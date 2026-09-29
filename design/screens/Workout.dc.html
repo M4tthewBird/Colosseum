@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Colosseum — Workout</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;color:#1C1C1E;background:#F2F2F7;-webkit-font-smoothing:antialiased}
+a{color:#1C1C1E}a:hover{color:#000}
+button,input{font-family:inherit}
+.glass{background:rgba(255,255,255,0.72);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);border:0.5px solid rgba(255,255,255,0.9);box-shadow:0 1px 1px rgba(0,0,0,0.03),0 8px 24px rgba(0,0,0,0.05)}
+.fill{background:rgba(118,118,128,0.12)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F2F2F7; box-sizing: border-box">
+<div style="position: absolute; width: 420px; height: 300px; border-radius: 50%; left: -180px; top: -120px; background: {{blobA}}; filter: blur(80px)"></div>
+
+<div style="position: relative; padding: 58px 20px 0; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<a href="Workouts.dc.html" aria-label="Minimize workout" class="fill" style="width: 36px; height: 36px; border-radius: 18px; display: flex; align-items: center; justify-content: center; color: #1C1C1E; flex-shrink: 0">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+</a>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 1px">
+<div style="font-size: 17px; font-weight: 600">Push Day</div>
+<div style="font-size: 12px; color: #6C6C70; font-variant-numeric: tabular-nums">1 of 5 · 12:48</div>
+</div>
+<button class="fill" style="height: 36px; padding: 0 14px; border-radius: 18px; border: none; font-size: 15px; font-weight: 600; color: #1C1C1E; cursor: pointer">Finish</button>
+</div>
+
+<div aria-hidden="true" style="display: flex; gap: 4px">
+<div style="flex-grow: 1; height: 4px; border-radius: 2px; background: {{accent}}"></div>
+<div class="fill" style="flex-grow: 1; height: 4px; border-radius: 2px"></div>
+<div class="fill" style="flex-grow: 1; height: 4px; border-radius: 2px"></div>
+<div class="fill" style="flex-grow: 1; height: 4px; border-radius: 2px"></div>
+<div class="fill" style="flex-grow: 1; height: 4px; border-radius: 2px"></div>
+</div>
+
+<section class="glass" style="border-radius: 26px; padding: 8px 8px 16px; display: flex; flex-direction: column; gap: 14px">
+<div style="position: relative; height: 188px; border-radius: 20px; background: #DEDDDC; overflow: hidden">
+<img src="/_blob/4d586614d0b82fe0450bf1c19743498e" alt="Marble statue of an athlete performing a bench press, bar held above the chest" style="width: 100%; height: 100%; object-fit: cover; display: block">
+<button aria-label="Exercise tips" class="fill" style="position: absolute; right: 10px; top: 10px; width: 30px; height: 30px; border-radius: 15px; border: none; display: flex; align-items: center; justify-content: center; color: #1C1C1E; cursor: pointer; padding: 0">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 7.5v.5"></path></svg>
+</button>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: flex-end; padding: 0 8px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h1 style="margin: 0; font-size: 26px; font-weight: 700; letter-spacing: -0.6px">Bench press</h1>
+<div style="font-size: 13px; color: #6C6C70">Chest, triceps, shoulders · 4 × 6–8</div>
+</div>
+<div class="fill" style="font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 12px; white-space: nowrap">PR 100 kg</div>
+</div>
+</section>
+
+<section class="glass" style="border-radius: 22px; padding: 10px 12px 8px; display: flex; flex-direction: column; gap: 4px">
+<div style="display: grid; grid-template-columns: 30px minmax(0, 1fr) 64px 52px 36px; gap: 8px; align-items: center; font-size: 12px; color: #6C6C70; padding: 0 4px 2px">
+<div>Set</div><div>Last time</div><div style="text-align: center">kg</div><div style="text-align: center">Reps</div><div></div>
+</div>
+<sc-for list="{{sets}}" as="s" hint-placeholder-count="4">
+<div style="display: grid; grid-template-columns: 30px minmax(0, 1fr) 64px 52px 36px; gap: 8px; align-items: center; height: 44px; padding: 0 4px; border-radius: 14px; background: {{s.rowBg}}">
+<div style="font-size: 15px; font-weight: 600; color: {{s.numColor}}">{{s.n}}</div>
+<div style="font-size: 14px; color: #6C6C70">{{s.prev}}</div>
+<input type="text" inputmode="decimal" aria-label="{{s.kgLabel}}" value="{{s.kg}}" onChange="{{s.setKg}}" class="fill" style="width: 64px; height: 34px; box-sizing: border-box; border: none; border-radius: 10px; text-align: center; font-size: 16px; font-weight: 600; color: #1C1C1E; outline-color: {{accent}}">
+<input type="text" inputmode="numeric" aria-label="{{s.repsLabel}}" value="{{s.reps}}" onChange="{{s.setReps}}" class="fill" style="width: 52px; height: 34px; box-sizing: border-box; border: none; border-radius: 10px; text-align: center; font-size: 16px; font-weight: 600; color: #1C1C1E; outline-color: {{accent}}">
+<button aria-label="{{s.checkLabel}}" aria-pressed="{{s.done}}" onClick="{{s.toggle}}" style="width: 32px; height: 32px; border-radius: 16px; border: none; background: {{s.checkBg}}; color: {{s.checkFg}}; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+</button>
+</div>
+</sc-for>
+</section>
+</div>
+
+<div class="glass" style="position: absolute; left: 16px; right: 16px; bottom: 28px; height: 66px; border-radius: 33px; padding: 6px 6px 6px 20px; box-sizing: border-box; display: flex; align-items: center; gap: 12px">
+<div style="display: flex; flex-direction: column; flex-grow: 1">
+<div style="font-size: 12px; color: #6C6C70">Rest</div>
+<div style="font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; color: {{accent}}">1:24</div>
+</div>
+<button class="fill" style="height: 54px; padding: 0 18px 0 20px; border-radius: 27px; border: none; color: #1C1C1E; display: flex; align-items: center; gap: 8px; cursor: pointer; text-align: left">
+<span style="display: flex; flex-direction: column">
+<span style="font-size: 11px; color: #6C6C70">Next</span>
+<span style="font-size: 15px; font-weight: 600">Overhead press</span>
+</span>
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#B91C1C","options":["#B91C1C","#9F1239","#7F1D1D","#C2410C"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = {
+      sets: [
+        { prev: '95 × 8', kg: '95', reps: '8', done: true },
+        { prev: '95 × 7', kg: '97.5', reps: '7', done: true },
+        { prev: '95 × 6', kg: '97.5', reps: '6', done: false },
+        { prev: '95 × 6', kg: '97.5', reps: '6', done: false }
+      ]
+    };
+  }
+  update(i, patch) {
+    var sets = this.state.sets.map(function (s, j) { return j === i ? Object.assign({}, s, patch) : s; });
+    this.setState({ sets: sets });
+  }
+  renderVals() {
+    var self = this;
+    var accent = this.props.accent ?? '#B91C1C';
+    var h = accent.replace('#', '');
+    var r = parseInt(h.substr(0, 2), 16), g = parseInt(h.substr(2, 2), 16), b = parseInt(h.substr(4, 2), 16);
+    var sets = this.state.sets.map(function (s, i) {
+      return {
+        n: i + 1, prev: s.prev, kg: s.kg, reps: s.reps, done: s.done,
+        kgLabel: 'Set ' + (i + 1) + ' weight in kilograms',
+        repsLabel: 'Set ' + (i + 1) + ' reps',
+        checkLabel: s.done ? 'Set ' + (i + 1) + ' done' : 'Mark set ' + (i + 1) + ' done',
+        rowBg: s.done ? 'rgba(' + r + ',' + g + ',' + b + ',0.07)' : 'transparent',
+        numColor: s.done ? accent : '#1C1C1E',
+        checkBg: s.done ? accent : 'rgba(118,118,128,0.12)',
+        checkFg: s.done ? '#fff' : '#AEAEB2',
+        toggle: function () { self.update(i, { done: !s.done }); },
+        setKg: function (e) { self.update(i, { kg: e.target.value }); },
+        setReps: function (e) { self.update(i, { reps: e.target.value }); }
+      };
+    });
+    return { accent: accent, blobA: 'rgba(' + r + ',' + g + ',' + b + ',0.12)', sets: sets };
+  }
+}
+</script>
+</body>
+</html>

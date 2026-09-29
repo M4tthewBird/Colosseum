@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "Colosseum",
+    "slug": "colosseum",
+    "scheme": "colosseum",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./brand/app-icon-1024.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#F2F2F7",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "app.colosseum"
+    },
+    "android": {
+      "package": "app.colosseum",
+      "adaptiveIcon": {
+        "backgroundColor": "#B91C1C",
+        "foregroundImage": "./brand/app-icon-maskable-512.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./brand/app-icon-32.png",
+      "name": "Colosseum",
+      "shortName": "Colosseum",
+      "backgroundColor": "#F2F2F7",
+      "themeColor": "#F2F2F7"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Colosseum uses your photos to set a profile picture."
+        }
+      ],
+      "expo-image"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

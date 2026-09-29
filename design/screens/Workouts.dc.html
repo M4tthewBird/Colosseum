@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Colosseum — Workouts</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;color:#1C1C1E;background:#F2F2F7;-webkit-font-smoothing:antialiased}
+a{color:#1C1C1E}a:hover{color:#000}
+button,input{font-family:inherit}
+.glass{background:rgba(255,255,255,0.72);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);border:0.5px solid rgba(255,255,255,0.9);box-shadow:0 1px 1px rgba(0,0,0,0.03),0 8px 24px rgba(0,0,0,0.05)}
+.fill{background:rgba(118,118,128,0.12)}
+</style>
+</helmet>
+<div style="width: 390px; height: 1090px; position: relative; overflow: hidden; background: #F2F2F7; box-sizing: border-box">
+<div style="position: absolute; width: 420px; height: 300px; border-radius: 50%; left: -180px; top: -120px; background: {{blobA}}; filter: blur(80px)"></div>
+
+<div style="position: relative; padding: 62px 20px 0; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; align-items: flex-end">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-size: 13px; color: #6C6C70; font-weight: 500">Push Pull Legs · week 3 of 8</div>
+<h1 style="margin: 0; font-size: 34px; font-weight: 700; letter-spacing: -0.8px">Workouts</h1>
+</div>
+<a href="Programs.dc.html" class="fill" style="height: 36px; padding: 0 14px; border-radius: 18px; display: flex; align-items: center; font-size: 15px; font-weight: 600; text-decoration: none; color: #1C1C1E">Programs</a>
+</div>
+
+<section class="glass" style="border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 3px">
+<div style="font-size: 13px; font-weight: 600; color: #6C6C70">Up next</div>
+<h2 style="margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.4px">Push Day</h2>
+<div style="font-size: 13px; color: #6C6C70">Bench press, overhead press, incline dumbbell press and 2 more</div>
+</div>
+<div style="display: flex; gap: 8px">
+<a href="Workout.dc.html" class="fill" style="flex-grow: 1; height: 50px; border-radius: 25px; color: #1C1C1E; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 17px; font-weight: 600">
+<svg width="15" height="15" viewBox="0 0 24 24" fill="{{accent}}" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"></path></svg>
+Start workout
+</a>
+<button aria-label="Start an empty workout" class="fill" style="width: 50px; height: 50px; border-radius: 25px; border: none; color: #1C1C1E; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+</button>
+</div>
+</section>
+
+<section class="glass" style="border-radius: 24px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<div style="font-size: 17px; font-weight: 700">September</div>
+<div style="display: flex; gap: 6px">
+<button aria-label="Previous month" class="fill" style="width: 30px; height: 30px; border-radius: 15px; border: none; color: #1C1C1E; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0">
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg>
+</button>
+<button aria-label="Next month" class="fill" style="width: 30px; height: 30px; border-radius: 15px; border: none; color: #1C1C1E; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0">
+<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+</button>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; justify-items: center">
+<sc-for list="{{weekdays}}" as="w" hint-placeholder-count="7">
+<div style="font-size: 11px; font-weight: 600; color: #6C6C70; height: 18px">{{w}}</div>
+</sc-for>
+<sc-for list="{{cells}}" as="c" hint-placeholder-count="31">
+<div style="width: 34px; height: 34px; border-radius: 17px; box-sizing: border-box; background: {{c.bg}}; color: {{c.fg}}; border: {{c.border}}; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: {{c.weight}}">{{c.label}}</div>
+</sc-for>
+</div>
+<div style="display: flex; gap: 16px; font-size: 12px; color: #6C6C70; padding-top: 2px">
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 5px; background: rgba(118,118,128,0.30)"></span>Trained</span>
+<span style="display: flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; border-radius: 5px; background: {{accent}}"></span>New PR</span>
+<span style="margin-left: auto">15 workouts</span>
+</div>
+</section>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h2 style="margin: 0; padding: 0 4px; font-size: 20px; font-weight: 700; letter-spacing: -0.3px">Previous workouts</h2>
+<div class="glass" style="border-radius: 22px; padding: 2px 16px; display: flex; flex-direction: column">
+<sc-for list="{{workouts}}" as="w" hint-placeholder-count="4">
+<button style="display: flex; align-items: center; gap: 12px; height: 64px; border: none; border-bottom: {{w.divider}}; background: transparent; padding: 0; color: #1C1C1E; text-align: left; cursor: pointer">
+<span style="width: 40px; display: flex; flex-direction: column; align-items: center; flex-shrink: 0">
+<span style="font-size: 11px; font-weight: 600; color: #6C6C70">{{w.dow}}</span>
+<span style="font-size: 20px; font-weight: 600; letter-spacing: -0.4px">{{w.day}}</span>
+</span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 15px; font-weight: 600">{{w.name}}</span>
+<span style="font-size: 13px; color: #6C6C70">{{w.meta}}</span>
+</span>
+<sc-if value="{{w.hasPr}}" hint-placeholder-val="{{ false }}">
+<span style="font-size: 11px; font-weight: 600; color: {{accent}}">PR</span>
+</sc-if>
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#AEAEB2" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+</button>
+</sc-for>
+</div>
+</div>
+</div>
+
+<nav aria-label="Tabs" class="glass" style="position: absolute; left: 24px; right: 24px; bottom: 28px; height: 62px; border-radius: 31px; padding: 5px; box-sizing: border-box; display: flex; gap: 2px">
+<a href="Main.dc.html" style="flex-grow: 1; flex-basis: 0; border-radius: 26px; color: #6C6C70; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"></path></svg>
+<span style="font-size: 10px; font-weight: 600">Today</span>
+</a>
+<a href="Workouts.dc.html" aria-current="page" style="flex-grow: 1; flex-basis: 0; border-radius: 26px; background: rgba(118,118,128,0.12); color: {{accent}}; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 7v10M3.5 9.5v5M17.5 7v10M20.5 9.5v5M6.5 12h11"></path></svg>
+<span style="font-size: 10px; font-weight: 600">Workouts</span>
+</a>
+<a href="Arena.dc.html" style="flex-grow: 1; flex-basis: 0; border-radius: 26px; color: #6C6C70; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8"></path></svg>
+<span style="font-size: 10px; font-weight: 600">Arena</span>
+</a>
+<a href="Profile.dc.html" style="flex-grow: 1; flex-basis: 0; border-radius: 26px; color: #6C6C70; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4.5 20.5a7.5 7.5 0 0 1 15 0"></path></svg>
+<span style="font-size: 10px; font-weight: 600">Profile</span>
+</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#B91C1C","options":["#B91C1C","#9F1239","#7F1D1D","#C2410C"]},"$preview":{"width":390,"height":1090}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var accent = this.props.accent ?? '#B91C1C';
+    var h = accent.replace('#', '');
+    var r = parseInt(h.substr(0, 2), 16), g = parseInt(h.substr(2, 2), 16), b = parseInt(h.substr(4, 2), 16);
+    var trained = [1, 3, 4, 7, 9, 11, 14, 15, 17, 18, 21, 22, 24, 25, 28];
+    var prs = [9, 17, 24];
+    var today = 29;
+    var cells = [{ label: '', bg: 'transparent', fg: '#1C1C1E', border: 'none', weight: 400 }];
+    for (var d = 1; d <= 30; d++) {
+      var isPr = prs.indexOf(d) >= 0, isT = trained.indexOf(d) >= 0, isToday = d === today;
+      cells.push({
+        label: String(d),
+        bg: isPr ? accent : (isT ? 'rgba(118,118,128,0.18)' : 'transparent'),
+        fg: isPr ? '#fff' : (d > today ? '#AEAEB2' : (isToday ? accent : '#1C1C1E')),
+        border: isToday ? '1.5px solid ' + accent : 'none',
+        weight: isT || isToday ? 600 : 400
+      });
+    }
+    var workouts = [
+      { dow: 'MON', day: 28, name: 'Pull Day', meta: '1 h 02 min · 12.9 t', hasPr: false },
+      { dow: 'FRI', day: 25, name: 'Leg Day', meta: '1 h 10 min · 16.4 t', hasPr: false },
+      { dow: 'THU', day: 24, name: 'Push Day', meta: '58 min · 11.2 t · Bench 100 kg', hasPr: true },
+      { dow: 'TUE', day: 22, name: 'Pull Day', meta: '1 h 05 min · 12.6 t', hasPr: false }
+    ].map(function (w, i, a) { return Object.assign({}, w, { divider: i < a.length - 1 ? '0.5px solid rgba(60,60,67,0.18)' : 'none' }); });
+    return {
+      accent: accent, blobA: 'rgba(' + r + ',' + g + ',' + b + ',0.14)',
+      weekdays: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], cells: cells, workouts: workouts
+    };
+  }
+}
+</script>
+</body>
+</html>

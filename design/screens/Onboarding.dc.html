@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Colosseum — Create profile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&amp;display=swap">
+<style>
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;color:#1C1C1E;background:#F2F2F7;-webkit-font-smoothing:antialiased}
+a{color:#1C1C1E}a:hover{color:#000}
+button,input{font-family:inherit}
+.glass{background:rgba(255,255,255,0.72);-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);border:0.5px solid rgba(255,255,255,0.9);box-shadow:0 1px 1px rgba(0,0,0,0.03),0 8px 24px rgba(0,0,0,0.05)}
+.fill{background:rgba(118,118,128,0.12)}
+input::placeholder{color:#8E8E93}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F2F2F7; box-sizing: border-box">
+<div style="position: absolute; width: 420px; height: 320px; border-radius: 50%; right: -160px; top: -140px; background: {{blobA}}; filter: blur(80px)"></div>
+
+<div style="position: relative; padding: 60px 20px 0; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+<div style="position: relative; width: 88px; height: 88px">
+<button aria-label="Add profile photo" class="fill" style="width: 88px; height: 88px; border-radius: 44px; border: none; display: flex; align-items: center; justify-content: center; color: #6C6C70; cursor: pointer; padding: 0">
+<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1.5-2h6l1.5 2h2A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"></path><circle cx="12" cy="13" r="3.2"></circle></svg>
+</button>
+<div aria-hidden="true" style="position: absolute; right: -4px; bottom: -4px; width: 32px; height: 32px; border-radius: 8px; background: {{accent}}; color: #fff; display: flex; align-items: center; justify-content: center; border: 2px solid #F2F2F7">
+<svg width="22" height="22" viewBox="0 0 100 100"><defs><mask id="mkO"><rect width="100" height="100" fill="#fff"></rect><path fill="#000" d="M20 84V70a8 8 0 0 1 16 0v14zM42 84V70a8 8 0 0 1 16 0v14zM64 84V70a8 8 0 0 1 16 0v14zM20 36V30a8 8 0 0 1 16 0v6zM42 36V30a8 8 0 0 1 16 0v6zM64 36V30a8 8 0 0 1 16 0v6zM0 43h100v14H0z"></path></mask></defs><path d="M12 88V22q0-6 6-6h28l42 27v45z" fill="currentColor" mask="url(#mkO)"></path><rect x="3" y="48" width="94" height="4" rx="2" fill="currentColor"></rect><rect x="3" y="38" width="7" height="24" rx="2" fill="currentColor"></rect><rect x="90" y="38" width="7" height="24" rx="2" fill="currentColor"></rect></svg>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="font-family: 'Cinzel', serif; font-weight: 700; font-size: 12px; letter-spacing: 3px; color: {{accent}}">COLOSSEUM</div>
+<h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.6px">Create your profile</h1>
+<div style="font-size: 15px; color: #6C6C70">Your friends will see this in the arena.</div>
+</div>
+</div>
+
+<div class="glass" style="border-radius: 20px; padding: 0 16px; display: flex; flex-direction: column">
+<label style="display: flex; align-items: center; height: 50px; gap: 12px; border-bottom: 0.5px solid rgba(60,60,67,0.18)">
+<span style="width: 96px; font-size: 16px">Name</span>
+<input type="text" placeholder="Your name" style="flex-grow: 1; min-width: 0; border: none; background: transparent; font-size: 16px; color: #1C1C1E; outline: none">
+</label>
+<label style="display: flex; align-items: center; height: 50px; gap: 12px; border-bottom: 0.5px solid rgba(60,60,67,0.18)">
+<span style="width: 96px; font-size: 16px">Username</span>
+<input type="text" placeholder="@username" autocapitalize="none" style="flex-grow: 1; min-width: 0; border: none; background: transparent; font-size: 16px; color: #1C1C1E; outline: none">
+</label>
+<div style="display: flex; align-items: center; height: 50px; gap: 12px; border-bottom: 0.5px solid rgba(60,60,67,0.18)">
+<span style="flex-grow: 1; font-size: 16px">Sex</span>
+<div role="group" aria-label="Sex" class="fill" style="height: 30px; border-radius: 15px; padding: 2px; box-sizing: border-box; display: flex; gap: 2px">
+<sc-for list="{{sexes}}" as="s" hint-placeholder-count="2">
+<button aria-pressed="{{s.on}}" onClick="{{s.pick}}" style="border: none; border-radius: 13px; padding: 0 14px; background: {{s.bg}}; box-shadow: {{s.shadow}}; color: #1C1C1E; font-size: 14px; font-weight: {{s.weight}}; cursor: pointer">{{s.label}}</button>
+</sc-for>
+</div>
+</div>
+<label style="display: flex; align-items: center; height: 50px; gap: 12px; border-bottom: 0.5px solid rgba(60,60,67,0.18)">
+<span style="width: 96px; font-size: 16px">Bodyweight</span>
+<input type="text" inputmode="decimal" placeholder="80" style="flex-grow: 1; min-width: 0; border: none; background: transparent; font-size: 16px; color: #1C1C1E; outline: none">
+<div role="group" aria-label="Units" class="fill" style="height: 28px; border-radius: 14px; padding: 2px; box-sizing: border-box; display: flex; gap: 2px">
+<sc-for list="{{units}}" as="u" hint-placeholder-count="2">
+<button aria-pressed="{{u.on}}" onClick="{{u.pick}}" style="border: none; border-radius: 12px; padding: 0 10px; background: {{u.bg}}; box-shadow: {{u.shadow}}; color: #1C1C1E; font-size: 13px; font-weight: 600; cursor: pointer">{{u.label}}</button>
+</sc-for>
+</div>
+</label>
+<button style="display: flex; align-items: center; height: 50px; gap: 12px; border: none; background: transparent; padding: 0; color: #1C1C1E; cursor: pointer; text-align: left">
+<span style="flex-grow: 1; font-size: 16px">Gym</span>
+<span style="font-size: 16px; color: #6C6C70">Choose</span>
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#AEAEB2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+</button>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 13px; color: #6C6C70; padding: 0 16px">Experience</div>
+<div role="group" aria-label="Experience" class="fill" style="height: 36px; border-radius: 18px; padding: 2px; box-sizing: border-box; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px">
+<sc-for list="{{levels}}" as="l" hint-placeholder-count="3">
+<button aria-pressed="{{l.on}}" onClick="{{l.pick}}" style="border: none; border-radius: 16px; background: {{l.bg}}; box-shadow: {{l.shadow}}; color: #1C1C1E; font-size: 14px; font-weight: {{l.weight}}; cursor: pointer">{{l.label}}</button>
+</sc-for>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 13px; color: #6C6C70; padding: 0 16px">Goals</div>
+<div role="group" aria-label="Goals" style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{goals}}" as="g" hint-placeholder-count="5">
+<button aria-pressed="{{g.on}}" onClick="{{g.pick}}" style="height: 34px; padding: 0 14px; border-radius: 17px; border: none; background: {{g.bg}}; box-shadow: {{g.shadow}}; color: #1C1C1E; font-size: 14px; font-weight: {{g.weight}}; display: flex; align-items: center; gap: 6px; cursor: pointer">
+<sc-if value="{{g.on}}" hint-placeholder-val="{{ false }}">
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+</sc-if>
+{{g.label}}
+</button>
+</sc-for>
+</div>
+</div>
+</div>
+
+<div style="position: absolute; left: 20px; right: 20px; bottom: 34px; display: flex; flex-direction: column; gap: 14px">
+<a href="Main.dc.html" class="fill" style="height: 52px; border-radius: 26px; color: #1C1C1E; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 600">Continue</a>
+<div style="text-align: center; font-size: 14px; color: #6C6C70">Already have an account? <a href="Main.dc.html" style="color: {{accent}}; font-weight: 600; text-decoration: none">Sign in</a></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#B91C1C","options":["#B91C1C","#9F1239","#7F1D1D","#C2410C"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { sex: 'm', level: 'mid', unit: 'kg', goals: { strength: true, muscle: true } };
+  }
+  renderVals() {
+    var self = this;
+    var accent = this.props.accent ?? '#B91C1C';
+    var h = accent.replace('#', '');
+    var r = parseInt(h.substr(0, 2), 16), g = parseInt(h.substr(2, 2), 16), b = parseInt(h.substr(4, 2), 16);
+    var sel = function (on) { return { bg: on ? '#fff' : 'transparent', shadow: on ? '0 2px 6px rgba(0,0,0,0.08)' : 'none', weight: on ? 600 : 500 }; };
+    var levels = [['new', 'Beginner'], ['mid', 'Intermediate'], ['pro', 'Advanced']].map(function (l) {
+      var on = self.state.level === l[0];
+      return Object.assign({ label: l[1], on: on, pick: function () { self.setState({ level: l[0] }); } }, sel(on));
+    });
+    var sexes = [['m', 'Male'], ['f', 'Female']].map(function (s) {
+      var on = self.state.sex === s[0];
+      return Object.assign({ label: s[1], on: on, pick: function () { self.setState({ sex: s[0] }); } }, sel(on));
+    });
+    var units = ['kg', 'lb'].map(function (u) {
+      var on = self.state.unit === u;
+      return Object.assign({ label: u, on: on, pick: function () { self.setState({ unit: u }); } }, sel(on));
+    });
+    var goals = [['strength', 'Strength'], ['muscle', 'Build muscle'], ['endurance', 'Endurance'], ['lean', 'Lose fat'], ['health', 'Stay healthy']].map(function (x) {
+      var on = !!self.state.goals[x[0]];
+      return {
+        label: x[1], on: on, bg: on ? '#fff' : 'rgba(118,118,128,0.12)', shadow: on ? '0 2px 6px rgba(0,0,0,0.08)' : 'none', weight: on ? 600 : 500,
+        pick: function () { var gs = Object.assign({}, self.state.goals); gs[x[0]] = !gs[x[0]]; self.setState({ goals: gs }); }
+      };
+    });
+    return { accent: accent, blobA: 'rgba(' + r + ',' + g + ',' + b + ',0.14)', levels: levels, units: units, sexes: sexes, goals: goals };
+  }
+}
+</script>
+</body>
+</html>

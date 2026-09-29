@@ -1,0 +1,7 @@
+design/
+dist/
+node_modules/
+.expo/
+brand/
+supabase/
+*.md
