@@ -75,7 +75,13 @@ export function startAuth(): void {
   if (started || isServer) return;
   started = true;
   if (isDemo) {
-    const profile = useData.getState().profile;
+    const { profile, exercises } = useData.getState();
+    // Built-in exercises added in later versions show up without signing in again.
+    if (profile && DEMO_EXERCISES.some((e) => !exercises[e.id])) {
+      useData.setState({
+        exercises: { ...Object.fromEntries(DEMO_EXERCISES.map((e) => [e.id, e])), ...exercises },
+      });
+    }
     useAuth.setState({
       status: profile ? 'signedIn' : 'signedOut',
       userId: profile ? profile.id : null,

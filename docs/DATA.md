@@ -79,6 +79,6 @@ A free project **pauses after 1 week without activity**. That is fine for testin
 
 ## Built-in exercises (seed)
 
-Seed about 40 common lifts with muscles, e.g. Bench press, Incline bench press, Incline dumbbell press, Overhead press, Lateral raise, Triceps pushdown, Squat, Front squat, Deadlift, Romanian deadlift, Leg press, Leg curl, Leg extension, Calf raise, Barbell row, Pull-up, Lat pulldown, Seated cable row, Biceps curl, Hammer curl, Face pull, Hip thrust, Lunge, Dips, Plank.
+Seed about 40 common lifts plus the S, A and B tier exercises from Jeff Nippard's tier lists (124 in total), with muscles, e.g. Bench press, Incline bench press, Incline dumbbell press, Overhead press, Lateral raise, Triceps pushdown, Squat, Front squat, Deadlift, Romanian deadlift, Leg press, Leg curl, Leg extension, Calf raise, Barbell row, Pull-up, Lat pulldown, Seated cable row, Biceps curl, Hammer curl, Face pull, Hip thrust, Lunge, Dips, Plank.
 
 The `image_key` for Bench press is `bench-press`; the others are `null` until illustrations exist.
