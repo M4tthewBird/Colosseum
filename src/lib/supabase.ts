@@ -11,6 +11,9 @@ const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '';
  */
 export const isDemo = !url || !anonKey;
 
+/** Where supabase-js keeps the session (its default key, so existing sign-ins keep working). */
+export const AUTH_STORAGE_KEY = `sb-${url ? new URL(url).hostname.split('.')[0] : 'demo'}-auth-token`;
+
 export const supabase: SupabaseClient = createClient(
   url || 'https://demo.invalid',
   anonKey || 'demo',
@@ -20,6 +23,7 @@ export const supabase: SupabaseClient = createClient(
       persistSession: true,
       autoRefreshToken: !isDemo,
       detectSessionInUrl: false,
+      storageKey: AUTH_STORAGE_KEY,
     },
   },
 );

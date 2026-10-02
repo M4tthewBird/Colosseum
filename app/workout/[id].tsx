@@ -92,10 +92,11 @@ function ActiveWorkout({
 
   const restPulse = useRestPulse();
 
-  // Keep the pager in sync with the current exercise.
+  // Keep the pager in sync with the current exercise. `pages` is a dependency too: when an
+  // exercise is added or removed the browser keeps the old page in view (scroll anchoring).
   useEffect(() => {
     if (pageW > 0) pager.current?.scrollTo({ x: idx * pageW, animated: true });
-  }, [idx, pageW]);
+  }, [idx, pageW, pages]);
 
   const onScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (!pageW) return;
@@ -267,14 +268,17 @@ function ActiveWorkout({
             </ScrollView>
           );
         })}
-        <View style={[styles.page, { width: pageW || MAX_WIDTH }]}>
-          <GlassCard radius={26} style={{ gap: 14 }}>
-            <Text style={type.title}>
-              {ordered.length ? 'Add another exercise' : 'Empty workout'}
-            </Text>
-            <Text style={type.caption}>Pick any exercise and log your sets.</Text>
-            <FillButton label="Add exercise" icon={Plus} onPress={() => setPicker(true)} />
-          </GlassCard>
+        {/* The page spans the pager; the card is centered inside it like the exercise pages. */}
+        <View style={{ width: pageW || MAX_WIDTH }}>
+          <View style={styles.page}>
+            <GlassCard radius={26} style={{ gap: 14 }}>
+              <Text style={type.title}>
+                {ordered.length ? 'Add another exercise' : 'Empty workout'}
+              </Text>
+              <Text style={type.caption}>Pick any exercise and log your sets.</Text>
+              <FillButton label="Add exercise" icon={Plus} onPress={() => setPicker(true)} />
+            </GlassCard>
+          </View>
         </View>
       </ScrollView>
 
@@ -299,7 +303,7 @@ function ActiveWorkout({
           ) : (
             <Pressable
               accessibilityRole="button"
-              onPress={() => (idx < ordered.length ? setCurrent(ordered.length) : setPicker(true))}
+              onPress={() => setPicker(true)}
               style={({ pressed }) => [styles.next, { opacity: pressed ? 0.6 : 1 }]}
             >
               <Plus size={16} color={colors.accent} strokeWidth={2.6} />

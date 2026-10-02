@@ -13,8 +13,8 @@ import {
   demoSessions,
 } from '@/dev/seed';
 import { addDays, toLocalDate } from '@/lib/dates';
-import { isServer } from '@/lib/storage';
-import { isDemo, supabase, usernameToEmail } from '@/lib/supabase';
+import { isServer, safeStorage } from '@/lib/storage';
+import { AUTH_STORAGE_KEY, isDemo, supabase, usernameToEmail } from '@/lib/supabase';
 import type { BodyMeasurement, Experience, Goal, Profile, Sex } from '@/lib/types';
 import { uuid } from '@/lib/uuid';
 import { useData } from '@/stores/data';
@@ -209,9 +209,15 @@ export async function signIn(username: string, password: string): Promise<void> 
   if (error) throw new Error(friendlyAuthError(error.message));
 }
 
-/** `local` skips the server call (used after the account is already deleted). */
-export async function signOut(scope: 'global' | 'local' = 'global'): Promise<void> {
-  if (!isDemo) await supabase.auth.signOut({ scope });
+/**
+ * Signs out and clears local data. `forgotten` is for an account that no longer exists: the
+ * stored session is just dropped, because asking the server to end it would fail with 403.
+ */
+export async function signOut(how: 'server' | 'forgotten' = 'server'): Promise<void> {
+  if (!isDemo) {
+    if (how === 'server') await supabase.auth.signOut();
+    else await safeStorage.removeItem(AUTH_STORAGE_KEY);
+  }
   useData.getState().reset();
   useQueue.getState().clear();
   useWorkout.getState().end();
@@ -223,7 +229,7 @@ export async function deleteAccount(): Promise<void> {
     const { error } = await supabase.rpc('delete_my_account');
     if (error) throw new Error(error.message);
   }
-  await signOut('local');
+  await signOut('forgotten');
 }
 
 // ───────────── Demo mode (no Supabase keys) ─────────────
