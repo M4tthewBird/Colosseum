@@ -351,6 +351,22 @@ export async function searchGyms(q: string): Promise<Gym[]> {
   return check(await query) as Gym[];
 }
 
+/** Cities already used by gyms, for the "Add new gym" city suggestions. */
+export function useGymCities(enabled: boolean) {
+  return useQuery({
+    queryKey: ['gym-cities'],
+    enabled,
+    staleTime: 10 * 60_000,
+    queryFn: async (): Promise<string[]> => {
+      if (isDemo) return demo.gyms.map((g) => g.city).filter((c): c is string => !!c);
+      const rows = check(
+        await supabase.from('gyms').select('city').not('city', 'is', null).limit(2000),
+      ) as { city: string }[];
+      return [...new Set(rows.map((r) => r.city.trim()).filter(Boolean))];
+    },
+  });
+}
+
 export async function createGym(name: string, city: string): Promise<Gym> {
   if (isDemo) {
     const g = { id: `demo-gym-${Date.now()}`, name, city: city || null };
