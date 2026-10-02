@@ -18,6 +18,7 @@ import { AUTH_STORAGE_KEY, isDemo, supabase, usernameToEmail } from '@/lib/supab
 import type { BodyMeasurement, Experience, Goal, Profile, Sex } from '@/lib/types';
 import { uuid } from '@/lib/uuid';
 import { useData } from '@/stores/data';
+import { usePrefs } from '@/stores/prefs';
 import { useQueue } from '@/stores/queue';
 import { useWorkout } from '@/stores/workout';
 import { uploadAvatar } from '../profile/avatar';
@@ -197,6 +198,7 @@ export async function signUp(input: SignUpInput): Promise<void> {
   useData.setState({ profile });
   useData.getState().savePrivate({ user_id: userId, height_cm: input.heightCm });
   if (input.bodyweightKg) useData.getState().logBodyweight(input.bodyweightKg);
+  usePrefs.getState().setInstallTipPending(true);
   await onSignedIn(userId);
 }
 

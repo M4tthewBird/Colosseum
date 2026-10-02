@@ -12,6 +12,7 @@ import { Wordmark } from '@/components/Logo';
 import { Header, Screen } from '@/components/Screen';
 import { useFriendsPrs, useLeaderboard } from '@/features/social/api';
 import { useActiveProgram, useFinishedSessions } from '@/features/training/hooks';
+import { InstallTip } from '@/features/onboarding/InstallTip';
 import { UpNextCard } from '@/features/training/UpNextCard';
 import { timeAgo } from '@/lib/dates';
 import { formatKg, formatVolume, weekStreak } from '@/lib/formulas';
@@ -71,6 +72,7 @@ export default function Today() {
       <UpNextCard variant="today" />
 
       <FriendsPrs />
+      <InstallTip />
     </Screen>
   );
 }

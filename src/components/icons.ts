@@ -31,3 +31,7 @@ export { default as User } from 'lucide-react-native/icons/user';
 export { default as UserPlus } from 'lucide-react-native/icons/user-plus';
 export { default as Users } from 'lucide-react-native/icons/users';
 export { default as X } from 'lucide-react-native/icons/x';
+export { default as Share } from 'lucide-react-native/icons/share';
+export { default as SquarePlus } from 'lucide-react-native/icons/square-plus';
+export { default as EllipsisVertical } from 'lucide-react-native/icons/ellipsis-vertical';
+export { default as Download } from 'lucide-react-native/icons/download';

@@ -21,6 +21,9 @@ interface PrefsState {
   arenaPeriod: ArenaPeriod;
   /** Rank lifts by bodyweight-adjusted DOTS score instead of kg. */
   arenaDots: boolean;
+  /** Show the "Add to Home Screen" tip once, after sign-up. */
+  installTipPending: boolean;
+  setInstallTipPending: (v: boolean) => void;
   setArenaDots: (v: boolean) => void;
   setArenaMetrics: (m: ArenaMetric[]) => void;
   setArenaMetric: (m: ArenaMetric) => void;
@@ -34,6 +37,8 @@ export const usePrefs = create<PrefsState>()(
       arenaMetric: 'volume',
       arenaPeriod: 'week',
       arenaDots: false,
+      installTipPending: false,
+      setInstallTipPending: (installTipPending) => set({ installTipPending }),
       setArenaDots: (arenaDots) => set({ arenaDots }),
       setArenaMetrics: (arenaMetrics) => set({ arenaMetrics }),
       setArenaMetric: (arenaMetric) => set({ arenaMetric }),
