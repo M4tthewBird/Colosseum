@@ -30,3 +30,8 @@ export function usernameToEmail(username: string): string {
 }
 
 export const USERNAME_RE = /^[a-z0-9_.]{3,20}$/;
+
+/** Normalizes typed usernames: lowercase, no spaces, and no "@" (the field shows "@username"). */
+export function cleanUsername(input: string): string {
+  return input.toLowerCase().replace(/[\s@]/g, '');
+}

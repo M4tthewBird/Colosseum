@@ -13,7 +13,7 @@ import { GymPicker, type GymChoice } from '@/features/gyms/GymPicker';
 import { pickImage } from '@/features/profile/avatar';
 import { ExperiencePicker, GoalsPicker, SexSwitch } from '@/features/profile/ProfileFields';
 import { parseNumber } from '@/lib/formulas';
-import { isDemo, USERNAME_RE } from '@/lib/supabase';
+import { cleanUsername, isDemo, USERNAME_RE } from '@/lib/supabase';
 import type { Experience, Goal, Sex } from '@/lib/types';
 import { colors, type } from '@/theme/tokens';
 
@@ -163,7 +163,7 @@ export default function Onboarding() {
           <FormField
             label="Username"
             value={username}
-            onChangeText={(t) => setUsername(t.toLowerCase().replace(/\s/g, ''))}
+            onChangeText={(t) => setUsername(cleanUsername(t))}
             placeholder="@username"
             autoCapitalize="none"
             autoCorrect={false}

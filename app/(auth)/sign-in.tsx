@@ -8,7 +8,7 @@ import { FieldHint, FormField, FormGroup } from '@/components/Form';
 import { Wordmark } from '@/components/Logo';
 import { Screen } from '@/components/Screen';
 import { signIn } from '@/features/auth/auth';
-import { isDemo } from '@/lib/supabase';
+import { cleanUsername, isDemo } from '@/lib/supabase';
 import { colors, type } from '@/theme/tokens';
 
 export default function SignIn() {
@@ -54,7 +54,7 @@ export default function SignIn() {
         <FormField
           label="Username"
           value={username}
-          onChangeText={(t) => setUsername(t.toLowerCase().replace(/\s/g, ''))}
+          onChangeText={(t) => setUsername(cleanUsername(t))}
           placeholder="@username"
           autoCapitalize="none"
           autoCorrect={false}
