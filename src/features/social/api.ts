@@ -17,7 +17,7 @@ import {
   demoUser,
 } from '@/dev/seed';
 import { addDays, startOfMonth, startOfWeek, toLocalDate } from '@/lib/dates';
-import { e1rm, volume } from '@/lib/formulas';
+import { dotsCoefficient, e1rm, volume } from '@/lib/formulas';
 import { finished } from '@/lib/stats';
 import { isDemo, supabase } from '@/lib/supabase';
 import type { Gym, PublicUser, Session, SetEntry } from '@/lib/types';
@@ -208,8 +208,32 @@ function myValue(metric: string, period: ArenaPeriod): number | null {
   return best > 0 ? Math.round(best * 10) / 10 : null;
 }
 
-export function useLeaderboard(scope: 'friends' | 'gym', metric: string, period: ArenaPeriod) {
-  const resolved = resolveMetric(metric);
+/** True when the metric is a lift (ranked by e1RM), not volume or workouts. */
+export function isLiftMetric(metric: string): boolean {
+  return metric !== 'volume' && metric !== 'workouts';
+}
+
+/** My latest bodyweight-adjusted factor, or null when sex or bodyweight is missing. */
+export function myDotsCoefficient(): number | null {
+  const { profile, bodyweights } = useData.getState();
+  const latest = Object.values(bodyweights).sort((a, b) =>
+    b.logged_on.localeCompare(a.logged_on),
+  )[0];
+  return dotsCoefficient(latest?.weight_kg ?? null, profile?.sex ?? null);
+}
+
+/**
+ * Leaderboard rows. With `dots`, lifts are ranked by e1RM × DOTS coefficient; the server reads
+ * bodyweight only to compute the score and never returns it.
+ */
+export function useLeaderboard(
+  scope: 'friends' | 'gym',
+  metric: string,
+  period: ArenaPeriod,
+  dots = false,
+) {
+  const lift = resolveMetric(metric);
+  const resolved = dots && isLiftMetric(lift) ? `dots:${lift}` : lift;
   return useQuery({
     queryKey: ['leaderboard', me(), scope, resolved, period],
     queryFn: async (): Promise<RankRow[]> => {
@@ -227,7 +251,9 @@ export function useLeaderboard(scope: 'friends' | 'gym', metric: string, period:
   });
 }
 
-function demoLeaderboard(metric: string, period: ArenaPeriod): RankRow[] {
+function demoLeaderboard(key: string, period: ArenaPeriod): RankRow[] {
+  const dots = key.startsWith('dots:');
+  const metric = dots ? key.slice(5) : key;
   const exName = Object.values(useData.getState().exercises).find((e) => e.id === metric)?.name;
   const scale = period === 'week' ? 1 : period === 'month' ? 4.2 : 40;
   const rows: Omit<RankRow, 'rank'>[] = [];
@@ -239,6 +265,7 @@ function demoLeaderboard(metric: string, period: ArenaPeriod): RankRow[] {
     else if (exName === 'Bench press') value = st.bench;
     else if (exName === 'Squat') value = st.squat;
     else if (exName === 'Deadlift') value = st.deadlift;
+    if (value != null && dots) value = value * dotsCoefficient(st.bodyweight, 'male')!;
     if (value != null)
       rows.push({
         user_id: u.id,
@@ -249,7 +276,9 @@ function demoLeaderboard(metric: string, period: ArenaPeriod): RankRow[] {
       });
   }
   const p = useData.getState().profile;
-  const mine = myValue(metric, period);
+  const raw = myValue(metric, period);
+  const k = dots ? myDotsCoefficient() : 1;
+  const mine = raw != null && k != null ? raw * k : null;
   if (p && mine != null) {
     rows.push({
       user_id: p.id,

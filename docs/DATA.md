@@ -46,7 +46,8 @@ A free project **pauses after 1 week without activity**. That is fine for testin
   - It is `security definer` and filters to the caller's friends (`scope = 'friends'`) or home gym (`scope = 'gym'`)
   - metric = `'volume'` | `'workouts'` | `<exercise uuid>` (best estimated 1RM)
   - period = `'week'` | `'month'` | `'all'`
-  - It must **never** read `bodyweight_logs` or `body_measurements`
+  - metric `'dots:<exercise uuid>'` = best e1RM × `dots_coefficient(latest bodyweight, sex)`
+  - It may read the latest `bodyweight_logs` row only for DOTS and must **never** return it; it never reads `body_measurements`
 
 ## Privacy rules
 

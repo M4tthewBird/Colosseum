@@ -19,6 +19,9 @@ interface PrefsState {
   arenaMetrics: ArenaMetric[];
   arenaMetric: ArenaMetric;
   arenaPeriod: ArenaPeriod;
+  /** Rank lifts by bodyweight-adjusted DOTS score instead of kg. */
+  arenaDots: boolean;
+  setArenaDots: (v: boolean) => void;
   setArenaMetrics: (m: ArenaMetric[]) => void;
   setArenaMetric: (m: ArenaMetric) => void;
   setArenaPeriod: (p: ArenaPeriod) => void;
@@ -30,6 +33,8 @@ export const usePrefs = create<PrefsState>()(
       arenaMetrics: DEFAULT_METRICS,
       arenaMetric: 'volume',
       arenaPeriod: 'week',
+      arenaDots: false,
+      setArenaDots: (arenaDots) => set({ arenaDots }),
       setArenaMetrics: (arenaMetrics) => set({ arenaMetrics }),
       setArenaMetric: (arenaMetric) => set({ arenaMetric }),
       setArenaPeriod: (arenaPeriod) => set({ arenaPeriod }),

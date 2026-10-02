@@ -1,5 +1,6 @@
 import {
   bestsByExercise,
+  dots,
   e1rm,
   estimateMinutes,
   formatKg,
@@ -125,5 +126,23 @@ describe('weekStreak', () => {
   it('breaks on a missed week', () => {
     const dates = [d(8, 22), d(8, 24), d(8, 26), d(8, 8), d(8, 10), d(8, 12)];
     expect(weekStreak(dates, 3, now)).toBe(1);
+  });
+});
+
+describe('DOTS', () => {
+  it('uses the OpenPowerlifting coefficients', () => {
+    expect(dots(600, 90, 'male')!).toBeCloseTo(387.96, 1);
+    expect(dots(350, 60, 'female')!).toBeCloseTo(387.99, 1);
+  });
+  it('clamps bodyweight', () => {
+    expect(dots(100, 250, 'male')).toBeCloseTo(dots(100, 210, 'male')!, 6);
+    expect(dots(100, 30, 'female')).toBeCloseTo(dots(100, 40, 'female')!, 6);
+  });
+  it('rewards the lighter lifter for the same lift', () => {
+    expect(dots(150, 70, 'male')!).toBeGreaterThan(dots(150, 130, 'male')!);
+  });
+  it('needs bodyweight and sex', () => {
+    expect(dots(100, null, 'male')).toBeNull();
+    expect(dots(100, 80, null)).toBeNull();
   });
 });

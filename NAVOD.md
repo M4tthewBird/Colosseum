@@ -91,6 +91,7 @@ Soubor `supabase/schema.sql` je oproti původní verzi doplněný:
 - `workout_sessions.volume_kg / set_count / pr_count` – součty pro feed a Arenu
 - `set_entries.is_pr` – označení PR sérií (pro „Friends' PRs“)
 - `get_leaderboard(..., p_tz)` – „tento týden“ začíná v pondělí podle místního času, ne podle UTC
+- `get_leaderboard` umí i DOTS (`dots:<id cviku>`) a funkce `dots_coefficient` – váhu jen použije k výpočtu skóre, nikdy ji nevrátí
 - funkce `username_available`, `delete_my_account`, `friends_prs`, `gym_training_now`, `gym_challenge_progress`
 - bucket `avatars` s pravidly (každý smí zapisovat jen do své složky)
 - seznam posiloven je čitelný i před registrací (výběr posilovny v onboardingu)

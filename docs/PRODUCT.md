@@ -211,7 +211,7 @@ This is the core of the app and must work fully offline.
 
 **Rules:**
 
-- No bodyweight-relative metrics
+- Lift metrics have a **kg / DOTS** switch. DOTS = best e1RM × DOTS coefficient (bodyweight + sex, OpenPowerlifting coefficients). Users without sex or a bodyweight log are left out of DOTS boards and get a hint. No other bodyweight-relative metrics
 - Only lifts logged in finished sessions count
 
 ## 8. Arena · My gym — `Gym.dc.html`
@@ -269,7 +269,7 @@ This is the core of the app and must work fully offline.
 - **Big 3 total** (best bench + squat + deadlift, estimated 1RM)
 - **PRs** (count)
 - **Lifted all time** (t)
-- Replace the design's "5.2× Bodyweight" tile with **Lifted all time**. Bodyweight metrics are not allowed.
+- Replace the design's "5.2× Bodyweight" tile with **Lifted all time**. No bodyweight metrics on the profile.
 
 **Exercise list:**
 

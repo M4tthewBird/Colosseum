@@ -7,10 +7,15 @@ import { Avatar } from '@/components/Avatar';
 import { FillButton } from '@/components/Buttons';
 import { Glass } from '@/components/Glass';
 import { EmptyState, ListGroup, ListRow } from '@/components/List';
-import { Chip } from '@/components/Segmented';
+import { Chip, Segmented } from '@/components/Segmented';
 import { Sheet } from '@/components/Sheet';
 import { ExercisePicker } from '@/features/exercises/ExercisePicker';
-import { resolveMetric, useLeaderboard, type RankRow } from '@/features/social/api';
+import {
+  isLiftMetric,
+  resolveMetric,
+  useLeaderboard,
+  type RankRow,
+} from '@/features/social/api';
 import { formatKg } from '@/lib/formulas';
 import { useData } from '@/stores/data';
 import { usePrefs, type ArenaMetric } from '@/stores/prefs';
@@ -28,7 +33,9 @@ export function metricLabel(m: ArenaMetric, exercises: Record<string, { name: st
   return exercises[m]?.name ?? 'Exercise';
 }
 
+/** metric is 'volume' | 'workouts' | 'dots' | an exercise id (kg). */
 function formatValue(metric: string, v: number): string {
+  if (metric === 'dots') return v.toFixed(1);
   if (metric === 'volume') return `${(v / 1000).toFixed(1)} t`;
   if (metric === 'workouts') return `${Math.round(v)}`;
   return `${formatKg(v)} kg`;
@@ -41,9 +48,14 @@ export function Ranks({ friendCount }: { friendCount: number }) {
   const metric = usePrefs((s) => s.arenaMetric);
   const period = usePrefs((s) => s.arenaPeriod);
   const setMetric = usePrefs((s) => s.setArenaMetric);
+  const dotsPref = usePrefs((s) => s.arenaDots);
+  const setDots = usePrefs((s) => s.setArenaDots);
   const [editing, setEditing] = useState(false);
-  const board = useLeaderboard('friends', metric, period);
-  const resolved = resolveMetric(metric);
+  const lift = isLiftMetric(metric);
+  const dots = lift && dotsPref;
+  const board = useLeaderboard('friends', metric, period, dots);
+  const resolved = dots ? 'dots' : resolveMetric(metric);
+  const canDots = useData((s) => !!s.profile?.sex && Object.keys(s.bodyweights).length > 0);
   const rows = board.data ?? [];
   const me = rows.find((r) => r.user_id === myId);
   const top = rows.slice(0, TOP);
@@ -69,6 +81,25 @@ export function Ranks({ friendCount }: { friendCount: number }) {
         <Chip label="Edit" onPress={() => setEditing(true)} />
         <View style={{ width: 12 }} />
       </ScrollView>
+
+      {lift ? (
+        <View style={styles.unitRow}>
+          <Text style={[type.small, { flex: 1 }]}>
+            {dots ? 'Adjusted for bodyweight (DOTS)' : 'Best estimated 1RM'}
+          </Text>
+          <Segmented
+            compact
+            height={30}
+            options={[
+              { value: 'kg', label: 'kg' },
+              { value: 'dots', label: 'DOTS' },
+            ]}
+            value={dots ? 'dots' : 'kg'}
+            onChange={(v) => setDots(v === 'dots')}
+            accessibilityLabel="Rank by"
+          />
+        </View>
+      ) : null}
 
       {friendCount === 0 ? (
         <EmptyState
@@ -103,7 +134,9 @@ export function Ranks({ friendCount }: { friendCount: number }) {
           ) : null}
           {!me ? (
             <Text style={[type.small, { textAlign: 'center' }]}>
-              You are not on this board yet. Log a finished workout to join.
+              {dots && !canDots
+                ? 'Set your sex in Settings and log your bodyweight in Profile → Body to get a DOTS score.'
+                : 'You are not on this board yet. Log a finished workout to join.'}
             </Text>
           ) : null}
         </>
@@ -257,6 +290,7 @@ function MetricsSheet({ visible, onClose }: { visible: boolean; onClose: () => v
 }
 
 const styles = StyleSheet.create({
+  unitRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: -4 },
   podium: { flexDirection: 'row', gap: 10, alignItems: 'flex-end', paddingTop: 4 },
   podiumCol: { flex: 1, alignItems: 'center', gap: 8 },
   block: {

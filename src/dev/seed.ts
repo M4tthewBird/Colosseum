@@ -98,15 +98,29 @@ export const demoUser = (username: string) => DEMO_USERS.find((u) => u.username 
 /** Sample bests per friend (kg, estimated 1RM) and weekly volume (kg). */
 export const DEMO_STATS: Record<
   string,
-  { bench: number; squat: number; deadlift: number; weekVolume: number; workouts: number }
+  {
+    bench: number;
+    squat: number;
+    deadlift: number;
+    weekVolume: number;
+    workouts: number;
+    bodyweight: number;
+  }
 > = {
-  tomas: { bench: 115, squat: 150, deadlift: 185, weekVolume: 17900, workouts: 4 },
-  adam: { bench: 110, squat: 160, deadlift: 190, weekVolume: 16200, workouts: 3 },
-  jakub: { bench: 105, squat: 140, deadlift: 200, weekVolume: 14800, workouts: 3 },
-  ondrej: { bench: 102.5, squat: 135, deadlift: 170, weekVolume: 24100, workouts: 5 },
-  filip: { bench: 95, squat: 130, deadlift: 165, weekVolume: 12000, workouts: 2 },
-  lukas: { bench: 90, squat: 120, deadlift: 150, weekVolume: 9600, workouts: 2 },
-  petr: { bench: 85, squat: 110, deadlift: 150, weekVolume: 7000, workouts: 1 },
+  tomas: { bench: 115, squat: 150, deadlift: 185, weekVolume: 17900, workouts: 4, bodyweight: 96 },
+  adam: { bench: 110, squat: 160, deadlift: 190, weekVolume: 16200, workouts: 3, bodyweight: 104 },
+  jakub: { bench: 105, squat: 140, deadlift: 200, weekVolume: 14800, workouts: 3, bodyweight: 112 },
+  ondrej: {
+    bench: 102.5,
+    squat: 135,
+    deadlift: 170,
+    weekVolume: 24100,
+    workouts: 5,
+    bodyweight: 78,
+  },
+  filip: { bench: 95, squat: 130, deadlift: 165, weekVolume: 12000, workouts: 2, bodyweight: 85 },
+  lukas: { bench: 90, squat: 120, deadlift: 150, weekVolume: 9600, workouts: 2, bodyweight: 72 },
+  petr: { bench: 85, squat: 110, deadlift: 150, weekVolume: 7000, workouts: 1, bodyweight: 68 },
 };
 
 /** A Push/Pull/Legs program for the demo user. */

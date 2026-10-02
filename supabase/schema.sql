@@ -198,12 +198,32 @@ join public.workout_sessions s on s.id = e.session_id
 where e.done and s.finished_at is not null
 group by s.user_id, e.exercise_id;
 
--- ───────────────────────── Leaderboard (never touches body data) ─────────────────────────
+-- ───────────────────────── Leaderboard ─────────────────────────
+-- DOTS coefficient: 500 / polynomial(bodyweight), separate for men and women.
+-- Multiplied with a lift it gives a bodyweight-adjusted score.
+create or replace function public.dots_coefficient(p_bodyweight numeric, p_sex text) returns numeric
+language sql immutable as $$
+  select case
+    when p_bodyweight is null or p_sex is null then null
+    when p_sex = 'female' then 500 / (-57.96288 + 13.6175032 * w - 0.1126655495 * w ^ 2
+                                      + 0.0005158568 * w ^ 3 - 0.0000010706 * w ^ 4)
+    else 500 / (-307.75076 + 24.0900756 * w - 0.1918759221 * w ^ 2
+                + 0.0007391293 * w ^ 3 - 0.000001093 * w ^ 4)
+  end
+  from (select least(greatest(p_bodyweight, 40), case when p_sex = 'female' then 150 else 210 end) as w) x;
+$$;
+
+-- p_metric: 'volume' | 'workouts' | <exercise uuid> (best e1RM, kg) | 'dots:<exercise uuid>' (best e1RM × DOTS).
 -- p_tz: the caller's IANA time zone, so "this week" starts on the local Monday.
+-- Bodyweight is read only for DOTS (latest log) and is never returned, only the score.
 create or replace function public.get_leaderboard(p_scope text, p_metric text, p_period text, p_tz text default 'UTC')
 returns table (rank bigint, user_id uuid, username text, display_name text, avatar_url text, value numeric)
 language sql stable security definer set search_path = public as $$
   with me as (select id, home_gym_id from profiles where id = auth.uid()),
+  metric as (
+    select p_metric like 'dots:%' as dots,
+           case when p_metric like 'dots:%' then substr(p_metric, 6) else p_metric end as key
+  ),
   members as (
     select p.id from profiles p, me
     where p.id = me.id
@@ -225,15 +245,25 @@ language sql stable security definer set search_path = public as $$
   vals as (
     select user_id,
       case
-        when p_metric = 'volume'   then sum(weight_kg * reps)
-        when p_metric = 'workouts' then count(distinct session_id)::numeric
-        else max(case when exercise_id::text = p_metric
+        when (select key from metric) = 'volume'   then sum(weight_kg * reps)
+        when (select key from metric) = 'workouts' then count(distinct session_id)::numeric
+        else max(case when exercise_id::text = (select key from metric)
                       then case when reps <= 1 then weight_kg else weight_kg * (1 + reps / 30.0) end end)
       end as value
     from sets group by user_id
+  ),
+  scored as (
+    select v.user_id,
+      case when (select dots from metric)
+        then v.value * dots_coefficient(
+          (select b.weight_kg from bodyweight_logs b where b.user_id = v.user_id
+           order by b.logged_on desc limit 1),
+          (select p.sex from profiles p where p.id = v.user_id))
+        else v.value end as value
+    from vals v
   )
   select rank() over (order by v.value desc nulls last), p.id, p.username, p.display_name, p.avatar_url, round(v.value, 1)
-  from vals v join profiles p on p.id = v.user_id
+  from scored v join profiles p on p.id = v.user_id
   where v.value is not null
   order by 1;
 $$;

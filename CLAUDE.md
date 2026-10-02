@@ -56,8 +56,9 @@ The design is **final**. Build it, don't redesign it.
   - Use client-generated UUIDs so syncing twice is safe
 - **Privacy:** bodyweight and body measurements are private.
   - Only the owner can read them; RLS enforces this
-  - They never appear in Arena, Gym or on another user's profile
-- **No bodyweight-relative metrics** (no "× bodyweight", no Wilks) for now.
+  - The values never appear in Arena, Gym or on another user's profile (a DOTS score is the only derived number)
+- **Bodyweight-adjusted lifts: DOTS only.** In the Arena, lift leaderboards can switch between kg and DOTS (best e1RM × DOTS coefficient from bodyweight and sex). No "× bodyweight" ratios or Wilks.
+  - The server reads the latest bodyweight only to compute the score and never returns the weight itself
 - **Home gym:** "Gym" in the profile means the user's home gym, the physical place they train at most.
 - **Onboarding** asks for bodyweight and height. Body measurements (chest, biceps…) are added later from a popup on Profile → Body.
 - **Arena:** the user chooses what the leaderboard shows (metric + time period).

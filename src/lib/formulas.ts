@@ -19,6 +19,34 @@ export function volume(sets: SetLike[]): number {
   return sets.reduce((sum, s) => (s.done ? sum + s.weight_kg * s.reps : sum), 0);
 }
 
+/**
+ * DOTS coefficient (powerlifting): multiply a lift by it for a bodyweight-adjusted score, so a
+ * 70 kg and a 130 kg lifter can be compared. Bodyweight is clamped to 40–210 kg (men) or
+ * 40–150 kg (women). Returns null without a bodyweight or sex.
+ */
+export function dotsCoefficient(
+  bodyweightKg: number | null,
+  sex: 'male' | 'female' | null,
+): number | null {
+  if (!bodyweightKg || !sex) return null;
+  const w = Math.min(Math.max(bodyweightKg, 40), sex === 'female' ? 150 : 210);
+  const [a, b, c, d, e] =
+    sex === 'female'
+      ? [-57.96288, 13.6175032, -0.1126655495, 0.0005158568, -0.0000010706]
+      : [-307.75076, 24.0900756, -0.1918759221, 0.0007391293, -0.000001093];
+  return 500 / (a + b * w + c * w ** 2 + d * w ** 3 + e * w ** 4);
+}
+
+/** Bodyweight-adjusted DOTS score for a lift (kg), or null without bodyweight/sex. */
+export function dots(
+  liftKg: number,
+  bodyweightKg: number | null,
+  sex: 'male' | 'female' | null,
+): number | null {
+  const k = dotsCoefficient(bodyweightKg, sex);
+  return k == null ? null : liftKg * k;
+}
+
 /** "18.4 t" at 1000 kg and more, otherwise "850 kg". */
 export function formatVolume(kg: number): string {
   if (kg >= 1000) return `${(kg / 1000).toFixed(1)} t`;
