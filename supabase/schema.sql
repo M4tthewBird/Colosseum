@@ -289,6 +289,7 @@ alter table public.session_comments enable row level security;
 create policy "gyms read"   on public.gyms for select to anon, authenticated using (true);  -- onboarding picks a gym before sign-up
 create policy "gyms insert" on public.gyms for insert to authenticated with check (created_by = auth.uid());
 create policy "gyms update" on public.gyms for update to authenticated using (created_by = auth.uid());
+create policy "gyms delete" on public.gyms for delete to authenticated using (created_by = auth.uid());
 
 create policy "profiles read"  on public.profiles for select to authenticated using (true);  -- select explicit public columns in the app
 create policy "profiles write" on public.profiles for insert to authenticated with check (id = auth.uid());

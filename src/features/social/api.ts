@@ -581,7 +581,7 @@ export function useFeed() {
           .from('workout_sessions')
           .select(
             `id,name,started_at,finished_at,volume_kg,pr_count,user_id,
-             profiles(${PUBLIC_COLS}), session_likes(count), session_comments(count)`,
+             profiles!workout_sessions_user_id_fkey(${PUBLIC_COLS}), session_likes(count), session_comments(count)`,
           )
           .not('finished_at', 'is', null)
           .neq('user_id', uid)

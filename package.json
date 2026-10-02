@@ -56,7 +56,8 @@
     "export:web": "expo export -p web",
     "format": "prettier --write .",
     "images": "node scripts/exercise-images.mjs",
-    "images:import": "node scripts/exercise-images.mjs --import"
+    "images:import": "node scripts/exercise-images.mjs --import",
+    "test:backend": "node --env-file=.env scripts/backend-smoke-test.mjs"
   },
   "private": true
 }
