@@ -4,6 +4,7 @@
  */
 import { addDays, startOfWeek, toLocalDate } from '@/lib/dates';
 import { e1rm, markPRs, prCount, volume } from '@/lib/formulas';
+import { defaultPhases } from '@/lib/periodization';
 import type { Exercise, Gym, Program, PublicUser, Session, SetEntry } from '@/lib/types';
 
 const BUILT_IN: [string, string[], string | null][] = [
@@ -233,6 +234,7 @@ export function demoProgram(userId: string, now: Date): Program {
     name: 'Push Pull Legs',
     weeks: 8,
     training_days: [1, 2, 4, 5],
+    phases: defaultPhases(8),
     is_active: true,
     started_on: toLocalDate(addDays(startOfWeek(now), -14)),
     updated_at: now.toISOString(),

@@ -4,6 +4,8 @@ import { Platform, Vibration } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
 import { formatKg, markPRs, prCount, volume } from '@/lib/formulas';
+import { phaseFor, phasedSets } from '@/lib/periodization';
+import { programWeek } from '@/lib/programs';
 import { primaryGoal, recommend } from '@/lib/repRanges';
 import { historyBests, lastTimeSets } from '@/lib/stats';
 import type { ProgramDay, Session, SetEntry } from '@/lib/types';
@@ -41,18 +43,24 @@ function initialSets(sessionId: string, plan: PlannedExercise): SetEntry[] {
 }
 
 export function startWorkout(day: ProgramDay | null): string {
-  const { userId } = useData.getState();
+  const { userId, programs } = useData.getState();
   const id = uuid();
+  // The program's phase for this week scales the sets and sets the target effort.
+  const program = day
+    ? Object.values(programs).find((p) => p.days.some((d) => d.id === day.id))
+    : undefined;
+  const phase = program ? phaseFor(program.phases, programWeek(program)) : null;
   const plan: PlannedExercise[] = (day?.exercises ?? [])
     .slice()
     .sort((a, b) => a.position - b.position)
     .map((e, i) => ({
       exercise_id: e.exercise_id,
       position: i,
-      sets: e.sets,
+      sets: phasedSets(e.sets, phase),
       reps_min: e.reps_min,
       reps_max: e.reps_max,
       rest_seconds: e.rest_seconds,
+      rpe: phase?.rpe,
     }));
   const s: Session = {
     id,

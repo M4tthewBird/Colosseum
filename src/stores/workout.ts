@@ -14,6 +14,8 @@ export interface PlannedExercise {
   reps_min: number;
   reps_max: number;
   rest_seconds: number;
+  /** Target effort this week (from the program phase). */
+  rpe?: number;
 }
 
 interface WorkoutState {

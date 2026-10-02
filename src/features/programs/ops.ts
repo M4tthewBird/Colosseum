@@ -1,4 +1,5 @@
 import type { Program, ProgramDay } from '@/lib/types';
+import { defaultPhases } from '@/lib/periodization';
 import { nowIso, uuid } from '@/lib/uuid';
 
 export function blankDay(position: number): ProgramDay {
@@ -18,6 +19,7 @@ export function blankProgram(ownerId: string): Program {
     name: '',
     weeks: 8,
     training_days: [],
+    phases: defaultPhases(8),
     is_active: false,
     started_on: null,
     updated_at: nowIso(),

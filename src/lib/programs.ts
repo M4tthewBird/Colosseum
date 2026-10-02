@@ -72,7 +72,12 @@ export function completedWorkouts(program: Program, sessions: FinishedRef[]): nu
 
 /** 2-letter label for a day name: "Push Day" → "Pu". */
 export function dayAbbrev(name: string): string {
-  const w = name.trim().split(/\s+/)[0] ?? '';
+  const words = name.trim().split(/\s+/);
+  const w = words[0] ?? '';
+  // "Upper 1" → "U1", "Full Body A" → "FA": the numbered/lettered variants stay apart.
+  const last = words[words.length - 1] ?? '';
+  if (words.length > 1 && /^[a-z0-9]$/i.test(last))
+    return w.slice(0, 1).toUpperCase() + last.toUpperCase();
   return w.slice(0, 1).toUpperCase() + w.slice(1, 2).toLowerCase();
 }
 

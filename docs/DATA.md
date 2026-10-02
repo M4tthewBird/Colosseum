@@ -29,7 +29,7 @@ A free project **pauses after 1 week without activity**. That is fine for testin
 | `gyms` | name, city | signed-in users | signed-in users (create); creator (edit) |
 | `friendships` | request + status (`pending` / `accepted`) | the two users | requester creates; addressee accepts |
 | `exercises` | name, muscles, image key, custom flag | signed-in users (built-in + own custom) | owner (custom only) |
-| `programs`, `program_days`, `program_exercises` | user programs | owner | owner |
+| `programs`, `program_days`, `program_exercises` | user programs; `programs.phases` holds the periodization | owner | owner |
 | `workout_sessions` | a workout: name, program day, start and finish times, totals | owner, friends, same home gym | owner |
 | `set_entries` | one set: exercise, set number, kg, reps, done | same as its session | owner |
 | `bodyweight_logs` | date, kg | **owner only** | owner |

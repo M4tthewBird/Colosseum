@@ -122,6 +122,7 @@ export async function pullAll(userId: string): Promise<void> {
   const serverPrograms: Program[] = programs.map((p) => ({
     ...p,
     training_days: p.training_days ?? [],
+    phases: p.phases ?? [],
     days: (daysByProgram.get(p.id) ?? []).sort((a, b) => a.position - b.position),
   }));
 

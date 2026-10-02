@@ -15,6 +15,7 @@ const program = (scheduled: boolean): Program => ({
   name: 'PPL',
   weeks: 8,
   training_days: [1, 2, 4, 5],
+  phases: [],
   is_active: true,
   started_on: '2025-09-15',
   updated_at: '',
@@ -91,6 +92,9 @@ describe('program progress', () => {
 
   it('abbreviates day names uniquely', () => {
     expect(dayAbbrev('Leg Day')).toBe('Le');
+    expect(dayAbbrev('Upper 1')).toBe('U1');
+    expect(dayAbbrev('Lower 2')).toBe('L2');
+    expect(dayAbbrev('Full Body A')).toBe('FA');
     const m = dayAbbrevs([
       { id: 'a', name: 'Push Day' },
       { id: 'b', name: 'Pull Day' },

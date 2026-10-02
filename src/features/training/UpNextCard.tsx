@@ -36,7 +36,7 @@ export function UpNextCard({ variant }: { variant: 'today' | 'workouts' }) {
         <View style={{ gap: 3 }}>
           <Text style={type.captionStrong}>Up next</Text>
           <Text style={type.title}>No program yet</Text>
-          <Text style={type.caption}>Create a program or just start lifting.</Text>
+          <Text style={type.caption}>Pick a ready-made program or just start lifting.</Text>
         </View>
         <FillButton
           label="Start empty workout"
@@ -45,9 +45,9 @@ export function UpNextCard({ variant }: { variant: 'today' | 'workouts' }) {
           onPress={() => startDay(null)}
         />
         <FillButton
-          label="Create program"
+          label="Choose a program"
           icon={Plus}
-          onPress={() => router.push({ pathname: '/program/[id]', params: { id: 'new' } })}
+          onPress={() => router.push('/workouts/programs')}
         />
       </GlassCard>
     );

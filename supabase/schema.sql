@@ -72,6 +72,7 @@ create table public.programs (
   name text not null,
   weeks int not null default 8 check (weeks between 1 and 52),
   training_days int[] not null default '{}',   -- 1 = Monday … 7 = Sunday
+  phases jsonb not null default '[]',           -- periodization: [{name, from, to, sets, rpe}]
   is_active boolean not null default false,
   started_on date,
   updated_at timestamptz not null default now(),

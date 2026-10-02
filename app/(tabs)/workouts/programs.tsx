@@ -11,6 +11,9 @@ import { ListGroup, ListRow, SectionHeader } from '@/components/List';
 import { Header, Screen } from '@/components/Screen';
 import { Sheet } from '@/components/Sheet';
 import { duplicateProgram } from '@/features/programs/ops';
+import { PhaseStrip } from '@/features/programs/PhaseStrip';
+import { TemplateList } from '@/features/programs/TemplatePicker';
+import { phaseFor } from '@/lib/periodization';
 import { useFinishedSessions } from '@/features/training/hooks';
 import { weekdayLetter } from '@/lib/dates';
 import {
@@ -60,7 +63,9 @@ export default function Programs() {
         <GlassCard style={{ gap: 6 }}>
           <Text style={[type.captionStrong, { color: colors.accent }]}>Active</Text>
           <Text style={type.title}>No active program</Text>
-          <Text style={type.caption}>Long-press a program below and choose “Set as active”.</Text>
+          <Text style={type.caption}>
+            Pick a template below, or long-press one of your programs and choose “Set as active”.
+          </Text>
         </GlassCard>
       )}
 
@@ -97,6 +102,8 @@ export default function Programs() {
         ) : null}
       </View>
 
+      <TemplateList />
+
       <ProgramMenu program={menu} onClose={() => setMenu(null)} />
     </Screen>
   );
@@ -112,6 +119,7 @@ function ActiveCard({
   onMenu: () => void;
 }) {
   const week = programWeek(program);
+  const phase = phaseFor(program.phases, week);
   const done = completedWorkouts(program, sessions);
   const planned = plannedWorkouts(program);
   const strip = weekStrip(program, sessions);
@@ -136,6 +144,7 @@ function ActiveCard({
         <View style={styles.row}>
           <Text style={type.small}>
             Week {week} of {program.weeks}
+            {phase ? ` · ${phase.name}` : ''}
           </Text>
           <Text style={type.small}>
             {done} of {planned} workouts
@@ -143,6 +152,7 @@ function ActiveCard({
         </View>
         <ProgressBar value={planned ? done / planned : 0} />
       </View>
+      {program.phases.length > 1 ? <PhaseStrip phases={program.phases} week={week} /> : null}
       <View style={styles.strip} accessibilityLabel="This week">
         {strip.map((d) => (
           <View key={d.weekday} style={styles.stripDay}>

@@ -1,3 +1,5 @@
+import type { Phase } from './periodization';
+
 /** Row shapes shared by the local store, the sync queue and Supabase. Dates are ISO strings. */
 
 export type Sex = 'male' | 'female';
@@ -60,6 +62,8 @@ export interface Program {
   weeks: number;
   /** 1 = Monday … 7 = Sunday */
   training_days: number[];
+  /** Weekly periodization; empty = every week the same. */
+  phases: Phase[];
   is_active: boolean;
   started_on: string | null;
   updated_at: string;

@@ -47,31 +47,27 @@ try {
     'create gym',
   );
   must(
-    await A.c
-      .from('profiles')
-      .insert({
-        id: A.id,
-        username: `zz_a_${tag}`,
-        display_name: 'Tester A',
-        sex: 'male',
-        experience: 'intermediate',
-        goals: ['strength'],
-        home_gym_id: gym?.id,
-      }),
+    await A.c.from('profiles').insert({
+      id: A.id,
+      username: `zz_a_${tag}`,
+      display_name: 'Tester A',
+      sex: 'male',
+      experience: 'intermediate',
+      goals: ['strength'],
+      home_gym_id: gym?.id,
+    }),
     'profile A',
   );
   must(
-    await B.c
-      .from('profiles')
-      .insert({
-        id: B.id,
-        username: `zz_b_${tag}`,
-        display_name: 'Tester B',
-        sex: 'female',
-        experience: 'beginner',
-        goals: [],
-        home_gym_id: gym?.id,
-      }),
+    await B.c.from('profiles').insert({
+      id: B.id,
+      username: `zz_b_${tag}`,
+      display_name: 'Tester B',
+      sex: 'female',
+      experience: 'beginner',
+      goals: [],
+      home_gym_id: gym?.id,
+    }),
     'profile B',
   );
   const dupe = await B.c
@@ -110,17 +106,16 @@ try {
   const pid = randomUUID();
   const did = randomUUID();
   must(
-    await A.c
-      .from('programs')
-      .upsert({
-        id: pid,
-        owner_id: A.id,
-        name: 'PPL',
-        weeks: 8,
-        training_days: [1, 3, 5],
-        is_active: true,
-        started_on: '2026-09-28',
-      }),
+    await A.c.from('programs').upsert({
+      id: pid,
+      owner_id: A.id,
+      name: 'PPL',
+      weeks: 8,
+      training_days: [1, 3, 5],
+      phases: [{ name: 'Build', from: 1, to: 8, sets: 1, rpe: 8 }],
+      is_active: true,
+      started_on: '2026-09-28',
+    }),
     'program upsert',
   );
   must(
@@ -130,18 +125,16 @@ try {
     'program day',
   );
   must(
-    await A.c
-      .from('program_exercises')
-      .upsert({
-        id: randomUUID(),
-        program_day_id: did,
-        exercise_id: bench?.id,
-        position: 0,
-        sets: 3,
-        reps_min: 6,
-        reps_max: 8,
-        rest_seconds: 120,
-      }),
+    await A.c.from('program_exercises').upsert({
+      id: randomUUID(),
+      program_day_id: did,
+      exercise_id: bench?.id,
+      position: 0,
+      sets: 3,
+      reps_min: 6,
+      reps_max: 8,
+      rest_seconds: 120,
+    }),
     'program exercise',
   );
   const peekProg = await B.c.from('programs').select('id').eq('id', pid);
@@ -176,46 +169,40 @@ try {
   must(await A.c.from('set_entries').upsert(sets, { onConflict: 'id' }), 'sets upsert');
   const sid2 = randomUUID();
   must(
-    await B.c
-      .from('workout_sessions')
-      .upsert({
-        id: sid2,
-        user_id: B.id,
-        name: 'Legs',
-        started_at: new Date(now - 7200e3).toISOString(),
-        finished_at: new Date(now - 3600e3).toISOString(),
-        volume_kg: 480,
-        set_count: 1,
-        pr_count: 0,
-      }),
+    await B.c.from('workout_sessions').upsert({
+      id: sid2,
+      user_id: B.id,
+      name: 'Legs',
+      started_at: new Date(now - 7200e3).toISOString(),
+      finished_at: new Date(now - 3600e3).toISOString(),
+      volume_kg: 480,
+      set_count: 1,
+      pr_count: 0,
+    }),
     'session B',
   );
   must(
-    await B.c
-      .from('set_entries')
-      .upsert([
-        {
-          id: randomUUID(),
-          session_id: sid2,
-          exercise_id: bench?.id,
-          exercise_position: 0,
-          set_number: 1,
-          weight_kg: 60,
-          reps: 8,
-          done: true,
-          is_pr: false,
-        },
-      ]),
+    await B.c.from('set_entries').upsert([
+      {
+        id: randomUUID(),
+        session_id: sid2,
+        exercise_id: bench?.id,
+        exercise_position: 0,
+        set_number: 1,
+        weight_kg: 60,
+        reps: 8,
+        done: true,
+        is_pr: false,
+      },
+    ]),
     'sets B',
   );
-  const forge = await B.c
-    .from('workout_sessions')
-    .upsert({
-      id: randomUUID(),
-      user_id: A.id,
-      name: 'forged',
-      started_at: new Date(now).toISOString(),
-    });
+  const forge = await B.c.from('workout_sessions').upsert({
+    id: randomUUID(),
+    user_id: A.id,
+    name: 'forged',
+    started_at: new Date(now).toISOString(),
+  });
   ok('B cannot write A session', !!forge.error);
 
   must(

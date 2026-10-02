@@ -111,3 +111,10 @@ Celý postup i hotové texty pro ChatGPT jsou v **`docs/chatgpt-obrazky.md`**:
    ```
 
    Obrázky se pojmenují podle pořadí, oříznou na 16:9, zmenší (~100 kB) a napojí do aplikace. Seznam dávek se zkrátí jen na zbývající cviky.
+
+## Aktualizace databáze
+
+Když přidám do aplikace něco, co potřebuje změnu v Supabase, najdeš to ve složce `supabase/updates/`. Každý soubor spusť **jednou** v SQL Editoru (od nejstaršího data):
+
+- `2026-10-02-gyms-delete.sql` – mazání posiloven autorem, úklid testovacích posiloven
+- `2026-10-03-program-phases.sql` – periodizace programů (bez ní se programy nesynchronizují)

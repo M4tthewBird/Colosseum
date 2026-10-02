@@ -125,6 +125,13 @@ Screens outside the tab bar:
 
 **Create program** opens the editor.
 
+**Start from a template:** five built-in programs (Full Body 3×, Upper/Lower 4×, Push Pull Legs 6×, Strength Base 3×, Arms & Shoulders 2× add-on), original to Colosseum, defined in `src/features/programs/templates.ts`.
+
+- Tap shows a preview: days, exercises with sets × reps, weekly sets, and the periodization
+- **Use this program** creates the user's own editable copy and makes it active
+
+**Periodization:** a program can have phases (stored in `programs.phases`). Default for 8 weeks: Intro 1–2 (×0.75 sets, RPE 7), Build 3–5 (×1, RPE 8), Push 6–7 (×1.25, RPE 9), Deload 8 (×0.5, RPE 6); other lengths scale. Starting a workout applies the current week's phase to the planned sets and shows the target RPE. The editor can switch phases off ("Same every week").
+
 ## 5. Program editor — `ProgramEdit.dc.html`
 
 **Nav:** Cancel (asks to confirm when there are unsaved changes), title, Save (accent text).

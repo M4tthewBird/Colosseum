@@ -33,6 +33,7 @@ import { SetHeader, SetRow } from '@/features/workout/SetRow';
 import { ProgressSegment, RestPulseOverlay, useRestPulse } from '@/features/workout/WorkoutMotion';
 import { formatClock, formatDuration } from '@/lib/dates';
 import { formatKg, formatRest, formatScheme, formatVolume } from '@/lib/formulas';
+import { rpeHint } from '@/lib/periodization';
 import { historyBests, lastTimeSets } from '@/lib/stats';
 import type { Session } from '@/lib/types';
 import { useNow } from '@/lib/useNow';
@@ -223,6 +224,7 @@ function ActiveWorkout({
                       {ex ? musclesLabel(ex.muscles) : ''} ·{' '}
                       {formatScheme(p.sets, p.reps_min, p.reps_max)} · rest{' '}
                       {formatRest(p.rest_seconds)}
+                      {p.rpe ? ` · RPE ${p.rpe}` : ''}
                     </Text>
                   </View>
                   {pr ? (
@@ -327,6 +329,7 @@ function ActiveWorkout({
             <Text style={type.body}>
               Plan: {formatScheme(info.sets, info.reps_min, info.reps_max)}, rest{' '}
               {formatRest(info.rest_seconds)}
+              {info.rpe ? `, RPE ${info.rpe} (${rpeHint(info.rpe)})` : ''}
             </Text>
             <Text style={type.caption}>Technique tips are coming soon.</Text>
           </View>
