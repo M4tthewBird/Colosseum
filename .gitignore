@@ -42,3 +42,6 @@ yarn-error.*
 
 # env
 .env
+
+# private, never upload
+_donotdeploy/
