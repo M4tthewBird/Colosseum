@@ -11,7 +11,13 @@ import { move, ReorderList } from '@/components/ReorderList';
 import { Screen } from '@/components/Screen';
 import { Sheet } from '@/components/Sheet';
 import { ExercisePicker } from '@/features/exercises/ExercisePicker';
-import { blankDay, blankProgram, normalizeProgram } from '@/features/programs/ops';
+import {
+  blankDay,
+  blankProgram,
+  blankSavedWorkout,
+  isSavedWorkout,
+  normalizeProgram,
+} from '@/features/programs/ops';
 import { weekdayName } from '@/lib/dates';
 import { formatRest, formatScheme } from '@/lib/formulas';
 import { resizePhases } from '@/lib/periodization';
@@ -40,7 +46,7 @@ function close() {
 }
 
 export default function ProgramEditor() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, kind } = useLocalSearchParams<{ id: string; kind?: string }>();
   const existing = useData((s) => (id && id !== 'new' ? s.programs[id] : undefined));
   const userId = useData((s) => s.userId);
   const exercises = useData((s) => s.exercises);
@@ -48,7 +54,12 @@ export default function ProgramEditor() {
   const setActive = useData((s) => s.setActiveProgram);
   const goals = useData((s) => s.profile?.goals ?? []);
 
-  const initial = useMemo(() => existing ?? blankProgram(userId), [existing, userId]);
+  const initial = useMemo(
+    () => existing ?? (kind === 'workout' ? blankSavedWorkout(userId) : blankProgram(userId)),
+    [existing, userId, kind],
+  );
+  const single = isSavedWorkout(initial);
+  const what = single ? 'workout' : 'program';
   const [draft, setDraft] = useState<Program>(initial);
   const [open, setOpen] = useState<string | null>(initial.days[0]?.id ?? null);
   const [pickerFor, setPickerFor] = useState<string | null>(null);
@@ -77,7 +88,7 @@ export default function ProgramEditor() {
     if (dirty) {
       const ok = await confirm({
         title: 'Discard changes?',
-        message: 'Your changes to this program are not saved.',
+        message: `Your changes to this ${what} are not saved.`,
         confirmLabel: 'Discard',
         cancelLabel: 'Keep editing',
         destructive: true,
@@ -89,13 +100,21 @@ export default function ProgramEditor() {
 
   const save = () => {
     if (!draft.name.trim()) {
-      toast('Give the program a name');
+      toast(`Give the ${what} a name`);
       return;
     }
-    const p = normalizeProgram(draft);
+    // A saved workout's single day carries the workout's name.
+    const p = normalizeProgram(
+      single
+        ? {
+            ...draft,
+            days: draft.days.map((d) => ({ ...d, name: draft.name.trim(), weekdays: [] })),
+          }
+        : draft,
+    );
     saveProgram(p);
     const hasActive = Object.values(useData.getState().programs).some((x) => x.is_active);
-    if (isNew && !hasActive) setActive(p.id);
+    if (isNew && !hasActive && !single) setActive(p.id);
     close();
   };
 
@@ -104,7 +123,7 @@ export default function ProgramEditor() {
       <View style={styles.nav}>
         <FillButton label="Cancel" size="sm" onPress={cancel} labelStyle={{ fontWeight: '500' }} />
         <Text style={[type.bodyStrong, { fontSize: 17 }]}>
-          {isNew ? 'New program' : 'Edit program'}
+          {isNew ? `New ${what}` : `Edit ${what}`}
         </Text>
         <FillButton label="Save" size="sm" onPress={save} labelStyle={{ color: colors.accent }} />
       </View>
@@ -116,63 +135,76 @@ export default function ProgramEditor() {
           align="right"
           value={draft.name}
           onChangeText={(name) => setDraft((p) => ({ ...p, name }))}
-          placeholder="Program name"
+          placeholder={single ? 'e.g. Arms pump, Hotel gym' : 'Program name'}
         />
-        <StepperRow
-          label="Length"
-          value={draft.weeks}
-          min={1}
-          max={52}
-          onChange={(weeks) =>
-            // Periodization follows the program length.
-            setDraft((p) => ({
-              ...p,
-              weeks,
-              phases: p.phases.length ? resizePhases(p.phases, weeks) : [],
-            }))
-          }
-          format={(w) => `${w} week${w === 1 ? '' : 's'}`}
-        />
+        {single ? null : (
+          <StepperRow
+            label="Length"
+            value={draft.weeks}
+            min={1}
+            max={52}
+            onChange={(weeks) =>
+              // Periodization follows the program length.
+              setDraft((p) => ({
+                ...p,
+                weeks,
+                phases: p.phases.length ? resizePhases(p.phases, weeks) : [],
+              }))
+            }
+            format={(w) => `${w} week${w === 1 ? '' : 's'}`}
+          />
+        )}
       </FormGroup>
 
-      <PhaseEditor
-        phases={draft.phases}
-        weeks={draft.weeks}
-        onChange={(phases) => setDraft((p) => ({ ...p, phases }))}
-      />
+      {single ? (
+        <Text style={[type.caption, { paddingHorizontal: 16, marginTop: -8 }]}>
+          A one-off workout you can start any time, outside your program.
+        </Text>
+      ) : (
+        <PhaseEditor
+          phases={draft.phases}
+          weeks={draft.weeks}
+          onChange={(phases) => setDraft((p) => ({ ...p, phases }))}
+        />
+      )}
 
-      <View style={{ gap: 8 }}>
-        <FieldLabel text="Training days" right={`${draft.training_days.length} per week`} />
-        <View style={styles.days} accessibilityLabel="Training days">
-          {LETTERS.map((l, i) => {
-            const wd = i + 1;
-            const on = draft.training_days.includes(wd);
-            return (
-              <Pressable
-                key={wd}
-                accessibilityRole="switch"
-                accessibilityLabel={weekdayName(wd)}
-                accessibilityState={{ checked: on }}
-                onPress={() => toggleTrainingDay(wd)}
-                style={[styles.dayToggle, { backgroundColor: on ? colors.accent : colors.fill }]}
-              >
-                <Text style={{ fontSize: 14, fontWeight: '600', color: on ? '#fff' : colors.text }}>
-                  {l}
-                </Text>
-              </Pressable>
-            );
-          })}
+      {single ? null : (
+        <View style={{ gap: 8 }}>
+          <FieldLabel text="Training days" right={`${draft.training_days.length} per week`} />
+          <View style={styles.days} accessibilityLabel="Training days">
+            {LETTERS.map((l, i) => {
+              const wd = i + 1;
+              const on = draft.training_days.includes(wd);
+              return (
+                <Pressable
+                  key={wd}
+                  accessibilityRole="switch"
+                  accessibilityLabel={weekdayName(wd)}
+                  accessibilityState={{ checked: on }}
+                  onPress={() => toggleTrainingDay(wd)}
+                  style={[styles.dayToggle, { backgroundColor: on ? colors.accent : colors.fill }]}
+                >
+                  <Text
+                    style={{ fontSize: 14, fontWeight: '600', color: on ? '#fff' : colors.text }}
+                  >
+                    {l}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
-      </View>
+      )}
 
       <View style={{ gap: 8 }}>
-        <FieldLabel text="Workouts" />
+        <FieldLabel text={single ? 'Exercises' : 'Workouts'} />
         {draft.days.map((day) =>
           open === day.id ? (
             <DayCard
               key={day.id}
               day={day}
               trainingDays={draft.training_days}
+              single={single}
               exercises={exercises}
               onChange={(fn) => patchDay(day.id, fn)}
               onAddExercise={() => setPickerFor(day.id)}
@@ -206,17 +238,38 @@ export default function ProgramEditor() {
             </Glass>
           ),
         )}
-        <FillButton
-          label="Add workout day"
-          icon={Plus}
-          style={{ marginTop: 4 }}
-          onPress={() => {
-            const d = blankDay(draft.days.length);
-            setDraft((p) => ({ ...p, days: [...p.days, d] }));
-            setOpen(d.id);
+        {single ? null : (
+          <FillButton
+            label="Add workout day"
+            icon={Plus}
+            style={{ marginTop: 4 }}
+            onPress={() => {
+              const d = blankDay(draft.days.length);
+              setDraft((p) => ({ ...p, days: [...p.days, d] }));
+              setOpen(d.id);
+            }}
+          />
+        )}
+      </View>
+
+      {single && !isNew ? (
+        <TextButton
+          label="Delete this workout"
+          accent
+          style={{ alignSelf: 'center', paddingVertical: 8 }}
+          onPress={async () => {
+            const ok = await confirm({
+              title: `Delete ${initial.name}?`,
+              message: 'Workouts you already did with it stay in your history.',
+              confirmLabel: 'Delete',
+              destructive: true,
+            });
+            if (!ok) return;
+            useData.getState().deleteProgram(initial.id);
+            close();
           }}
         />
-      </View>
+      ) : null}
 
       <ExercisePicker
         visible={!!pickerFor}
@@ -273,9 +326,12 @@ function DayCard({
   onAddExercise,
   onEditExercise,
   onDelete,
+  single,
 }: {
   day: ProgramDay;
   trainingDays: number[];
+  /** Saved one-off workout: no day name or weekdays, just the exercise list. */
+  single?: boolean;
   exercises: ReturnType<typeof useData.getState>['exercises'];
   onChange: (fn: (d: ProgramDay) => ProgramDay) => void;
   onAddExercise: () => void;
@@ -284,18 +340,20 @@ function DayCard({
 }) {
   return (
     <Glass radius={22} style={{ paddingTop: 4, paddingHorizontal: 16 }}>
-      <View style={styles.dayHead}>
-        <TextInput
-          value={day.name}
-          onChangeText={(name) => onChange((d) => ({ ...d, name }))}
-          placeholder="Day name"
-          placeholderTextColor={colors.placeholder}
-          accessibilityLabel="Workout day name"
-          style={styles.dayName}
-        />
-        <Text style={type.caption}>{weekdaysLabel(day.weekdays) || 'Any day'}</Text>
-      </View>
-      {trainingDays.length > 0 ? (
+      {single ? null : (
+        <View style={styles.dayHead}>
+          <TextInput
+            value={day.name}
+            onChangeText={(name) => onChange((d) => ({ ...d, name }))}
+            placeholder="Day name"
+            placeholderTextColor={colors.placeholder}
+            accessibilityLabel="Workout day name"
+            style={styles.dayName}
+          />
+          <Text style={type.caption}>{weekdaysLabel(day.weekdays) || 'Any day'}</Text>
+        </View>
+      )}
+      {!single && trainingDays.length > 0 ? (
         <View style={styles.assign}>
           <Text style={type.small}>On</Text>
           {[...trainingDays].sort().map((wd) => {
@@ -322,7 +380,7 @@ function DayCard({
           })}
         </View>
       ) : null}
-      <Separator />
+      {single ? null : <Separator />}
       <ReorderList
         items={day.exercises}
         rowHeight={ROW_H}

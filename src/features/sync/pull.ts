@@ -152,6 +152,7 @@ export async function pullAll(userId: string): Promise<void> {
     ...p,
     training_days: p.training_days ?? [],
     phases: p.phases ?? [],
+    kind: p.kind ?? 'program',
     days: (daysByProgram.get(p.id) ?? []).sort((a, b) => a.position - b.position),
   }));
 
@@ -166,6 +167,7 @@ export async function pullAll(userId: string): Promise<void> {
   const serverSessions: Session[] = sessions.map((s) => ({
     ...s,
     volume_kg: Number(s.volume_kg ?? 0),
+    notes: s.notes ?? {},
     sets: (setsBySession.get(s.id) ?? []).sort(
       (a, b) => a.exercise_position - b.exercise_position || a.set_number - b.set_number,
     ),

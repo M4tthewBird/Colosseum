@@ -11,6 +11,15 @@ import { isServer } from './storage';
 import { isDemo, supabase } from './supabase';
 
 let flushing = false;
+/** "table.column" pairs the live database does not have yet (see supabase/updates). */
+const missingColumns = new Set<string>();
+
+function withoutMissing(table: string, row: Record<string, unknown>): Record<string, unknown> {
+  if (missingColumns.size === 0) return row;
+  return Object.fromEntries(
+    Object.entries(row).filter(([k]) => !missingColumns.has(`${table}.${k}`)),
+  );
+}
 let timer: ReturnType<typeof setTimeout> | null = null;
 let backoffMs = 2000;
 let online = true;
@@ -48,12 +57,10 @@ export async function flush(): Promise<void> {
       if (items.length === 0) break;
       const batch = batches(items)[0];
       const { table, op } = batch[0];
+      const rows = batch.map((b) => withoutMissing(table, b.row ?? {}));
       const res =
         op === 'upsert'
-          ? await supabase.from(table).upsert(
-              batch.map((b) => b.row ?? {}),
-              { onConflict: PK[table] },
-            )
+          ? await supabase.from(table).upsert(rows, { onConflict: PK[table] })
           : await supabase
               .from(table)
               .delete()
@@ -61,6 +68,13 @@ export async function flush(): Promise<void> {
                 PK[table],
                 batch.map((b) => b.id),
               );
+      const missing = res.error?.message.match(/Could not find the '(\w+)' column/)?.[1];
+      if (op === 'upsert' && missing) {
+        // The live database is behind the app (an update SQL has not run yet).
+        console.warn(`[sync] ${table}.${missing} is missing in the database; syncing without it`);
+        missingColumns.add(`${table}.${missing}`);
+        continue;
+      }
       if (res.error) throw new Error(`${table} ${op}: ${res.error.message}`);
       useQueue.getState().remove(batch.map((b) => b.key));
     }

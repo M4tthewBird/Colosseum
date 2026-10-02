@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { Platform, Vibration } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
-import { formatKg, markPRs, prCount, volume } from '@/lib/formulas';
+import { bestsByExercise, markPRs, prCount, prKinds, prLabel, volume } from '@/lib/formulas';
 import { phaseFor, phasedSets } from '@/lib/periodization';
 import { programWeek } from '@/lib/programs';
 import { primaryGoal, recommend } from '@/lib/repRanges';
@@ -142,8 +142,38 @@ export function toggleSet(setId: string) {
   const after = sets.find((x) => x.id === setId);
   if (after?.is_pr) {
     feedback(true);
-    toast(`New PR · ${formatKg(after.weight_kg)} kg × ${after.reps}`, true);
+    toast(prLabel(after.weight_kg, after.reps, setPrKinds(s.id, sets, after)), true);
   }
+}
+
+/** Kind of PR for one set: against history plus the earlier done sets of this workout. */
+export function setPrKinds(sessionId: string, sets: SetEntry[], set: SetEntry) {
+  const history = historyBests(Object.values(useData.getState().sessions), sessionId);
+  const earlier = sets.filter(
+    (x) =>
+      x.done &&
+      x.exercise_id === set.exercise_id &&
+      x.id !== set.id &&
+      (x.exercise_position < set.exercise_position ||
+        (x.exercise_position === set.exercise_position && x.set_number < set.set_number)),
+  );
+  const before = bestsByExercise(earlier)[set.exercise_id];
+  const h = history[set.exercise_id];
+  const best =
+    h && before
+      ? { weight: Math.max(h.weight, before.weight), e1rm: Math.max(h.e1rm, before.e1rm) }
+      : (h ?? undefined);
+  return prKinds(set.weight_kg, set.reps, best);
+}
+
+/** Note for one exercise in the active workout; empty text removes it. */
+export function setNote(position: number, text: string) {
+  const s = session();
+  if (!s) return;
+  const notes = { ...(s.notes ?? {}) };
+  if (text.trim()) notes[String(position)] = text;
+  else delete notes[String(position)];
+  useData.getState().putSession({ ...s, notes });
 }
 
 export function addSet(position: number) {
@@ -203,6 +233,7 @@ export function removeExercise(position: number) {
 }
 
 export interface Summary {
+  sessionId: string;
   durationMs: number;
   volumeKg: number;
   sets: number;
@@ -226,6 +257,7 @@ export function finishWorkout(): Summary | null {
   put(next);
   const final = useData.getState().sessions[s.id];
   const summary = {
+    sessionId: s.id,
     durationMs: new Date(finishedAt).getTime() - new Date(s.started_at).getTime(),
     volumeKg: final.volume_kg,
     sets: final.set_count,
@@ -235,6 +267,57 @@ export function finishWorkout(): Summary | null {
     useData.getState().putSession({ ...final, pr_count: summary.prs });
   useWorkout.getState().end();
   return summary;
+}
+
+/**
+ * Saves a finished workout as a one-off "saved workout": same exercises in the same order,
+ * as many sets as were done, and the rep range that was done.
+ */
+export function saveSessionAsWorkout(sessionId: string, name: string): string | null {
+  const { sessions, userId, saveProgram } = useData.getState();
+  const s = sessions[sessionId];
+  if (!s) return null;
+  const byPos = new Map<number, SetEntry[]>();
+  for (const x of s.sets.filter((x) => x.done))
+    byPos.set(x.exercise_position, [...(byPos.get(x.exercise_position) ?? []), x]);
+  const now = nowIso();
+  const id = uuid();
+  saveProgram({
+    id,
+    owner_id: userId,
+    name: name.trim() || s.name,
+    weeks: 1,
+    training_days: [],
+    phases: [],
+    kind: 'workout',
+    is_active: false,
+    started_on: null,
+    created_at: now,
+    updated_at: now,
+    days: [
+      {
+        id: uuid(),
+        position: 0,
+        name: name.trim() || s.name,
+        weekdays: [],
+        exercises: [...byPos.entries()]
+          .sort((a, b) => a[0] - b[0])
+          .map(([, sets], i) => {
+            const reps = sets.map((x) => x.reps);
+            return {
+              id: uuid(),
+              exercise_id: sets[0].exercise_id,
+              position: i,
+              sets: sets.length,
+              reps_min: Math.min(...reps),
+              reps_max: Math.max(...reps),
+              rest_seconds: DEFAULT_REST,
+            };
+          }),
+      },
+    ],
+  });
+  return id;
 }
 
 export function discardWorkout() {

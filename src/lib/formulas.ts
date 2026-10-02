@@ -159,3 +159,24 @@ export function formatScheme(sets: number, repsMin: number, repsMax: number): st
 export function formatRest(seconds: number): string {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
 }
+
+export interface PrKinds {
+  /** Heavier than any earlier set of this exercise. */
+  weight: boolean;
+  /** Higher estimated one-rep max (Epley) — e.g. more reps with the same weight. */
+  e1rm: boolean;
+}
+
+/** What kind of PR a set is against the previous bests (no history = no PR). */
+export function prKinds(weightKg: number, reps: number, best: Best | undefined): PrKinds {
+  if (!best || reps <= 0) return { weight: false, e1rm: false };
+  return { weight: weightKg > best.weight, e1rm: e1rm(weightKg, reps) > best.e1rm + 1e-9 };
+}
+
+/** "Weight PR · 105 kg" / "1RM PR · ≈ 120 kg" / both. */
+export function prLabel(weightKg: number, reps: number, kinds: PrKinds): string {
+  const parts: string[] = [];
+  if (kinds.weight) parts.push(`Weight PR · ${formatKg(weightKg)} kg`);
+  if (kinds.e1rm) parts.push(`1RM PR · ≈ ${formatKg(roundHalf(e1rm(weightKg, reps)))} kg`);
+  return parts.join('  ·  ');
+}

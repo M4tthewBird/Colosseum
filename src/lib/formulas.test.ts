@@ -9,6 +9,8 @@ import {
   markPRs,
   parseNumber,
   prCount,
+  prKinds,
+  prLabel,
   volume,
   weekStreak,
 } from './formulas';
@@ -144,5 +146,21 @@ describe('DOTS', () => {
   it('needs bodyweight and sex', () => {
     expect(dots(100, null, 'male')).toBeNull();
     expect(dots(100, 80, null)).toBeNull();
+  });
+});
+
+describe('PR kinds', () => {
+  const best = { weight: 100, e1rm: 116.7 }; // 100 × 5
+  it('tells a weight PR from a 1RM PR', () => {
+    expect(prKinds(102.5, 1, best)).toEqual({ weight: true, e1rm: false });
+    expect(prKinds(100, 7, best)).toEqual({ weight: false, e1rm: true });
+    expect(prKinds(105, 5, best)).toEqual({ weight: true, e1rm: true });
+    expect(prKinds(90, 5, best)).toEqual({ weight: false, e1rm: false });
+  });
+  it('needs history', () => {
+    expect(prKinds(200, 1, undefined)).toEqual({ weight: false, e1rm: false });
+  });
+  it('labels them', () => {
+    expect(prLabel(100, 7, { weight: false, e1rm: true })).toBe('1RM PR · ≈ 123.5 kg');
   });
 });

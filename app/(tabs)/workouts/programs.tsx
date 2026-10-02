@@ -10,7 +10,7 @@ import { GlassCard } from '@/components/Glass';
 import { ListGroup, ListRow, SectionHeader } from '@/components/List';
 import { Header, Screen } from '@/components/Screen';
 import { Sheet } from '@/components/Sheet';
-import { duplicateProgram } from '@/features/programs/ops';
+import { duplicateProgram, isSavedWorkout } from '@/features/programs/ops';
 import { PhaseStrip } from '@/features/programs/PhaseStrip';
 import { TemplateList } from '@/features/programs/TemplatePicker';
 import { phaseFor } from '@/lib/periodization';
@@ -37,7 +37,10 @@ export default function Programs() {
   const sessions = useFinishedSessions();
   const [menu, setMenu] = useState<Program | null>(null);
   const list = useMemo(
-    () => Object.values(programs).sort((a, b) => b.updated_at.localeCompare(a.updated_at)),
+    () =>
+      Object.values(programs)
+        .filter((p) => !isSavedWorkout(p))
+        .sort((a, b) => b.updated_at.localeCompare(a.updated_at)),
     [programs],
   );
   const active = list.find((p) => p.is_active);

@@ -66,6 +66,8 @@ export interface Program {
   training_days: number[];
   /** Weekly periodization; empty = every week the same. */
   phases: Phase[];
+  /** 'workout' = a saved one-off workout (one day, never active), started on demand. */
+  kind?: 'program' | 'workout';
   is_active: boolean;
   started_on: string | null;
   updated_at: string;
@@ -96,6 +98,8 @@ export interface Session {
   volume_kg: number;
   set_count: number;
   pr_count: number;
+  /** Note per exercise in this workout, keyed by exercise_position. */
+  notes?: Record<string, string>;
   updated_at: string;
   sets: SetEntry[];
 }

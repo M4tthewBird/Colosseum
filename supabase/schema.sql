@@ -74,6 +74,7 @@ create table public.programs (
   weeks int not null default 8 check (weeks between 1 and 52),
   training_days int[] not null default '{}',   -- 1 = Monday … 7 = Sunday
   phases jsonb not null default '[]',           -- periodization: [{name, from, to, sets, rpe}]
+  kind text not null default 'program' check (kind in ('program','workout')),  -- 'workout' = saved one-off workout
   is_active boolean not null default false,
   started_on date,
   updated_at timestamptz not null default now(),
@@ -111,6 +112,7 @@ create table public.workout_sessions (
   volume_kg numeric not null default 0,         -- totals written by the client on finish
   set_count int not null default 0,
   pr_count int not null default 0,
+  notes jsonb not null default '{}',            -- note per exercise: {"<exercise_position>": "text"}
   updated_at timestamptz not null default now()
 );
 create index on public.workout_sessions(user_id, started_at desc);

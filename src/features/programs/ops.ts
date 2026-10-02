@@ -28,6 +28,21 @@ export function blankProgram(ownerId: string): Program {
   };
 }
 
+/** A saved one-off workout: one day, no schedule or periodization, never active. */
+export function blankSavedWorkout(ownerId: string): Program {
+  return {
+    ...blankProgram(ownerId),
+    kind: 'workout',
+    weeks: 1,
+    phases: [],
+    days: [{ ...blankDay(0), name: 'Workout' }],
+  };
+}
+
+export function isSavedWorkout(p: Program): boolean {
+  return p.kind === 'workout';
+}
+
 export function duplicateProgram(p: Program): Program {
   return {
     ...p,

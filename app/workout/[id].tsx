@@ -30,10 +30,12 @@ import {
   restAlert,
   type Summary,
 } from '@/features/workout/actions';
+import { ExerciseNote } from '@/features/workout/ExerciseNote';
+import { WorkoutSummary } from '@/features/workout/WorkoutSummary';
 import { SetHeader, SetRow } from '@/features/workout/SetRow';
 import { ProgressSegment, RestPulseOverlay, useRestPulse } from '@/features/workout/WorkoutMotion';
-import { formatClock, formatDuration } from '@/lib/dates';
-import { formatKg, formatRest, formatScheme, formatVolume } from '@/lib/formulas';
+import { formatClock } from '@/lib/dates';
+import { formatKg, formatRest, formatScheme, roundHalf } from '@/lib/formulas';
 import { rpeHint } from '@/lib/periodization';
 import { historyBests, lastTimeSets } from '@/lib/stats';
 import type { Session } from '@/lib/types';
@@ -53,7 +55,7 @@ export default function WorkoutScreen() {
   const session = useData((s) => (sessionId ? s.sessions[sessionId] : undefined));
   const [summary, setSummary] = useState<Summary | null>(null);
 
-  if (summary) return <SummaryView summary={summary} />;
+  if (summary) return <WorkoutSummary sessionId={summary.sessionId} />;
   if (!session || session.finished_at) {
     return (
       <View style={[styles.root, styles.center]}>
@@ -236,11 +238,18 @@ function ActiveWorkout({
                       {p.rpe ? ` · RPE ${p.rpe}` : ''}
                     </Text>
                   </View>
-                  {pr ? (
-                    <View style={styles.prPill}>
-                      <Text style={styles.prText}>PR {formatKg(pr.weight)} kg</Text>
-                    </View>
-                  ) : null}
+                </View>
+                <View style={styles.records}>
+                  <Record
+                    label="Heaviest"
+                    value={pr ? `${formatKg(pr.weight)} kg` : '—'}
+                    hint="Weight PR"
+                  />
+                  <Record
+                    label="Est. 1RM"
+                    value={pr ? `≈ ${formatKg(roundHalf(pr.e1rm))} kg` : '—'}
+                    hint="One-rep max PR"
+                  />
                 </View>
               </GlassCard>
 
@@ -263,6 +272,7 @@ function ActiveWorkout({
                   ) : null}
                 </View>
               </Glass>
+              <ExerciseNote session={session} position={p.position} exerciseId={p.exercise_id} />
               <TextButton
                 label="Remove exercise"
                 accent
@@ -385,35 +395,12 @@ function RestReadout({ onFinished }: { onFinished: () => void }) {
   );
 }
 
-function SummaryView({ summary }: { summary: Summary }) {
-  const top = useTopPadding();
+/** One record on the exercise card: heaviest weight or best estimated one-rep max. */
+function Record({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
-    <View style={styles.root}>
-      <ScreenGlow side="center" top={-100} fullWidth />
-      <View style={[styles.column, { paddingTop: top + 40, gap: 18 }]}>
-        <Text style={[type.largeTitle, { textAlign: 'center' }]} accessibilityRole="header">
-          Workout saved
-        </Text>
-        <Text style={[type.caption, { textAlign: 'center', fontSize: 15 }]}>
-          It syncs automatically when you are online.
-        </Text>
-        <GlassCard style={styles.summaryGrid}>
-          <SummaryStat value={formatDuration(summary.durationMs)} label="Duration" />
-          <SummaryStat value={formatVolume(summary.volumeKg)} label="Volume" />
-          <SummaryStat value={String(summary.sets)} label="Sets" />
-          <SummaryStat value={String(summary.prs)} label="PRs" accent={summary.prs > 0} />
-        </GlassCard>
-        <FillButton label="Done" onPress={() => router.replace('/')} />
-      </View>
-    </View>
-  );
-}
-
-function SummaryStat({ value, label, accent }: { value: string; label: string; accent?: boolean }) {
-  return (
-    <View style={{ width: '50%', paddingVertical: 8 }}>
-      <Text style={[styles.summaryValue, accent && { color: colors.accent }]}>{value}</Text>
+    <View style={styles.record} accessibilityLabel={`${hint}: ${value}`}>
       <Text style={type.small}>{label}</Text>
+      <Text style={[styles.recordValue, tabular]}>{value}</Text>
     </View>
   );
 }
@@ -442,6 +429,15 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   exName: { fontSize: 26, fontWeight: '700', letterSpacing: -0.6, color: colors.text },
+  records: { flexDirection: 'row', gap: 8, paddingHorizontal: 8 },
+  record: {
+    flex: 1,
+    backgroundColor: colors.fill,
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  recordValue: { fontSize: 16, fontWeight: '700', color: colors.text },
   prPill: {
     backgroundColor: colors.fill,
     borderRadius: 12,
@@ -481,6 +477,4 @@ const styles = StyleSheet.create({
     gap: 8,
     maxWidth: 230,
   },
-  summaryGrid: { flexDirection: 'row', flexWrap: 'wrap' },
-  summaryValue: { fontSize: 24, fontWeight: '700', letterSpacing: -0.5, color: colors.text },
 });

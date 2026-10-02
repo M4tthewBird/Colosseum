@@ -6,6 +6,7 @@ import { FillButton, TextButton } from '@/components/Buttons';
 import { GlassCard } from '@/components/Glass';
 import { ListGroup, SectionHeader } from '@/components/List';
 import { Header, Screen } from '@/components/Screen';
+import { SavedWorkouts } from '@/features/programs/SavedWorkouts';
 import { useActiveProgram, useFinishedSessions } from '@/features/training/hooks';
 import { MonthCalendar } from '@/features/training/MonthCalendar';
 import { SessionRow } from '@/features/training/SessionRow';
@@ -43,6 +44,7 @@ export default function Workouts() {
         }
       />
       <UpNextCard variant="workouts" />
+      <SavedWorkouts />
       <MonthCalendar sessions={sessions} />
 
       <View style={{ gap: 8 }}>
