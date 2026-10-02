@@ -1,6 +1,6 @@
 /** Another user's profile: avatar, name, gym, Lifts and recent workouts. Never Body data. */
 import { useLocalSearchParams } from 'expo-router';
-import { UserPlus } from 'lucide-react-native';
+import { UserPlus } from '@/components/icons';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/Avatar';

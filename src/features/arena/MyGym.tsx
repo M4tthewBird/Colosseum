@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Heart, MapPin, MessageCircle, Plus, Send } from 'lucide-react-native';
+import { Heart, MapPin, MessageCircle, Plus, Send } from '@/components/icons';
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, {

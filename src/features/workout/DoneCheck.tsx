@@ -3,7 +3,7 @@
  * a short press-and-settle; a new PR makes the Colosseum laurel bloom around it and fade, the
  * victor's wreath for the lift. Reduce Motion keeps the color change and a still, fading wreath.
  */
-import { Check } from 'lucide-react-native';
+import { Check } from '@/components/icons';
 import { useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {

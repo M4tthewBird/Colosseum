@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react-native';
+import { Plus } from '@/components/icons';
 import { useMemo, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 

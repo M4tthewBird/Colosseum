@@ -1,5 +1,5 @@
 import { Link } from 'expo-router';
-import { Camera, ChevronRight } from 'lucide-react-native';
+import { Camera, ChevronRight } from '@/components/icons';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 

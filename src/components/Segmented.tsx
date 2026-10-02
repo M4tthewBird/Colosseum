@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react-native';
+import { Check } from '@/components/icons';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { colors, shadows } from '@/theme/tokens';
@@ -51,6 +51,7 @@ export function Segmented<T extends string>({
             accessibilityState={{ selected: on }}
             onPress={() => onChange(o.value)}
             onLayout={pill.onItemLayout(i)}
+            hitSlop={{ top: (44 - height) / 2, bottom: (44 - height) / 2 }}
             style={[
               styles.seg,
               compact ? { paddingHorizontal: 14 } : { flex: 1 },
@@ -86,6 +87,7 @@ export function Chip({
       accessibilityState={{ selected: !!selected }}
       onPress={onPress}
       onLongPress={onLongPress}
+      hitSlop={{ top: 5, bottom: 5 }}
       style={({ pressed }) => [
         styles.chip,
         selected ? styles.on : { backgroundColor: colors.fill },

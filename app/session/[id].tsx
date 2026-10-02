@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { Trash2 } from 'lucide-react-native';
+import { Trash2 } from '@/components/icons';
 import { Text, View } from 'react-native';
 
 import { BackLink } from '@/components/BackLink';

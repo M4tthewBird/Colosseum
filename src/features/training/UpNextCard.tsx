@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Play, Plus } from 'lucide-react-native';
+import { Play, Plus } from '@/components/icons';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { FillButton, IconButton, TextButton } from '@/components/Buttons';

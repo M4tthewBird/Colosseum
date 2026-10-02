@@ -116,6 +116,7 @@ export function Stepper({
         accessibilityRole="button"
         accessibilityLabel={minusLabel}
         onPress={onMinus}
+        hitSlop={{ top: 6, bottom: 6 }}
         style={styles.stepBtn}
       >
         <Text style={styles.stepText}>−</Text>
@@ -125,6 +126,7 @@ export function Stepper({
         accessibilityRole="button"
         accessibilityLabel={plusLabel}
         onPress={onPlus}
+        hitSlop={{ top: 6, bottom: 6 }}
         style={styles.stepBtn}
       >
         <Text style={styles.stepText}>+</Text>

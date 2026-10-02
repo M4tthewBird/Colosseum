@@ -1,5 +1,5 @@
 import type { BottomTabBarProps } from 'expo-router/js-tabs';
-import { ChevronUp, Dumbbell, House, Trophy, User, type LucideIcon } from 'lucide-react-native';
+import { ChevronUp, Dumbbell, House, Trophy, User, type LucideIcon } from '@/components/icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 

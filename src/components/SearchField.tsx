@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react-native';
+import { Search } from '@/components/icons';
 import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 
 import { colors } from '@/theme/tokens';

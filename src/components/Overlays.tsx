@@ -40,7 +40,13 @@ export function ToastHost() {
 
   if (!t) return null;
   return (
-    <View style={[{ pointerEvents: 'none' }, styles.toastWrap, { top: insets.top + 10 }]}>
+    <View
+      style={[
+        { pointerEvents: 'none' },
+        styles.toastWrap,
+        { top: Math.max(insets.top + 8, 24) + 50 },
+      ]}
+    >
       <Animated.View style={style}>
         <Glass radius={20} style={styles.toast} accessibilityLiveRegion="polite">
           {t.accent ? <View style={styles.dot} /> : null}

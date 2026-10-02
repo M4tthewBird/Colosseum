@@ -1,5 +1,5 @@
 /** Hidden dev route that shows every design-system component. Not linked from the app. */
-import { Play, Plus, SlidersHorizontal } from 'lucide-react-native';
+import { Play, Plus, SlidersHorizontal } from '@/components/icons';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 

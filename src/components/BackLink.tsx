@@ -1,5 +1,5 @@
 import { router, type Href } from 'expo-router';
-import { ChevronLeft } from 'lucide-react-native';
+import { ChevronLeft } from '@/components/icons';
 import { Text } from 'react-native';
 
 import { colors } from '@/theme/tokens';

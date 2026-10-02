@@ -33,9 +33,13 @@ export default function Root({ children }: PropsWithChildren) {
 const css = `
 html, body { background: #F2F2F7; -webkit-font-smoothing: antialiased; overscroll-behavior: none; }
 body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; }
-input, textarea { font-family: inherit; }
+input, textarea { font-family: inherit; caret-color: #B91C1C; }
 input:focus, textarea:focus { outline: none; }
+input:focus-visible, textarea:focus-visible { box-shadow: 0 0 0 2px rgba(185, 28, 28, 0.35); border-radius: 10px; }
+:focus-visible { outline: 2px solid rgba(185, 28, 28, 0.6); outline-offset: 2px; }
+::selection { background: rgba(185, 28, 28, 0.18); color: #1C1C1E; }
 * { -webkit-tap-highlight-color: transparent; }
+input::placeholder { color: #8E8E93; }
 `;
 
 /** The service worker (public/sw.js) keeps the installed app working offline. */

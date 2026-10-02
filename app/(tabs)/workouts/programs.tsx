@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Copy, Plus, Star, Trash2 } from 'lucide-react-native';
+import { Copy, Plus, Star, Trash2 } from '@/components/icons';
 import { useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 

@@ -137,16 +137,19 @@ export function ScreenGlow({
   side = 'right',
   top = -140,
   opacity = 0.14,
+  fullWidth = false,
 }: {
   side?: 'left' | 'right' | 'center';
   top?: number;
   opacity?: number;
+  /** Set when the parent spans the whole window instead of the centered content column. */
+  fullWidth?: boolean;
 }) {
   const { width: screenW } = useWindowDimensions();
   const w = 620;
   const h = 500;
   const pageW = Math.min(screenW, 520);
-  const offset = (screenW - pageW) / 2;
+  const offset = fullWidth ? (screenW - pageW) / 2 : 0;
   // Center of the design ellipse, relative to a 390 px wide screen.
   const cx = side === 'right' ? pageW + 160 - 210 : side === 'left' ? -180 + 210 : pageW / 2;
   const cy = top + 150;

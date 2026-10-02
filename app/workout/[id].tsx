@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { ChevronDown, ChevronRight, Info, Plus } from 'lucide-react-native';
+import { ChevronDown, ChevronRight, Info, Plus } from '@/components/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Pressable,
@@ -75,11 +75,8 @@ function ActiveWorkout({
   const plan = useWorkout((s) => s.plan);
   const current = useWorkout((s) => s.current);
   const setCurrent = useWorkout((s) => s.setCurrent);
-  const restEndsAt = useWorkout((s) => s.restEndsAt);
-  const stopRest = useWorkout((s) => s.stopRest);
   const exercises = useData((s) => s.exercises);
   const allSessions = useData((s) => s.sessions);
-  const now = useNow(true, 500);
   const [pageW, setPageW] = useState(0);
   const [picker, setPicker] = useState(false);
   const [info, setInfo] = useState<PlannedExercise | null>(null);
@@ -93,18 +90,7 @@ function ActiveWorkout({
   const pages = ordered.length + 1; // last page adds an exercise
   const idx = Math.min(current, pages - 1);
 
-  const elapsed = (now - new Date(session.started_at).getTime()) / 1000;
-  const restLeft = restEndsAt ? Math.ceil((restEndsAt - now) / 1000) : null;
   const restPulse = useRestPulse();
-  const { pulse } = restPulse;
-
-  useEffect(() => {
-    if (restEndsAt && now >= restEndsAt) {
-      stopRest();
-      restAlert();
-      pulse();
-    }
-  }, [now, restEndsAt, stopRest, pulse]);
 
   // Keep the pager in sync with the current exercise.
   useEffect(() => {
@@ -160,7 +146,7 @@ function ActiveWorkout({
 
   return (
     <View style={styles.root}>
-      <ScreenGlow side="left" top={-120} opacity={0.12} />
+      <ScreenGlow side="left" top={-120} opacity={0.12} fullWidth />
       <View style={[styles.column, { paddingTop: top }]}>
         <View style={styles.topBar}>
           <IconButton icon={ChevronDown} accessibilityLabel="Minimize workout" onPress={minimize} />
@@ -170,8 +156,9 @@ function ActiveWorkout({
             </Text>
             <Text style={[type.small, tabular]}>
               {ordered.length > 0
-                ? `${Math.min(idx + 1, ordered.length)} of ${ordered.length} · ${formatClock(elapsed)}`
-                : formatClock(elapsed)}
+                ? `${Math.min(idx + 1, ordered.length)} of ${ordered.length} · `
+                : ''}
+              <Elapsed startedAt={session.started_at} />
             </Text>
           </View>
           <FillButton label="Finish" size="sm" onPress={finish} />
@@ -294,17 +281,7 @@ function ActiveWorkout({
       <View style={[styles.floatWrap, { bottom: insets.bottom + 28 }]}>
         <Glass radius={33} style={styles.float}>
           <RestPulseOverlay style={restPulse.style} radius={33} />
-          <Pressable
-            style={{ flex: 1 }}
-            accessibilityRole="button"
-            accessibilityLabel={restLeft ? 'Skip rest' : 'Rest timer'}
-            onPress={() => restLeft && stopRest()}
-          >
-            <Text style={type.small}>Rest</Text>
-            <Text style={[styles.rest, tabular, !restLeft && { color: colors.text3 }]}>
-              {restLeft ? formatClock(restLeft) : '0:00'}
-            </Text>
-          </Pressable>
+          <RestReadout onFinished={restPulse.pulse} />
           {nextName ? (
             <Pressable
               accessibilityRole="button"
@@ -355,11 +332,47 @@ function ActiveWorkout({
   );
 }
 
+/** The elapsed clock ticks on its own so the workout screen does not re-render every second. */
+function Elapsed({ startedAt }: { startedAt: string }) {
+  const now = useNow(true, 1000);
+  return <>{formatClock((now - new Date(startedAt).getTime()) / 1000)}</>;
+}
+
+/** Rest countdown; alerts (vibration + bar pulse) once when it reaches zero. */
+function RestReadout({ onFinished }: { onFinished: () => void }) {
+  const restEndsAt = useWorkout((s) => s.restEndsAt);
+  const stopRest = useWorkout((s) => s.stopRest);
+  const now = useNow(!!restEndsAt, 250);
+  const restLeft = restEndsAt ? Math.max(0, Math.ceil((restEndsAt - now) / 1000)) : null;
+
+  useEffect(() => {
+    if (restEndsAt && now >= restEndsAt) {
+      stopRest();
+      restAlert();
+      onFinished();
+    }
+  }, [now, restEndsAt, stopRest, onFinished]);
+
+  return (
+    <Pressable
+      style={{ flex: 1 }}
+      accessibilityRole="button"
+      accessibilityLabel={restLeft ? 'Skip rest' : 'Rest timer'}
+      onPress={() => restLeft && stopRest()}
+    >
+      <Text style={type.small}>Rest</Text>
+      <Text style={[styles.rest, tabular, !restLeft && { color: colors.text3 }]}>
+        {restLeft ? formatClock(restLeft) : '0:00'}
+      </Text>
+    </Pressable>
+  );
+}
+
 function SummaryView({ summary }: { summary: Summary }) {
   const top = useTopPadding();
   return (
     <View style={styles.root}>
-      <ScreenGlow side="center" top={-100} />
+      <ScreenGlow side="center" top={-100} fullWidth />
       <View style={[styles.column, { paddingTop: top + 40, gap: 18 }]}>
         <Text style={[type.largeTitle, { textAlign: 'center' }]} accessibilityRole="header">
           Workout saved

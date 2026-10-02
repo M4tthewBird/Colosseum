@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { Dumbbell } from 'lucide-react-native';
+import { Dumbbell } from '@/components/icons';
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 

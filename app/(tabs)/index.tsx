@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { UserPlus } from 'lucide-react-native';
+import { UserPlus } from '@/components/icons';
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
