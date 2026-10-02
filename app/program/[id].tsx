@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { Equal, Plus, Trash2 } from '@/components/icons';
+import { Check, Equal, Plus, Trash2 } from '@/components/icons';
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -15,7 +15,15 @@ import { blankDay, blankProgram, normalizeProgram } from '@/features/programs/op
 import { weekdayName } from '@/lib/dates';
 import { formatRest, formatScheme } from '@/lib/formulas';
 import { weekdaysLabel } from '@/lib/programs';
-import type { Program, ProgramDay, ProgramExercise } from '@/lib/types';
+import {
+  GOAL_LABELS,
+  GOAL_NOTES,
+  orderedGoals,
+  primaryGoal,
+  recommend,
+  type Recommendation,
+} from '@/lib/repRanges';
+import type { Goal, Program, ProgramDay, ProgramExercise } from '@/lib/types';
 import { uuid } from '@/lib/uuid';
 import { useData } from '@/stores/data';
 import { confirm, toast } from '@/stores/ui';
@@ -36,6 +44,7 @@ export default function ProgramEditor() {
   const exercises = useData((s) => s.exercises);
   const saveProgram = useData((s) => s.saveProgram);
   const setActive = useData((s) => s.setActiveProgram);
+  const goals = useData((s) => s.profile?.goals ?? []);
 
   const initial = useMemo(() => existing ?? blankProgram(userId), [existing, userId]);
   const [draft, setDraft] = useState<Program>(initial);
@@ -200,6 +209,7 @@ export default function ProgramEditor() {
         onPick={(exerciseId) => {
           const dayId = pickerFor;
           if (!dayId) return;
+          const rec = recommend(primaryGoal(goals), exercises[exerciseId]?.name ?? '');
           patchDay(dayId, (d) => ({
             ...d,
             exercises: [
@@ -208,10 +218,7 @@ export default function ProgramEditor() {
                 id: uuid(),
                 exercise_id: exerciseId,
                 position: d.exercises.length,
-                sets: 3,
-                reps_min: 8,
-                reps_max: 10,
-                rest_seconds: 120,
+                ...rec,
               },
             ],
           }));
@@ -220,6 +227,7 @@ export default function ProgramEditor() {
       <ExerciseSheet
         value={editing?.ex ?? null}
         name={editing ? (exercises[editing.ex.exercise_id]?.name ?? '') : ''}
+        goals={goals}
         onClose={() => setEditing(null)}
         onSave={(ex) => {
           if (!editing) return;
@@ -356,12 +364,14 @@ function DayCard({
 function ExerciseSheet({
   value,
   name,
+  goals,
   onClose,
   onSave,
   onRemove,
 }: {
   value: ProgramExercise | null;
   name: string;
+  goals: Goal[];
   onClose: () => void;
   onSave: (e: ProgramExercise) => void;
   onRemove: () => void;
@@ -416,6 +426,12 @@ function ExerciseSheet({
             {formatScheme(draft.sets, draft.reps_min, draft.reps_max)} · rest{' '}
             {formatRest(draft.rest_seconds)}
           </Text>
+          <Recommended
+            name={name}
+            goals={goals}
+            current={draft}
+            onApply={(rec) => setDraft({ ...draft, ...rec })}
+          />
           <FillButton label="Remove exercise" icon={Trash2} onPress={onRemove} />
         </>
       ) : null}
@@ -423,7 +439,63 @@ function ExerciseSheet({
   );
 }
 
+/** "Recommended for your goals": one row per goal the user picked; tap to apply. */
+function Recommended({
+  name,
+  goals,
+  current,
+  onApply,
+}: {
+  name: string;
+  goals: Goal[];
+  current: ProgramExercise;
+  onApply: (r: Recommendation) => void;
+}) {
+  const list = orderedGoals(goals);
+  const same = (r: Recommendation) =>
+    r.sets === current.sets &&
+    r.reps_min === current.reps_min &&
+    r.reps_max === current.reps_max &&
+    r.rest_seconds === current.rest_seconds;
+  const active = list.find((g) => same(recommend(g, name)));
+  return (
+    <View style={{ gap: 8 }}>
+      <FieldLabel text={goals.length ? 'Recommended for your goals' : 'Recommended'} />
+      <Glass radius={20} style={{ paddingHorizontal: 16 }}>
+        {list.map((g, i) => {
+          const r = recommend(g, name);
+          const on = g === active;
+          return (
+            <View key={g}>
+              {i > 0 ? <Separator /> : null}
+              <Pressable
+                accessibilityRole="button"
+                accessibilityState={{ selected: on }}
+                accessibilityLabel={`Use ${GOAL_LABELS[g]}: ${formatScheme(r.sets, r.reps_min, r.reps_max)}, rest ${formatRest(r.rest_seconds)}`}
+                onPress={() => onApply(r)}
+                style={styles.recRow}
+              >
+                <Text style={[type.body, { flex: 1, fontSize: 16 }]}>{GOAL_LABELS[g]}</Text>
+                <Text style={[type.body, { color: colors.text2, fontVariant: ['tabular-nums'] }]}>
+                  {formatScheme(r.sets, r.reps_min, r.reps_max)} · {formatRest(r.rest_seconds)}
+                </Text>
+                {on ? (
+                  <Check size={16} color={colors.accent} strokeWidth={3} />
+                ) : (
+                  <View style={{ width: 16 }} />
+                )}
+              </Pressable>
+            </View>
+          );
+        })}
+      </Glass>
+      <Text style={[type.small, { paddingHorizontal: 16 }]}>{GOAL_NOTES[active ?? list[0]]}</Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
+  recRow: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 48 },
   nav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   days: { flexDirection: 'row', gap: 6 },
   dayToggle: {

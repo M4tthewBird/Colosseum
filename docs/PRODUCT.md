@@ -139,7 +139,8 @@ Screens outside the tab bar:
 
 - Name and assigned weekdays
 - Exercise rows: name, muscle, scheme `sets × reps` (a rep range is allowed, e.g. 6–8), and a drag handle to reorder
-- Tap a row to edit sets, reps min/max and rest seconds (default 120)
+- Tap a row to edit sets, reps min/max and rest seconds
+- New exercises start with the **recommended sets, reps and rest for the user's main goal** (Strength > Build muscle > Lose fat > Stay healthy > Endurance; multi-joint lifts get lower reps than isolation lifts). The edit sheet lists the recommendation for each of the user's goals; tapping one applies it. Rules and sources in `src/lib/repRanges.ts`
 - **Add exercise** opens an exercise picker: search, muscle filter, "Create custom exercise"
 - **Add workout day**
 

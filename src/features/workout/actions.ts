@@ -4,6 +4,7 @@ import { Platform, Vibration } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
 import { formatKg, markPRs, prCount, volume } from '@/lib/formulas';
+import { primaryGoal, recommend } from '@/lib/repRanges';
 import { historyBests, lastTimeSets } from '@/lib/stats';
 import type { ProgramDay, Session, SetEntry } from '@/lib/types';
 import { nowIso, uuid } from '@/lib/uuid';
@@ -173,13 +174,11 @@ export function addExercise(exerciseId: string) {
   if (!s) return;
   const w = useWorkout.getState();
   const position = w.plan.length ? Math.max(...w.plan.map((p) => p.position)) + 1 : 0;
+  const { profile, exercises } = useData.getState();
   const plan: PlannedExercise = {
     exercise_id: exerciseId,
     position,
-    sets: 3,
-    reps_min: 8,
-    reps_max: 8,
-    rest_seconds: DEFAULT_REST,
+    ...recommend(primaryGoal(profile?.goals ?? []), exercises[exerciseId]?.name ?? ''),
   };
   w.setPlan([...w.plan, plan]);
   put({ ...s, sets: [...s.sets, ...initialSets(s.id, plan)] });

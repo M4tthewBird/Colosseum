@@ -209,8 +209,9 @@ export async function signIn(username: string, password: string): Promise<void> 
   if (error) throw new Error(friendlyAuthError(error.message));
 }
 
-export async function signOut(): Promise<void> {
-  if (!isDemo) await supabase.auth.signOut();
+/** `local` skips the server call (used after the account is already deleted). */
+export async function signOut(scope: 'global' | 'local' = 'global'): Promise<void> {
+  if (!isDemo) await supabase.auth.signOut({ scope });
   useData.getState().reset();
   useQueue.getState().clear();
   useWorkout.getState().end();
@@ -222,7 +223,7 @@ export async function deleteAccount(): Promise<void> {
     const { error } = await supabase.rpc('delete_my_account');
     if (error) throw new Error(error.message);
   }
-  await signOut();
+  await signOut('local');
 }
 
 // ───────────── Demo mode (no Supabase keys) ─────────────
