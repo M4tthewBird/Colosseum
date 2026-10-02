@@ -1,4 +1,4 @@
-import { defaultPhases, phaseFor, phasedSets, rpeHint } from './periodization';
+import { defaultPhases, phaseFor, phasedSets, resizePhases, rpeHint } from './periodization';
 
 describe('periodization', () => {
   it('splits 8 weeks into Intro 1–2, Build 3–5, Push 6–7, Deload 8', () => {
@@ -38,5 +38,16 @@ describe('periodization', () => {
     expect(rpeHint(8)).toBe('about 2 reps left');
     expect(rpeHint(9)).toBe('about 1 rep left');
     expect(rpeHint(10)).toBe('to failure');
+  });
+});
+
+describe('resizePhases', () => {
+  it('moves the week ranges but keeps custom sets and RPE', () => {
+    const custom = defaultPhases(8).map((p) =>
+      p.name === 'Push' ? { ...p, sets: 1.5, rpe: 10 } : p,
+    );
+    const r = resizePhases(custom, 12);
+    expect(r[r.length - 1].to).toBe(12);
+    expect(r.find((p) => p.name === 'Push')).toMatchObject({ sets: 1.5, rpe: 10 });
   });
 });

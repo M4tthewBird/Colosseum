@@ -64,3 +64,12 @@ export const PHASE_NOTES: Record<string, string> = {
   Push: 'Hardest block: an extra set and go close to failure.',
   Deload: 'Recover: half the sets, keep the weights, stay far from failure.',
 };
+
+/** New week ranges for a changed program length, keeping each phase's own sets and RPE. */
+export function resizePhases(phases: Phase[], weeks: number): Phase[] {
+  const own = new Map(phases.map((p) => [p.name, p]));
+  return defaultPhases(weeks).map((p) => {
+    const mine = own.get(p.name);
+    return mine ? { ...p, sets: mine.sets, rpe: mine.rpe } : p;
+  });
+}

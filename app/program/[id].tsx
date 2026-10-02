@@ -14,10 +14,9 @@ import { ExercisePicker } from '@/features/exercises/ExercisePicker';
 import { blankDay, blankProgram, normalizeProgram } from '@/features/programs/ops';
 import { weekdayName } from '@/lib/dates';
 import { formatRest, formatScheme } from '@/lib/formulas';
-import { defaultPhases, PHASE_NOTES, phaseWeeks } from '@/lib/periodization';
+import { resizePhases } from '@/lib/periodization';
 import { weekdaysLabel } from '@/lib/programs';
-import { PhaseStrip } from '@/features/programs/PhaseStrip';
-import { Segmented } from '@/components/Segmented';
+import { PhaseEditor } from '@/features/programs/PhaseEditor';
 import {
   GOAL_LABELS,
   GOAL_NOTES,
@@ -126,41 +125,21 @@ export default function ProgramEditor() {
           max={52}
           onChange={(weeks) =>
             // Periodization follows the program length.
-            setDraft((p) => ({ ...p, weeks, phases: p.phases.length ? defaultPhases(weeks) : [] }))
+            setDraft((p) => ({
+              ...p,
+              weeks,
+              phases: p.phases.length ? resizePhases(p.phases, weeks) : [],
+            }))
           }
           format={(w) => `${w} week${w === 1 ? '' : 's'}`}
         />
       </FormGroup>
 
-      <View style={{ gap: 8 }}>
-        <FieldLabel text="Periodization" />
-        <Segmented
-          options={[
-            { value: 'on', label: 'Phases' },
-            { value: 'off', label: 'Same every week' },
-          ]}
-          value={draft.phases.length ? 'on' : 'off'}
-          onChange={(v) =>
-            setDraft((p) => ({ ...p, phases: v === 'on' ? defaultPhases(p.weeks) : [] }))
-          }
-          accessibilityLabel="Periodization"
-        />
-        {draft.phases.length ? (
-          <Glass radius={20} style={{ padding: 16, gap: 10 }}>
-            <PhaseStrip phases={draft.phases} />
-            {draft.phases.map((ph) => (
-              <View key={ph.name} style={{ flexDirection: 'row', gap: 10 }}>
-                <Text style={[type.bodyStrong, { width: 64 }]}>{ph.name}</Text>
-                <Text style={[type.caption, { flex: 1 }]}>{PHASE_NOTES[ph.name]}</Text>
-                <Text style={type.small}>{phaseWeeks(ph)}</Text>
-              </View>
-            ))}
-            <Text style={type.small}>
-              Sets below are the Build-week sets; each phase scales them when you start a workout.
-            </Text>
-          </Glass>
-        ) : null}
-      </View>
+      <PhaseEditor
+        phases={draft.phases}
+        weeks={draft.weeks}
+        onChange={(phases) => setDraft((p) => ({ ...p, phases }))}
+      />
 
       <View style={{ gap: 8 }}>
         <FieldLabel text="Training days" right={`${draft.training_days.length} per week`} />
