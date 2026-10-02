@@ -121,7 +121,7 @@ export default function Settings() {
           <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
         </FormRow>
       </FormGroup>
-      <FieldHint text="Height is private. Only you can see it." />
+      <FieldHint text="Name is what your friends see in the Arena. Height is private: only you can see it." />
 
       <ExperiencePicker
         value={draft.experience}

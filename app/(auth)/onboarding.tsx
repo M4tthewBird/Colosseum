@@ -209,6 +209,7 @@ export default function Onboarding() {
         {!completing && hint[availability] ? (
           <FieldHint text={hint[availability]!.text} error={hint[availability]!.error} />
         ) : null}
+        <FieldHint text="Name is what your friends see in the Arena. Your username is for signing in and lets friends find you." />
       </View>
 
       <ExperiencePicker value={experience} onChange={setExperience} />
