@@ -87,6 +87,7 @@ export default function SignIn() {
         loading={busy}
         disabled={busy}
         labelStyle={isDemo || (username && password) ? undefined : { color: colors.text2 }}
+        ready={!!(username && password)}
       />
     </Screen>
   );

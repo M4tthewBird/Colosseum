@@ -2,6 +2,7 @@ import type { LucideIcon } from '@/components/icons';
 import type { ReactNode } from 'react';
 import {
   ActivityIndicator,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -39,6 +40,11 @@ interface FillButtonProps extends BaseProps {
   size?: 'lg' | 'sm';
   loading?: boolean;
   labelStyle?: StyleProp<TextStyle>;
+  /**
+   * Red fill with white text. Used only for the form's go button once the form is ready
+   * (Continue, Sign in), so "you can go now" reads at a glance.
+   */
+  ready?: boolean;
 }
 
 /** Grey-fill pill. Primary actions put a red icon before the label. Never black. */
@@ -50,17 +56,18 @@ export function FillButton({
   loading,
   style,
   labelStyle,
+  ready,
   ...rest
 }: FillButtonProps) {
   const lg = size === 'lg';
   return (
     <Tap
       accessibilityRole="button"
-      style={[styles.fill, lg ? styles.lg : styles.sm, style]}
+      style={[styles.fill, lg ? styles.lg : styles.sm, styles.fade, ready && styles.ready, style]}
       {...rest}
     >
       {loading ? (
-        <ActivityIndicator color={colors.text2} />
+        <ActivityIndicator color={ready ? colors.white : colors.text2} />
       ) : (
         <>
           {Icon ? (
@@ -71,7 +78,15 @@ export function FillButton({
               strokeWidth={2.6}
             />
           ) : null}
-          <Text style={[lg ? styles.lgText : styles.smText, labelStyle]}>{label}</Text>
+          <Text
+            style={[
+              lg ? styles.lgText : styles.smText,
+              labelStyle,
+              ready && { color: colors.white },
+            ]}
+          >
+            {label}
+          </Text>
         </>
       )}
     </Tap>
@@ -141,6 +156,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   lg: { height: 50, paddingHorizontal: 20 },
+  ready: { backgroundColor: colors.accent },
+  // Web: the switch to red fades in instead of snapping.
+  fade:
+    Platform.OS === 'web'
+      ? ({ transitionProperty: 'background-color', transitionDuration: '220ms' } as object)
+      : {},
   sm: { height: 36, paddingHorizontal: 14 },
   lgText: { fontSize: 17, fontWeight: '600', color: colors.text },
   smText: { fontSize: 15, fontWeight: '600', color: colors.text },

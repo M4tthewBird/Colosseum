@@ -251,6 +251,7 @@ export default function Onboarding() {
           accessibilityHint={valid ? undefined : 'Shows what is still missing'}
           style={{ height: 52 }}
           labelStyle={valid ? undefined : { color: colors.text2 }}
+          ready={valid}
         />
         {!completing ? (
           <Text style={[type.caption, { textAlign: 'center', fontSize: 14 }]}>

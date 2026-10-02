@@ -71,6 +71,7 @@ The design is **final**. Build it, don't redesign it.
   - Background `#F2F2F7`, text `#1C1C1E`, secondary text `#6C6C70`
   - Accent red `#B91C1C`, used **only** for: the active tab, PRs, progress, completed sets and small highlights
 - **Buttons:** no black buttons. Primary actions are grey-fill pills (`rgba(118,118,128,0.12)`) with dark text and a red icon.
+  - Exception (decided by Matyáš): a form's go button (Continue on sign-up, Sign in) turns **red with white text** once the form is valid
 - **Selection:** the selected segment or chip is a white pill with a soft shadow on a grey track.
 - **Glass:** cards are white frosted glass: `rgba(255,255,255,0.72)`, blur 30, 0.5px white border, soft shadow.
 - **Tab bar:** floating glass capsule with 4 tabs: Today, Workouts, Arena, Profile.
