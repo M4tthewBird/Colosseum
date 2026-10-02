@@ -1,0 +1,498 @@
+[
+  {
+    "old": "Bench press",
+    "muscles": ["chest", "triceps", "shoulders"]
+  },
+  {
+    "old": "Incline bench press",
+    "muscles": ["upper chest", "triceps", "shoulders"]
+  },
+  {
+    "old": "Incline dumbbell press",
+    "muscles": ["upper chest", "triceps"]
+  },
+  {
+    "old": "Dumbbell bench press",
+    "muscles": ["chest", "triceps"]
+  },
+  {
+    "old": "Dips",
+    "muscles": ["chest", "triceps"]
+  },
+  {
+    "old": "Push-up",
+    "muscles": ["chest", "triceps"]
+  },
+  {
+    "old": "Overhead press",
+    "muscles": ["shoulders", "triceps"]
+  },
+  {
+    "old": "Dumbbell shoulder press",
+    "muscles": ["shoulders", "triceps"]
+  },
+  {
+    "old": "Lateral raise",
+    "muscles": ["shoulders"]
+  },
+  {
+    "old": "Face pull",
+    "muscles": ["rear delts", "upper back"]
+  },
+  {
+    "old": "Triceps pushdown",
+    "muscles": ["triceps"]
+  },
+  {
+    "old": "Skull crusher",
+    "muscles": ["triceps"]
+  },
+  {
+    "old": "Squat",
+    "muscles": ["quads", "glutes"]
+  },
+  {
+    "old": "Front squat",
+    "muscles": ["quads"]
+  },
+  {
+    "old": "Leg press",
+    "muscles": ["quads", "glutes"]
+  },
+  {
+    "old": "Lunge",
+    "muscles": ["quads", "glutes"]
+  },
+  {
+    "old": "Bulgarian split squat",
+    "muscles": ["quads", "glutes"]
+  },
+  {
+    "old": "Leg extension",
+    "muscles": ["quads"]
+  },
+  {
+    "old": "Deadlift",
+    "muscles": ["back", "glutes", "hamstrings"]
+  },
+  {
+    "old": "Romanian deadlift",
+    "muscles": ["hamstrings", "glutes"]
+  },
+  {
+    "old": "Leg curl",
+    "muscles": ["hamstrings"]
+  },
+  {
+    "old": "Hip thrust",
+    "muscles": ["glutes"]
+  },
+  {
+    "old": "Calf raise",
+    "muscles": ["calves"]
+  },
+  {
+    "old": "Barbell row",
+    "muscles": ["back", "biceps"]
+  },
+  {
+    "old": "Dumbbell row",
+    "muscles": ["back", "biceps"]
+  },
+  {
+    "old": "Pull-up",
+    "muscles": ["back", "biceps"]
+  },
+  {
+    "old": "Chin-up",
+    "muscles": ["back", "biceps"]
+  },
+  {
+    "old": "Lat pulldown",
+    "muscles": ["back", "biceps"]
+  },
+  {
+    "old": "Seated cable row",
+    "muscles": ["back"]
+  },
+  {
+    "old": "Shrug",
+    "muscles": ["traps"]
+  },
+  {
+    "old": "Biceps curl",
+    "muscles": ["biceps"]
+  },
+  {
+    "old": "Hammer curl",
+    "muscles": ["biceps", "forearms"]
+  },
+  {
+    "old": "Preacher curl",
+    "muscles": ["biceps"]
+  },
+  {
+    "old": "Cable fly",
+    "muscles": ["chest"]
+  },
+  {
+    "old": "Plank",
+    "muscles": ["core"]
+  },
+  {
+    "old": "Hanging leg raise",
+    "muscles": ["core"]
+  },
+  {
+    "old": "Cable crunch",
+    "muscles": ["core"]
+  },
+  {
+    "old": "Farmer's carry",
+    "muscles": ["grip", "traps", "core"]
+  },
+  {
+    "old": "Good morning",
+    "muscles": ["hamstrings", "lower back"]
+  },
+  {
+    "old": "Arnold press",
+    "muscles": ["shoulders"]
+  },
+  {
+    "old": "Cable lateral raise",
+    "muscles": ["shoulders"]
+  },
+  {
+    "old": "Cable Y-raise",
+    "muscles": ["shoulders", "rear delts"]
+  },
+  {
+    "old": "Behind-the-back cuffed cable lateral raise",
+    "muscles": ["shoulders"]
+  },
+  {
+    "old": "Reverse pec deck",
+    "muscles": ["rear delts", "upper back"]
+  },
+  {
+    "old": "Reverse cable crossover",
+    "muscles": ["rear delts", "upper back"]
+  },
+  {
+    "old": "Machine shoulder press",
+    "muscles": ["shoulders", "triceps"]
+  },
+  {
+    "old": "Standing machine lateral raise",
+    "muscles": ["shoulders"]
+  },
+  {
+    "old": "Lean-in dumbbell lateral raise",
+    "muscles": ["shoulders"]
+  },
+  {
+    "old": "Side-lying dumbbell lateral raise",
+    "muscles": ["shoulders"]
+  },
+  {
+    "old": "Bent-over reverse dumbbell fly",
+    "muscles": ["rear delts", "upper back"]
+  },
+  {
+    "old": "Seated machine lateral raise",
+    "muscles": ["shoulders"]
+  },
+  {
+    "old": "Lean-away dumbbell lateral raise",
+    "muscles": ["shoulders"]
+  },
+  {
+    "old": "Super-ROM dumbbell lateral raise",
+    "muscles": ["shoulders"]
+  },
+  {
+    "old": "Seated barbell overhead press",
+    "muscles": ["shoulders", "triceps"]
+  },
+  {
+    "old": "Upright row",
+    "muscles": ["shoulders", "traps"]
+  },
+  {
+    "old": "Hack squat",
+    "muscles": ["quads", "glutes"]
+  },
+  {
+    "old": "Pendulum squat",
+    "muscles": ["quads", "glutes"]
+  },
+  {
+    "old": "Smith machine squat",
+    "muscles": ["quads", "glutes"]
+  },
+  {
+    "old": "Low-bar squat",
+    "muscles": ["quads", "glutes", "hamstrings"]
+  },
+  {
+    "old": "Reverse Nordic",
+    "muscles": ["quads"]
+  },
+  {
+    "old": "Goblet squat",
+    "muscles": ["quads", "glutes"]
+  },
+  {
+    "old": "Sissy squat",
+    "muscles": ["quads"]
+  },
+  {
+    "old": "Machine chest press",
+    "muscles": ["chest", "triceps", "shoulders"]
+  },
+  {
+    "old": "Seated cable pec fly",
+    "muscles": ["chest"]
+  },
+  {
+    "old": "Deficit push-up",
+    "muscles": ["chest", "triceps"]
+  },
+  {
+    "old": "Dumbbell guillotine press",
+    "muscles": ["chest", "shoulders"]
+  },
+  {
+    "old": "Smith machine bench press",
+    "muscles": ["chest", "triceps"]
+  },
+  {
+    "old": "Incline Smith machine bench press",
+    "muscles": ["upper chest", "triceps"]
+  },
+  {
+    "old": "Cable crossover",
+    "muscles": ["chest"]
+  },
+  {
+    "old": "Pec deck",
+    "muscles": ["chest"]
+  },
+  {
+    "old": "Dumbbell fly",
+    "muscles": ["chest"]
+  },
+  {
+    "old": "Cable press-around",
+    "muscles": ["chest"]
+  },
+  {
+    "old": "Decline bench press",
+    "muscles": ["chest", "triceps"]
+  },
+  {
+    "old": "Decline dumbbell press",
+    "muscles": ["chest", "triceps"]
+  },
+  {
+    "old": "Banded push-up",
+    "muscles": ["chest", "triceps"]
+  },
+  {
+    "old": "Neutral-grip lat pulldown",
+    "muscles": ["back", "biceps"]
+  },
+  {
+    "old": "One-arm lat pulldown",
+    "muscles": ["back"]
+  },
+  {
+    "old": "Cross-body one-arm lat pulldown",
+    "muscles": ["back"]
+  },
+  {
+    "old": "Meadows row",
+    "muscles": ["back", "rear delts"]
+  },
+  {
+    "old": "Chest-supported row",
+    "muscles": ["back", "rear delts"]
+  },
+  {
+    "old": "Wide-grip cable row",
+    "muscles": ["upper back", "rear delts"]
+  },
+  {
+    "old": "Neutral-grip pull-up",
+    "muscles": ["back", "biceps"]
+  },
+  {
+    "old": "Deficit Pendlay row",
+    "muscles": ["back"]
+  },
+  {
+    "old": "Pendlay row",
+    "muscles": ["back"]
+  },
+  {
+    "old": "Kroc row",
+    "muscles": ["back", "biceps", "forearms"]
+  },
+  {
+    "old": "Cable lat prayer",
+    "muscles": ["back"]
+  },
+  {
+    "old": "Dumbbell pullover",
+    "muscles": ["back", "chest"]
+  },
+  {
+    "old": "Overhead cable triceps extension",
+    "muscles": ["triceps"]
+  },
+  {
+    "old": "Katana cable triceps extension",
+    "muscles": ["triceps"]
+  },
+  {
+    "old": "One-arm dumbbell overhead extension",
+    "muscles": ["triceps"]
+  },
+  {
+    "old": "Dumbbell skull crusher",
+    "muscles": ["triceps"]
+  },
+  {
+    "old": "Smith machine JM press",
+    "muscles": ["triceps"]
+  },
+  {
+    "old": "JM press",
+    "muscles": ["triceps"]
+  },
+  {
+    "old": "Cable triceps kickback",
+    "muscles": ["triceps"]
+  },
+  {
+    "old": "Close-grip bench press",
+    "muscles": ["triceps", "chest"]
+  },
+  {
+    "old": "Rope triceps pushdown",
+    "muscles": ["triceps"]
+  },
+  {
+    "old": "Dumbbell French press",
+    "muscles": ["triceps"]
+  },
+  {
+    "old": "Machine dips",
+    "muscles": ["triceps", "chest"]
+  },
+  {
+    "old": "Diamond push-up",
+    "muscles": ["triceps", "chest"]
+  },
+  {
+    "old": "Bayesian cable curl",
+    "muscles": ["biceps"]
+  },
+  {
+    "old": "Dumbbell preacher curl",
+    "muscles": ["biceps"]
+  },
+  {
+    "old": "Machine preacher curl",
+    "muscles": ["biceps"]
+  },
+  {
+    "old": "Preacher hammer curl",
+    "muscles": ["biceps", "forearms"]
+  },
+  {
+    "old": "EZ-bar curl",
+    "muscles": ["biceps"]
+  },
+  {
+    "old": "Incline dumbbell curl",
+    "muscles": ["biceps"]
+  },
+  {
+    "old": "Lying dumbbell curl",
+    "muscles": ["biceps"]
+  },
+  {
+    "old": "Cable curl",
+    "muscles": ["biceps"]
+  },
+  {
+    "old": "Inverse Zottman curl",
+    "muscles": ["biceps", "forearms"]
+  },
+  {
+    "old": "Barbell curl",
+    "muscles": ["biceps"]
+  },
+  {
+    "old": "Flat bench dumbbell curl",
+    "muscles": ["biceps"]
+  },
+  {
+    "old": "Walking lunge",
+    "muscles": ["glutes", "quads"]
+  },
+  {
+    "old": "Machine hip abduction",
+    "muscles": ["glutes"]
+  },
+  {
+    "old": "45-degree back extension",
+    "muscles": ["glutes", "hamstrings", "lower back"]
+  },
+  {
+    "old": "Front-foot-elevated Smith machine lunge",
+    "muscles": ["glutes", "quads"]
+  },
+  {
+    "old": "Smith machine lunge",
+    "muscles": ["glutes", "quads"]
+  },
+  {
+    "old": "Machine hip thrust",
+    "muscles": ["glutes"]
+  },
+  {
+    "old": "Single-leg dumbbell hip thrust",
+    "muscles": ["glutes"]
+  },
+  {
+    "old": "Cable glute kickback",
+    "muscles": ["glutes"]
+  },
+  {
+    "old": "Step-up",
+    "muscles": ["glutes", "quads"]
+  },
+  {
+    "old": "Glute bridge",
+    "muscles": ["glutes"]
+  },
+  {
+    "old": "Cable hip abduction",
+    "muscles": ["glutes"]
+  },
+  {
+    "old": "Curtsy lunge",
+    "muscles": ["glutes", "quads"]
+  },
+  {
+    "old": "Sumo deadlift",
+    "muscles": ["glutes", "quads", "back"]
+  },
+  {
+    "old": "Cable pull-through",
+    "muscles": ["glutes", "hamstrings"]
+  }
+]

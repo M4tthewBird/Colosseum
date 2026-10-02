@@ -37,12 +37,46 @@ function merge<T extends { id: string }>(
   return out;
 }
 
+/** Every row of a query, 1000 at a time (PostgREST caps a response at 1000 rows). */
+async function paged<T>(
+  make: () => {
+    range: (
+      a: number,
+      b: number,
+    ) => PromiseLike<{ data: T[] | null; error: { message: string } | null }>;
+  },
+): Promise<T[]> {
+  const out: T[] = [];
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await make().range(from, from + 999);
+    if (error) throw new Error(error.message);
+    out.push(...(data ?? []));
+    if (!data || data.length < 1000) return out;
+  }
+}
+
 async function all<T>(
   q: PromiseLike<{ data: T[] | null; error: { message: string } | null }>,
 ): Promise<T[]> {
   const { data, error } = await q;
   if (error) throw new Error(error.message);
   return data ?? [];
+}
+
+/** Built-in and own exercises. Falls back to no tier until the tier column exists. */
+async function pullExercises(userId: string): Promise<Exercise[]> {
+  const query = (cols: string) => () =>
+    supabase
+      .from('exercises')
+      .select(cols)
+      .or(`created_by.is.null,created_by.eq.${userId}`)
+      .order('id');
+  try {
+    return await paged<Exercise>(query('id,name,muscles,image_key,created_by,tier') as never);
+  } catch (e) {
+    if (!/tier/.test(String(e))) throw e;
+    return paged<Exercise>(query('id,name,muscles,image_key,created_by') as never);
+  }
 }
 
 export async function pullAll(userId: string): Promise<void> {
@@ -61,12 +95,7 @@ export async function pullAll(userId: string): Promise<void> {
   ] = await Promise.all([
     all<Profile>(supabase.from('profiles').select('*').eq('id', userId)),
     all<ProfilePrivate>(supabase.from('profile_private').select('*').eq('user_id', userId)),
-    all<Exercise>(
-      supabase
-        .from('exercises')
-        .select('id,name,muscles,image_key,created_by')
-        .or(`created_by.is.null,created_by.eq.${userId}`),
-    ),
+    pullExercises(userId),
     all<Omit<Program, 'days'>>(supabase.from('programs').select('*').eq('owner_id', userId)),
     all<ProgramDay & { program_id: string }>(
       supabase

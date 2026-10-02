@@ -29,18 +29,20 @@ export function slug(name) {
 }
 
 // Built-in catalog (names + muscles) from supabase/seed.sql, in seed order: the common lifts first.
+// Prompts cover the curated list (core lifts + tier picks); the other ~1,200 catalog entries
+// come from a dataset and get images later.
 function catalog() {
-  const sql = fs.readFileSync(path.join(root, 'supabase/seed.sql'), 'utf8');
-  return [...sql.matchAll(/^\s+\('((?:[^']|'')+)', '\{([^}]*)\}'/gm)].map((m) => ({
-    name: m[1].replace(/''/g, "'"),
-    muscles: m[2].split(',').filter(Boolean),
-  }));
+  const all = JSON.parse(fs.readFileSync(path.join(root, 'src/data/exercises.json'), 'utf8'));
+  return all.filter((e) => e.core);
 }
 
 const poses = JSON.parse(fs.readFileSync(path.join(root, 'scripts/exercise-poses.json'), 'utf8'));
 
 function existingImages() {
-  const files = fs.readdirSync(dir).filter((f) => /\.(jpe?g|png|webp)$/i.test(f)).sort();
+  const files = fs
+    .readdirSync(dir)
+    .filter((f) => /\.(jpe?g|png|webp)$/i.test(f))
+    .sort();
   return new Map(files.map((f) => [f.replace(/\.[^.]+$/, ''), f]));
 }
 
@@ -76,7 +78,10 @@ function writePrompts() {
   const batches = [];
   for (let i = 0; i < todo.length; i += BATCH) batches.push(todo.slice(i, i + BATCH));
 
-  const batchText = (list, n) => `Generate ${list.length} exercise illustrations for a fitness app, one image per reply.
+  const batchText = (
+    list,
+    n,
+  ) => `Generate ${list.length} exercise illustrations for a fitness app, one image per reply.
 After each image, write only its number and file name, then wait until I write "next".
 
 Style for every image (keep it identical across all of them):
@@ -84,7 +89,10 @@ ${STYLE}
 If I attached bench-press.jpg, treat it as the exact style reference.
 
 ${list
-  .map((e, i) => `${i + 1}. ${slug(e.name)}.jpg | ${e.name}. Pose: ${poses[e.name] ?? `performing a ${e.name.toLowerCase()}`}.`)
+  .map(
+    (e, i) =>
+      `${i + 1}. ${slug(e.name)}.jpg | ${e.name}. Pose: ${poses[e.name] ?? `performing a ${e.name.toLowerCase()}`}.`,
+  )
   .join('\n')}
 
 Start with image 1.`;
@@ -140,11 +148,15 @@ async function importInbox() {
     .sort((a, b) => a.t - b.t)
     .map((x) => x.f);
   if (files.length === 0) {
-    console.log(`No images in ${path.relative(root, inbox)}. Download them there from ChatGPT first.`);
+    console.log(
+      `No images in ${path.relative(root, inbox)}. Download them there from ChatGPT first.`,
+    );
     return;
   }
   const queue = missing().map((e) => slug(e.name));
-  const named = new Set(files.map((f) => f.replace(/\.[^.]+$/, '')).filter((k) => queue.includes(k)));
+  const named = new Set(
+    files.map((f) => f.replace(/\.[^.]+$/, '')).filter((k) => queue.includes(k)),
+  );
   const order = queue.filter((k) => !named.has(k));
   const rows = [];
   for (const f of files) {
@@ -164,10 +176,14 @@ async function importInbox() {
   }
   console.log('Imported:');
   for (const [from, to] of rows) console.log(`  ${from}  ->  ${to}`);
-  console.log('Check the names above. A wrong one? Rename the file in assets/exercises/ and run npm run images.');
+  console.log(
+    'Check the names above. A wrong one? Rename the file in assets/exercises/ and run npm run images.',
+  );
 }
 
 if (process.argv.includes('--import')) await importInbox();
 const linked = writeLinks();
 const { todo, batches } = writePrompts();
-console.log(`${linked} image(s) linked; ${todo} exercises still need one (${batches} ChatGPT batches in docs/chatgpt-obrazky.md).`);
+console.log(
+  `${linked} image(s) linked; ${todo} exercises still need one (${batches} ChatGPT batches in docs/chatgpt-obrazky.md).`,
+);

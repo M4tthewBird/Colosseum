@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { ChevronDown, ChevronRight, Info, Plus } from '@/components/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -95,12 +96,20 @@ function ActiveWorkout({
 
   // Keep the pager in sync with the current exercise. `pages` is a dependency too: when an
   // exercise is added or removed the browser keeps the old page in view (scroll anchoring).
+  // Scroll events caused by this (or by the browser keeping a page in view) are not swipes.
+  const settling = useRef(0);
+  const pagesSeen = useRef(pages);
   useEffect(() => {
-    if (pageW > 0) pager.current?.scrollTo({ x: idx * pageW, animated: true });
+    if (pageW <= 0) return;
+    // A page was added or removed: jump straight there instead of animating past pages.
+    const jump = pagesSeen.current !== pages;
+    pagesSeen.current = pages;
+    settling.current = Date.now() + 700;
+    pager.current?.scrollTo({ x: idx * pageW, animated: !jump });
   }, [idx, pageW, pages]);
 
   const onScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (!pageW) return;
+    if (!pageW || Date.now() < settling.current) return;
     const i = Math.round(e.nativeEvent.contentOffset.x / pageW);
     if (i !== idx) setCurrent(i);
   };
@@ -187,7 +196,7 @@ function ActiveWorkout({
         onLayout={(e) => setPageW(e.nativeEvent.layout.width)}
         onMomentumScrollEnd={onScrollEnd}
         onScrollEndDrag={onScrollEnd}
-        style={{ flex: 1 }}
+        style={[{ flex: 1 }, Platform.OS === 'web' && ({ overflowAnchor: 'none' } as object)]}
         keyboardShouldPersistTaps="handled"
       >
         {ordered.map((p) => {
@@ -256,6 +265,7 @@ function ActiveWorkout({
               </Glass>
               <TextButton
                 label="Remove exercise"
+                accent
                 style={{ alignSelf: 'center' }}
                 onPress={async () => {
                   const ok = await confirm({

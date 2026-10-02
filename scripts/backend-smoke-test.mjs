@@ -100,7 +100,7 @@ try {
   ok('B cannot read A height', (peekH.data ?? []).length === 0);
 
   const ex = await A.c.from('exercises').select('id,name').is('created_by', null);
-  ok('seed exercises present', (ex.data ?? []).length === 124, `${ex.data?.length} built-ins`);
+  ok('seed exercises present', (ex.data ?? []).length >= 1000, `${ex.data?.length} built-ins`);
   const bench = ex.data?.find((e) => e.name === 'Bench press');
 
   const pid = randomUUID();

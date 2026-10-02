@@ -23,7 +23,7 @@ export function metricLabel(m: ArenaMetric, exercises: Record<string, { name: st
   if (m === 'workouts') return 'Workouts';
   if (m.startsWith('name:')) {
     const n = m.slice(5);
-    return n === 'Bench press' ? 'Bench' : n;
+    return n.toLowerCase() === 'bench press' ? 'Bench' : n;
   }
   return exercises[m]?.name ?? 'Exercise';
 }

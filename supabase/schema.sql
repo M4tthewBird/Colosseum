@@ -61,6 +61,7 @@ create table public.exercises (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   muscles text[] not null default '{}',
+  tier text check (tier in ('S','A','B')),       -- Jeff Nippard tier list rating, built-ins only
   image_key text,                               -- e.g. 'bench-press' → assets/exercises/bench-press.jpg
   created_by uuid references public.profiles(id) on delete cascade,  -- null = built-in
   created_at timestamptz not null default now()

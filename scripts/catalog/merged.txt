@@ -1,0 +1,128 @@
+barbell bench press  ->  Bench Press
+barbell bent over row  ->  Barbell Row
+barbell close-grip bench press  ->  Close Grip Bench Press
+barbell curl  ->  Barbell Curl
+barbell deadlift  ->  Deadlift
+barbell decline bench press  ->  Decline Bench Press
+barbell front squat  ->  Front Squat
+barbell full squat  ->  Squat
+barbell full squat (back pov)  ->  Squat
+barbell full squat (side pov)  ->  Squat
+barbell glute bridge  ->  Glute Bridge
+barbell good morning  ->  Good Morning
+barbell hack squat  ->  Hack Squat
+barbell high bar squat  ->  Squat
+barbell incline bench press  ->  Incline Bench Press
+barbell jm bench press  ->  JM Press
+barbell low bar squat  ->  Low Bar Squat
+barbell lunge  ->  Lunge
+barbell lying triceps extension skull crusher  ->  Skull Crusher
+barbell pendlay row  ->  Pendlay Row
+barbell preacher curl  ->  Preacher Curl
+barbell rear lunge v. 2  ->  Barbell Rear Lunge
+barbell reverse wrist curl  ->  Barbell Reverse Wrist Curl
+barbell romanian deadlift  ->  Romanian Deadlift
+barbell seated calf raise  ->  Barbell Seated Calf Raise
+barbell seated overhead press  ->  Seated Barbell Overhead Press
+barbell shrug  ->  Shrug
+barbell side split squat v. 2  ->  Barbell Side Split Squat
+barbell sitted alternate leg raise (female)  ->  Barbell Seated Alternate Leg Raise
+barbell step-up  ->  Step Up
+barbell sumo deadlift  ->  Sumo Deadlift
+barbell upright row  ->  Upright Row
+barbell upright row v. 2  ->  Upright Row
+barbell upright row v. 3  ->  Upright Row
+barbell wrist curl v. 2  ->  Barbell Wrist Curl
+cable bar lateral pulldown  ->  Lat Pulldown
+cable cross-over variation  ->  Cable Crossover
+cable curl  ->  Cable Curl
+cable kickback  ->  Cable Triceps Kickback
+cable kneeling crunch  ->  Cable Crunch
+cable lateral raise  ->  Cable Lateral Raise
+cable one arm lateral raise  ->  Cable Lateral Raise
+cable pull through (with rope)  ->  Cable Pull Through
+cable pulldown  ->  Lat Pulldown
+cable pushdown  ->  Triceps Pushdown
+cable pushdown (with rope attachment)  ->  Rope Triceps Pushdown
+cable rear delt row (with rope)  ->  Face Pull
+cable seated row  ->  Seated Cable Row
+cable standing fly  ->  Cable Fly
+cable triceps pushdown (v-bar)  ->  Triceps Pushdown
+chest dip  ->  Dips
+chin-up  ->  Chin Up
+diamond push-up  ->  Diamond Push Up
+dumbbell arnold press  ->  Arnold Press
+dumbbell arnold press v. 2  ->  Arnold Press
+dumbbell bench press  ->  Dumbbell Bench Press
+dumbbell bent over row  ->  Dumbbell Row
+dumbbell biceps curl  ->  Biceps Curl
+dumbbell close-grip press  ->  Dumbbell Close Grip Press
+dumbbell cross body hammer curl v. 2  ->  Dumbbell Cross Body Hammer Curl
+dumbbell cuban press v. 2  ->  Dumbbell Cuban Press
+dumbbell decline bench press  ->  Decline Dumbbell Press
+dumbbell decline shrug v. 2  ->  Dumbbell Decline Shrug
+dumbbell fly  ->  Dumbbell Fly
+dumbbell front raise v. 2  ->  Dumbbell Front Raise
+dumbbell goblet squat  ->  Goblet Squat
+dumbbell hammer curl  ->  Hammer Curl
+dumbbell hammer curl v. 2  ->  Hammer Curl
+dumbbell incline bench press  ->  Incline Dumbbell Press
+dumbbell incline curl  ->  Incline Dumbbell Curl
+dumbbell incline curl v. 2  ->  Incline Dumbbell Curl
+dumbbell lateral raise  ->  Lateral Raise
+dumbbell lunge  ->  Lunge
+dumbbell lying one arm press v. 2  ->  Dumbbell Lying One Arm Press
+dumbbell lying triceps extension  ->  Dumbbell Skull Crusher
+dumbbell one arm bent-over row  ->  Dumbbell Row
+dumbbell one arm shoulder press v. 2  ->  Dumbbell One Arm Shoulder Press
+dumbbell preacher curl  ->  Dumbbell Preacher Curl
+dumbbell pullover  ->  Dumbbell Pullover
+dumbbell rear fly  ->  Bent Over Reverse Dumbbell Fly
+dumbbell seated lateral raise v. 2  ->  Dumbbell Seated Lateral Raise
+dumbbell seated shoulder press  ->  Dumbbell Shoulder Press
+dumbbell shrug  ->  Shrug
+dumbbell single leg split squat  ->  Bulgarian Split Squat
+dumbbell standing one arm curl over incline bench  ->  Dumbbell Standing One Arm Curl Over Incline Bench
+dumbbell step-up  ->  Step Up
+dumbbell upright row (back pov)  ->  Dumbbell Upright Row
+ez barbell curl  ->  EZ Bar Curl
+ez barbell spider curl  ->  EZ Barbell Spider Curl
+farmers walk  ->  Farmers Carry
+hanging leg raise  ->  Hanging Leg Raise
+inchworm v. 2  ->  Inchworm
+inverted row v. 2  ->  Inverted Row
+jump squat v. 2  ->  Jump Squat
+lever chest press  ->  Machine Chest Press
+lever chest press  ->  Machine Chest Press
+lever gripless shrug v. 2  ->  Lever Gripless Shrug
+lever incline chest press v. 2  ->  Lever Incline Chest Press
+lever leg extension  ->  Leg Extension
+lever preacher curl  ->  Machine Preacher Curl
+lever preacher curl v. 2  ->  Machine Preacher Curl
+lever seated crunch v. 2  ->  Lever Seated Crunch
+lever seated fly  ->  Pec Deck
+lever seated hip abduction  ->  Machine Hip Abduction
+lever seated leg curl  ->  Leg Curl
+lever seated reverse fly  ->  Reverse Pec Deck
+lever shoulder press  ->  Machine Shoulder Press
+lever shoulder press v. 2  ->  Machine Shoulder Press
+lever shoulder press v. 3  ->  Machine Shoulder Press
+lever standing calf raise  ->  Calf Raise
+pull-up  ->  Pull Up
+push-up  ->  Push Up
+push-up (on stability ball)  ->  Push Up on Stability Ball
+push-up (wall) v. 2  ->  Push Up Wall
+self assisted inverse leg curl  ->  Self Assisted Inverse Leg Curl
+sissy squat  ->  Sissy Squat
+sled 45в° leg press  ->  Leg Press
+sled 45в° leg press (back pov)  ->  Leg Press
+sled 45° leg press (side pov)  ->  Leg Press
+smith bench press  ->  Smith Machine Bench Press
+smith incline bench press  ->  Incline Smith Machine Bench Press
+smith reverse calf raises  ->  Smith Reverse Calf Raises
+smith squat  ->  Smith Machine Squat
+triceps dip  ->  Dips
+twisted leg raise (female)  ->  Twisted Leg Raise
+walking lunge  ->  Walking Lunge
+weighted front plank  ->  Plank
+weighted russian twist v. 2  ->  Weighted Russian Twist

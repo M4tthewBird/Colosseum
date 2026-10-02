@@ -10,7 +10,7 @@ export type ArenaPeriod = 'week' | 'month' | 'all';
 
 export const DEFAULT_METRICS: ArenaMetric[] = [
   'volume',
-  'name:Bench press',
+  'name:Bench Press',
   'name:Squat',
   'name:Deadlift',
 ];

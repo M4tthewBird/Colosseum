@@ -118,3 +118,4 @@ Když přidám do aplikace něco, co potřebuje změnu v Supabase, najdeš to ve
 
 - `2026-10-02-gyms-delete.sql` – mazání posiloven autorem, úklid testovacích posiloven
 - `2026-10-03-program-phases.sql` – periodizace programů (bez ní se programy nesynchronizují)
+- `2026-10-04-exercise-catalog.sql` – velký katalog cviků (1 320), jednotné názvy, S/A/B tiery

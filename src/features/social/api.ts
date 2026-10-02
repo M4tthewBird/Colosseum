@@ -177,7 +177,7 @@ export interface RankRow {
   value: number;
 }
 
-/** Resolves 'name:Bench press' to the built-in exercise id. */
+/** Resolves 'name:Bench Press' to the built-in exercise id. */
 export function resolveMetric(metric: string): string {
   if (!metric.startsWith('name:')) return metric;
   const name = metric.slice(5).toLowerCase();
@@ -262,7 +262,7 @@ function demoLeaderboard(key: string, period: ArenaPeriod): RankRow[] {
     let value: number | null = null;
     if (metric === 'volume') value = st.weekVolume * scale;
     else if (metric === 'workouts') value = Math.round(st.workouts * scale);
-    else if (exName === 'Bench press') value = st.bench;
+    else if (exName === 'Bench Press') value = st.bench;
     else if (exName === 'Squat') value = st.squat;
     else if (exName === 'Deadlift') value = st.deadlift;
     if (value != null && dots) value = value * dotsCoefficient(st.bodyweight, 'male')!;
