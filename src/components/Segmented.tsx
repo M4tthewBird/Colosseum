@@ -2,6 +2,7 @@ import { Check } from 'lucide-react-native';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { colors, shadows } from '@/theme/tokens';
+import { Pill, useSlidingPill } from './SlidingPill';
 
 interface Option<T extends string> {
   value: T;
@@ -27,13 +28,21 @@ export function Segmented<T extends string>({
   style?: StyleProp<ViewStyle>;
   accessibilityLabel?: string;
 }) {
+  const selected = options.findIndex((o) => o.value === value);
+  const pill = useSlidingPill(options.length, selected);
   return (
     <View
       accessibilityRole="tablist"
       accessibilityLabel={accessibilityLabel}
       style={[styles.track, { height, borderRadius: height / 2 }, style]}
     >
-      {options.map((o) => {
+      {pill.animated ? (
+        <Pill
+          pillStyle={pill.style}
+          style={[styles.on, { top: 2, bottom: 2, borderRadius: (height - 4) / 2 }]}
+        />
+      ) : null}
+      {options.map((o, i) => {
         const on = o.value === value;
         return (
           <Pressable
@@ -41,11 +50,12 @@ export function Segmented<T extends string>({
             accessibilityRole="tab"
             accessibilityState={{ selected: on }}
             onPress={() => onChange(o.value)}
+            onLayout={pill.onItemLayout(i)}
             style={[
               styles.seg,
               compact ? { paddingHorizontal: 14 } : { flex: 1 },
               { borderRadius: (height - 4) / 2 },
-              on && styles.on,
+              on && !pill.animated && styles.on,
             ]}
           >
             <Text style={[styles.label, { fontWeight: on ? '600' : '500' }]}>{o.label}</Text>

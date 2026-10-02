@@ -30,6 +30,7 @@ import {
   type Summary,
 } from '@/features/workout/actions';
 import { SetHeader, SetRow } from '@/features/workout/SetRow';
+import { ProgressSegment, RestPulseOverlay, useRestPulse } from '@/features/workout/WorkoutMotion';
 import { formatClock, formatDuration } from '@/lib/dates';
 import { formatKg, formatRest, formatScheme, formatVolume } from '@/lib/formulas';
 import { historyBests, lastTimeSets } from '@/lib/stats';
@@ -94,13 +95,16 @@ function ActiveWorkout({
 
   const elapsed = (now - new Date(session.started_at).getTime()) / 1000;
   const restLeft = restEndsAt ? Math.ceil((restEndsAt - now) / 1000) : null;
+  const restPulse = useRestPulse();
+  const { pulse } = restPulse;
 
   useEffect(() => {
     if (restEndsAt && now >= restEndsAt) {
       stopRest();
       restAlert();
+      pulse();
     }
-  }, [now, restEndsAt, stopRest]);
+  }, [now, restEndsAt, stopRest, pulse]);
 
   // Keep the pager in sync with the current exercise.
   useEffect(() => {
@@ -176,12 +180,10 @@ function ActiveWorkout({
         {ordered.length > 0 ? (
           <View style={styles.progress} aria-hidden>
             {ordered.map((p, i) => (
-              <View
+              <ProgressSegment
                 key={p.position}
-                style={[
-                  styles.segment,
-                  { backgroundColor: i <= idx || doneCount(p) ? colors.accent : colors.fill },
-                ]}
+                on={i <= idx || doneCount(p)}
+                style={styles.segment}
               />
             ))}
           </View>
@@ -291,6 +293,7 @@ function ActiveWorkout({
 
       <View style={[styles.floatWrap, { bottom: insets.bottom + 28 }]}>
         <Glass radius={33} style={styles.float}>
+          <RestPulseOverlay style={restPulse.style} radius={33} />
           <Pressable
             style={{ flex: 1 }}
             accessibilityRole="button"

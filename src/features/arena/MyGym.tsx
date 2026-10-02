@@ -1,7 +1,13 @@
 import { router } from 'expo-router';
 import { Heart, MapPin, MessageCircle, Plus, Send } from 'lucide-react-native';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { Avatar } from '@/components/Avatar';
 import { FillButton } from '@/components/Buttons';
@@ -29,6 +35,7 @@ import { fromLocalDate, formatDuration, startOfDay, timeAgo } from '@/lib/dates'
 import { formatVolume, parseNumber } from '@/lib/formulas';
 import { useData } from '@/stores/data';
 import { toast } from '@/stores/ui';
+import { dur, ease, easeIn, useReducedMotion } from '@/theme/motion';
 import { colors, type } from '@/theme/tokens';
 
 export function MyGym({ gymId }: { gymId: string | null }) {
@@ -315,12 +322,7 @@ function FeedCard({ item, onComments }: { item: FeedItem; onComments: () => void
           onPress={() => like.mutate({ sessionId: item.id, like: !item.liked })}
           style={styles.react}
         >
-          <Heart
-            size={14}
-            color={item.liked ? colors.accent : colors.text}
-            fill={item.liked ? colors.accent : 'none'}
-            strokeWidth={2}
-          />
+          <LikeHeart liked={item.liked} />
           <Text style={[styles.reactText, item.liked && { color: colors.accent }]}>
             {item.likes}
           </Text>
@@ -439,3 +441,31 @@ const styles = StyleSheet.create({
     outlineStyle: 'none',
   } as object,
 });
+
+/** The like heart gives a quick squeeze-and-swell when you like a workout. */
+function LikeHeart({ liked }: { liked: boolean }) {
+  const reduced = useReducedMotion();
+  const scale = useSharedValue(1);
+  const was = useRef(liked);
+  useEffect(() => {
+    if (liked && !was.current && !reduced) {
+      scale.value = withSequence(
+        withTiming(0.7, { duration: dur.tap - 40, easing: easeIn }),
+        withTiming(1.25, { duration: dur.tap + 20, easing: ease }),
+        withTiming(1, { duration: dur.state, easing: ease }),
+      );
+    }
+    was.current = liked;
+  }, [liked, reduced, scale]);
+  const style = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+  return (
+    <Animated.View style={style}>
+      <Heart
+        size={14}
+        color={liked ? colors.accent : colors.text}
+        fill={liked ? colors.accent : 'none'}
+        strokeWidth={2}
+      />
+    </Animated.View>
+  );
+}

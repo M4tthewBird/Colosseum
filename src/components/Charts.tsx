@@ -2,9 +2,10 @@ import type { ReactNode } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import Svg, { Circle, Defs, Ellipse, Polyline, RadialGradient, Stop } from 'react-native-svg';
 
+import { useTween } from '@/lib/useTween';
 import { colors } from '@/theme/tokens';
 
-/** 80 px ring, stroke 7, accent progress with a round cap from 12 o'clock. */
+/** 80 px ring, stroke 7, accent progress with a round cap from 12 o'clock. Fills in on mount. */
 export function ProgressRing({
   value,
   size = 80,
@@ -19,7 +20,7 @@ export function ProgressRing({
 }) {
   const r = (size - stroke) / 2 - 0.5;
   const c = 2 * Math.PI * r;
-  const v = Math.max(0, Math.min(1, value));
+  const v = useTween(Math.max(0, Math.min(1, value)));
   return (
     <View style={{ width: size, height: size }}>
       <Svg width={size} height={size}>
@@ -31,7 +32,7 @@ export function ProgressRing({
           stroke="rgba(118,118,128,0.14)"
           strokeWidth={stroke}
         />
-        {v > 0 ? (
+        {v > 0.001 ? (
           <Circle
             cx={size / 2}
             cy={size / 2}
@@ -109,9 +110,9 @@ export function Sparkline({
   );
 }
 
-/** Thin progress bar (6 px). */
+/** Thin progress bar (6 px). Fills in on mount and glides on change. */
 export function ProgressBar({ value, height = 6 }: { value: number; height?: number }) {
-  const v = Math.max(0, Math.min(1, value));
+  const v = useTween(Math.max(0, Math.min(1, value)));
   return (
     <View
       style={{ height, borderRadius: height / 2, backgroundColor: colors.fill, overflow: 'hidden' }}

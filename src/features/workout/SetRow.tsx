@@ -1,11 +1,12 @@
-import { Check } from 'lucide-react-native';
 import { memo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 
 import { formatKg, parseNumber } from '@/lib/formulas';
 import type { SetEntry } from '@/lib/types';
-import { accentA, colors, tabular } from '@/theme/tokens';
+import { colors, tabular } from '@/theme/tokens';
 import { toggleSet, updateSet } from './actions';
+import { DoneCheck, useDoneProgress, useRowTint } from './DoneCheck';
 
 export const SET_GRID = { n: 30, kg: 64, reps: 52, check: 36, gap: 8 };
 
@@ -34,9 +35,11 @@ export const SetRow = memo(function SetRow({
   const [kg, setKg] = useState(set.weight_kg ? formatKg(set.weight_kg) : '');
   const [reps, setReps] = useState(set.reps ? String(set.reps) : '');
   const n = set.set_number;
+  const progress = useDoneProgress(set.done);
+  const tint = useRowTint(progress);
 
   return (
-    <View style={[styles.row, styles.body, set.done && { backgroundColor: accentA(0.07) }]}>
+    <Animated.View style={[styles.row, styles.body, tint]}>
       <Text
         style={[styles.num, { width: SET_GRID.n, color: set.done ? colors.accent : colors.text }]}
       >
@@ -86,11 +89,9 @@ export const SetRow = memo(function SetRow({
         hitSlop={6}
         style={{ width: SET_GRID.check, alignItems: 'center' }}
       >
-        <View style={[styles.check, { backgroundColor: set.done ? colors.accent : colors.fill }]}>
-          <Check size={15} color={set.done ? '#fff' : colors.text3} strokeWidth={3} />
-        </View>
+        <DoneCheck done={set.done} pr={set.is_pr} progress={progress} />
       </Pressable>
-    </View>
+    </Animated.View>
   );
 });
 
@@ -111,12 +112,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text,
     padding: 0,
-  },
-  check: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

@@ -10,12 +10,7 @@ import { EmptyState, ListGroup, ListRow } from '@/components/List';
 import { Chip, Segmented } from '@/components/Segmented';
 import { Sheet } from '@/components/Sheet';
 import { ExercisePicker } from '@/features/exercises/ExercisePicker';
-import {
-  isLiftMetric,
-  resolveMetric,
-  useLeaderboard,
-  type RankRow,
-} from '@/features/social/api';
+import { isLiftMetric, resolveMetric, useLeaderboard, type RankRow } from '@/features/social/api';
 import { formatKg } from '@/lib/formulas';
 import { useData } from '@/stores/data';
 import { usePrefs, type ArenaMetric } from '@/stores/prefs';

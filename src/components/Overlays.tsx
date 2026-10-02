@@ -1,29 +1,52 @@
 import { useEffect } from 'react';
 import { Modal, StyleSheet, Text, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useUi } from '@/stores/ui';
+import { dur, ease, easeIn, useReducedMotion } from '@/theme/motion';
 import { colors, type } from '@/theme/tokens';
 import { FillButton } from './Buttons';
 import { Glass } from './Glass';
 
-/** Small floating glass capsule at the top ("New PR", errors). */
+const TOAST_MS = 2400;
+
+/** Small floating glass capsule at the top ("New PR", errors). Drops in, lifts out. */
 export function ToastHost() {
   const t = useUi((s) => s.toast);
   const hide = useUi((s) => s.hideToast);
   const insets = useSafeAreaInsets();
+  const reduced = useReducedMotion();
+  const shown = useSharedValue(0);
+
   useEffect(() => {
     if (!t) return;
-    const id = setTimeout(hide, 2400);
-    return () => clearTimeout(id);
-  }, [t, hide]);
+    shown.value = 0;
+    shown.value = withTiming(1, { duration: dur.state + 60, easing: ease });
+    const out = setTimeout(() => {
+      shown.value = withTiming(0, { duration: dur.tap + 40, easing: easeIn });
+    }, TOAST_MS);
+    const gone = setTimeout(hide, TOAST_MS + dur.tap + 60);
+    return () => {
+      clearTimeout(out);
+      clearTimeout(gone);
+    };
+  }, [t, hide, shown]);
+
+  const style = useAnimatedStyle(() => ({
+    opacity: shown.value,
+    transform: reduced ? [] : [{ translateY: (shown.value - 1) * 14 }],
+  }));
+
   if (!t) return null;
   return (
     <View style={[{ pointerEvents: 'none' }, styles.toastWrap, { top: insets.top + 10 }]}>
-      <Glass radius={20} style={styles.toast} accessibilityLiveRegion="polite">
-        {t.accent ? <View style={styles.dot} /> : null}
-        <Text style={[type.bodyStrong, t.accent && { color: colors.accent }]}>{t.text}</Text>
-      </Glass>
+      <Animated.View style={style}>
+        <Glass radius={20} style={styles.toast} accessibilityLiveRegion="polite">
+          {t.accent ? <View style={styles.dot} /> : null}
+          <Text style={[type.bodyStrong, t.accent && { color: colors.accent }]}>{t.text}</Text>
+        </Glass>
+      </Animated.View>
     </View>
   );
 }

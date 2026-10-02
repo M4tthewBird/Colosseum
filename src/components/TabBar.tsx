@@ -10,6 +10,7 @@ import { useData } from '@/stores/data';
 import { useWorkout } from '@/stores/workout';
 import { colors, space, tabular, type } from '@/theme/tokens';
 import { Glass } from './Glass';
+import { Pill, useSlidingPill } from './SlidingPill';
 import { MAX_WIDTH } from './Screen';
 
 const TABS: Record<string, { label: string; icon: LucideIcon }> = {
@@ -23,10 +24,12 @@ const TABS: Record<string, { label: string; icon: LucideIcon }> = {
 export function TabBar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   const bottom = insets.bottom + space.tabBarBottom;
+  const pill = useSlidingPill(state.routes.length, state.index);
   return (
     <View style={[{ pointerEvents: 'box-none' }, styles.wrap, { bottom }]}>
       <ResumeBar />
       <Glass radius={31} style={styles.bar} accessibilityRole="tablist">
+        {pill.animated ? <Pill pillStyle={pill.style} style={styles.lozenge} /> : null}
         {state.routes.map((route, index) => {
           const tab = TABS[route.name];
           if (!tab) return null;
@@ -51,7 +54,8 @@ export function TabBar({ state, navigation }: BottomTabBarProps) {
                   else navigation.navigate(route.name);
                 }
               }}
-              style={[styles.tab, focused && { backgroundColor: colors.fill }]}
+              onLayout={pill.onItemLayout(index)}
+              style={[styles.tab, focused && !pill.animated && { backgroundColor: colors.fill }]}
             >
               <Icon size={22} color={color} strokeWidth={2} />
               <Text style={[type.tab, { color }]}>{tab.label}</Text>
@@ -107,6 +111,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 2,
   },
+  lozenge: { top: 5, bottom: 5, borderRadius: 26, backgroundColor: colors.fill },
   tab: {
     flex: 1,
     borderRadius: 26,
