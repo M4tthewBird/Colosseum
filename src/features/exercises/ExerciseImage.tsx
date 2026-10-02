@@ -3,12 +3,14 @@ import { Dumbbell } from '@/components/icons';
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-/** Bundled marble-statue illustrations (16:9, light grey background). */
-const IMAGES: Record<string, number> = {
-  'bench-press': require('../../../assets/exercises/bench-press.jpg'),
-};
+import { exerciseSlug } from '@/lib/slug';
 
-/** Exercise illustration, or a neutral placeholder of the same size. */
+import { EXERCISE_IMAGES } from './images';
+
+/**
+ * Bundled marble-statue illustration (16:9), looked up by image_key or by the exercise name,
+ * or a neutral placeholder of the same size. Add images with `npm run images`.
+ */
 export function ExerciseImage({
   imageKey,
   name,
@@ -20,7 +22,7 @@ export function ExerciseImage({
   height?: number;
   children?: ReactNode;
 }) {
-  const src = imageKey ? IMAGES[imageKey] : undefined;
+  const src = EXERCISE_IMAGES[imageKey ?? ''] ?? EXERCISE_IMAGES[exerciseSlug(name)];
   return (
     <View style={[styles.frame, { height }]}>
       {src ? (

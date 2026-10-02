@@ -53,7 +53,8 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "export:web": "expo export -p web",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "images": "node scripts/exercise-images.mjs"
   },
   "private": true
 }

@@ -95,3 +95,17 @@ Soubor `supabase/schema.sql` je oproti původní verzi doplněný:
 - funkce `username_available`, `delete_my_account`, `friends_prs`, `gym_training_now`, `gym_challenge_progress`
 - bucket `avatars` s pravidly (každý smí zapisovat jen do své složky)
 - seznam posiloven je čitelný i před registrací (výběr posilovny v onboardingu)
+
+## Obrázky cviků
+
+Zatím má obrázek jen Bench press. Ostatní cviky ukazují šedý zástupný obrázek.
+
+1. V `docs/exercise-images.md` najdeš pro každý cvik bez obrázku **název souboru** a **hotový prompt** ve stylu bench pressu (mramorová socha, světle šedé pozadí, 16:9).
+2. Vygeneruj obrázek (např. ChatGPT, Midjourney) a ulož ho do `assets/exercises/` pod názvem z tabulky, třeba `hack-squat.jpg`. Ideálně kolem 1200×675 px a do ~150 kB.
+3. Spusť:
+
+   ```powershell
+   npm run images
+   ```
+
+   Obrázek se napojí do aplikace a seznam chybějících se aktualizuje.
