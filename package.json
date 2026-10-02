@@ -41,6 +41,7 @@
     "eslint-config-prettier": "^10.1.8",
     "jest": "^29.7.0",
     "prettier": "^3.9.9",
+    "sharp": "^0.35.5",
     "ts-jest": "^29.4.14",
     "typescript": "~6.0.3"
   },
@@ -54,7 +55,8 @@
     "test": "jest",
     "export:web": "expo export -p web",
     "format": "prettier --write .",
-    "images": "node scripts/exercise-images.mjs"
+    "images": "node scripts/exercise-images.mjs",
+    "images:import": "node scripts/exercise-images.mjs --import"
   },
   "private": true
 }

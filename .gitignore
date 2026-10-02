@@ -45,3 +45,6 @@ yarn-error.*
 
 # private, never upload
 _donotdeploy/
+
+# images downloaded from ChatGPT, waiting for npm run images:import
+assets/exercises/_inbox/
