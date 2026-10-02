@@ -39,6 +39,7 @@ export default function Onboarding() {
   const [checked, setChecked] = useState<{ name: string; result: Availability } | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [tried, setTried] = useState(false);
 
   const uname = username.trim().toLowerCase();
 
@@ -67,18 +68,36 @@ export default function Onboarding() {
 
   const weightKg = parseNumber(weight);
   const heightCm = parseNumber(height);
-  const valid =
-    name.trim().length > 0 &&
-    (completing || (availability === 'free' && password.length >= 8)) &&
-    (weight === '' || (weightKg != null && weightKg > 20 && weightKg < 400)) &&
-    (height === '' || (heightCm != null && heightCm > 80 && heightCm < 260));
+  // Everything that still blocks Continue, in form order. Shown after the first tap.
+  const problems: string[] = [];
+  if (!name.trim()) problems.push('Enter your name.');
+  if (!completing) {
+    const usernameProblem: Record<Availability, string | null> = {
+      idle: 'Choose a username.',
+      invalid: 'Fix the username: 3–20 characters, only a–z, 0–9, _ and .',
+      taken: `@${uname} is taken. Pick another username.`,
+      checking: 'Checking the username, one moment…',
+      error: 'Could not check the username. Are you online?',
+      free: null,
+    };
+    if (usernameProblem[availability]) problems.push(usernameProblem[availability]!);
+    if (password.length < 8)
+      problems.push(
+        password
+          ? `The password needs at least 8 characters (${password.length} so far).`
+          : 'Enter a password (at least 8 characters).',
+      );
+  }
+  if (weight !== '' && (weightKg == null || weightKg <= 20 || weightKg >= 400))
+    problems.push('Bodyweight must be a number between 20 and 400 kg.');
+  if (height !== '' && (heightCm == null || heightCm <= 80 || heightCm >= 260))
+    problems.push('Height must be a number between 80 and 260 cm.');
+  const valid = problems.length === 0;
 
   const submit = async () => {
     setError(null);
-    if (!name.trim()) return setError('Enter your name.');
-    if (!completing && availability === 'taken') return setError('This username is taken.');
-    if (!completing && password.length < 8)
-      return setError('The password needs at least 8 characters.');
+    setTried(true);
+    if (!valid) return;
     setBusy(true);
     try {
       await signUp({
@@ -216,13 +235,22 @@ export default function Onboarding() {
       <GoalsPicker value={goals} onChange={setGoals} />
 
       <View style={{ gap: 14, marginTop: 10 }}>
+        {tried && problems.length > 0 ? (
+          <View style={{ gap: 4 }} accessibilityLiveRegion="polite">
+            {problems.map((p) => (
+              <FieldHint key={p} text={p} error />
+            ))}
+          </View>
+        ) : null}
         {error ? <FieldHint text={error} error /> : null}
         <FillButton
           label="Continue"
           onPress={submit}
           loading={busy}
-          disabled={!valid || busy}
+          disabled={busy}
+          accessibilityHint={valid ? undefined : 'Shows what is still missing'}
           style={{ height: 52 }}
+          labelStyle={valid ? undefined : { color: colors.text2 }}
         />
         {!completing ? (
           <Text style={[type.caption, { textAlign: 'center', fontSize: 14 }]}>

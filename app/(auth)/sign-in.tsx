@@ -19,6 +19,16 @@ export default function SignIn() {
 
   const submit = async () => {
     setError(null);
+    if (!isDemo && (!username || !password)) {
+      setError(
+        !username && !password
+          ? 'Enter your username and password.'
+          : !username
+            ? 'Enter your username.'
+            : 'Enter your password.',
+      );
+      return;
+    }
     setBusy(true);
     try {
       await signIn(username, password);
@@ -75,7 +85,8 @@ export default function SignIn() {
         label="Sign in"
         onPress={submit}
         loading={busy}
-        disabled={busy || (!isDemo && (!username || !password))}
+        disabled={busy}
+        labelStyle={isDemo || (username && password) ? undefined : { color: colors.text2 }}
       />
     </Screen>
   );
