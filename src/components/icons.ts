@@ -43,3 +43,7 @@ export { default as Clock } from 'lucide-react-native/icons/clock';
 export { default as Layers } from 'lucide-react-native/icons/layers';
 export { default as Repeat } from 'lucide-react-native/icons/repeat';
 export { default as Flame } from 'lucide-react-native/icons/flame';
+export { default as Link } from 'lucide-react-native/icons/link';
+export { default as Unlink } from 'lucide-react-native/icons/unlink';
+export { default as ArrowLeftRight } from 'lucide-react-native/icons/arrow-left-right';
+export { default as Settings2 } from 'lucide-react-native/icons/settings-2';

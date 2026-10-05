@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { Trash2 } from '@/components/icons';
+import { Link, Trash2 } from '@/components/icons';
 import { Text, View } from 'react-native';
 
 import { BackLink } from '@/components/BackLink';
@@ -8,6 +8,7 @@ import { Glass, GlassCard } from '@/components/Glass';
 import { Header, Screen } from '@/components/Screen';
 import { formatDuration, shortDate, weekdayName, isoWeekday } from '@/lib/dates';
 import { formatKg, formatVolume, volume } from '@/lib/formulas';
+import { interleave, letter } from '@/lib/supersets';
 import { useData } from '@/stores/data';
 import { confirm } from '@/stores/ui';
 import { colors, tabular, type } from '@/theme/tokens';
@@ -37,6 +38,14 @@ export default function SessionDetail() {
     list.push(s);
     groups.set(s.exercise_position, list);
   }
+  // Exercises done as a superset share one card.
+  const cards: [number, typeof session.sets][][] = [];
+  for (const entry of groups.entries()) {
+    const last = cards[cards.length - 1];
+    const id = entry[1][0].superset_id;
+    if (last && id && last[0][1][0].superset_id === id) last.push(entry);
+    else cards.push([entry]);
+  }
   const dur = session.finished_at
     ? formatDuration(new Date(session.finished_at).getTime() - d.getTime())
     : 'In progress';
@@ -55,14 +64,38 @@ export default function SessionDetail() {
         <Stat value={String(session.pr_count)} label="PRs" accent={session.pr_count > 0} />
       </GlassCard>
 
-      {[...groups.entries()].map(([pos, sets]) => {
-        const ex = exercises[sets[0].exercise_id];
+      {cards.map((card) => {
+        const positions = card.map(([pos]) => pos);
+        const isSuperset = card.length > 1;
+        const sets = isSuperset
+          ? interleave(
+              card.flatMap(([, list]) => list),
+              positions,
+            )
+          : card[0][1];
         return (
-          <Glass key={pos} radius={22} style={{ padding: 16, gap: 8 }}>
-            <Text style={[type.bodyStrong, { fontSize: 17 }]}>{ex?.name ?? 'Exercise'}</Text>
+          <Glass key={positions[0]} radius={22} style={{ padding: 16, gap: 8 }}>
+            {isSuperset ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Link size={13} color={colors.accent} strokeWidth={2.6} />
+                <Text style={{ fontSize: 12, fontWeight: '700', color: colors.accent }}>
+                  Superset
+                </Text>
+              </View>
+            ) : null}
+            {card.map(([pos, list], i) => (
+              <Text key={pos} style={[type.bodyStrong, { fontSize: 17 }]}>
+                {isSuperset ? `${letter(i)} · ` : ''}
+                {exercises[list[0].exercise_id]?.name ?? 'Exercise'}
+              </Text>
+            ))}
             {sets.map((s) => (
               <View key={s.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                <Text style={[type.caption, { width: 44 }]}>Set {s.set_number}</Text>
+                <Text style={[type.caption, { width: 44 }]}>
+                  {isSuperset
+                    ? `${letter(positions.indexOf(s.exercise_position))}${s.set_number}`
+                    : `Set ${s.set_number}`}
+                </Text>
                 <Text style={[type.body, tabular, { flex: 1 }]}>
                   {formatKg(s.weight_kg)} kg × {s.reps}
                 </Text>

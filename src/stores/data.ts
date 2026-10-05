@@ -100,7 +100,8 @@ function setChanged(a: SetEntry | undefined, b: SetEntry): boolean {
     a.is_pr !== b.is_pr ||
     a.set_number !== b.set_number ||
     a.exercise_position !== b.exercise_position ||
-    a.exercise_id !== b.exercise_id
+    a.exercise_id !== b.exercise_id ||
+    (a.superset_id ?? null) !== (b.superset_id ?? null)
   );
 }
 

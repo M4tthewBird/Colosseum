@@ -98,7 +98,8 @@ create table public.program_exercises (
   sets int not null default 3 check (sets between 1 and 20),
   reps_min int not null default 8,
   reps_max int not null default 8,
-  rest_seconds int not null default 120
+  rest_seconds int not null default 120,
+  superset_id text                              -- exercises done as one superset share this id
 );
 
 -- ───────────────────────── Workouts (client-generated ids for offline) ─────────────────────────
@@ -127,6 +128,7 @@ create table public.set_entries (
   reps int not null check (reps >= 0),
   done boolean not null default false,
   is_pr boolean not null default false,
+  superset_id text,                             -- sets of exercises done as one superset share this id
   updated_at timestamptz not null default now()
 );
 create index on public.set_entries(session_id);

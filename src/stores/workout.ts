@@ -16,6 +16,8 @@ export interface PlannedExercise {
   rest_seconds: number;
   /** Target effort this week (from the program phase). */
   rpe?: number;
+  /** Exercises done as one superset share this id. */
+  superset?: string;
 }
 
 interface WorkoutState {

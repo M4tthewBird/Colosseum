@@ -8,6 +8,7 @@ import { phaseFor, phasedSets } from '@/lib/periodization';
 import { programWeek } from '@/lib/programs';
 import { primaryGoal, recommend } from '@/lib/repRanges';
 import { historyBests, lastTimeSets } from '@/lib/stats';
+import { groupIndexOf, groupPlan, roundComplete } from '@/lib/supersets';
 import type { ProgramDay, Session, SetEntry } from '@/lib/types';
 import { nowIso, uuid } from '@/lib/uuid';
 import { useData } from '@/stores/data';
@@ -37,6 +38,7 @@ function initialSets(sessionId: string, plan: PlannedExercise): SetEntry[] {
       reps: prev?.reps ?? plan.reps_max,
       done: false,
       is_pr: false,
+      superset_id: plan.superset ?? null,
       updated_at: nowIso(),
     };
   });
@@ -61,6 +63,7 @@ export function startWorkout(day: ProgramDay | null): string {
       reps_max: e.reps_max,
       rest_seconds: e.rest_seconds,
       rpe: phase?.rpe,
+      superset: e.superset_id ?? undefined,
     }));
   const s: Session = {
     id,
@@ -137,8 +140,16 @@ export function toggleSet(setId: string) {
   const sets = put({ ...s, sets: s.sets.map((x) => (x.id === setId ? { ...x, done } : x)) });
   if (!done) return;
   feedback(false);
-  const plan = useWorkout.getState().plan.find((p) => p.position === target.exercise_position);
-  useWorkout.getState().startRest(plan?.rest_seconds ?? DEFAULT_REST);
+  // In a superset the rest starts only once every exercise of the round is done.
+  const w = useWorkout.getState();
+  const group =
+    groupPlan(w.plan).find((g) => g.some((p) => p.position === target.exercise_position)) ?? [];
+  const positions = group.map((p) => p.position);
+  if (group.length <= 1 || roundComplete(sets, positions, target.set_number)) {
+    w.startRest(Math.max(0, ...group.map((p) => p.rest_seconds)) || DEFAULT_REST);
+  } else {
+    w.stopRest();
+  }
   const after = sets.find((x) => x.id === setId);
   if (after?.is_pr) {
     feedback(true);
@@ -218,18 +229,106 @@ export function addExercise(exerciseId: string) {
     position,
     ...recommend(primaryGoal(profile?.goals ?? []), exercises[exerciseId]?.name ?? ''),
   };
+  const page = groupPlan(w.plan).length; // the new exercise gets its own page at the end
   w.setPlan([...w.plan, plan]);
   put({ ...s, sets: [...s.sets, ...initialSets(s.id, plan)] });
-  w.setCurrent(w.plan.length);
+  w.setCurrent(page);
+}
+
+/** Renumbers positions >= from by +1 in the plan, the sets and the notes. */
+function shiftFrom(s: Session, plan: PlannedExercise[], from: number) {
+  const bump = (n: number) => (n >= from ? n + 1 : n);
+  const notes = Object.fromEntries(
+    Object.entries(s.notes ?? {}).map(([k, v]) => [String(bump(Number(k))), v]),
+  );
+  return {
+    plan: plan.map((p) => ({ ...p, position: bump(p.position) })),
+    session: {
+      ...s,
+      notes,
+      sets: s.sets.map((x) => ({ ...x, exercise_position: bump(x.exercise_position) })),
+    },
+  };
+}
+
+/**
+ * Adds an exercise as a superset with the one at basePosition: it goes right after the
+ * superset's last exercise, with as many sets as the first one, and shares its superset id.
+ */
+export function addSuperset(basePosition: number, exerciseId: string) {
+  const current = session();
+  if (!current) return;
+  const w = useWorkout.getState();
+  const base = w.plan.find((p) => p.position === basePosition);
+  if (!base) return;
+  const id = base.superset ?? uuid();
+  const members = w.plan.filter(
+    (p) => p.position === basePosition || (base.superset && p.superset === base.superset),
+  );
+  const at = Math.max(...members.map((p) => p.position)) + 1;
+  const shifted = shiftFrom(current, w.plan, at);
+  const { profile, exercises } = useData.getState();
+  const rec = recommend(primaryGoal(profile?.goals ?? []), exercises[exerciseId]?.name ?? '');
+  const added: PlannedExercise = {
+    exercise_id: exerciseId,
+    position: at,
+    sets: base.sets,
+    reps_min: rec.reps_min,
+    reps_max: rec.reps_max,
+    rest_seconds: base.rest_seconds,
+    rpe: base.rpe,
+    superset: id,
+  };
+  const plan = [
+    ...shifted.plan.map((p) => (p.position === basePosition ? { ...p, superset: id } : p)),
+    added,
+  ];
+  const sets = [
+    ...shifted.session.sets.map((x) =>
+      x.exercise_position === basePosition ? { ...x, superset_id: id } : x,
+    ),
+    ...initialSets(current.id, added),
+  ];
+  w.setPlan(plan);
+  put({ ...shifted.session, sets });
+  w.setCurrent(groupIndexOf(groupPlan(plan), at));
+}
+
+/** Splits a superset back into separate exercises. */
+export function unlinkSuperset(id: string) {
+  const s = session();
+  if (!s) return;
+  const w = useWorkout.getState();
+  w.setPlan(w.plan.map((p) => (p.superset === id ? { ...p, superset: undefined } : p)));
+  put({ ...s, sets: s.sets.map((x) => (x.superset_id === id ? { ...x, superset_id: null } : x)) });
+}
+
+/** Adds one set to every exercise of a superset (a new round). */
+export function addRound(positions: number[]) {
+  for (const p of positions) addSet(p);
+}
+
+/** Removes the last set of every exercise of a superset. */
+export function removeRound(positions: number[]) {
+  for (const p of positions) removeSet(p);
 }
 
 export function removeExercise(position: number) {
   const s = session();
   if (!s) return;
   const w = useWorkout.getState();
-  w.setPlan(w.plan.filter((p) => p.position !== position));
-  put({ ...s, sets: s.sets.filter((x) => x.exercise_position !== position) });
-  w.setCurrent(Math.max(0, Math.min(w.current, w.plan.length - 2)));
+  const removed = w.plan.find((p) => p.position === position);
+  let plan = w.plan.filter((p) => p.position !== position);
+  let sets = s.sets.filter((x) => x.exercise_position !== position);
+  // A superset left with one exercise is just an exercise again.
+  const id = removed?.superset;
+  if (id && plan.filter((p) => p.superset === id).length === 1) {
+    plan = plan.map((p) => (p.superset === id ? { ...p, superset: undefined } : p));
+    sets = sets.map((x) => (x.superset_id === id ? { ...x, superset_id: null } : x));
+  }
+  w.setPlan(plan);
+  put({ ...s, sets });
+  w.setCurrent(Math.max(0, Math.min(w.current, groupPlan(plan).length - 1)));
 }
 
 export interface Summary {
@@ -282,6 +381,7 @@ export function saveSessionAsWorkout(sessionId: string, name: string): string | 
     byPos.set(x.exercise_position, [...(byPos.get(x.exercise_position) ?? []), x]);
   const now = nowIso();
   const id = uuid();
+  const groupIds = new Map<string, string>();
   saveProgram({
     id,
     owner_id: userId,
@@ -304,6 +404,7 @@ export function saveSessionAsWorkout(sessionId: string, name: string): string | 
           .sort((a, b) => a[0] - b[0])
           .map(([, sets], i) => {
             const reps = sets.map((x) => x.reps);
+            const group = sets[0].superset_id;
             return {
               id: uuid(),
               exercise_id: sets[0].exercise_id,
@@ -312,6 +413,10 @@ export function saveSessionAsWorkout(sessionId: string, name: string): string | 
               reps_min: Math.min(...reps),
               reps_max: Math.max(...reps),
               rest_seconds: DEFAULT_REST,
+              // New ids, same grouping.
+              superset_id: group
+                ? (groupIds.get(group) ?? groupIds.set(group, uuid()).get(group))
+                : null,
             };
           }),
       },

@@ -163,9 +163,14 @@ export function WorkoutSummary({ sessionId }: { sessionId: string }) {
                 {k > 0 ? <Separator /> : null}
                 <View style={styles.exRow}>
                   <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={type.bodyStrong} numberOfLines={1}>
-                      {name(e.exerciseId)}
-                    </Text>
+                    <View style={styles.exTitle}>
+                      {e.superset ? (
+                        <Text style={styles.ssTag}>Superset {e.superset}</Text>
+                      ) : null}
+                      <Text style={[type.bodyStrong, { flexShrink: 1 }]} numberOfLines={1}>
+                        {name(e.exerciseId)}
+                      </Text>
+                    </View>
                     <Text style={[type.small, tabular]} numberOfLines={2}>
                       {setsLine(e.sets)}
                     </Text>
@@ -341,6 +346,17 @@ function SaveSheet({
 }
 
 const styles = StyleSheet.create({
+  exTitle: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  ssTag: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.accent,
+    backgroundColor: accentA(0.1),
+    borderRadius: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    overflow: 'hidden',
+  },
   root: { flex: 1, backgroundColor: colors.bg, overflow: 'hidden' },
   column: {
     width: '100%',

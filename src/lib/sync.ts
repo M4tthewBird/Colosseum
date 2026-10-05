@@ -55,8 +55,17 @@ export async function flush(): Promise<void> {
     for (;;) {
       const items = useQueue.getState().items;
       if (items.length === 0) break;
-      const batch = batches(items)[0];
+      let batch = batches(items)[0];
       const { table, op } = batch[0];
+      // Only one program can be active. A queued "make it active" can sit before the
+      // "make the old one inactive" (the queue replaces items in place), so programs that
+      // become inactive always go first.
+      if (table === 'programs' && op === 'upsert' && batch.some((b) => b.row?.is_active)) {
+        const inactive = items.filter(
+          (x) => x.table === 'programs' && x.op === 'upsert' && !x.row?.is_active,
+        );
+        if (inactive.length > 0) batch = inactive;
+      }
       const rows = batch.map((b) => withoutMissing(table, b.row ?? {}));
       const res =
         op === 'upsert'

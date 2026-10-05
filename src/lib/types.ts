@@ -46,6 +46,8 @@ export interface ProgramExercise {
   reps_min: number;
   reps_max: number;
   rest_seconds: number;
+  /** Exercises done as one superset share this id. */
+  superset_id?: string | null;
 }
 
 export interface ProgramDay {
@@ -85,6 +87,8 @@ export interface SetEntry {
   reps: number;
   done: boolean;
   is_pr: boolean;
+  /** Sets of exercises done as one superset share this id. */
+  superset_id?: string | null;
   updated_at: string;
 }
 

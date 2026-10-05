@@ -1,6 +1,7 @@
 /** Numbers for the post-workout summary. Pure — covered by summary.test.ts. */
 import { e1rm, formatKg, prKinds, volume, weekStreak, type Best, type PrKinds } from './formulas';
 import { finished, historyBests } from './stats';
+import { supersetLetters } from './supersets';
 import type { Session, SetEntry } from './types';
 
 export interface ExerciseLine {
@@ -8,6 +9,8 @@ export interface ExerciseLine {
   sets: SetEntry[];
   volumeKg: number;
   top: { weight: number; reps: number; e1rm: number };
+  /** "A", "B"… when the exercise was done in a superset. */
+  superset: string | null;
 }
 
 export interface PrLine {
@@ -55,8 +58,10 @@ export function buildSummary(
       },
       { weight: 0, reps: 0, e1rm: 0 },
     );
-    return { exerciseId: sets[0].exercise_id, sets, volumeKg: volume(sets), top };
+    return { exerciseId: sets[0].exercise_id, sets, volumeKg: volume(sets), top, superset: null };
   });
+  const letters = supersetLetters(exercises.map((e) => ({ superset: e.sets[0].superset_id })));
+  exercises.forEach((e, i) => (e.superset = letters[i]));
 
   // PRs: per exercise, the best set against everything before this workout.
   const history = historyBests(all, session.id);

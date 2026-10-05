@@ -29,7 +29,7 @@ const TIER_RANK = { S: 0, A: 1, B: 2 } as const;
 const BROWSE_LIMIT = 80;
 
 /** Small "S" / "A" / "B" badge: Jeff Nippard's tier list rating. */
-function TierBadge({ tier }: { tier: 'S' | 'A' | 'B' }) {
+export function TierBadge({ tier }: { tier: 'S' | 'A' | 'B' }) {
   return (
     <View
       style={[styles.badge, tier === 'S' && { backgroundColor: accentA(0.12) }]}

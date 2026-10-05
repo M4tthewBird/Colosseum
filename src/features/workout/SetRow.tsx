@@ -27,14 +27,17 @@ export const SetRow = memo(function SetRow({
   set,
   last,
   readOnly,
+  label,
 }: {
   set: SetEntry;
   last: string;
   readOnly?: boolean;
+  /** Shown instead of the set number, e.g. "A1" / "B1" in a superset. */
+  label?: string;
 }) {
   const [kg, setKg] = useState(set.weight_kg ? formatKg(set.weight_kg) : '');
   const [reps, setReps] = useState(set.reps ? String(set.reps) : '');
-  const n = set.set_number;
+  const n = label ?? String(set.set_number);
   const progress = useDoneProgress(set.done);
   const tint = useRowTint(progress);
 

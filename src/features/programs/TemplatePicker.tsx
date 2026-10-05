@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { FillButton } from '@/components/Buttons';
 import { Glass } from '@/components/Glass';
-import { Check } from '@/components/icons';
+import { Check, Settings2 } from '@/components/icons';
 import { ListGroup, ListRow, SectionHeader, Separator } from '@/components/List';
 import { Sheet } from '@/components/Sheet';
 import { formatScheme } from '@/lib/formulas';
@@ -110,12 +110,21 @@ function TemplateSheet({
             </Text>
           </View>
 
+          <FillButton
+            label="Customize first"
+            icon={Settings2}
+            accessibilityHint="Swap exercises or change sets before you start"
+            onPress={() => {
+              onClose();
+              router.push({ pathname: '/program/[id]', params: { id: 'new', template: t.key } });
+            }}
+          />
           <FillButton label="Use this program" icon={Check} ready onPress={() => use(true)} />
           {hasActive ? (
             <FillButton label="Add without making it active" onPress={() => use(false)} />
           ) : null}
           <Text style={[type.small, { textAlign: 'center' }]}>
-            You get your own copy: change any day, exercise or number afterwards.
+            You get your own copy: change any day, exercise or number now or later.
           </Text>
         </View>
       ) : null}

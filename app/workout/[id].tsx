@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { ChevronDown, ChevronRight, Info, Plus } from '@/components/icons';
+import { ChevronDown, ChevronRight, Plus } from '@/components/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Platform,
@@ -18,26 +18,23 @@ import { ScreenGlow } from '@/components/Charts';
 import { Glass, GlassCard } from '@/components/Glass';
 import { MAX_WIDTH, useTopPadding } from '@/components/Screen';
 import { Sheet } from '@/components/Sheet';
-import { ExerciseImage } from '@/features/exercises/ExerciseImage';
 import { ExercisePicker, musclesLabel } from '@/features/exercises/ExercisePicker';
 import {
   addExercise,
-  addSet,
+  addSuperset,
   discardWorkout,
   finishWorkout,
-  removeExercise,
-  removeSet,
   restAlert,
   type Summary,
 } from '@/features/workout/actions';
-import { ExerciseNote } from '@/features/workout/ExerciseNote';
 import { WorkoutSummary } from '@/features/workout/WorkoutSummary';
-import { SetHeader, SetRow } from '@/features/workout/SetRow';
+import { ExercisePage, SupersetPage } from '@/features/workout/WorkoutPages';
 import { ProgressSegment, RestPulseOverlay, useRestPulse } from '@/features/workout/WorkoutMotion';
 import { formatClock } from '@/lib/dates';
-import { formatKg, formatRest, formatScheme, roundHalf } from '@/lib/formulas';
+import { formatRest, formatScheme } from '@/lib/formulas';
 import { rpeHint } from '@/lib/periodization';
-import { historyBests, lastTimeSets } from '@/lib/stats';
+import { historyBests } from '@/lib/stats';
+import { groupPlan } from '@/lib/supersets';
 import type { Session } from '@/lib/types';
 import { useNow } from '@/lib/useNow';
 import { useData } from '@/stores/data';
@@ -84,6 +81,7 @@ function ActiveWorkout({
   const [pageW, setPageW] = useState(0);
   const [picker, setPicker] = useState(false);
   const [info, setInfo] = useState<PlannedExercise | null>(null);
+  const [supersetFor, setSupersetFor] = useState<number | null>(null);
   const pager = useRef<ScrollView>(null);
 
   const ordered = useMemo(() => [...plan].sort((a, b) => a.position - b.position), [plan]);
@@ -91,7 +89,8 @@ function ActiveWorkout({
     () => historyBests(Object.values(allSessions), session.id),
     [allSessions, session.id],
   );
-  const pages = ordered.length + 1; // last page adds an exercise
+  const groups = useMemo(() => groupPlan(ordered), [ordered]);
+  const pages = groups.length + 1; // last page adds an exercise
   const idx = Math.min(current, pages - 1);
 
   const restPulse = useRestPulse();
@@ -150,11 +149,21 @@ function ActiveWorkout({
     if (s) onFinished(s);
   };
 
-  const next = ordered[idx + 1];
-  const nextName = next ? (exercises[next.exercise_id]?.name ?? 'Exercise') : null;
-  const doneCount = (p: PlannedExercise) => {
-    const sets = session.sets.filter((s) => s.exercise_position === p.position);
+  const next = groups[idx + 1];
+  const nextName = next
+    ? next.map((p) => exercises[p.exercise_id]?.name ?? 'Exercise').join(' + ')
+    : null;
+  const groupDone = (g: PlannedExercise[]) => {
+    const sets = session.sets.filter((s) => g.some((p) => p.position === s.exercise_position));
     return sets.length > 0 && sets.every((s) => s.done);
+  };
+  const pageProps = {
+    session,
+    sessions: Object.values(allSessions),
+    exercises,
+    bests,
+    onInfo: setInfo,
+    onSuperset: setSupersetFor,
   };
 
   return (
@@ -168,8 +177,8 @@ function ActiveWorkout({
               {session.name}
             </Text>
             <Text style={[type.small, tabular]}>
-              {ordered.length > 0
-                ? `${Math.min(idx + 1, ordered.length)} of ${ordered.length} · `
+              {groups.length > 0
+                ? `${Math.min(idx + 1, groups.length)} of ${groups.length} · `
                 : ''}
               <Elapsed startedAt={session.started_at} />
             </Text>
@@ -177,12 +186,12 @@ function ActiveWorkout({
           <FillButton label="Finish" size="sm" onPress={finish} />
         </View>
 
-        {ordered.length > 0 ? (
+        {groups.length > 0 ? (
           <View style={styles.progress} aria-hidden>
-            {ordered.map((p, i) => (
+            {groups.map((g, i) => (
               <ProgressSegment
-                key={p.position}
-                on={i <= idx || doneCount(p)}
+                key={g[0].position}
+                on={i <= idx || groupDone(g)}
                 style={styles.segment}
               />
             ))}
@@ -201,95 +210,20 @@ function ActiveWorkout({
         style={[{ flex: 1 }, Platform.OS === 'web' && ({ overflowAnchor: 'none' } as object)]}
         keyboardShouldPersistTaps="handled"
       >
-        {ordered.map((p) => {
-          const ex = exercises[p.exercise_id];
-          const sets = session.sets
-            .filter((s) => s.exercise_position === p.position)
-            .sort((a, b) => a.set_number - b.set_number);
-          const last = lastTimeSets(Object.values(allSessions), p.exercise_id, session.id);
-          const pr = bests[p.exercise_id];
-          return (
-            <ScrollView
-              key={p.position}
-              style={{ width: pageW || MAX_WIDTH }}
-              contentContainerStyle={[styles.page, { paddingBottom: insets.bottom + 120 }]}
-              keyboardShouldPersistTaps="handled"
-            >
-              <GlassCard radius={26} style={styles.exCard}>
-                <ExerciseImage imageKey={ex?.image_key ?? null} name={ex?.name ?? 'Exercise'}>
-                  <IconButton
-                    icon={Info}
-                    size={30}
-                    iconSize={15}
-                    accessibilityLabel="Exercise tips"
-                    onPress={() => setInfo(p)}
-                    style={styles.infoBtn}
-                  />
-                </ExerciseImage>
-                <View style={styles.exHead}>
-                  <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={styles.exName} accessibilityRole="header">
-                      {ex?.name ?? 'Exercise'}
-                    </Text>
-                    <Text style={type.caption}>
-                      {ex ? musclesLabel(ex.muscles) : ''} ·{' '}
-                      {formatScheme(p.sets, p.reps_min, p.reps_max)} · rest{' '}
-                      {formatRest(p.rest_seconds)}
-                      {p.rpe ? ` · RPE ${p.rpe}` : ''}
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.records}>
-                  <Record
-                    label="Heaviest"
-                    value={pr ? `${formatKg(pr.weight)} kg` : '—'}
-                    hint="Weight PR"
-                  />
-                  <Record
-                    label="Est. 1RM"
-                    value={pr ? `≈ ${formatKg(roundHalf(pr.e1rm))} kg` : '—'}
-                    hint="One-rep max PR"
-                  />
-                </View>
-              </GlassCard>
-
-              <Glass radius={22} style={styles.table}>
-                <SetHeader />
-                {sets.map((s, i) => {
-                  const l = last[i];
-                  return (
-                    <SetRow
-                      key={s.id}
-                      set={s}
-                      last={l ? `${formatKg(l.weight_kg)} × ${l.reps}` : '—'}
-                    />
-                  );
-                })}
-                <View style={styles.tableActions}>
-                  <TextButton label="+ Add set" accent onPress={() => addSet(p.position)} />
-                  {sets.length > 1 ? (
-                    <TextButton label="Remove set" onPress={() => removeSet(p.position)} />
-                  ) : null}
-                </View>
-              </Glass>
-              <ExerciseNote session={session} position={p.position} exerciseId={p.exercise_id} />
-              <TextButton
-                label="Remove exercise"
-                accent
-                style={{ alignSelf: 'center' }}
-                onPress={async () => {
-                  const ok = await confirm({
-                    title: `Remove ${ex?.name ?? 'exercise'}?`,
-                    message: 'Its sets in this workout will be deleted.',
-                    confirmLabel: 'Remove',
-                    destructive: true,
-                  });
-                  if (ok) removeExercise(p.position);
-                }}
-              />
-            </ScrollView>
-          );
-        })}
+        {groups.map((g) => (
+          <ScrollView
+            key={g[0].position}
+            style={{ width: pageW || MAX_WIDTH }}
+            contentContainerStyle={[styles.page, { paddingBottom: insets.bottom + 120 }]}
+            keyboardShouldPersistTaps="handled"
+          >
+            {g.length > 1 ? (
+              <SupersetPage group={g} {...pageProps} />
+            ) : (
+              <ExercisePage plan={g[0]} {...pageProps} />
+            )}
+          </ScrollView>
+        ))}
         {/* The page spans the pager; the card is centered inside it like the exercise pages. */}
         <View style={{ width: pageW || MAX_WIDTH }}>
           <View style={styles.page}>
@@ -336,6 +270,13 @@ function ActiveWorkout({
       </View>
 
       <ExercisePicker visible={picker} onClose={() => setPicker(false)} onPick={addExercise} />
+      <ExercisePicker
+        visible={supersetFor !== null}
+        onClose={() => setSupersetFor(null)}
+        onPick={(id) => {
+          if (supersetFor !== null) addSuperset(supersetFor, id);
+        }}
+      />
       <Sheet
         visible={!!info}
         onClose={() => setInfo(null)}
@@ -395,16 +336,6 @@ function RestReadout({ onFinished }: { onFinished: () => void }) {
   );
 }
 
-/** One record on the exercise card: heaviest weight or best estimated one-rep max. */
-function Record({ label, value, hint }: { label: string; value: string; hint: string }) {
-  return (
-    <View style={styles.record} accessibilityLabel={`${hint}: ${value}`}>
-      <Text style={type.small}>{label}</Text>
-      <Text style={[styles.recordValue, tabular]}>{value}</Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.bg, overflow: 'hidden' },
   center: { alignItems: 'center', justifyContent: 'center', gap: 12 },
@@ -419,40 +350,6 @@ const styles = StyleSheet.create({
   progress: { flexDirection: 'row', gap: 4, marginBottom: 14 },
   segment: { flex: 1, height: 4, borderRadius: 2 },
   page: { paddingHorizontal: 20, gap: 14, maxWidth: MAX_WIDTH, alignSelf: 'center', width: '100%' },
-  exCard: { padding: 8, paddingBottom: 16, gap: 14 },
-  infoBtn: { position: 'absolute', right: 10, top: 10 },
-  exHead: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    paddingHorizontal: 8,
-    gap: 8,
-  },
-  exName: { fontSize: 26, fontWeight: '700', letterSpacing: -0.6, color: colors.text },
-  records: { flexDirection: 'row', gap: 8, paddingHorizontal: 8 },
-  record: {
-    flex: 1,
-    backgroundColor: colors.fill,
-    borderRadius: 12,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-  },
-  recordValue: { fontSize: 16, fontWeight: '700', color: colors.text },
-  prPill: {
-    backgroundColor: colors.fill,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  prText: { fontSize: 12, fontWeight: '600', color: colors.text },
-  table: { paddingTop: 10, paddingHorizontal: 12, paddingBottom: 8, gap: 4 },
-  tableActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 4,
-    paddingTop: 8,
-    paddingBottom: 4,
-  },
   floatWrap: { position: 'absolute', left: 16, right: 16, alignItems: 'center' },
   float: {
     width: '100%',
