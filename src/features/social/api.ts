@@ -174,7 +174,8 @@ export interface RankRow {
   username: string;
   display_name: string;
   avatar_url: string | null;
-  value: number;
+  /** Null for other people's DOTS scores: ranked, but the score is not shown (see schema.sql). */
+  value: number | null;
 }
 
 /** Resolves 'name:Bench Press' to the built-in exercise id. */
@@ -227,7 +228,7 @@ export function myDotsCoefficient(): number | null {
  * bodyweight only to compute the score and never returns it.
  */
 export function useLeaderboard(
-  scope: 'friends' | 'gym',
+  scope: 'friends' | 'gym' | 'global',
   metric: string,
   period: ArenaPeriod,
   dots = false,
@@ -237,7 +238,7 @@ export function useLeaderboard(
   return useQuery({
     queryKey: ['leaderboard', me(), scope, resolved, period],
     queryFn: async (): Promise<RankRow[]> => {
-      if (isDemo) return demoLeaderboard(resolved, period);
+      if (isDemo) return demoLeaderboard(resolved, period, scope === 'global');
       const rows = check(
         await supabase.rpc('get_leaderboard', {
           p_scope: scope,
@@ -246,18 +247,23 @@ export function useLeaderboard(
           p_tz: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
         }),
       ) as RankRow[];
-      return rows.map((r) => ({ ...r, rank: Number(r.rank), value: Number(r.value) }));
+      return rows.map((r) => ({
+        ...r,
+        rank: Number(r.rank),
+        value: r.value == null ? null : Number(r.value),
+      }));
     },
   });
 }
 
-function demoLeaderboard(key: string, period: ArenaPeriod): RankRow[] {
+function demoLeaderboard(key: string, period: ArenaPeriod, global = false): RankRow[] {
+  if (global && !useData.getState().profile?.global_ranking) return [];
   const dots = key.startsWith('dots:');
   const metric = dots ? key.slice(5) : key;
   const exName = Object.values(useData.getState().exercises).find((e) => e.id === metric)?.name;
   const scale = period === 'week' ? 1 : period === 'month' ? 4.2 : 40;
   const rows: Omit<RankRow, 'rank'>[] = [];
-  for (const u of DEMO_USERS.filter((x) => demo.friends.has(x.username))) {
+  for (const u of DEMO_USERS.filter((x) => global || demo.friends.has(x.username))) {
     const st = DEMO_STATS[u.username];
     let value: number | null = null;
     if (metric === 'volume') value = st.weekVolume * scale;
@@ -288,8 +294,12 @@ function demoLeaderboard(key: string, period: ArenaPeriod): RankRow[] {
       value: mine,
     });
   }
-  rows.sort((a, b) => b.value - a.value);
-  return rows.map((r, i) => ({ ...r, rank: i + 1 }));
+  rows.sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
+  return rows.map((r, i) => ({
+    ...r,
+    rank: i + 1,
+    value: dots && r.user_id !== p?.id ? null : r.value,
+  }));
 }
 
 // ───────────── Friends' PRs ─────────────

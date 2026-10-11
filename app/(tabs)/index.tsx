@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { UserPlus } from '@/components/icons';
+import { Landmark, UserPlus } from '@/components/icons';
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -10,6 +10,8 @@ import { GlassCard } from '@/components/Glass';
 import { ListGroup, ListRow, SectionHeader } from '@/components/List';
 import { Wordmark } from '@/components/Logo';
 import { Header, Screen } from '@/components/Screen';
+import { useForumPosts } from '@/features/forum/api';
+import { PostCard } from '@/features/forum/ForumViews';
 import { useFriendsPrs, useLeaderboard } from '@/features/social/api';
 import { useActiveProgram, useFinishedSessions } from '@/features/training/hooks';
 import { InstallTip } from '@/features/onboarding/InstallTip';
@@ -17,6 +19,7 @@ import { UpNextCard } from '@/features/training/UpNextCard';
 import { timeAgo } from '@/lib/dates';
 import { formatKg, formatVolume, weekStreak } from '@/lib/formulas';
 import { weeklyTarget } from '@/lib/programs';
+import { deloadAdvice } from '@/lib/progression';
 import { weekStats } from '@/lib/stats';
 import { useData } from '@/stores/data';
 import { colors, type } from '@/theme/tokens';
@@ -35,6 +38,7 @@ export default function Today() {
       ),
     [sessions, target],
   );
+  const deload = useMemo(() => deloadAdvice(sessions), [sessions]);
   const ranks = useLeaderboard('friends', 'volume', 'week');
   const myRank = ranks.data?.find((r) => r.user_id === profile?.id)?.rank;
 
@@ -69,7 +73,20 @@ export default function Today() {
         </View>
       </GlassCard>
 
+      {deload ? (
+        <GlassCard radius={22} style={{ gap: 6, padding: 16 }} accessibilityLabel="Deload hint">
+          <Text style={type.bodyStrong}>Time for a lighter week?</Text>
+          <Text style={type.caption}>
+            Your last {deload.hard} workouts were hard (effort 9+ or you felt bad). A deload week
+            helps you recover: keep the weights, do about half the sets and stop well short of
+            failure.
+          </Text>
+        </GlassCard>
+      ) : null}
+
       <UpNextCard variant="today" />
+
+      <ForumSection />
 
       <FriendsPrs />
       <InstallTip />
@@ -84,6 +101,36 @@ function Stat({ value, label }: { value: string; label: string }) {
         {value}
       </Text>
       <Text style={type.small}>{label}</Text>
+    </View>
+  );
+}
+
+/** The newest Forum posts; the full Forum is one tap away. */
+function ForumSection() {
+  const posts = useForumPosts('all', 3);
+  const list = posts.data ?? [];
+  return (
+    <View style={{ gap: 8 }}>
+      <SectionHeader
+        title="Forum"
+        right={<TextButton label="See all" onPress={() => router.push('/forum')} />}
+      />
+      {list.length > 0 ? (
+        list.map((p) => <PostCard key={p.id} post={p} lines={2} />)
+      ) : (
+        <GlassCard radius={22} style={{ gap: 12, padding: 16 }}>
+          <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+            <Landmark size={18} color={colors.accent} strokeWidth={2} />
+            <Text style={[type.caption, { flex: 1 }]}>
+              {posts.isLoading
+                ? 'Loading…'
+                : posts.isError
+                  ? 'Could not load the Forum. Are you online?'
+                  : 'Share a workout after you finish it. Friends and your gym can comment and copy it.'}
+            </Text>
+          </View>
+        </GlassCard>
+      )}
     </View>
   );
 }

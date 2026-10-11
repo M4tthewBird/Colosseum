@@ -1,4 +1,5 @@
 /** Pages of the active workout: one exercise, or a superset of several on one card. */
+import { Fragment, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { FillButton, IconButton, TextButton } from '@/components/Buttons';
@@ -6,10 +7,13 @@ import { Glass, GlassCard } from '@/components/Glass';
 import { Info, Link, Unlink, X } from '@/components/icons';
 import { ExerciseImage } from '@/features/exercises/ExerciseImage';
 import { musclesLabel } from '@/features/exercises/ExercisePicker';
+import { dropChain, isMain, withDrops } from '@/lib/dropsets';
+import { isMachine } from '@/lib/exerciseName';
 import { formatKg, formatRest, formatScheme, roundHalf, type Best } from '@/lib/formulas';
 import { lastTimeSets } from '@/lib/stats';
 import { interleave, letter } from '@/lib/supersets';
-import type { Exercise, Session } from '@/lib/types';
+import type { Exercise, Session, SetEntry } from '@/lib/types';
+import { useData } from '@/stores/data';
 import { confirm } from '@/stores/ui';
 import type { PlannedExercise } from '@/stores/workout';
 import { accentA, colors, tabular, type } from '@/theme/tokens';
@@ -22,6 +26,9 @@ import {
   unlinkSuperset,
 } from './actions';
 import { ExerciseNote } from './ExerciseNote';
+import { MachineWeight } from './MachineWeight';
+import { NextSuggestion } from './NextSuggestion';
+import { SetMenu } from './SetMenu';
 import { SetHeader, SetRow } from './SetRow';
 
 interface PageProps {
@@ -45,7 +52,7 @@ async function askRemove(p: PlannedExercise, name: string) {
   if (ok) removeExercise(p.position);
 }
 
-function Records({ best }: { best?: Best }) {
+function Records({ best, machine }: { best?: Best; machine?: { id: string; name: string } }) {
   return (
     <View style={styles.records}>
       <Record
@@ -58,8 +65,18 @@ function Records({ best }: { best?: Best }) {
         value={best ? `≈ ${formatKg(roundHalf(best.e1rm))} kg` : '—'}
         hint="One-rep max PR"
       />
+      {machine ? <MachineWeight exerciseId={machine.id} name={machine.name} /> : null}
     </View>
   );
+}
+
+const SET_HINT = 'Tap a set number to add a drop set or mark failure.';
+
+/** Set menu title: "Set 2", "A2" or "Drop set". */
+function menuTitle(set: SetEntry | null, label?: (s: SetEntry) => string) {
+  if (!set) return '';
+  if (set.drop_of) return 'Drop set';
+  return label ? label(set) : `Set ${set.set_number}`;
 }
 
 /** One record: heaviest weight or best estimated one-rep max. */
@@ -87,9 +104,12 @@ export function ExercisePage({
 }: PageProps & { plan: PlannedExercise; onSuperset: (position: number) => void }) {
   const ex = exercises[p.exercise_id];
   const name = ex?.name ?? 'Exercise';
+  const hasMachineWeight = useData((s) => s.exercisePrefs[p.exercise_id]?.machine_kg != null);
+  const [menu, setMenu] = useState<SetEntry | null>(null);
   const sets = session.sets
     .filter((s) => s.exercise_position === p.position)
     .sort((a, b) => a.set_number - b.set_number);
+  const mains = sets.filter(isMain);
   const last = lastTimeSets(sessions, p.exercise_id, session.id);
   return (
     <>
@@ -113,21 +133,32 @@ export function ExercisePage({
             {scheme(p)}
           </Text>
         </View>
-        <Records best={bests[p.exercise_id]} />
+        <Records
+          best={bests[p.exercise_id]}
+          machine={isMachine(name) || hasMachineWeight ? { id: p.exercise_id, name } : undefined}
+        />
+        <NextSuggestion plan={p} name={name} session={session} sessions={sessions} />
       </GlassCard>
 
       <Glass radius={22} style={styles.table}>
         <SetHeader />
-        {sets.map((s, i) => (
-          <SetRow key={s.id} set={s} last={lastLabel(last[i])} />
+        {withDrops(sets).map(({ set, drops }, i) => (
+          <Fragment key={set.id}>
+            <SetRow set={set} last={lastLabel(last[i])} onMenu={setMenu} />
+            {drops.map((d) => (
+              <SetRow key={d.id} set={d} last="" onMenu={setMenu} />
+            ))}
+          </Fragment>
         ))}
         <View style={styles.tableActions}>
           <TextButton label="+ Add set" accent onPress={() => addSet(p.position)} />
-          {sets.length > 1 ? (
+          {mains.length > 1 ? (
             <TextButton label="Remove set" onPress={() => removeSet(p.position)} />
           ) : null}
         </View>
       </Glass>
+      <Text style={[type.small, { paddingHorizontal: 4 }]}>{SET_HINT}</Text>
+      <SetMenu set={menu} title={menuTitle(menu)} onClose={() => setMenu(null)} />
       <FillButton
         label="Make it a superset"
         icon={Link}
@@ -155,18 +186,18 @@ export function SupersetPage({
   onInfo,
   onSuperset,
 }: PageProps & { group: PlannedExercise[]; onSuperset: (position: number) => void }) {
+  const [menu, setMenu] = useState<SetEntry | null>(null);
   const positions = group.map((p) => p.position);
   const letterOf = new Map(positions.map((pos, i) => [pos, letter(i)]));
-  const sets = interleave(
-    session.sets.filter((s) => positions.includes(s.exercise_position)),
-    positions,
-  );
+  const all = session.sets.filter((s) => positions.includes(s.exercise_position));
+  const sets = interleave(all.filter(isMain), positions);
+  const labelOf = (s: SetEntry) => `${letterOf.get(s.exercise_position) ?? ''}${s.set_number}`;
   const lastBy = new Map(
     group.map((p) => [p.position, lastTimeSets(sessions, p.exercise_id, session.id)]),
   );
   const rounds = Math.max(
     0,
-    ...group.map((p) => session.sets.filter((s) => s.exercise_position === p.position).length),
+    ...group.map((p) => sets.filter((s) => s.exercise_position === p.position).length),
   );
   const id = group[0].superset;
   const first = exercises[group[0].exercise_id];
@@ -224,15 +255,17 @@ export function SupersetPage({
       <Glass radius={22} style={styles.table}>
         <SetHeader />
         {sets.map((s) => {
-          const l = letterOf.get(s.exercise_position) ?? '';
           const prev = lastBy.get(s.exercise_position)?.[s.set_number - 1];
           const roundEnd = s.exercise_position === positions[positions.length - 1];
           return (
             <View
               key={s.id}
-              style={roundEnd && s.set_number < rounds ? styles.roundGap : undefined}
+              style={[{ gap: 4 }, roundEnd && s.set_number < rounds ? styles.roundGap : undefined]}
             >
-              <SetRow set={s} last={lastLabel(prev)} label={`${l}${s.set_number}`} />
+              <SetRow set={s} last={lastLabel(prev)} label={labelOf(s)} onMenu={setMenu} />
+              {dropChain(all, s.id).map((d) => (
+                <SetRow key={d.id} set={d} last="" onMenu={setMenu} />
+              ))}
             </View>
           );
         })}
@@ -245,8 +278,9 @@ export function SupersetPage({
       </Glass>
       <Text style={[type.small, { paddingHorizontal: 4 }]}>
         Do one set of each, back to back. The rest timer starts after the last exercise of the
-        round.
+        round. {SET_HINT}
       </Text>
+      <SetMenu set={menu} title={menuTitle(menu, labelOf)} onClose={() => setMenu(null)} />
 
       <View style={{ flexDirection: 'row', gap: 8 }}>
         <FillButton

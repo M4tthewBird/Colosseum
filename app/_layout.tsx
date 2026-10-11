@@ -53,6 +53,8 @@ export default function RootLayout() {
               <Stack.Screen name="program/[id]" options={{ presentation: 'modal' }} />
               <Stack.Screen name="session/[id]" />
               <Stack.Screen name="user/[id]" />
+              <Stack.Screen name="forum/index" />
+              <Stack.Screen name="forum/[id]" />
             </Stack.Protected>
             <Stack.Protected guard={!signedIn}>
               <Stack.Screen name="(auth)" />

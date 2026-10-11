@@ -81,14 +81,15 @@ export interface Best {
  * Marks PRs within one session, in order. A set is a PR when it is done and its weight or
  * estimated 1RM beats every earlier completed set of that exercise (history + earlier sets in
  * this session). The first time an exercise is ever logged is not a PR: there must be history.
+ * Drop sets are never PRs.
  */
-export function markPRs<T extends SetLike & { exercise_id: string }>(
+export function markPRs<T extends SetLike & { exercise_id: string; drop_of?: string | null }>(
   sets: T[],
   history: Record<string, Best | undefined>,
 ): boolean[] {
   const running: Record<string, Best | undefined> = { ...history };
   return sets.map((s) => {
-    if (!s.done || s.reps <= 0) return false;
+    if (!s.done || s.reps <= 0 || s.drop_of) return false;
     const prev = running[s.exercise_id];
     const est = e1rm(s.weight_kg, s.reps);
     const isPr = !!prev && (s.weight_kg > prev.weight || est > prev.e1rm + 1e-9);

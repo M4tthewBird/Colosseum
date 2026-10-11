@@ -30,6 +30,14 @@ describe('exercise search', () => {
     expect(top('bayesain curl')[0]).toBe('Bayesian Cable Curl');
   });
 
+  it('finds machines by the names gyms use', () => {
+    expect(top('machine chest fly')[0]).toBe('Pec Deck');
+    expect(top('hackenschmidt')[0]).toBe('Hack Squat');
+    expect(top('seated leg curl')[0]).toBe('Leg Curl');
+    expect(top('machine row')).toContain('Machine Seated Row');
+    expect(top('lying leg curl')[0]).toBe('Lying Leg Curl');
+  });
+
   it('does not match unrelated names', () => {
     expect(matchScore('squat', 'Bench Press')).toBe(0);
     expect(matchScore('xyzxyz', 'Squat')).toBe(0);

@@ -15,6 +15,8 @@ export interface Profile {
   goals: Goal[];
   home_gym_id: string | null;
   avatar_url: string | null;
+  /** Opted in to the global leaderboard (everyone who opted in sees everyone who did). */
+  global_ranking?: boolean;
 }
 
 export interface ProfilePrivate {
@@ -89,7 +91,19 @@ export interface SetEntry {
   is_pr: boolean;
   /** Sets of exercises done as one superset share this id. */
   superset_id?: string | null;
+  /** A drop set: the set it follows right away (the main set or the previous drop). */
+  drop_of?: string | null;
+  /** Taken to muscular failure. */
+  failure?: boolean;
   updated_at: string;
+}
+
+/** How a workout felt, each 1 (bad) … 5 (great). */
+export interface Feel {
+  energy: number;
+  sleep: number;
+  pump: number;
+  joints: number;
 }
 
 export interface Session {
@@ -104,8 +118,21 @@ export interface Session {
   pr_count: number;
   /** Note per exercise in this workout, keyed by exercise_position. */
   notes?: Record<string, string>;
+  /** Effort of the whole workout, 1–10, rated after finishing. */
+  rpe?: number | null;
+  feel?: Feel | null;
   updated_at: string;
   sets: SetEntry[];
+}
+
+/** The user's own settings for one exercise. */
+export interface ExercisePref {
+  id: string;
+  user_id: string;
+  exercise_id: string;
+  /** Weight of the machine itself (sled, carriage, Smith bar). Shown as information only. */
+  machine_kg: number | null;
+  updated_at: string;
 }
 
 export interface BodyweightLog {

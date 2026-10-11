@@ -18,3 +18,10 @@ export function cleanExerciseName(raw: string): string {
     )
     .join(' ');
 }
+
+/** Machines whose own weight (sled, carriage, Smith bar) is worth knowing. */
+export function isMachine(name: string): boolean {
+  return /\b(machine|smith|sled|lever|hack|leg press|pendulum|pec deck|belt squat|v squat|t bar)\b/i.test(
+    name,
+  );
+}

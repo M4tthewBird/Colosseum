@@ -270,6 +270,7 @@ function loadDemo(
       }),
     ),
     measurements: Object.fromEntries(measurements.map((m) => [m.id, m])),
+    exercisePrefs: {},
   });
   useAuth.setState({ status: 'signedIn', userId });
 }

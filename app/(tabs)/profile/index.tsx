@@ -9,6 +9,7 @@ import { Glass } from '@/components/Glass';
 import { Header, Screen } from '@/components/Screen';
 import { Segmented } from '@/components/Segmented';
 import { BodyView } from '@/features/profile/BodyView';
+import { FeelTrend } from '@/features/profile/FeelTrend';
 import { LiftsView } from '@/features/profile/LiftsView';
 import { useGym } from '@/features/social/api';
 import { useFinishedSessions } from '@/features/training/hooks';
@@ -61,13 +62,16 @@ export default function Profile() {
       {tab === 'body' ? (
         <BodyView />
       ) : (
-        <LiftsView
-          sessions={sessions}
-          exercises={exercises}
-          onPressExercise={(id) =>
-            router.push({ pathname: '/profile/exercise/[id]', params: { id } })
-          }
-        />
+        <>
+          <FeelTrend sessions={sessions} />
+          <LiftsView
+            sessions={sessions}
+            exercises={exercises}
+            onPressExercise={(id) =>
+              router.push({ pathname: '/profile/exercise/[id]', params: { id } })
+            }
+          />
+        </>
       )}
     </Screen>
   );

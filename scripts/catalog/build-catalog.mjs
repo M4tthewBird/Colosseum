@@ -321,7 +321,95 @@ for (const e of dataset) {
   added.push(entry);
 }
 
-const catalog = [...curated, ...added.sort((a, b) => a.name.localeCompare(b.name))];
+added.sort((a, b) => a.name.localeCompare(b.name));
+
+// ---------------------------------------------------------------- machines
+// Gym machines under the names gyms use. `from` renames a dataset entry ("Lever …" is the
+// dataset's word for a machine) so its id and history are kept; without it the exercise is new.
+// Applied after the 2026-10-04 update, so that file stays as it was run.
+const MACHINES = [
+  {
+    name: 'Machine Seated Row',
+    from: 'Lever Seated Row',
+    muscles: ['back', 'upper back', 'biceps'],
+  },
+  { name: 'Machine High Row', from: 'Lever High Row', muscles: ['back', 'upper back', 'biceps'] },
+  { name: 'Machine Lat Pulldown', from: 'Lever Front Pulldown', muscles: ['back', 'biceps'] },
+  {
+    name: 'Machine Incline Chest Press',
+    from: 'Lever Incline Chest Press',
+    muscles: ['upper chest', 'triceps', 'shoulders'],
+  },
+  {
+    name: 'Machine Decline Chest Press',
+    from: 'Lever Decline Chest Press',
+    muscles: ['chest', 'triceps'],
+  },
+  { name: 'Machine Biceps Curl', from: 'Lever Bicep Curl', muscles: ['biceps'] },
+  { name: 'Machine Triceps Extension', from: 'Lever Triceps Extension', muscles: ['triceps'] },
+  { name: 'Lying Leg Curl', from: 'Lever Lying Leg Curl', muscles: ['hamstrings'] },
+  { name: 'Seated Calf Raise', from: 'Lever Seated Calf Raise', muscles: ['calves'] },
+  { name: 'Machine Hip Adduction', from: 'Lever Seated Hip Adduction', muscles: ['adductors'] },
+  { name: 'Machine Crunch', from: 'Lever Seated Crunch', muscles: ['core'] },
+  { name: 'Machine Shrug', from: 'Lever Shrug', muscles: ['traps'] },
+  { name: 'T Bar Row', from: 'Lever T Bar Row', muscles: ['back', 'upper back', 'biceps'] },
+  { name: 'Machine Pullover', from: 'Lever Pullover', muscles: ['back', 'chest'] },
+  {
+    name: 'Machine Back Extension',
+    from: 'Lever Back Extension',
+    muscles: ['lower back', 'glutes', 'hamstrings'],
+  },
+  {
+    name: 'Reverse Hyperextension',
+    from: 'Lever Reverse Hyperextension',
+    muscles: ['glutes', 'hamstrings', 'lower back'],
+  },
+  {
+    name: 'Machine Glute Kickback',
+    from: 'Lever Hip Extension',
+    muscles: ['glutes', 'hamstrings'],
+  },
+  {
+    name: 'Smith Machine Shoulder Press',
+    from: 'Smith Seated Shoulder Press',
+    muscles: ['shoulders', 'triceps'],
+  },
+  {
+    name: 'Smith Machine Row',
+    from: 'Smith Bent Over Row',
+    muscles: ['back', 'upper back', 'biceps'],
+  },
+  { name: 'Belt Squat', muscles: ['quads', 'glutes'] },
+  { name: 'V Squat', muscles: ['quads', 'glutes'] },
+  { name: 'Reverse Hack Squat', muscles: ['glutes', 'quads', 'hamstrings'] },
+  { name: 'Horizontal Leg Press', muscles: ['quads', 'glutes'] },
+  { name: 'Standing Leg Curl', muscles: ['hamstrings'] },
+  { name: 'Chest Supported T Bar Row', muscles: ['back', 'upper back', 'biceps'] },
+  { name: 'Smith Machine Romanian Deadlift', muscles: ['hamstrings', 'glutes'] },
+  { name: 'Smith Machine Calf Raise', muscles: ['calves'] },
+  { name: 'Assisted Dip', muscles: ['chest', 'triceps'] },
+];
+const machines = [];
+const machineRenames = [];
+for (const m of MACHINES) {
+  if (byKey.has(key(m.name))) throw new Error(`machine already in catalog: ${m.name}`);
+  const entry = { name: m.name, muscles: m.muscles, tier: null, core: true };
+  if (m.from) {
+    const i = added.findIndex((e) => e.name === m.from);
+    if (i < 0) throw new Error(`machine source not in dataset: ${m.from}`);
+    const [orig] = added.splice(i, 1);
+    byKey.delete(key(m.from));
+    machineRenames.push({ orig, ...entry });
+  }
+  byKey.set(key(m.name), entry);
+  machines.push(entry);
+}
+// The 2026-10-04 update as it was run, before the machine renames.
+const addedBefore = [...added, ...machineRenames.map((r) => r.orig)].sort((a, b) =>
+  a.name.localeCompare(b.name),
+);
+
+const catalog = [...curated, ...machines, ...added];
 
 // ---------------------------------------------------------------- outputs
 const sq = (s) => `'${s.replace(/'/g, "''")}'`;
@@ -380,7 +468,30 @@ ${curated
 insert into public.exercises (name, muscles, tier)
 select v.name, v.muscles::text[], v.tier
 from (values
-${added.map((e) => `  (${sq(e.name)}, '{${e.muscles.join(',')}}', null)`).join(',\n')}
+${addedBefore.map((e) => `  (${sq(e.name)}, '{${e.muscles.join(',')}}', null)`).join(',\n')}
+) as v(name, muscles, tier)
+where not exists (
+  select 1 from public.exercises e where e.created_by is null and lower(e.name) = lower(v.name)
+);
+`,
+);
+
+fs.writeFileSync(
+  path.join(root, 'supabase/updates/2026-10-11-machines.sql'),
+  `-- Run once in the SQL editor (after 2026-10-04-exercise-catalog.sql). Gym machines under the
+-- names gyms use. Renames keep ids, so programs and history are kept.
+
+${machineRenames
+  .map(
+    (e) =>
+      `update public.exercises set name = ${sq(e.name)}, muscles = '{${e.muscles.join(',')}}' where created_by is null and name = ${sq(e.orig.name)};`,
+  )
+  .join('\n')}
+
+insert into public.exercises (name, muscles, tier)
+select v.name, v.muscles::text[], v.tier
+from (values
+${machines.map((e) => `  (${sq(e.name)}, '{${e.muscles.join(',')}}', null)`).join(',\n')}
 ) as v(name, muscles, tier)
 where not exists (
   select 1 from public.exercises e where e.created_by is null and lower(e.name) = lower(v.name)
@@ -396,5 +507,5 @@ fs.writeFileSync(posesPath, JSON.stringify(renamed, null, 2) + '\n');
 
 fs.writeFileSync(path.join(here, 'merged.txt'), merged.join('\n') + '\n');
 console.log(
-  `catalog: ${catalog.length} (${curated.length} curated, ${curated.filter((e) => e.tier).length} with a tier, ${added.length} from the dataset; ${merged.length} dataset entries merged into curated ones, see merged.txt); ${renames.length} renames`,
+  `catalog: ${catalog.length} (${curated.length} curated, ${machines.length} machines (${machineRenames.length} renamed), ${curated.filter((e) => e.tier).length} with a tier, ${added.length} from the dataset; ${merged.length} dataset entries merged into curated ones, see merged.txt); ${renames.length} renames`,
 );

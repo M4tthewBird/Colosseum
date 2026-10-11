@@ -1,11 +1,15 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { Link, Trash2 } from '@/components/icons';
+import { Landmark, Link, Trash2 } from '@/components/icons';
+import { Fragment, useState } from 'react';
 import { Text, View } from 'react-native';
 
 import { BackLink } from '@/components/BackLink';
 import { FillButton } from '@/components/Buttons';
 import { Glass, GlassCard } from '@/components/Glass';
 import { Header, Screen } from '@/components/Screen';
+import { ShareSheet } from '@/features/forum/ForumViews';
+import { FeelRating } from '@/features/workout/FeelRating';
+import { dropChain, isMain } from '@/lib/dropsets';
 import { formatDuration, shortDate, weekdayName, isoWeekday } from '@/lib/dates';
 import { formatKg, formatVolume, volume } from '@/lib/formulas';
 import { interleave, letter } from '@/lib/supersets';
@@ -19,6 +23,7 @@ export default function SessionDetail() {
   const session = useData((s) => s.sessions[id]);
   const exercises = useData((s) => s.exercises);
   const deleteSession = useData((s) => s.deleteSession);
+  const [sharing, setSharing] = useState(false);
 
   if (!session) {
     return (
@@ -67,12 +72,9 @@ export default function SessionDetail() {
       {cards.map((card) => {
         const positions = card.map(([pos]) => pos);
         const isSuperset = card.length > 1;
-        const sets = isSuperset
-          ? interleave(
-              card.flatMap(([, list]) => list),
-              positions,
-            )
-          : card[0][1];
+        const all = card.flatMap(([, list]) => list);
+        const mains = all.filter(isMain);
+        const sets = isSuperset ? interleave(mains, positions) : mains;
         return (
           <Glass key={positions[0]} radius={22} style={{ padding: 16, gap: 8 }}>
             {isSuperset ? (
@@ -90,23 +92,42 @@ export default function SessionDetail() {
               </Text>
             ))}
             {sets.map((s) => (
-              <View key={s.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                <Text style={[type.caption, { width: 44 }]}>
-                  {isSuperset
-                    ? `${letter(positions.indexOf(s.exercise_position))}${s.set_number}`
-                    : `Set ${s.set_number}`}
-                </Text>
-                <Text style={[type.body, tabular, { flex: 1 }]}>
-                  {formatKg(s.weight_kg)} kg × {s.reps}
-                </Text>
-                {s.is_pr ? (
-                  <Text style={{ fontSize: 11, fontWeight: '700', color: colors.accent }}>PR</Text>
-                ) : null}
-              </View>
+              <Fragment key={s.id}>
+                {[s, ...dropChain(all, s.id)].map((x) => (
+                  <View key={x.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={[type.caption, { width: 56 }]}>
+                      {x.drop_of
+                        ? '  ↳ Drop'
+                        : isSuperset
+                          ? `${letter(positions.indexOf(x.exercise_position))}${x.set_number}`
+                          : `Set ${x.set_number}`}
+                    </Text>
+                    <Text style={[type.body, tabular, { flex: 1 }]}>
+                      {formatKg(x.weight_kg)} kg × {x.reps}
+                      {x.failure ? <Text style={type.small}> · to failure</Text> : null}
+                    </Text>
+                    {x.is_pr ? (
+                      <Text style={{ fontSize: 11, fontWeight: '700', color: colors.accent }}>
+                        PR
+                      </Text>
+                    ) : null}
+                  </View>
+                ))}
+              </Fragment>
             ))}
           </Glass>
         );
       })}
+
+      {session.finished_at ? (
+        <>
+          <FeelRating session={session} />
+          <FillButton label="Share on the Forum" icon={Landmark} onPress={() => setSharing(true)} />
+          {sharing ? (
+            <ShareSheet sessionId={session.id} visible onClose={() => setSharing(false)} />
+          ) : null}
+        </>
+      ) : null}
 
       <FillButton
         label="Delete workout"

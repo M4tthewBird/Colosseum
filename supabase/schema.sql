@@ -21,6 +21,7 @@ create table public.profiles (
   goals text[] not null default '{}',
   home_gym_id uuid references public.gyms(id) on delete set null,
   avatar_url text,
+  global_ranking boolean not null default false,  -- opted in to the global leaderboard
   created_at timestamptz not null default now()
 );
 
@@ -129,10 +130,31 @@ create table public.set_entries (
   done boolean not null default false,
   is_pr boolean not null default false,
   superset_id text,                             -- sets of exercises done as one superset share this id
+  drop_of uuid,                                 -- drop set: the set it follows (main set or previous drop)
+  failure boolean not null default false,       -- taken to muscular failure
   updated_at timestamptz not null default now()
 );
 create index on public.set_entries(session_id);
 create index on public.set_entries(exercise_id);
+
+-- How a workout felt, rated after finishing. Private (owner only), unlike the session itself.
+create table public.session_ratings (
+  session_id uuid primary key references public.workout_sessions(id) on delete cascade,
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  rpe smallint check (rpe between 1 and 10),    -- effort of the whole workout
+  feel jsonb,                                   -- {"energy","sleep","pump","joints"}: 1 (bad) … 5 (great)
+  updated_at timestamptz not null default now()
+);
+
+-- The user's own settings per exercise.
+create table public.exercise_prefs (
+  id uuid primary key,                          -- generated on the device
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  exercise_id uuid not null references public.exercises(id) on delete cascade,
+  machine_kg numeric(6,2) check (machine_kg >= 0),  -- weight of the machine itself, information only
+  updated_at timestamptz not null default now(),
+  unique (user_id, exercise_id)
+);
 
 -- ───────────────────────── Private body data ─────────────────────────
 create table public.profile_private (
@@ -194,6 +216,35 @@ create table public.session_comments (
   created_at timestamptz not null default now()
 );
 
+-- ───────────────────────── Forum ─────────────────────────
+-- Workouts shared with friends and the home gym, to comment on and copy.
+create table public.forum_posts (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  session_id uuid references public.workout_sessions(id) on delete set null,
+  title text not null check (length(title) between 1 and 80),
+  body text not null default '' check (length(body) <= 2000),
+  workout jsonb not null,                       -- snapshot of the exercises and sets (see src/features/forum)
+  created_at timestamptz not null default now()
+);
+create index forum_posts_created on public.forum_posts(created_at desc);
+
+create table public.forum_comments (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references public.forum_posts(id) on delete cascade,
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  body text not null check (length(body) between 1 and 500),
+  created_at timestamptz not null default now()
+);
+create index forum_comments_post on public.forum_comments(post_id, created_at);
+
+create table public.forum_likes (
+  post_id uuid not null references public.forum_posts(id) on delete cascade,
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (post_id, user_id)
+);
+
 -- ───────────────────────── Bests (PRs) ─────────────────────────
 create or replace view public.exercise_bests with (security_invoker = true) as
 select s.user_id, e.exercise_id,
@@ -219,22 +270,25 @@ language sql immutable as $$
   from (select least(greatest(p_bodyweight, 40), case when p_sex = 'female' then 150 else 210 end) as w) x;
 $$;
 
+-- p_scope: 'friends' | 'gym' | 'global' (only users who opted in, and only for a caller who did).
 -- p_metric: 'volume' | 'workouts' | <exercise uuid> (best e1RM, kg) | 'dots:<exercise uuid>' (best e1RM × DOTS).
 -- p_tz: the caller's IANA time zone, so "this week" starts on the local Monday.
--- Bodyweight is read only for DOTS (latest log) and is never returned, only the score.
+-- Bodyweight is read only for DOTS (latest log) and is never returned. Other users' DOTS scores are
+-- not returned either (only their rank), since next to the kg board they would give bodyweight away.
 create or replace function public.get_leaderboard(p_scope text, p_metric text, p_period text, p_tz text default 'UTC')
 returns table (rank bigint, user_id uuid, username text, display_name text, avatar_url text, value numeric)
 language sql stable security definer set search_path = public as $$
-  with me as (select id, home_gym_id from profiles where id = auth.uid()),
+  with me as (select id, home_gym_id, global_ranking from profiles where id = auth.uid()),
   metric as (
     select p_metric like 'dots:%' as dots,
            case when p_metric like 'dots:%' then substr(p_metric, 6) else p_metric end as key
   ),
   members as (
     select p.id from profiles p, me
-    where p.id = me.id
+    where (p_scope <> 'global' and p.id = me.id)
        or (p_scope = 'friends' and is_friend(me.id, p.id))
        or (p_scope = 'gym' and p.home_gym_id is not null and p.home_gym_id = me.home_gym_id)
+       or (p_scope = 'global' and me.global_ranking and p.global_ranking)
   ),
   since as (
     select case p_period
@@ -268,10 +322,14 @@ language sql stable security definer set search_path = public as $$
         else v.value end as value
     from vals v
   )
-  select rank() over (order by v.value desc nulls last), p.id, p.username, p.display_name, p.avatar_url, round(v.value, 1)
+  -- DOTS scores of others are ranked but not returned: next to the kg board they would give
+  -- away bodyweight. The caller sees their own score.
+  select rank() over (order by v.value desc nulls last), p.id, p.username, p.display_name, p.avatar_url,
+         case when (select dots from metric) and p.id <> auth.uid() then null else round(v.value, 1) end
   from scored v join profiles p on p.id = v.user_id
   where v.value is not null
-  order by 1;
+  order by 1
+  limit 500;
 $$;
 
 -- ───────────────────────── Row level security ─────────────────────────
@@ -291,6 +349,11 @@ alter table public.gym_checkins enable row level security;
 alter table public.gym_challenges enable row level security;
 alter table public.session_likes enable row level security;
 alter table public.session_comments enable row level security;
+alter table public.exercise_prefs enable row level security;
+alter table public.session_ratings enable row level security;
+alter table public.forum_posts enable row level security;
+alter table public.forum_comments enable row level security;
+alter table public.forum_likes enable row level security;
 
 create policy "gyms read"   on public.gyms for select to anon, authenticated using (true);  -- onboarding picks a gym before sign-up
 create policy "gyms insert" on public.gyms for insert to authenticated with check (created_by = auth.uid());
@@ -348,6 +411,30 @@ create policy "likes write" on public.session_likes for all to authenticated usi
 create policy "comments read"  on public.session_comments for select to authenticated
   using (exists (select 1 from workout_sessions s where s.id = session_id and public.can_view_user(s.user_id)));
 create policy "comments write" on public.session_comments for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+create policy "session ratings owner" on public.session_ratings for all to authenticated
+  using (user_id = auth.uid())
+  with check (user_id = auth.uid() and exists (
+    select 1 from public.workout_sessions s where s.id = session_id and s.user_id = auth.uid()));
+
+create policy "exercise prefs owner" on public.exercise_prefs for all to authenticated
+  using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+create policy "forum posts read"   on public.forum_posts for select to authenticated using (public.can_view_user(user_id));
+create policy "forum posts write"  on public.forum_posts for insert to authenticated
+  with check (user_id = auth.uid() and (session_id is null or exists (
+    select 1 from public.workout_sessions s where s.id = session_id and s.user_id = auth.uid())));
+create policy "forum posts delete" on public.forum_posts for delete to authenticated using (user_id = auth.uid());
+create policy "forum comments read"  on public.forum_comments for select to authenticated
+  using (exists (select 1 from forum_posts p where p.id = post_id and public.can_view_user(p.user_id)));
+create policy "forum comments write" on public.forum_comments for all to authenticated
+  using (user_id = auth.uid())
+  with check (user_id = auth.uid() and exists (select 1 from forum_posts p where p.id = post_id and public.can_view_user(p.user_id)));
+create policy "forum likes read"  on public.forum_likes for select to authenticated
+  using (exists (select 1 from forum_posts p where p.id = post_id and public.can_view_user(p.user_id)));
+create policy "forum likes write" on public.forum_likes for all to authenticated
+  using (user_id = auth.uid())
+  with check (user_id = auth.uid() and exists (select 1 from forum_posts p where p.id = post_id and public.can_view_user(p.user_id)));
 
 
 -- ───────────────────────── App functions ─────────────────────────

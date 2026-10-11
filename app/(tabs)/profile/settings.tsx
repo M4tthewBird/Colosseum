@@ -7,6 +7,7 @@ import { BackLink } from '@/components/BackLink';
 import { FillButton } from '@/components/Buttons';
 import { FieldHint, FormField, FormGroup, FormRow } from '@/components/Form';
 import { Header, Screen } from '@/components/Screen';
+import { Segmented } from '@/components/Segmented';
 import { deleteAccount, signOut } from '@/features/auth/auth';
 import { GymPicker, type GymChoice } from '@/features/gyms/GymPicker';
 import { pickImage, uploadAvatar } from '@/features/profile/avatar';
@@ -128,6 +129,25 @@ export default function Settings() {
         onChange={(experience) => setDraft({ ...draft, experience })}
       />
       <GoalsPicker value={draft.goals} onChange={(goals) => setDraft({ ...draft, goals })} />
+
+      <View style={{ gap: 6 }}>
+        <FormGroup>
+          <FormRow label="Global leaderboard">
+            <Segmented
+              compact
+              height={30}
+              options={[
+                { value: 'off', label: 'Off' },
+                { value: 'on', label: 'On' },
+              ]}
+              value={draft.global_ranking ? 'on' : 'off'}
+              onChange={(v) => setDraft({ ...draft, global_ranking: v === 'on' })}
+              accessibilityLabel="Global leaderboard"
+            />
+          </FormRow>
+        </FormGroup>
+        <FieldHint text="On: everyone who joined sees your name, photo and ranked numbers in Arena → Global. Bodyweight is never shown." />
+      </View>
 
       {error ? <FieldHint text={error} error /> : null}
       <FillButton label="Save changes" onPress={save} disabled={!dirty || busy} loading={busy} />

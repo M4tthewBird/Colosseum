@@ -20,16 +20,19 @@ import { FillButton } from '@/components/Buttons';
 import { ProgressRing, ScreenGlow } from '@/components/Charts';
 import { FormField, FormGroup } from '@/components/Form';
 import { Glass, GlassCard } from '@/components/Glass';
-import { BookmarkPlus, Check, Flame, TrendingUp } from '@/components/icons';
+import { BookmarkPlus, Check, Flame, Landmark, TrendingUp } from '@/components/icons';
 import { Separator } from '@/components/List';
 import { LogoMark } from '@/components/Logo';
 import { MAX_WIDTH, useTopPadding } from '@/components/Screen';
 import { Sheet } from '@/components/Sheet';
+import { ShareSheet } from '@/features/forum/ForumViews';
 import { isSavedWorkout } from '@/features/programs/ops';
 import { useActiveProgram } from '@/features/training/hooks';
 import { formatDuration, isoWeekday, shortDate, weekdayName } from '@/lib/dates';
 import { formatKg, formatVolume, roundHalf } from '@/lib/formulas';
 import { weeklyTarget } from '@/lib/programs';
+import { deloadAdvice } from '@/lib/progression';
+import { finished } from '@/lib/stats';
 import { buildSummary, percentChange, setsLine } from '@/lib/summary';
 import { useTween } from '@/lib/useTween';
 import { useData } from '@/stores/data';
@@ -37,6 +40,10 @@ import { toast, useUi } from '@/stores/ui';
 import { dur, ease, easeIn, useReducedMotion } from '@/theme/motion';
 import { accentA, colors, tabular, type } from '@/theme/tokens';
 import { saveSessionAsWorkout } from './actions';
+import { FeelRating } from './FeelRating';
+
+/** "Upper", "full body" — as it reads inside a sentence. */
+const kindLabel = (k: string | null) => (k === 'Full body' ? 'full body' : (k ?? ''));
 
 const enter = (i: number, reduced: boolean) =>
   reduced ? undefined : FadeInDown.delay(250 + i * 90).duration(dur.layout + 80);
@@ -51,13 +58,23 @@ export function WorkoutSummary({ sessionId }: { sessionId: string }) {
   const program = useActiveProgram();
   const session = sessions[sessionId];
   const [saving, setSaving] = useState(false);
+  const [sharing, setSharing] = useState(false);
   // The last set's PR toast would cover the laurel; the summary tells the story now.
   useEffect(() => useUi.getState().hideToast(), []);
 
   const sum = useMemo(
-    () => (session ? buildSummary(session, Object.values(sessions), weeklyTarget(program)) : null),
-    [session, sessions, program],
+    () =>
+      session
+        ? buildSummary(
+            session,
+            Object.values(sessions),
+            weeklyTarget(program),
+            (id) => exercises[id]?.muscles ?? [],
+          )
+        : null,
+    [session, sessions, program, exercises],
   );
+  const deload = useMemo(() => deloadAdvice(finished(Object.values(sessions))), [sessions]);
   const fromSaved = useMemo(
     () =>
       !!session?.program_day_id &&
@@ -111,17 +128,50 @@ export function WorkoutSummary({ sessionId }: { sessionId: string }) {
                   <Text style={styles.strong}>
                     {percentChange(sum.volumeKg, sum.previous.volumeKg)}
                   </Text>{' '}
-                  vs last {session.name} ({shortDate(new Date(sum.previous.date))}){' · '}
+                  {sum.previous.match === 'same'
+                    ? `vs last ${sum.previous.name} (${shortDate(new Date(sum.previous.date))})`
+                    : `vs your last ${kindLabel(sum.kind)} workout (${sum.previous.name}, ${shortDate(new Date(sum.previous.date))})`}
+                  {' · '}
                   {formatDuration(sum.durationMs)} vs {formatDuration(sum.previous.durationMs)}
                 </Text>
               </View>
             ) : (
               <Text style={type.small}>
-                First time doing this workout. Next time you can beat it.
+                {sum.kind
+                  ? `Your first ${kindLabel(sum.kind)} workout here. Next time it has something to beat.`
+                  : 'First time doing this workout. Next time you can beat it.'}
               </Text>
             )}
+            {sum.failures || sum.drops ? (
+              <Text style={type.small}>
+                {[
+                  sum.failures
+                    ? `${sum.failures} set${sum.failures === 1 ? '' : 's'} to failure`
+                    : '',
+                  sum.drops ? `${sum.drops} drop set${sum.drops === 1 ? '' : 's'}` : '',
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </Text>
+            ) : null}
           </GlassCard>
         </Animated.View>
+
+        <Animated.View entering={enter(i++, reduced)}>
+          <FeelRating session={session} />
+        </Animated.View>
+
+        {deload ? (
+          <Animated.View entering={enter(i++, reduced)}>
+            <Glass radius={22} style={[styles.card, { gap: 4 }]}>
+              <Text style={type.bodyStrong}>Time for a lighter week?</Text>
+              <Text style={type.small}>
+                Your last {deload.hard} workouts were hard. Next week, keep the weights, do about
+                half the sets and stop well short of failure.
+              </Text>
+            </Glass>
+          </Animated.View>
+        ) : null}
 
         {prCount > 0 ? (
           <Animated.View entering={enter(i++, reduced)}>
@@ -164,9 +214,7 @@ export function WorkoutSummary({ sessionId }: { sessionId: string }) {
                 <View style={styles.exRow}>
                   <View style={{ flex: 1, gap: 2 }}>
                     <View style={styles.exTitle}>
-                      {e.superset ? (
-                        <Text style={styles.ssTag}>Superset {e.superset}</Text>
-                      ) : null}
+                      {e.superset ? <Text style={styles.ssTag}>Superset {e.superset}</Text> : null}
                       <Text style={[type.bodyStrong, { flexShrink: 1 }]} numberOfLines={1}>
                         {name(e.exerciseId)}
                       </Text>
@@ -220,6 +268,7 @@ export function WorkoutSummary({ sessionId }: { sessionId: string }) {
 
         <Animated.View entering={enter(i++, reduced)} style={{ gap: 10 }}>
           <FillButton label="Done" ready onPress={() => router.replace('/')} />
+          <FillButton label="Share on the Forum" icon={Landmark} onPress={() => setSharing(true)} />
           {!fromSaved ? (
             <FillButton
               label="Save as a workout"
@@ -232,6 +281,9 @@ export function WorkoutSummary({ sessionId }: { sessionId: string }) {
           </Text>
         </Animated.View>
       </ScrollView>
+      {sharing ? (
+        <ShareSheet sessionId={session.id} visible onClose={() => setSharing(false)} />
+      ) : null}
       <SaveSheet
         visible={saving}
         initialName={session.name}

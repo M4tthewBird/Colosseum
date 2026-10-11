@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
 });
 
 /** The like heart gives a quick squeeze-and-swell when you like a workout. */
-function LikeHeart({ liked }: { liked: boolean }) {
+export function LikeHeart({ liked }: { liked: boolean }) {
   const reduced = useReducedMotion();
   const scale = useSharedValue(1);
   const was = useRef(liked);

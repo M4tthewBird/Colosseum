@@ -1,8 +1,10 @@
 /** Numbers for the post-workout summary. Pure — covered by summary.test.ts. */
+import { isMain } from './dropsets';
 import { e1rm, formatKg, prKinds, volume, weekStreak, type Best, type PrKinds } from './formulas';
 import { finished, historyBests } from './stats';
 import { supersetLetters } from './supersets';
 import type { Session, SetEntry } from './types';
+import { comparableWorkout, type WorkoutKind } from './workoutType';
 
 export interface ExerciseLine {
   exerciseId: string;
@@ -11,6 +13,8 @@ export interface ExerciseLine {
   top: { weight: number; reps: number; e1rm: number };
   /** "A", "B"… when the exercise was done in a superset. */
   superset: string | null;
+  drops: number;
+  failures: number;
 }
 
 export interface PrLine {
@@ -30,8 +34,22 @@ export interface WorkoutSummary {
   reps: number;
   exercises: ExerciseLine[];
   prs: PrLine[];
-  /** Same workout last time (same program day, or same name). */
-  previous: { volumeKg: number; durationMs: number; date: string } | null;
+  /** Sets taken to failure and drop sets. */
+  failures: number;
+  drops: number;
+  /** What kind of workout this was, read from the muscles (Push, Legs, Upper…). */
+  kind: WorkoutKind | null;
+  /**
+   * The last comparable workout: the same program day (or name), otherwise the same kind of
+   * workout with similar muscles, so a leg day is never compared with an arm day.
+   */
+  previous: {
+    volumeKg: number;
+    durationMs: number;
+    date: string;
+    name: string;
+    match: 'same' | 'similar';
+  } | null;
   week: { done: number; target: number; streak: number };
 }
 
@@ -42,6 +60,7 @@ export function buildSummary(
   session: Session,
   all: Session[],
   weeklyTarget: number,
+  musclesOf: (exerciseId: string) => string[] = () => [],
 ): WorkoutSummary {
   const done = session.sets
     .filter((x) => x.done)
@@ -58,7 +77,15 @@ export function buildSummary(
       },
       { weight: 0, reps: 0, e1rm: 0 },
     );
-    return { exerciseId: sets[0].exercise_id, sets, volumeKg: volume(sets), top, superset: null };
+    return {
+      exerciseId: sets[0].exercise_id,
+      sets,
+      volumeKg: volume(sets),
+      top,
+      superset: null,
+      drops: sets.filter((s) => !isMain(s)).length,
+      failures: sets.filter((s) => s.failure).length,
+    };
   });
   const letters = supersetLetters(exercises.map((e) => ({ superset: e.sets[0].superset_id })));
   exercises.forEach((e, i) => (e.superset = letters[i]));
@@ -99,14 +126,10 @@ export function buildSummary(
   }
 
   const earlier = finished(all).filter(
-    (s) =>
-      s.id !== session.id &&
-      s.started_at < session.started_at &&
-      (session.program_day_id
-        ? s.program_day_id === session.program_day_id
-        : s.name === session.name),
+    (s) => s.id !== session.id && s.started_at < session.started_at,
   );
-  const prev = earlier[0];
+  const comparable = comparableWorkout({ ...session, sets: done }, earlier, musclesOf);
+  const prev = comparable?.session;
 
   const dates = finished(all).map((s) => new Date(s.started_at));
   if (!all.some((s) => s.id === session.id && s.finished_at))
@@ -125,11 +148,16 @@ export function buildSummary(
     reps: done.reduce((n, s) => n + s.reps, 0),
     exercises,
     prs,
+    failures: done.filter((s) => s.failure).length,
+    drops: done.filter((s) => !isMain(s)).length,
+    kind: comparable?.kind ?? null,
     previous: prev
       ? {
           volumeKg: prev.volume_kg || volume(prev.sets),
           durationMs: duration(prev),
           date: prev.started_at,
+          name: prev.name,
+          match: comparable.match,
         }
       : null,
     week: {
@@ -140,11 +168,17 @@ export function buildSummary(
   };
 }
 
-/** "100 × 8, 100 × 7, 97.5 × 8" (same weight collapsed: "100 kg: 8, 7, 6"). */
-export function setsLine(sets: SetEntry[]): string {
+/**
+ * "100 × 8, 100 × 7, 97.5 × 8" (same weight collapsed: "100 kg × 8, 7, 6"), then
+ * "· 2 drop sets" when there were any.
+ */
+export function setsLine(all: SetEntry[]): string {
+  const sets = all.filter(isMain);
+  const drops = all.length - sets.length;
+  const tail = drops ? ` · ${drops} drop set${drops === 1 ? '' : 's'}` : '';
   if (sets.length && sets.every((s) => s.weight_kg === sets[0].weight_kg))
-    return `${formatKg(sets[0].weight_kg)} kg × ${sets.map((s) => s.reps).join(', ')}`;
-  return sets.map((s) => `${formatKg(s.weight_kg)} × ${s.reps}`).join(', ');
+    return `${formatKg(sets[0].weight_kg)} kg × ${sets.map((s) => s.reps).join(', ')}${tail}`;
+  return sets.map((s) => `${formatKg(s.weight_kg)} × ${s.reps}`).join(', ') + tail;
 }
 
 /** "+12 %" / "−3 %" / "same" */

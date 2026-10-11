@@ -3,13 +3,14 @@ import { router } from 'expo-router';
 import { Platform, Vibration } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
+import { chainIds, dropChain, dropWeight, isMain } from '@/lib/dropsets';
 import { bestsByExercise, markPRs, prCount, prKinds, prLabel, volume } from '@/lib/formulas';
 import { phaseFor, phasedSets } from '@/lib/periodization';
 import { programWeek } from '@/lib/programs';
 import { primaryGoal, recommend } from '@/lib/repRanges';
 import { historyBests, lastTimeSets } from '@/lib/stats';
 import { groupIndexOf, groupPlan, roundComplete } from '@/lib/supersets';
-import type { ProgramDay, Session, SetEntry } from '@/lib/types';
+import type { Feel, ProgramDay, Session, SetEntry } from '@/lib/types';
 import { nowIso, uuid } from '@/lib/uuid';
 import { useData } from '@/stores/data';
 import { toast } from '@/stores/ui';
@@ -140,8 +141,14 @@ export function toggleSet(setId: string) {
   const sets = put({ ...s, sets: s.sets.map((x) => (x.id === setId ? { ...x, done } : x)) });
   if (!done) return;
   feedback(false);
-  // In a superset the rest starts only once every exercise of the round is done.
   const w = useWorkout.getState();
+  // A drop set follows right away: the rest starts after the last drop.
+  const main = mainOf(sets, target);
+  if (dropChain(sets, main.id).some((x) => !x.done) || (!isMain(target) && !main.done)) {
+    w.stopRest();
+    return;
+  }
+  // In a superset the rest starts only once every exercise of the round is done.
   const group =
     groupPlan(w.plan).find((g) => g.some((p) => p.position === target.exercise_position)) ?? [];
   const positions = group.map((p) => p.position);
@@ -155,6 +162,71 @@ export function toggleSet(setId: string) {
     feedback(true);
     toast(prLabel(after.weight_kg, after.reps, setPrKinds(s.id, sets, after)), true);
   }
+}
+
+/** The main set of a set's drop chain (the set itself when it is a main set). */
+function mainOf(sets: SetEntry[], set: SetEntry): SetEntry {
+  let cur = set;
+  for (let i = 0; cur.drop_of && i < 20; i++) {
+    const parent = sets.find((x) => x.id === cur.drop_of);
+    if (!parent) break;
+    cur = parent;
+  }
+  return cur;
+}
+
+/** Adds a drop set after a set's chain: about 20 % lighter, same reps to aim for. */
+export function addDropSet(setId: string) {
+  const s = session();
+  if (!s) return;
+  const target = s.sets.find((x) => x.id === setId);
+  if (!target) return;
+  const main = mainOf(s.sets, target);
+  const chain = dropChain(s.sets, main.id);
+  const after = chain[chain.length - 1] ?? main;
+  put({
+    ...s,
+    sets: [
+      ...s.sets,
+      {
+        ...after,
+        id: uuid(),
+        set_number: main.set_number,
+        weight_kg: dropWeight(after.weight_kg),
+        done: false,
+        is_pr: false,
+        failure: false,
+        drop_of: after.id,
+        updated_at: nowIso(),
+      },
+    ],
+  });
+}
+
+/** Removes a drop set and the drops after it. */
+export function removeDropSet(setId: string) {
+  const s = session();
+  if (!s) return;
+  const remove = new Set(chainIds(s.sets, setId));
+  put({ ...s, sets: s.sets.filter((x) => !remove.has(x.id)) });
+}
+
+export function toggleFailure(setId: string) {
+  const s = session();
+  if (!s) return;
+  put({ ...s, sets: s.sets.map((x) => (x.id === setId ? { ...x, failure: !x.failure } : x)) });
+}
+
+/** Sets the weight of every main set of an exercise that is not done yet. */
+export function applyWeight(position: number, weightKg: number) {
+  const s = session();
+  if (!s) return;
+  put({
+    ...s,
+    sets: s.sets.map((x) =>
+      x.exercise_position === position && isMain(x) && !x.done ? { ...x, weight_kg: weightKg } : x,
+    ),
+  });
 }
 
 /** Kind of PR for one set: against history plus the earlier done sets of this workout. */
@@ -187,10 +259,17 @@ export function setNote(position: number, text: string) {
   useData.getState().putSession({ ...s, notes });
 }
 
+/** Main sets of one exercise in order. */
+function mainSets(s: Session, position: number): SetEntry[] {
+  return s.sets
+    .filter((x) => x.exercise_position === position && isMain(x))
+    .sort((a, b) => a.set_number - b.set_number);
+}
+
 export function addSet(position: number) {
   const s = session();
   if (!s) return;
-  const sets = s.sets.filter((x) => x.exercise_position === position);
+  const sets = mainSets(s, position);
   const last = sets[sets.length - 1];
   if (!last) return;
   put({
@@ -203,19 +282,21 @@ export function addSet(position: number) {
         set_number: last.set_number + 1,
         done: false,
         is_pr: false,
+        failure: false,
         updated_at: nowIso(),
       },
     ],
   });
 }
 
+/** Removes the last set of an exercise with its drop sets. */
 export function removeSet(position: number) {
   const s = session();
   if (!s) return;
-  const sets = s.sets.filter((x) => x.exercise_position === position);
+  const sets = mainSets(s, position);
   if (sets.length <= 1) return;
-  const last = sets[sets.length - 1];
-  put({ ...s, sets: s.sets.filter((x) => x.id !== last.id) });
+  const remove = new Set(chainIds(s.sets, sets[sets.length - 1].id));
+  put({ ...s, sets: s.sets.filter((x) => !remove.has(x.id)) });
 }
 
 export function addExercise(exerciseId: string) {
@@ -339,11 +420,17 @@ export interface Summary {
   prs: number;
 }
 
-/** Marks the session finished. Sets that were not done are dropped. */
+/** Marks the session finished. Sets that were not done are dropped (with their drop sets). */
 export function finishWorkout(): Summary | null {
   const s = session();
   if (!s) return null;
-  const done = s.sets.filter((x) => x.done);
+  const done = s.sets.filter((x) => x.done && isMain(x));
+  for (const m of [...done]) {
+    for (const d of dropChain(s.sets, m.id)) {
+      if (!d.done) break;
+      done.push(d);
+    }
+  }
   const finishedAt = nowIso();
   const next: Session = {
     ...s,
@@ -377,7 +464,7 @@ export function saveSessionAsWorkout(sessionId: string, name: string): string | 
   const s = sessions[sessionId];
   if (!s) return null;
   const byPos = new Map<number, SetEntry[]>();
-  for (const x of s.sets.filter((x) => x.done))
+  for (const x of s.sets.filter((x) => x.done && isMain(x)))
     byPos.set(x.exercise_position, [...(byPos.get(x.exercise_position) ?? []), x]);
   const now = nowIso();
   const id = uuid();
@@ -423,6 +510,13 @@ export function saveSessionAsWorkout(sessionId: string, name: string): string | 
     ],
   });
   return id;
+}
+
+/** How a finished workout felt: effort 1–10 and feel ratings. */
+export function rateWorkout(sessionId: string, patch: { rpe?: number | null; feel?: Feel | null }) {
+  const s = useData.getState().sessions[sessionId];
+  if (!s) return;
+  useData.getState().putSession({ ...s, ...patch });
 }
 
 export function discardWorkout() {

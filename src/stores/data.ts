@@ -12,6 +12,7 @@ import type {
   BodyMeasurement,
   BodyweightLog,
   Exercise,
+  ExercisePref,
   MeasurementKey,
   Profile,
   ProfilePrivate,
@@ -19,7 +20,7 @@ import type {
   Session,
   SetEntry,
 } from '@/lib/types';
-import { nowIso, uuid } from '@/lib/uuid';
+import { nowIso, stableUuid, uuid } from '@/lib/uuid';
 import { useQueue, type QueueItem } from './queue';
 
 type Enq = Omit<QueueItem, 'key'>;
@@ -33,6 +34,8 @@ export interface Snapshot {
   sessions: Record<string, Session>;
   bodyweights: Record<string, BodyweightLog>;
   measurements: Record<string, BodyMeasurement>;
+  /** Keyed by exercise id. */
+  exercisePrefs: Record<string, ExercisePref>;
 }
 
 interface DataState extends Snapshot {
@@ -49,6 +52,7 @@ interface DataState extends Snapshot {
   deleteSession: (id: string) => void;
   logBodyweight: (kg: number, date?: Date) => void;
   logMeasurements: (values: Partial<Record<MeasurementKey, number>>, date?: Date) => void;
+  setMachineWeight: (exerciseId: string, kg: number | null) => void;
 }
 
 const empty: Snapshot = {
@@ -60,6 +64,7 @@ const empty: Snapshot = {
   sessions: {},
   bodyweights: {},
   measurements: {},
+  exercisePrefs: {},
 };
 
 function enqueue(items: Enq[]) {
@@ -86,8 +91,9 @@ export function programRows(p: Program): Enq[] {
   return out;
 }
 
+/** The shared session row. How it felt goes to the private session_ratings table instead. */
 function sessionRow(s: Session): Record<string, unknown> {
-  const { sets: _sets, ...row } = s;
+  const { sets: _sets, rpe: _rpe, feel: _feel, ...row } = s;
   return row;
 }
 
@@ -101,7 +107,9 @@ function setChanged(a: SetEntry | undefined, b: SetEntry): boolean {
     a.set_number !== b.set_number ||
     a.exercise_position !== b.exercise_position ||
     a.exercise_id !== b.exercise_id ||
-    (a.superset_id ?? null) !== (b.superset_id ?? null)
+    (a.superset_id ?? null) !== (b.superset_id ?? null) ||
+    (a.drop_of ?? null) !== (b.drop_of ?? null) ||
+    !!a.failure !== !!b.failure
   );
 }
 
@@ -112,7 +120,7 @@ export const useData = create<DataState>()(
       hydrated: false,
 
       reset: () => set({ ...empty }),
-      load: (s) => set({ ...s }),
+      load: (s) => set({ ...s, exercisePrefs: s.exercisePrefs ?? {} }),
 
       saveProfile: (p) => {
         set({ profile: p });
@@ -201,6 +209,22 @@ export const useData = create<DataState>()(
         const s: Session = { ...next, sets, updated_at: now };
         // The session row goes first so its sets never reference a missing session.
         ops.unshift({ table: 'workout_sessions', op: 'upsert', id: s.id, row: sessionRow(s) });
+        if (
+          (prev?.rpe ?? null) !== (s.rpe ?? null) ||
+          JSON.stringify(prev?.feel ?? null) !== JSON.stringify(s.feel ?? null)
+        )
+          ops.push({
+            table: 'session_ratings',
+            op: 'upsert',
+            id: s.id,
+            row: {
+              session_id: s.id,
+              user_id: s.user_id,
+              rpe: s.rpe ?? null,
+              feel: s.feel ?? null,
+              updated_at: now,
+            },
+          });
         set((st) => ({ sessions: { ...st.sessions, [s.id]: s } }));
         enqueue(ops);
       },
@@ -250,6 +274,21 @@ export const useData = create<DataState>()(
         set((s) => ({ measurements: { ...s.measurements, [row.id]: row } }));
         enqueue([{ table: 'body_measurements', op: 'upsert', id: row.id, row: { ...row } }]);
       },
+
+      setMachineWeight: (exerciseId, kg) => {
+        const { userId } = get();
+        const row: ExercisePref = {
+          // One row per user and exercise: every device computes the same id, so setting it on
+          // two devices offline syncs as an update instead of a unique-key conflict.
+          id: stableUuid(`exercise-pref:${userId}:${exerciseId}`),
+          user_id: userId,
+          exercise_id: exerciseId,
+          machine_kg: kg,
+          updated_at: nowIso(),
+        };
+        set((s) => ({ exercisePrefs: { ...s.exercisePrefs, [exerciseId]: row } }));
+        enqueue([{ table: 'exercise_prefs', op: 'upsert', id: row.id, row: { ...row } }]);
+      },
     }),
     {
       name: 'colosseum-data',
@@ -263,6 +302,7 @@ export const useData = create<DataState>()(
         sessions: s.sessions,
         bodyweights: s.bodyweights,
         measurements: s.measurements,
+        exercisePrefs: s.exercisePrefs,
       }),
       onRehydrateStorage: () => () => {
         useData.setState({ hydrated: true });

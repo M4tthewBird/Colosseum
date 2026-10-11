@@ -15,7 +15,7 @@ export function historyBests(sessions: Session[], excludeId?: string): Record<st
   return bestsByExercise(sets);
 }
 
-/** Sets of this exercise from the most recent finished session that has it. */
+/** Main sets (no drop sets) of this exercise from the most recent finished session that has it. */
 export function lastTimeSets(
   sessions: Session[],
   exerciseId: string,
@@ -25,7 +25,7 @@ export function lastTimeSets(
   for (const s of list) {
     if (s.id === excludeId) continue;
     const sets = s.sets
-      .filter((x) => x.exercise_id === exerciseId && x.done)
+      .filter((x) => x.exercise_id === exerciseId && x.done && !x.drop_of)
       .sort((a, b) => a.set_number - b.set_number);
     if (sets.length) return sets;
   }

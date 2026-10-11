@@ -7,6 +7,7 @@ import type {
   BodyMeasurement,
   BodyweightLog,
   Exercise,
+  ExercisePref,
   Profile,
   ProfilePrivate,
   Program,
@@ -92,6 +93,8 @@ export async function pullAll(userId: string): Promise<void> {
     sets,
     bodyweights,
     measurements,
+    exercisePrefs,
+    ratings,
   ] = await Promise.all([
     all<Profile>(supabase.from('profiles').select('*').eq('id', userId)),
     all<ProfilePrivate>(supabase.from('profile_private').select('*').eq('user_id', userId)),
@@ -118,7 +121,15 @@ export async function pullAll(userId: string): Promise<void> {
     ),
     all<BodyweightLog>(supabase.from('bodyweight_logs').select('*').eq('user_id', userId)),
     all<BodyMeasurement>(supabase.from('body_measurements').select('*').eq('user_id', userId)),
+    // Optional until 2026-10-11-feel-dropsets-forum.sql has run.
+    all<ExercisePref>(supabase.from('exercise_prefs').select('*').eq('user_id', userId)).catch(
+      () => [] as ExercisePref[],
+    ),
+    all<{ session_id: string; rpe: number | null; feel: Session['feel'] }>(
+      supabase.from('session_ratings').select('session_id,rpe,feel').eq('user_id', userId),
+    ).catch(() => []),
   ]);
+  const ratingOf = new Map(ratings.map((r) => [r.session_id, r]));
 
   const items = useQueue.getState().items;
   const pendingKeys = new Set(items.map((i) => i.key));
@@ -161,11 +172,13 @@ export async function pullAll(userId: string): Promise<void> {
   for (const s of sets) {
     const { workout_sessions: _ws, ...row } = s;
     const list = setsBySession.get(row.session_id) ?? [];
-    list.push({ ...row, weight_kg: Number(row.weight_kg) });
+    list.push({ ...row, weight_kg: Number(row.weight_kg), failure: !!row.failure });
     setsBySession.set(row.session_id, list);
   }
   const serverSessions: Session[] = sessions.map((s) => ({
     ...s,
+    rpe: ratingOf.get(s.id)?.rpe ?? null,
+    feel: ratingOf.get(s.id)?.feel ?? null,
     volume_kg: Number(s.volume_kg ?? 0),
     notes: s.notes ?? {},
     sets: (setsBySession.get(s.id) ?? []).sort(
@@ -197,7 +210,22 @@ export async function pullAll(userId: string): Promise<void> {
       pendingKeys,
       pendingDeletes,
     ),
+    exercisePrefs: mergePrefs(exercisePrefs, local.exercisePrefs ?? {}, pendingKeys),
   });
+}
+
+/** Keyed by exercise id; a pending local edit wins. */
+function mergePrefs(
+  server: ExercisePref[],
+  local: Record<string, ExercisePref>,
+  pendingKeys: Set<string>,
+): Record<string, ExercisePref> {
+  const out: Record<string, ExercisePref> = {};
+  for (const p of server)
+    out[p.exercise_id] = { ...p, machine_kg: p.machine_kg == null ? null : Number(p.machine_kg) };
+  for (const p of Object.values(local))
+    if (pendingKeys.has(`exercise_prefs:${p.id}`)) out[p.exercise_id] = p;
+  return out;
 }
 
 function numericMeasurement(m: BodyMeasurement): BodyMeasurement {
@@ -236,6 +264,7 @@ function mergeSessions(
   for (const [id, s] of Object.entries(local)) {
     const touched =
       pendingKeys.has(`workout_sessions:${id}`) ||
+      pendingKeys.has(`session_ratings:${id}`) ||
       s.sets.some((x) => pendingKeys.has(`set_entries:${x.id}`));
     if (touched && !pendingDeletes.has(`workout_sessions:${id}`)) out[id] = s;
   }

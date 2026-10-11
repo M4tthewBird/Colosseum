@@ -7,6 +7,8 @@ import { safeStorage } from '@/lib/storage';
 /** 'volume' | 'workouts' | `name:<exercise name>` (built-in) | <exercise uuid> */
 export type ArenaMetric = string;
 export type ArenaPeriod = 'week' | 'month' | 'all';
+/** Who the Ranks leaderboard compares you with. */
+export type ArenaScope = 'friends' | 'global';
 
 export const DEFAULT_METRICS: ArenaMetric[] = [
   'volume',
@@ -19,6 +21,8 @@ interface PrefsState {
   arenaMetrics: ArenaMetric[];
   arenaMetric: ArenaMetric;
   arenaPeriod: ArenaPeriod;
+  arenaScope: ArenaScope;
+  setArenaScope: (s: ArenaScope) => void;
   /** Rank lifts by bodyweight-adjusted DOTS score instead of kg. */
   arenaDots: boolean;
   /** Show the "Add to Home Screen" tip once, after sign-up. */
@@ -36,6 +40,8 @@ export const usePrefs = create<PrefsState>()(
       arenaMetrics: DEFAULT_METRICS,
       arenaMetric: 'volume',
       arenaPeriod: 'week',
+      arenaScope: 'friends',
+      setArenaScope: (arenaScope) => set({ arenaScope }),
       arenaDots: false,
       installTipPending: false,
       setInstallTipPending: (installTipPending) => set({ installTipPending }),

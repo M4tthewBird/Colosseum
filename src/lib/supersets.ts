@@ -29,6 +29,7 @@ export interface RoundSet {
   exercise_position: number;
   set_number: number;
   done: boolean;
+  drop_of?: string | null;
 }
 
 /** Sets of a superset in the order they are done: A1, B1, A2, B2… */
@@ -48,11 +49,11 @@ export function letter(i: number): string {
 
 /**
  * True when every exercise of the group that has a set with this number has it done:
- * the round is over and the rest starts.
+ * the round is over and the rest starts. Drop sets do not hold a round back.
  */
 export function roundComplete(sets: RoundSet[], positions: number[], setNumber: number): boolean {
   const round = sets.filter(
-    (s) => s.set_number === setNumber && positions.includes(s.exercise_position),
+    (s) => s.set_number === setNumber && !s.drop_of && positions.includes(s.exercise_position),
   );
   return round.length > 0 && round.every((s) => s.done);
 }

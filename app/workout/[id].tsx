@@ -27,11 +27,12 @@ import {
   restAlert,
   type Summary,
 } from '@/features/workout/actions';
+import { MachineWeightSheet } from '@/features/workout/MachineWeight';
 import { WorkoutSummary } from '@/features/workout/WorkoutSummary';
 import { ExercisePage, SupersetPage } from '@/features/workout/WorkoutPages';
 import { ProgressSegment, RestPulseOverlay, useRestPulse } from '@/features/workout/WorkoutMotion';
 import { formatClock } from '@/lib/dates';
-import { formatRest, formatScheme } from '@/lib/formulas';
+import { formatKg, formatRest, formatScheme } from '@/lib/formulas';
 import { rpeHint } from '@/lib/periodization';
 import { historyBests } from '@/lib/stats';
 import { groupPlan } from '@/lib/supersets';
@@ -82,6 +83,8 @@ function ActiveWorkout({
   const [picker, setPicker] = useState(false);
   const [info, setInfo] = useState<PlannedExercise | null>(null);
   const [supersetFor, setSupersetFor] = useState<number | null>(null);
+  const [machineFor, setMachineFor] = useState<string | null>(null);
+  const machineKg = useData((s) => (info ? s.exercisePrefs[info.exercise_id]?.machine_kg : null));
   const pager = useRef<ScrollView>(null);
 
   const ordered = useMemo(() => [...plan].sort((a, b) => a.position - b.position), [plan]);
@@ -292,10 +295,29 @@ function ActiveWorkout({
               {formatRest(info.rest_seconds)}
               {info.rpe ? `, RPE ${info.rpe} (${rpeHint(info.rpe)})` : ''}
             </Text>
+            <Text style={type.body}>
+              Machine weight: {machineKg != null ? `${formatKg(machineKg)} kg` : 'not set'}
+            </Text>
+            <FillButton
+              label={machineKg != null ? 'Edit machine weight' : 'Add machine weight'}
+              size="sm"
+              onPress={() => {
+                setMachineFor(info.exercise_id);
+                setInfo(null);
+              }}
+            />
             <Text style={type.caption}>Technique tips are coming soon.</Text>
           </View>
         ) : null}
       </Sheet>
+      {machineFor ? (
+        <MachineWeightSheet
+          visible
+          exerciseId={machineFor}
+          name={exercises[machineFor]?.name ?? 'Exercise'}
+          onClose={() => setMachineFor(null)}
+        />
+      ) : null}
     </View>
   );
 }
@@ -344,10 +366,11 @@ const styles = StyleSheet.create({
     maxWidth: MAX_WIDTH,
     alignSelf: 'center',
     paddingHorizontal: 20,
+    paddingBottom: 14, // keeps the first card off the top bar even without a progress row
     gap: 14,
   },
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
-  progress: { flexDirection: 'row', gap: 4, marginBottom: 14 },
+  progress: { flexDirection: 'row', gap: 4 },
   segment: { flex: 1, height: 4, borderRadius: 2 },
   page: { paddingHorizontal: 20, gap: 14, maxWidth: MAX_WIDTH, alignSelf: 'center', width: '100%' },
   floatWrap: { position: 'absolute', left: 16, right: 16, alignItems: 'center' },

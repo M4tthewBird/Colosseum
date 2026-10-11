@@ -1,19 +1,22 @@
 import { router } from 'expo-router';
-import { Plus, UserPlus, X } from '@/components/icons';
+import { Globe, Plus, UserPlus, X } from '@/components/icons';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/Avatar';
 import { FillButton } from '@/components/Buttons';
-import { Glass } from '@/components/Glass';
+import { Glass, GlassCard } from '@/components/Glass';
 import { EmptyState, ListGroup, ListRow } from '@/components/List';
 import { Chip, Segmented } from '@/components/Segmented';
 import { Sheet } from '@/components/Sheet';
 import { ExercisePicker } from '@/features/exercises/ExercisePicker';
 import { isLiftMetric, resolveMetric, useLeaderboard, type RankRow } from '@/features/social/api';
 import { formatKg } from '@/lib/formulas';
+import { flush } from '@/lib/sync';
 import { useData } from '@/stores/data';
 import { usePrefs, type ArenaMetric } from '@/stores/prefs';
+import { toast } from '@/stores/ui';
 import { accentA, colors, shadows, tabular, type } from '@/theme/tokens';
 
 const TOP = 20;
@@ -28,8 +31,9 @@ export function metricLabel(m: ArenaMetric, exercises: Record<string, { name: st
   return exercises[m]?.name ?? 'Exercise';
 }
 
-/** metric is 'volume' | 'workouts' | 'dots' | an exercise id (kg). */
-function formatValue(metric: string, v: number): string {
+/** metric is 'volume' | 'workouts' | 'dots' | an exercise id (kg). Null = rank only. */
+function formatValue(metric: string, v: number | null): string {
+  if (v == null) return '';
   if (metric === 'dots') return v.toFixed(1);
   if (metric === 'volume') return `${(v / 1000).toFixed(1)} t`;
   if (metric === 'workouts') return `${Math.round(v)}`;
@@ -46,17 +50,33 @@ export function Ranks({ friendCount }: { friendCount: number }) {
   const dotsPref = usePrefs((s) => s.arenaDots);
   const setDots = usePrefs((s) => s.setArenaDots);
   const [editing, setEditing] = useState(false);
+  const scope = usePrefs((s) => s.arenaScope);
+  const setScope = usePrefs((s) => s.setArenaScope);
+  const joined = useData((s) => !!s.profile?.global_ranking);
   const lift = isLiftMetric(metric);
   const dots = lift && dotsPref;
-  const board = useLeaderboard('friends', metric, period, dots);
+  const board = useLeaderboard(scope, metric, period, dots);
   const resolved = dots ? 'dots' : resolveMetric(metric);
   const canDots = useData((s) => !!s.profile?.sex && Object.keys(s.bodyweights).length > 0);
   const rows = board.data ?? [];
   const me = rows.find((r) => r.user_id === myId);
-  const top = rows.slice(0, TOP);
+  const top = rows.slice(0, scope === 'global' ? 50 : TOP);
+  const limit = top.length;
 
   return (
     <>
+      <Segmented
+        compact
+        height={32}
+        style={{ alignSelf: 'flex-start' }}
+        options={[
+          { value: 'friends', label: 'Friends' },
+          { value: 'global', label: 'Global' },
+        ]}
+        value={scope}
+        onChange={setScope}
+        accessibilityLabel="Compare with"
+      />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -80,7 +100,9 @@ export function Ranks({ friendCount }: { friendCount: number }) {
       {lift ? (
         <View style={styles.unitRow}>
           <Text style={[type.small, { flex: 1 }]}>
-            {dots ? 'Adjusted for bodyweight (DOTS)' : 'Best estimated 1RM'}
+            {dots
+              ? 'Adjusted for bodyweight (DOTS). Ranks only: scores could give away bodyweight.'
+              : 'Best estimated 1RM'}
           </Text>
           <Segmented
             compact
@@ -96,7 +118,9 @@ export function Ranks({ friendCount }: { friendCount: number }) {
         </View>
       ) : null}
 
-      {friendCount === 0 ? (
+      {scope === 'global' && !joined ? (
+        <JoinGlobal />
+      ) : scope === 'friends' && friendCount === 0 ? (
         <EmptyState
           title="Add friends to compete"
           text="The leaderboard ranks you against your friends."
@@ -119,12 +143,12 @@ export function Ranks({ friendCount }: { friendCount: number }) {
       ) : (
         <>
           <Podium rows={rows.slice(0, 3)} myId={myId} metric={resolved} />
-          {top.length > 3 || (me && me.rank > TOP) ? (
+          {top.length > 3 || (me && me.rank > limit) ? (
             <Glass radius={22} style={{ padding: 4, gap: 2 }}>
               {top.slice(3).map((r) => (
                 <RankLine key={r.user_id} row={r} me={r.user_id === myId} metric={resolved} />
               ))}
-              {me && me.rank > TOP ? <RankLine row={me} me metric={resolved} /> : null}
+              {me && me.rank > limit ? <RankLine row={me} me metric={resolved} /> : null}
             </Glass>
           ) : null}
           {!me ? (
@@ -139,6 +163,33 @@ export function Ranks({ friendCount }: { friendCount: number }) {
 
       <MetricsSheet visible={editing} onClose={() => setEditing(false)} />
     </>
+  );
+}
+
+/** Opt-in card: the global board shows only people who joined it, to people who joined it. */
+function JoinGlobal() {
+  const qc = useQueryClient();
+  const join = async () => {
+    const { profile, saveProfile } = useData.getState();
+    if (!profile) return;
+    saveProfile({ ...profile, global_ranking: true });
+    await flush();
+    void qc.invalidateQueries({ queryKey: ['leaderboard'] });
+    toast('You joined the global leaderboard');
+  };
+  return (
+    <GlassCard radius={22} style={{ gap: 12, padding: 18 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <Globe size={20} color={colors.accent} strokeWidth={2} />
+        <Text style={type.bodyStrong}>Compete with everyone</Text>
+      </View>
+      <Text style={type.caption}>
+        The global leaderboard ranks everyone in Colosseum who joined it. Others see your name,
+        photo and the number you are ranked by (volume, workouts, best lift or DOTS score). Your
+        bodyweight is never shown. Leave any time in Settings.
+      </Text>
+      <FillButton label="Join the global leaderboard" icon={Globe} onPress={() => void join()} />
+    </GlassCard>
   );
 }
 
@@ -306,5 +357,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 18,
   },
-  lineRank: { width: 20, fontSize: 15, fontWeight: '600', color: colors.text2 },
+  lineRank: { minWidth: 20, fontSize: 15, fontWeight: '600', color: colors.text2 },
 });

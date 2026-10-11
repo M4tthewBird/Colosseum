@@ -125,6 +125,27 @@ export function matchScore(query: string, name: string): number {
   return score * 10 - words.length;
 }
 
+/** Other names gyms use for a catalog exercise (lowercase catalog name → other names). */
+const ALSO_KNOWN_AS: Record<string, string[]> = {
+  'pec deck': ['machine chest fly', 'machine fly', 'butterfly', 'chest fly machine'],
+  'reverse pec deck': ['machine rear delt fly', 'rear delt machine', 'reverse fly machine'],
+  'leg curl': ['seated leg curl', 'machine leg curl'],
+  'leg extension': ['machine leg extension', 'quad extension'],
+  'calf raise': ['standing calf raise', 'machine calf raise'],
+  'leg press': ['machine leg press', '45 degree leg press', 'sled leg press'],
+  'hack squat': ['machine hack squat', 'hackenschmidt'],
+  'machine chest press': ['iso lateral chest press', 'hammer strength chest press', 'chest press'],
+  'machine seated row': ['iso lateral row', 'hammer strength row', 'machine row', 'low row'],
+  'machine lat pulldown': ['iso lateral pulldown', 'hammer strength pulldown'],
+  'seated machine lateral raise': ['machine lateral raise', 'lateral raise machine'],
+  'machine shoulder press': ['shoulder press machine'],
+  'machine hip abduction': ['abductor machine', 'hip abductor'],
+  'machine hip adduction': ['adductor machine', 'hip adductor'],
+  'machine dips': ['dip machine', 'seated dip machine'],
+  'assisted pull up': ['assisted chin up', 'gravitron'],
+  'machine crunch': ['ab crunch machine'],
+};
+
 export interface Searchable {
   name: string;
   tier?: 'S' | 'A' | 'B' | null;
@@ -136,7 +157,11 @@ const TIER_BONUS = { S: 6, A: 4, B: 2 } as const;
 export function searchExercises<T extends Searchable>(query: string, items: T[], limit = 60): T[] {
   return items
     .map((item) => {
-      const s = matchScore(query, item.name);
+      // Another name counts a little less than the catalog name itself.
+      const aka = (ALSO_KNOWN_AS[item.name.toLowerCase()] ?? []).map(
+        (n) => matchScore(query, n) - 5,
+      );
+      const s = Math.max(matchScore(query, item.name), ...aka);
       return { item, s: s > 0 ? s + (item.tier ? TIER_BONUS[item.tier] : 0) : 0 };
     })
     .filter((x) => x.s > 0)
