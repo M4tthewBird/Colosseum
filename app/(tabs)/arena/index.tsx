@@ -4,12 +4,11 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { FillButton, IconButton } from '@/components/Buttons';
-import { ListGroup, ListRow } from '@/components/List';
+import { ListGroup, ListRow, SectionHeader } from '@/components/List';
 import { Header, Screen } from '@/components/Screen';
-import { Segmented } from '@/components/Segmented';
 import { Sheet } from '@/components/Sheet';
 import { MyGym } from '@/features/arena/MyGym';
-import { Ranks } from '@/features/arena/Ranks';
+import { Ranks, ScopeTabs } from '@/features/arena/Ranks';
 import { useCheckIn, useFriends, useGym, useMyCheckin } from '@/features/social/api';
 import { useData } from '@/stores/data';
 import { usePrefs, type ArenaPeriod } from '@/stores/prefs';
@@ -23,7 +22,8 @@ const PERIODS: { value: ArenaPeriod; label: string }[] = [
 ];
 
 export default function Arena() {
-  const [section, setSection] = useState<'ranks' | 'gym'>('ranks');
+  const scope = usePrefs((s) => s.arenaScope);
+  const setScope = usePrefs((s) => s.setArenaScope);
   const profile = useData((s) => s.profile);
   const friends = useFriends();
   const friendCount = friends.data?.friends.length ?? 0;
@@ -32,18 +32,16 @@ export default function Arena() {
   const gym = useGym(gymId);
 
   const above =
-    section === 'ranks'
+    scope === 'friends'
       ? `${friendCount} friend${friendCount === 1 ? '' : 's'}`
-      : gym.data?.gym
-        ? `${gym.data.gym.name} · ${gym.data.members} member${gym.data.members === 1 ? '' : 's'}`
-        : 'No home gym';
+      : scope === 'gym'
+        ? gym.data?.gym
+          ? `${gym.data.gym.name} · ${gym.data.members} member${gym.data.members === 1 ? '' : 's'}`
+          : 'No home gym'
+        : 'Everyone who joined';
 
   return (
-    <Screen
-      glow={section === 'ranks' ? 'center' : 'right'}
-      glowTop={section === 'ranks' ? 200 : -120}
-      gap={16}
-    >
+    <Screen glow="center" glowTop={260} gap={16}>
       <Header
         above={above}
         title="Arena"
@@ -52,28 +50,28 @@ export default function Arena() {
             <View>
               <IconButton
                 icon={Users}
-                accessibilityLabel="Friends"
+                accessibilityLabel={incoming ? `Friends, ${incoming} requests` : 'Friends'}
                 onPress={() => router.push('/arena/friends')}
               />
               {incoming > 0 ? <View style={styles.badge} /> : null}
             </View>
-            {section === 'ranks' ? <PeriodMenu /> : gymId ? <CheckInButton gymId={gymId} /> : null}
+            <PeriodMenu />
           </View>
         }
       />
-      <Segmented
-        options={[
-          { value: 'ranks', label: 'Ranks' },
-          { value: 'gym', label: 'My gym' },
-        ]}
-        value={section}
-        onChange={setSection}
-        accessibilityLabel="Arena sections"
-      />
-      {section === 'ranks' ? (
-        <Ranks friendCount={friends.isLoading ? 1 : friendCount} />
+      <ScopeTabs value={scope} onChange={setScope} />
+      {scope === 'gym' && !gymId ? (
+        <MyGym gymId={null} />
       ) : (
-        <MyGym gymId={gymId} />
+        <>
+          <Ranks scope={scope} friendCount={friends.isLoading ? 1 : friendCount} />
+          {scope === 'gym' && gymId ? (
+            <View style={{ gap: 10, marginTop: 8 }}>
+              <SectionHeader title="In your gym" right={<CheckInButton gymId={gymId} />} />
+              <MyGym gymId={gymId} />
+            </View>
+          ) : null}
+        </>
       )}
     </Screen>
   );

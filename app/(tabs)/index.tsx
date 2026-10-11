@@ -11,7 +11,7 @@ import { ListGroup, ListRow, SectionHeader } from '@/components/List';
 import { Wordmark } from '@/components/Logo';
 import { Header, Screen } from '@/components/Screen';
 import { useForumPosts } from '@/features/forum/api';
-import { PostCard } from '@/features/forum/ForumViews';
+import { ForumRail } from '@/features/forum/ForumViews';
 import { useFriendsPrs, useLeaderboard } from '@/features/social/api';
 import { useActiveProgram, useFinishedSessions } from '@/features/training/hooks';
 import { InstallTip } from '@/features/onboarding/InstallTip';
@@ -105,30 +105,35 @@ function Stat({ value, label }: { value: string; label: string }) {
   );
 }
 
-/** The newest Forum posts; the full Forum is one tap away. */
+/** The newest Forum posts as a swipeable rail; the full Forum is one tap away. */
 function ForumSection() {
-  const posts = useForumPosts('all', 3);
+  const posts = useForumPosts('all', 6);
   const list = posts.data ?? [];
   return (
-    <View style={{ gap: 8 }}>
-      <SectionHeader
-        title="Forum"
-        right={<TextButton label="See all" onPress={() => router.push('/forum')} />}
-      />
-      {list.length > 0 ? (
-        list.map((p) => <PostCard key={p.id} post={p} lines={2} />)
-      ) : (
-        <GlassCard radius={22} style={{ gap: 12, padding: 16 }}>
-          <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
-            <Landmark size={18} color={colors.accent} strokeWidth={2} />
-            <Text style={[type.caption, { flex: 1 }]}>
-              {posts.isLoading
-                ? 'Loading…'
-                : posts.isError
-                  ? 'Could not load the Forum. Are you online?'
-                  : 'Share a workout after you finish it. Friends and your gym can comment and copy it.'}
+    <View style={{ gap: 10 }}>
+      <View style={styles.forumHead}>
+        <View style={{ flex: 1, gap: 2 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Landmark size={20} color={colors.accent} strokeWidth={2.2} />
+            <Text style={type.section} accessibilityRole="header">
+              Forum
             </Text>
           </View>
+          <Text style={type.caption}>What your friends and gym are training</Text>
+        </View>
+        <TextButton label="See all" accent onPress={() => router.push('/forum')} />
+      </View>
+      {list.length > 0 ? (
+        <ForumRail posts={list} />
+      ) : (
+        <GlassCard radius={22} style={{ gap: 12, padding: 16 }}>
+          <Text style={type.caption}>
+            {posts.isLoading
+              ? 'Loading…'
+              : posts.isError
+                ? 'Could not load the Forum. Are you online?'
+                : 'Nothing shared yet. Finish a workout and share it: friends and your gym can comment on it and copy it.'}
+          </Text>
         </GlassCard>
       )}
     </View>
@@ -201,4 +206,5 @@ const styles = StyleSheet.create({
   stat: { width: '50%' },
   statValue: { fontSize: 19, fontWeight: '700', letterSpacing: -0.4, color: colors.text },
   newPr: { fontSize: 11, fontWeight: '600', color: colors.accent },
+  forumHead: { flexDirection: 'row', alignItems: 'flex-end', gap: 12, paddingHorizontal: 4 },
 });

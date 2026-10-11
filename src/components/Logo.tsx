@@ -4,8 +4,16 @@ import Svg, { Ellipse, G, Path, Rect } from 'react-native-svg';
 import { colors, type } from '@/theme/tokens';
 import { BELL, LEAVES, STEMS } from './logoData';
 
-/** Laurel wreath + dumbbell (brand/logo-mark.svg). */
-export function LogoMark({ size = 16, color = colors.accent }: { size?: number; color?: string }) {
+/** Laurel wreath + dumbbell (brand/logo-mark.svg). Without the bell it is the bare wreath. */
+export function LogoMark({
+  size = 16,
+  color = colors.accent,
+  bell = true,
+}: {
+  size?: number;
+  color?: string;
+  bell?: boolean;
+}) {
   return (
     <Svg width={size} height={size} viewBox="0 0 100 100" aria-hidden>
       {STEMS.map((d) => (
@@ -22,11 +30,13 @@ export function LogoMark({ size = 16, color = colors.accent }: { size?: number; 
           transform={`rotate(${r} ${cx} ${cy})`}
         />
       ))}
-      <G transform="translate(5 5) scale(0.9)">
-        {BELL.map(([x, y, w, h, rx]) => (
-          <Rect key={`${x}-${y}`} x={x} y={y} width={w} height={h} rx={rx} fill={color} />
-        ))}
-      </G>
+      {bell ? (
+        <G transform="translate(5 5) scale(0.9)">
+          {BELL.map(([x, y, w, h, rx]) => (
+            <Rect key={`${x}-${y}`} x={x} y={y} width={w} height={h} rx={rx} fill={color} />
+          ))}
+        </G>
+      ) : null}
     </Svg>
   );
 }

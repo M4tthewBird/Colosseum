@@ -68,7 +68,8 @@ const STEPS: Record<Kind, { icon: LucideIcon; text: string }[]> = {
 };
 
 export function InstallTip() {
-  const pending = usePrefs((s) => s.installTipPending);
+  // Waits for the app tour, so a new user gets one thing at a time.
+  const pending = usePrefs((s) => s.installTipPending && !s.tourPending);
   const done = usePrefs((s) => s.setInstallTipPending);
   const [kind] = useState<Kind>(platformKind);
   const [canPrompt, setCanPrompt] = useState(false);

@@ -1,23 +1,32 @@
+/**
+ * Arena leaderboard. One question leads the screen: who are you up against (friends, your gym,
+ * everyone)? The champion wears the Colosseum laurel; 2nd and 3rd stand beside them; everyone
+ * else follows in a list, and your own row says how far you are from the next place.
+ */
 import { router } from 'expo-router';
-import { Globe, Plus, UserPlus, X } from '@/components/icons';
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { Globe, Plus, UserPlus, X } from '@/components/icons';
+import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 import { Avatar } from '@/components/Avatar';
 import { FillButton } from '@/components/Buttons';
 import { Glass, GlassCard } from '@/components/Glass';
 import { EmptyState, ListGroup, ListRow } from '@/components/List';
+import { LogoMark } from '@/components/Logo';
 import { Chip, Segmented } from '@/components/Segmented';
 import { Sheet } from '@/components/Sheet';
+import { Pill, useSlidingPill } from '@/components/SlidingPill';
 import { ExercisePicker } from '@/features/exercises/ExercisePicker';
 import { isLiftMetric, resolveMetric, useLeaderboard, type RankRow } from '@/features/social/api';
 import { formatKg } from '@/lib/formulas';
 import { flush } from '@/lib/sync';
 import { useData } from '@/stores/data';
-import { usePrefs, type ArenaMetric } from '@/stores/prefs';
+import { usePrefs, type ArenaMetric, type ArenaPeriod, type ArenaScope } from '@/stores/prefs';
 import { toast } from '@/stores/ui';
-import { accentA, colors, shadows, tabular, type } from '@/theme/tokens';
+import { dur, ease, useReducedMotion } from '@/theme/motion';
+import { accentA, colors, tabular, type } from '@/theme/tokens';
 
 const TOP = 20;
 
@@ -40,7 +49,67 @@ function formatValue(metric: string, v: number | null): string {
   return `${formatKg(v)} kg`;
 }
 
-export function Ranks({ friendCount }: { friendCount: number }) {
+/** A difference in the board's unit: "1.2 t", "2 workouts", "7.5 kg", "3.1 points". */
+function formatGap(metric: string, v: number): string {
+  if (metric === 'workouts') {
+    const n = Math.round(v);
+    return `${n} workout${n === 1 ? '' : 's'}`;
+  }
+  if (metric === 'dots') return `${v.toFixed(1)} points`;
+  return formatValue(metric, v);
+}
+
+const PERIOD_TEXT: Record<ArenaPeriod, string> = {
+  week: 'this week',
+  month: 'this month',
+  all: 'of all time',
+};
+
+const firstName = (n: string) => n.split(' ')[0];
+
+const SCOPES: { value: ArenaScope; label: string }[] = [
+  { value: 'friends', label: 'Friends' },
+  { value: 'gym', label: 'My gym' },
+  { value: 'global', label: 'Global' },
+];
+
+/** Who you compete with: three large words, a red rule slides under the chosen one. */
+export function ScopeTabs({
+  value,
+  onChange,
+}: {
+  value: ArenaScope;
+  onChange: (s: ArenaScope) => void;
+}) {
+  const selected = SCOPES.findIndex((s) => s.value === value);
+  const rule = useSlidingPill(SCOPES.length, selected);
+  return (
+    <View style={styles.scopes} accessibilityRole="tablist" accessibilityLabel="Compete with">
+      {SCOPES.map((s, i) => {
+        const on = i === selected;
+        return (
+          <Pressable
+            key={s.value}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: on }}
+            onPress={() => onChange(s.value)}
+            onLayout={rule.onItemLayout(i)}
+            hitSlop={{ left: 8, right: 8 }}
+            style={styles.scope}
+          >
+            <Text style={[styles.scopeText, { color: on ? colors.text : colors.text2 }]}>
+              {s.label}
+            </Text>
+            {on && !rule.animated ? <View style={styles.rule} /> : null}
+          </Pressable>
+        );
+      })}
+      {rule.animated ? <Pill pillStyle={rule.style} style={styles.rule} /> : null}
+    </View>
+  );
+}
+
+export function Ranks({ scope, friendCount }: { scope: ArenaScope; friendCount: number }) {
   const exercises = useData((s) => s.exercises);
   const myId = useData((s) => s.userId);
   const metrics = usePrefs((s) => s.arenaMetrics);
@@ -50,8 +119,6 @@ export function Ranks({ friendCount }: { friendCount: number }) {
   const dotsPref = usePrefs((s) => s.arenaDots);
   const setDots = usePrefs((s) => s.setArenaDots);
   const [editing, setEditing] = useState(false);
-  const scope = usePrefs((s) => s.arenaScope);
-  const setScope = usePrefs((s) => s.setArenaScope);
   const joined = useData((s) => !!s.profile?.global_ranking);
   const lift = isLiftMetric(metric);
   const dots = lift && dotsPref;
@@ -60,63 +127,50 @@ export function Ranks({ friendCount }: { friendCount: number }) {
   const canDots = useData((s) => !!s.profile?.sex && Object.keys(s.bodyweights).length > 0);
   const rows = board.data ?? [];
   const me = rows.find((r) => r.user_id === myId);
-  const top = rows.slice(0, scope === 'global' ? 50 : TOP);
-  const limit = top.length;
+  const limit = scope === 'global' ? 50 : TOP;
 
   return (
     <>
-      <Segmented
-        compact
-        height={32}
-        style={{ alignSelf: 'flex-start' }}
-        options={[
-          { value: 'friends', label: 'Friends' },
-          { value: 'global', label: 'Global' },
-        ]}
-        value={scope}
-        onChange={setScope}
-        accessibilityLabel="Compare with"
-      />
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 8, paddingRight: 4 }}
-        style={{ marginHorizontal: -20 }}
-        contentInset={{ left: 20 }}
-      >
-        <View style={{ width: 12 }} />
-        {metrics.map((m) => (
-          <Chip
-            key={m}
-            label={metricLabel(m, exercises)}
-            selected={m === metric}
-            onPress={() => setMetric(m)}
-          />
-        ))}
-        <Chip label="Edit" onPress={() => setEditing(true)} />
-        <View style={{ width: 12 }} />
-      </ScrollView>
-
-      {lift ? (
-        <View style={styles.unitRow}>
-          <Text style={[type.small, { flex: 1 }]}>
-            {dots
-              ? 'Adjusted for bodyweight (DOTS). Ranks only: scores could give away bodyweight.'
-              : 'Best estimated 1RM'}
-          </Text>
-          <Segmented
-            compact
-            height={30}
-            options={[
-              { value: 'kg', label: 'kg' },
-              { value: 'dots', label: 'DOTS' },
-            ]}
-            value={dots ? 'dots' : 'kg'}
-            onChange={(v) => setDots(v === 'dots')}
-            accessibilityLabel="Rank by"
-          />
-        </View>
-      ) : null}
+      <View style={{ gap: 10 }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 8 }}
+          style={{ marginHorizontal: -20 }}
+        >
+          <View style={{ width: 12 }} />
+          {metrics.map((m) => (
+            <Chip
+              key={m}
+              label={metricLabel(m, exercises)}
+              selected={m === metric}
+              onPress={() => setMetric(m)}
+            />
+          ))}
+          <Chip label="Edit" onPress={() => setEditing(true)} />
+          <View style={{ width: 12 }} />
+        </ScrollView>
+        {lift ? (
+          <View style={styles.unitRow}>
+            <Text style={[type.small, { flex: 1 }]}>
+              {dots
+                ? 'Bodyweight-adjusted (DOTS). Ranks only, so nobody can work out your bodyweight.'
+                : 'Best estimated 1RM'}
+            </Text>
+            <Segmented
+              compact
+              height={30}
+              options={[
+                { value: 'kg', label: 'kg' },
+                { value: 'dots', label: 'DOTS' },
+              ]}
+              value={dots ? 'dots' : 'kg'}
+              onChange={(v) => setDots(v === 'dots')}
+              accessibilityLabel="Rank by"
+            />
+          </View>
+        ) : null}
+      </View>
 
       {scope === 'global' && !joined ? (
         <JoinGlobal />
@@ -133,23 +187,42 @@ export function Ranks({ friendCount }: { friendCount: number }) {
           }
         />
       ) : board.isLoading ? (
-        <Text style={[type.caption, { textAlign: 'center', paddingVertical: 24 }]}>Loading…</Text>
+        <Text style={[type.caption, styles.status]}>Loading…</Text>
       ) : board.isError ? (
-        <Text style={[type.caption, { textAlign: 'center', paddingVertical: 24 }]}>
+        <Text style={[type.caption, styles.status]}>
           Could not load the leaderboard. Are you online?
         </Text>
       ) : rows.length === 0 ? (
         <EmptyState title="No results yet" text="Nobody has logged this in the chosen period." />
       ) : (
         <>
-          <Podium rows={rows.slice(0, 3)} myId={myId} metric={resolved} />
-          {top.length > 3 || (me && me.rank > limit) ? (
-            <Glass radius={22} style={{ padding: 4, gap: 2 }}>
-              {top.slice(3).map((r) => (
-                <RankLine key={r.user_id} row={r} me={r.user_id === myId} metric={resolved} />
+          <Champion row={rows[0]} me={rows[0].user_id === myId} metric={resolved} period={period}>
+            {rows.length > 1 ? (
+              <View style={styles.runners}>
+                {rows.slice(1, 3).map((r) => (
+                  <RunnerUp key={r.user_id} row={r} me={r.user_id === myId} metric={resolved} />
+                ))}
+              </View>
+            ) : null}
+          </Champion>
+          {rows.length > 3 || (me && me.rank > limit) ? (
+            <Glass radius={22} style={styles.list}>
+              {rows.slice(3, limit).map((r) => (
+                <RankLine
+                  key={r.user_id}
+                  row={r}
+                  me={r.user_id === myId}
+                  metric={resolved}
+                  rows={rows}
+                />
               ))}
-              {me && me.rank > limit ? <RankLine row={me} me metric={resolved} /> : null}
+              {me && me.rank > limit ? (
+                <RankLine row={me} me metric={resolved} rows={rows} />
+              ) : null}
             </Glass>
+          ) : null}
+          {me && me.rank > 1 && me.rank <= 3 ? (
+            <Text style={[type.small, { textAlign: 'center' }]}>{gapText(me, rows, resolved)}</Text>
           ) : null}
           {!me ? (
             <Text style={[type.small, { textAlign: 'center' }]}>
@@ -166,6 +239,144 @@ export function Ranks({ friendCount }: { friendCount: number }) {
   );
 }
 
+/** "1.2 t behind Lukáš" / "Leading by 3.4 t"; null when the scores are hidden (DOTS). */
+function gapText(me: RankRow, rows: RankRow[], metric: string): string | null {
+  if (me.value == null) return null;
+  const i = rows.indexOf(me);
+  if (i === 0) {
+    const next = rows[1];
+    return next?.value != null ? `Leading by ${formatGap(metric, me.value - next.value)}` : null;
+  }
+  const ahead = rows[i - 1];
+  if (ahead?.value == null) return null;
+  const d = ahead.value - me.value;
+  return d > 0
+    ? `${formatGap(metric, d)} behind ${firstName(ahead.display_name)}`
+    : `Level with ${firstName(ahead.display_name)}`;
+}
+
+const openUser = (id: string) => router.push({ pathname: '/user/[id]', params: { id } });
+
+/** The victor: crowned with the Colosseum laurel, which blooms in when the board loads. */
+function Champion({
+  row,
+  me,
+  metric,
+  period,
+  children,
+}: {
+  row: RankRow;
+  me: boolean;
+  metric: string;
+  period: ArenaPeriod;
+  children?: React.ReactNode;
+}) {
+  const reduced = useReducedMotion();
+  const bloom = useSharedValue(reduced ? 1 : 0);
+  useEffect(() => {
+    if (reduced) return;
+    bloom.value = 0;
+    bloom.value = withTiming(1, { duration: dur.focal, easing: ease });
+  }, [row.user_id, reduced, bloom]);
+  const wreath = useAnimatedStyle(() => ({
+    opacity: bloom.value,
+    transform: [{ scale: 0.7 + 0.3 * bloom.value }, { rotate: `${(1 - bloom.value) * -20}deg` }],
+  }));
+  const value = formatValue(metric, row.value);
+  const name = me ? 'You' : row.display_name;
+
+  return (
+    <GlassCard radius={26} style={styles.champion}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Champion ${PERIOD_TEXT[period]}: ${name}${value ? `, ${value}` : ''}`}
+        disabled={me}
+        onPress={() => openUser(row.user_id)}
+        style={styles.championBody}
+      >
+        <View style={styles.crown}>
+          <Animated.View style={[StyleSheet.absoluteFill, styles.center, wreath]} aria-hidden>
+            <LogoMark size={CROWN} bell={false} />
+          </Animated.View>
+          <Avatar
+            name={row.display_name}
+            url={row.avatar_url}
+            size={CROWN * 0.5}
+            white
+            style={styles.championAvatar}
+          />
+        </View>
+        <View style={{ alignItems: 'center', gap: 2 }}>
+          <Text style={type.title} numberOfLines={1}>
+            {name}
+          </Text>
+          <Text style={type.caption}>
+            {me ? 'You lead' : 'Leads'} {PERIOD_TEXT[period]}
+          </Text>
+        </View>
+        {value ? <Text style={[styles.championValue, tabular]}>{value}</Text> : null}
+      </Pressable>
+      {children}
+    </GlassCard>
+  );
+}
+
+const CROWN = 150;
+
+function RunnerUp({ row, me, metric }: { row: RankRow; me: boolean; metric: string }) {
+  const value = formatValue(metric, row.value);
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${row.rank}. ${me ? 'You' : row.display_name}${value ? `, ${value}` : ''}`}
+      disabled={me}
+      onPress={() => openUser(row.user_id)}
+      style={[styles.runner, me && { backgroundColor: accentA(0.08) }]}
+    >
+      <Text style={[styles.runnerRank, tabular]}>{row.rank}</Text>
+      <Avatar name={row.display_name} url={row.avatar_url} size={40} white />
+      <View style={{ flex: 1, minWidth: 0 }}>
+        <Text style={type.bodyStrong} numberOfLines={1}>
+          {me ? 'You' : firstName(row.display_name)}
+        </Text>
+        {value ? <Text style={[type.caption, tabular]}>{value}</Text> : null}
+      </View>
+    </Pressable>
+  );
+}
+
+function RankLine({
+  row,
+  me,
+  metric,
+  rows,
+}: {
+  row: RankRow;
+  me: boolean;
+  metric: string;
+  rows: RankRow[];
+}) {
+  const gap = me ? gapText(row, rows, metric) : null;
+  return (
+    <Pressable
+      accessibilityRole="button"
+      disabled={me}
+      onPress={() => openUser(row.user_id)}
+      style={[styles.line, me && { backgroundColor: accentA(0.08) }]}
+    >
+      <Text style={[styles.lineRank, tabular]}>{row.rank}</Text>
+      <Avatar name={row.display_name} url={row.avatar_url} size={34} />
+      <View style={{ flex: 1, minWidth: 0 }}>
+        <Text style={type.bodyStrong} numberOfLines={1}>
+          {me ? 'You' : row.display_name}
+        </Text>
+        {gap ? <Text style={[type.small, { color: colors.accent }]}>{gap}</Text> : null}
+      </View>
+      <Text style={[type.bodyStrong, tabular]}>{formatValue(metric, row.value)}</Text>
+    </Pressable>
+  );
+}
+
 /** Opt-in card: the global board shows only people who joined it, to people who joined it. */
 function JoinGlobal() {
   const qc = useQueryClient();
@@ -178,87 +389,26 @@ function JoinGlobal() {
     toast('You joined the global leaderboard');
   };
   return (
-    <GlassCard radius={22} style={{ gap: 12, padding: 18 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        <Globe size={20} color={colors.accent} strokeWidth={2} />
-        <Text style={type.bodyStrong}>Compete with everyone</Text>
+    <GlassCard radius={26} style={styles.join}>
+      <View style={styles.crownSmall}>
+        <LogoMark size={92} bell={false} />
+        <View style={[StyleSheet.absoluteFill, styles.center]}>
+          <Globe size={30} color={colors.accent} strokeWidth={1.8} />
+        </View>
       </View>
-      <Text style={type.caption}>
+      <Text style={[type.title, { textAlign: 'center' }]}>Take on everyone</Text>
+      <Text style={[type.caption, { textAlign: 'center', fontSize: 15, lineHeight: 21 }]}>
         The global leaderboard ranks everyone in Colosseum who joined it. Others see your name,
-        photo and the number you are ranked by (volume, workouts, best lift or DOTS score). Your
-        bodyweight is never shown. Leave any time in Settings.
+        photo and the number you are ranked by. Your bodyweight is never shown. Leave any time in
+        Settings.
       </Text>
-      <FillButton label="Join the global leaderboard" icon={Globe} onPress={() => void join()} />
+      <FillButton
+        label="Join the global leaderboard"
+        icon={Globe}
+        style={{ alignSelf: 'stretch' }}
+        onPress={() => void join()}
+      />
     </GlassCard>
-  );
-}
-
-function Podium({ rows, myId, metric }: { rows: RankRow[]; myId: string; metric: string }) {
-  const order = [rows[1], rows[0], rows[2]];
-  const heights = [72, 96, 56];
-  return (
-    <View style={styles.podium}>
-      {order.map((r, col) => {
-        if (!r) return <View key={col} style={{ flex: 1 }} />;
-        const first = col === 1;
-        const you = r.user_id === myId;
-        return (
-          <Pressable
-            key={r.user_id}
-            style={styles.podiumCol}
-            accessibilityRole="button"
-            accessibilityLabel={`${r.rank}. ${you ? 'You' : r.display_name}, ${formatValue(metric, r.value)}`}
-            onPress={() =>
-              !you && router.push({ pathname: '/user/[id]', params: { id: r.user_id } })
-            }
-          >
-            <Avatar
-              name={r.display_name}
-              url={r.avatar_url}
-              size={first ? 62 : 52}
-              white
-              ring={
-                first
-                  ? { width: 2.5, color: colors.accent }
-                  : you
-                    ? { width: 2, color: accentA(0.45) }
-                    : { width: 0.5, color: 'rgba(60,60,67,0.12)' }
-              }
-              style={{ boxShadow: shadows.avatar }}
-            />
-            <View style={{ alignItems: 'center' }}>
-              <Text style={[type.bodyStrong, { fontSize: 14 }]} numberOfLines={1}>
-                {you ? 'You' : r.display_name.split(' ')[0]}
-              </Text>
-              <Text style={[type.caption, tabular]}>{formatValue(metric, r.value)}</Text>
-            </View>
-            <Glass radius={16} style={[styles.block, { height: heights[col] }]}>
-              <Text style={[styles.blockRank, { color: first ? colors.accent : colors.text2 }]}>
-                {r.rank}
-              </Text>
-            </Glass>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-}
-
-function RankLine({ row, me, metric }: { row: RankRow; me: boolean; metric: string }) {
-  return (
-    <Pressable
-      accessibilityRole="button"
-      disabled={me}
-      onPress={() => router.push({ pathname: '/user/[id]', params: { id: row.user_id } })}
-      style={[styles.line, me && { backgroundColor: accentA(0.08) }]}
-    >
-      <Text style={[styles.lineRank, tabular]}>{row.rank}</Text>
-      <Avatar name={row.display_name} url={row.avatar_url} size={34} />
-      <Text style={[type.bodyStrong, { flex: 1 }]} numberOfLines={1}>
-        {me ? 'You' : row.display_name}
-      </Text>
-      <Text style={[type.bodyStrong, tabular]}>{formatValue(metric, row.value)}</Text>
-    </Pressable>
   );
 }
 
@@ -336,26 +486,47 @@ function MetricsSheet({ visible, onClose }: { visible: boolean; onClose: () => v
 }
 
 const styles = StyleSheet.create({
-  unitRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: -4 },
-  podium: { flexDirection: 'row', gap: 10, alignItems: 'flex-end', paddingTop: 4 },
-  podiumCol: { flex: 1, alignItems: 'center', gap: 8 },
-  block: {
-    width: '100%',
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    borderBottomLeftRadius: 8,
-    borderBottomRightRadius: 8,
-    alignItems: 'center',
-    paddingTop: 10,
+  center: { alignItems: 'center', justifyContent: 'center' },
+  status: { textAlign: 'center', paddingVertical: 24 },
+  scopes: { flexDirection: 'row', gap: 22, alignItems: 'flex-end' },
+  scope: { height: 44, justifyContent: 'center' },
+  scopeText: { fontSize: 20, fontWeight: '700', letterSpacing: -0.3 },
+  rule: { bottom: 0, height: 3, borderRadius: 1.5, backgroundColor: colors.accent },
+  unitRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  champion: { paddingTop: 22, paddingHorizontal: 14, paddingBottom: 14, gap: 16 },
+  championBody: { alignItems: 'center', gap: 10 },
+  crown: { width: CROWN, height: CROWN, alignItems: 'center', justifyContent: 'center' },
+  championAvatar: { marginTop: -6, boxShadow: '0 6px 18px rgba(185,28,28,0.18)' },
+  championValue: {
+    fontSize: 30,
+    fontWeight: '700',
+    letterSpacing: -0.8,
+    color: colors.text,
+    marginTop: -4,
   },
-  blockRank: { fontSize: 24, fontWeight: '700' },
+  runners: { flexDirection: 'row', gap: 8 },
+  runner: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    minHeight: 60,
+    paddingHorizontal: 12,
+    borderRadius: 18,
+    backgroundColor: colors.fill,
+  },
+  runnerRank: { fontSize: 18, fontWeight: '700', color: colors.text2, minWidth: 12 },
+  list: { padding: 4, gap: 2 },
   line: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    height: 50,
+    minHeight: 52,
+    paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 18,
   },
   lineRank: { minWidth: 20, fontSize: 15, fontWeight: '600', color: colors.text2 },
+  join: { alignItems: 'center', gap: 12, padding: 22 },
+  crownSmall: { width: 92, height: 92 },
 });

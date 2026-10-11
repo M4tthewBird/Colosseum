@@ -199,6 +199,7 @@ export async function signUp(input: SignUpInput): Promise<void> {
   useData.getState().savePrivate({ user_id: userId, height_cm: input.heightCm });
   if (input.bodyweightKg) useData.getState().logBodyweight(input.bodyweightKg);
   usePrefs.getState().setInstallTipPending(true);
+  usePrefs.getState().setTourPending(true);
   await onSignedIn(userId);
 }
 
@@ -292,6 +293,7 @@ async function demoSignUp(input: SignUpInput) {
     input.bodyweightKg,
     true,
   );
+  usePrefs.getState().setTourPending(true);
 }
 
 async function demoSignIn() {

@@ -8,6 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ConfirmHost, ToastHost } from '@/components/Overlays';
 import { startAuth, useAuth } from '@/features/auth/auth';
+import { Tour } from '@/features/onboarding/Tour';
 import { startSync } from '@/lib/sync';
 import { useData } from '@/stores/data';
 import { colors } from '@/theme/tokens';
@@ -65,6 +66,7 @@ export default function RootLayout() {
           // Wait for the stored session so deep links and reloads keep their route.
           <View style={{ flex: 1, backgroundColor: colors.bg }} />
         )}
+        {ready && signedIn ? <Tour /> : null}
         <ToastHost />
         <ConfirmHost />
       </SafeAreaProvider>

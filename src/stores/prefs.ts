@@ -8,7 +8,7 @@ import { safeStorage } from '@/lib/storage';
 export type ArenaMetric = string;
 export type ArenaPeriod = 'week' | 'month' | 'all';
 /** Who the Ranks leaderboard compares you with. */
-export type ArenaScope = 'friends' | 'global';
+export type ArenaScope = 'friends' | 'gym' | 'global';
 
 export const DEFAULT_METRICS: ArenaMetric[] = [
   'volume',
@@ -25,8 +25,11 @@ interface PrefsState {
   setArenaScope: (s: ArenaScope) => void;
   /** Rank lifts by bodyweight-adjusted DOTS score instead of kg. */
   arenaDots: boolean;
-  /** Show the "Add to Home Screen" tip once, after sign-up. */
+  /** Show the "Add to Home Screen" tip once, after sign-up (after the tour). */
   installTipPending: boolean;
+  /** Walk through the app once after sign-up; Settings can start it again. */
+  tourPending: boolean;
+  setTourPending: (v: boolean) => void;
   setInstallTipPending: (v: boolean) => void;
   setArenaDots: (v: boolean) => void;
   setArenaMetrics: (m: ArenaMetric[]) => void;
@@ -44,6 +47,8 @@ export const usePrefs = create<PrefsState>()(
       setArenaScope: (arenaScope) => set({ arenaScope }),
       arenaDots: false,
       installTipPending: false,
+      tourPending: false,
+      setTourPending: (tourPending) => set({ tourPending }),
       setInstallTipPending: (installTipPending) => set({ installTipPending }),
       setArenaDots: (arenaDots) => set({ arenaDots }),
       setArenaMetrics: (arenaMetrics) => set({ arenaMetrics }),

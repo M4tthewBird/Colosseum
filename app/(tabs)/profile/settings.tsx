@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { ChevronRight, LogOut, Trash2 } from '@/components/icons';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -18,6 +19,7 @@ import { isDemo } from '@/lib/supabase';
 import { flush } from '@/lib/sync';
 import type { Profile } from '@/lib/types';
 import { useData } from '@/stores/data';
+import { usePrefs } from '@/stores/prefs';
 import { useQueue } from '@/stores/queue';
 import { confirm, toast } from '@/stores/ui';
 import { colors, type } from '@/theme/tokens';
@@ -178,6 +180,21 @@ export default function Settings() {
         {isDemo ? (
           <FieldHint text="Add your Supabase keys to .env to sync and use the Arena for real." />
         ) : null}
+      </View>
+
+      <View style={{ gap: 6 }}>
+        <Text style={[type.caption, { paddingHorizontal: 16 }]}>Help</Text>
+        <FormGroup>
+          <FormRow
+            label="Show the app tour"
+            onPress={() => {
+              usePrefs.getState().setTourPending(true);
+              router.navigate('/');
+            }}
+          >
+            <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
+          </FormRow>
+        </FormGroup>
       </View>
 
       <View style={{ gap: 10, marginTop: 8 }}>
