@@ -7,7 +7,7 @@ Feedback from Matyáš (2026-10-23). Work top to bottom, one item at a time; ask
 - [x] **Onboarding**: a Friends step after Arena (how to add friends + an Add friends button); each step also highlights the element it talks about on the screen
 - [x] **Sign-up**: Name allows at most two words (sign-up and Settings; older longer names stay until changed)
 - [x] **Forum**: shows the short name instead of the full name (full name everywhere now)
-- [ ] **Sharing bug** (screenshot pending)
+- [x] **Sharing bug**: "Could not share. Are you online?" while online. The post linked a workout still in the offline queue, so RLS refused it; now the workout syncs first (or the post goes without the link) and only real network errors say "Are you online?" (needs a check on the live app)
 - [ ] **Czech version** of the app
 - [ ] **Images** (missing exercise images?)
 - [ ] **Unilateral exercises** (Bulgarian split squat, single-leg RDL…): log left and right side separately

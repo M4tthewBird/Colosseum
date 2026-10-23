@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { DEMO_FORUM, DEMO_FORUM_COMMENTS, demoUser } from '@/dev/seed';
 import type { ForumWorkout } from '@/lib/forum';
 import { isDemo, supabase } from '@/lib/supabase';
+import { syncRow } from '@/lib/sync';
 import type { PublicUser } from '@/lib/types';
 import { uuid } from '@/lib/uuid';
 import { useData } from '@/stores/data';
@@ -194,12 +195,16 @@ export function useCreatePost() {
         });
         return id;
       }
+      // The database only links a post to a workout it already has. Right after finishing, the
+      // workout may still be in the offline queue: send it first, and if it does not get there
+      // in time, share without the link (the post carries its own copy of the workout).
+      const linked = p.sessionId ? await syncRow('workout_sessions', p.sessionId) : false;
       const row = check(
         await supabase
           .from('forum_posts')
           .insert({
             user_id: me(),
-            session_id: p.sessionId,
+            session_id: linked ? p.sessionId : null,
             title: p.title,
             body: p.body,
             workout: p.workout,

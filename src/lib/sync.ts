@@ -101,6 +101,21 @@ export async function flush(): Promise<void> {
   flushing = false;
 }
 
+/**
+ * Pushes the queue and waits (up to timeoutMs) until nothing for this row is waiting any more.
+ * True once it is on the server. For writes that need the row to exist there first.
+ */
+export async function syncRow(table: string, id: string, timeoutMs = 6000): Promise<boolean> {
+  const pending = () => useQueue.getState().items.some((i) => i.table === table && i.id === id);
+  const end = Date.now() + timeoutMs;
+  while (pending() && Date.now() < end) {
+    // Returns at once while another flush runs; then just wait for that one.
+    await flush();
+    if (pending()) await new Promise((r) => setTimeout(r, 300));
+  }
+  return !pending();
+}
+
 /** Starts the online/offline listeners. Call once from the root layout. */
 export function startSync(): () => void {
   if (isDemo || isServer) return () => {};

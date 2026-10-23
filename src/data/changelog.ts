@@ -17,6 +17,7 @@ export const CHANGELOG: Release[] = [
       'The app tour now lights up what each step talks about and shows you how to add friends.',
       'Full names everywhere: the Forum, comments, your gym and friends’ PRs.',
       'Names are at most two words, like “Jan Novák”.',
+      'Fix: sharing a workout right after finishing it no longer fails with “Are you online?”.',
     ],
   },
   {

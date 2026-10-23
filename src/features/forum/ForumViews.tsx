@@ -10,6 +10,7 @@ import { ChevronRight, Heart, Landmark, MessageCircle } from '@/components/icons
 import { Sheet } from '@/components/Sheet';
 import { LikeHeart } from '@/features/arena/MyGym';
 import { timeAgo } from '@/lib/dates';
+import { isNetworkError } from '@/lib/errors';
 import { formatVolume } from '@/lib/formulas';
 import { postSummary, snapshotOf } from '@/lib/forum';
 import { muscleVector, workoutKind } from '@/lib/workoutType';
@@ -119,7 +120,12 @@ export function ShareSheet({
           toast('Shared on the Forum');
           router.push({ pathname: '/forum/[id]', params: { id } });
         },
-        onError: () => toast('Could not share. Are you online?'),
+        onError: (e) =>
+          toast(
+            isNetworkError(e)
+              ? 'Could not share. Are you online?'
+              : `Could not share: ${e.message}`,
+          ),
       },
     );
   };
