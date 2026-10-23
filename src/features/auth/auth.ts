@@ -295,6 +295,8 @@ async function demoSignUp(input: SignUpInput) {
     input.bodyweightKg,
     true,
   );
+  // Same first run as a real sign-up: the tour, then the Home Screen tip.
+  usePrefs.getState().setInstallTipPending(true);
   usePrefs.getState().setTourPending(true);
   markChangelogSeen();
 }
