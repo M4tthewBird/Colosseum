@@ -1,0 +1,567 @@
+[
+  {
+    "id": "workouts",
+    "name": "Workouts",
+    "about": "Finished workouts.",
+    "currentIcon": "dumbbell",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 1,
+        "title": "First workout",
+        "level": 1
+      },
+      {
+        "threshold": 10,
+        "title": "10 workouts",
+        "level": 2
+      },
+      {
+        "threshold": 25,
+        "title": "25 workouts",
+        "level": 2
+      },
+      {
+        "threshold": 50,
+        "title": "50 workouts",
+        "level": 3
+      },
+      {
+        "threshold": 100,
+        "title": "100 workouts",
+        "level": 4
+      },
+      {
+        "threshold": 250,
+        "title": "250 workouts",
+        "level": 4
+      },
+      {
+        "threshold": 500,
+        "title": "500 workouts",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "streak",
+    "name": "Week streak",
+    "about": "Weeks in a row that reached your weekly target.",
+    "currentIcon": "flame",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 4,
+        "title": "4 weeks in a row",
+        "level": 1
+      },
+      {
+        "threshold": 8,
+        "title": "8 weeks in a row",
+        "level": 2
+      },
+      {
+        "threshold": 12,
+        "title": "12 weeks in a row",
+        "level": 3
+      },
+      {
+        "threshold": 26,
+        "title": "26 weeks in a row",
+        "level": 4
+      },
+      {
+        "threshold": 52,
+        "title": "A whole year",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "volume",
+    "name": "Total volume",
+    "about": "Everything you lifted, added up (weight × reps).",
+    "currentIcon": "weight",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 10,
+        "title": "10 t lifted",
+        "level": 1
+      },
+      {
+        "threshold": 100,
+        "title": "100 t lifted",
+        "level": 2
+      },
+      {
+        "threshold": 500,
+        "title": "500 t lifted",
+        "level": 4
+      },
+      {
+        "threshold": 1000,
+        "title": "1000 t lifted",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "prs",
+    "name": "Records",
+    "about": "Personal records: heavier, or more reps than ever.",
+    "currentIcon": "trophy",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 10,
+        "title": "10 PRs",
+        "level": 1
+      },
+      {
+        "threshold": 50,
+        "title": "50 PRs",
+        "level": 2
+      },
+      {
+        "threshold": 100,
+        "title": "100 PRs",
+        "level": 4
+      },
+      {
+        "threshold": 250,
+        "title": "250 PRs",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "plates",
+    "name": "Plate club",
+    "about": "Heaviest set of any lift: 20 kg plates per side on a 20 kg bar.",
+    "currentIcon": "plate",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 60,
+        "title": "1 plate",
+        "level": 1
+      },
+      {
+        "threshold": 100,
+        "title": "2 plates",
+        "level": 2
+      },
+      {
+        "threshold": 140,
+        "title": "3 plates",
+        "level": 3
+      },
+      {
+        "threshold": 180,
+        "title": "4 plates",
+        "level": 4
+      },
+      {
+        "threshold": 220,
+        "title": "5 plates",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "bench",
+    "name": "Bench club",
+    "about": "Heaviest Bench Press set.",
+    "currentIcon": "bench",
+    "centre": "number (the kg)",
+    "tiers": [
+      {
+        "threshold": 60,
+        "title": "Bench 60 kg",
+        "level": 1
+      },
+      {
+        "threshold": 80,
+        "title": "Bench 80 kg",
+        "level": 2
+      },
+      {
+        "threshold": 100,
+        "title": "Bench 100 kg",
+        "level": 3
+      },
+      {
+        "threshold": 120,
+        "title": "Bench 120 kg",
+        "level": 4
+      },
+      {
+        "threshold": 140,
+        "title": "Bench 140 kg",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "squat",
+    "name": "Squat club",
+    "about": "Heaviest Squat set.",
+    "currentIcon": "squat",
+    "centre": "number (the kg)",
+    "tiers": [
+      {
+        "threshold": 60,
+        "title": "Squat 60 kg",
+        "level": 1
+      },
+      {
+        "threshold": 100,
+        "title": "Squat 100 kg",
+        "level": 2
+      },
+      {
+        "threshold": 140,
+        "title": "Squat 140 kg",
+        "level": 3
+      },
+      {
+        "threshold": 180,
+        "title": "Squat 180 kg",
+        "level": 4
+      },
+      {
+        "threshold": 220,
+        "title": "Squat 220 kg",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "deadlift",
+    "name": "Deadlift club",
+    "about": "Heaviest Deadlift set.",
+    "currentIcon": "deadlift",
+    "centre": "number (the kg)",
+    "tiers": [
+      {
+        "threshold": 100,
+        "title": "Deadlift 100 kg",
+        "level": 1
+      },
+      {
+        "threshold": 140,
+        "title": "Deadlift 140 kg",
+        "level": 2
+      },
+      {
+        "threshold": 180,
+        "title": "Deadlift 180 kg",
+        "level": 3
+      },
+      {
+        "threshold": 220,
+        "title": "Deadlift 220 kg",
+        "level": 4
+      },
+      {
+        "threshold": 260,
+        "title": "Deadlift 260 kg",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "total",
+    "name": "Total club",
+    "about": "Heaviest Squat + Bench Press + Deadlift together.",
+    "currentIcon": "crown",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 300,
+        "title": "300 kg total",
+        "level": 1
+      },
+      {
+        "threshold": 455,
+        "title": "1000 lb club",
+        "level": 2
+      },
+      {
+        "threshold": 600,
+        "title": "600 kg total",
+        "level": 4
+      },
+      {
+        "threshold": 750,
+        "title": "750 kg total",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "early",
+    "name": "Early bird",
+    "about": "Workouts started before 7 am.",
+    "currentIcon": "sunrise",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 1,
+        "title": "Early bird",
+        "level": 1
+      },
+      {
+        "threshold": 10,
+        "title": "10 early workouts",
+        "level": 3
+      },
+      {
+        "threshold": 50,
+        "title": "50 early workouts",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "night",
+    "name": "Night owl",
+    "about": "Workouts started after 9 pm.",
+    "currentIcon": "moon",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 1,
+        "title": "Night owl",
+        "level": 1
+      },
+      {
+        "threshold": 10,
+        "title": "10 late workouts",
+        "level": 3
+      },
+      {
+        "threshold": 50,
+        "title": "50 late workouts",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "weekend",
+    "name": "Weekend warrior",
+    "about": "Workouts on a Saturday or Sunday.",
+    "currentIcon": "calendar",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 10,
+        "title": "10 weekend workouts",
+        "level": 1
+      },
+      {
+        "threshold": 50,
+        "title": "50 weekend workouts",
+        "level": 3
+      },
+      {
+        "threshold": 100,
+        "title": "100 weekend workouts",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "marathon",
+    "name": "Marathon",
+    "about": "Your longest workout.",
+    "currentIcon": "clock",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 90,
+        "title": "90 min workout",
+        "level": 1
+      },
+      {
+        "threshold": 120,
+        "title": "2 h workout",
+        "level": 3
+      },
+      {
+        "threshold": 180,
+        "title": "3 h workout",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "bigday",
+    "name": "Big day",
+    "about": "Most volume in a single workout.",
+    "currentIcon": "bolt",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 5,
+        "title": "5 t in one workout",
+        "level": 1
+      },
+      {
+        "threshold": 10,
+        "title": "10 t in one workout",
+        "level": 3
+      },
+      {
+        "threshold": 20,
+        "title": "20 t in one workout",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "explorer",
+    "name": "Explorer",
+    "about": "Different exercises you have logged.",
+    "currentIcon": "compass",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 10,
+        "title": "10 exercises",
+        "level": 1
+      },
+      {
+        "threshold": 25,
+        "title": "25 exercises",
+        "level": 2
+      },
+      {
+        "threshold": 50,
+        "title": "50 exercises",
+        "level": 4
+      },
+      {
+        "threshold": 100,
+        "title": "100 exercises",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "drops",
+    "name": "Drop sets",
+    "about": "Drop sets done.",
+    "currentIcon": "layers",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 10,
+        "title": "10 drop sets",
+        "level": 1
+      },
+      {
+        "threshold": 50,
+        "title": "50 drop sets",
+        "level": 3
+      },
+      {
+        "threshold": 100,
+        "title": "100 drop sets",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "failure",
+    "name": "To failure",
+    "about": "Sets taken to failure.",
+    "currentIcon": "skull",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 10,
+        "title": "10 sets to failure",
+        "level": 1
+      },
+      {
+        "threshold": 50,
+        "title": "50 sets to failure",
+        "level": 3
+      },
+      {
+        "threshold": 100,
+        "title": "100 sets to failure",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "supersets",
+    "name": "Supersets",
+    "about": "Supersets done (counted per workout).",
+    "currentIcon": "link",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 10,
+        "title": "10 supersets",
+        "level": 1
+      },
+      {
+        "threshold": 50,
+        "title": "50 supersets",
+        "level": 3
+      },
+      {
+        "threshold": 100,
+        "title": "100 supersets",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "comeback",
+    "name": "Comeback",
+    "about": "Back in the gym after three weeks or more off.",
+    "currentIcon": "rotate",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 1,
+        "title": "Comeback",
+        "level": 1
+      },
+      {
+        "threshold": 5,
+        "title": "5 comebacks",
+        "level": 5
+      }
+    ]
+  },
+  {
+    "id": "friends",
+    "name": "Squad",
+    "about": "Friends in Colosseum.",
+    "currentIcon": "users",
+    "centre": "icon",
+    "tiers": [
+      {
+        "threshold": 1,
+        "title": "First friend",
+        "level": 1
+      },
+      {
+        "threshold": 5,
+        "title": "5 friends",
+        "level": 3
+      },
+      {
+        "threshold": 10,
+        "title": "10 friends",
+        "level": 5
+      }
+    ]
+  }
+]
