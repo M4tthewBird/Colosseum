@@ -11,6 +11,7 @@ import { ListGroup, ListRow, SectionHeader } from '@/components/List';
 import { Wordmark } from '@/components/Logo';
 import { Header, Screen } from '@/components/Screen';
 import { useForumPosts } from '@/features/forum/api';
+import { HomeGymPrompt } from '@/features/gyms/HomeGymPrompt';
 import { ForumRail } from '@/features/forum/ForumViews';
 import { useFriendsPrs, useLeaderboard } from '@/features/social/api';
 import { useActiveProgram, useFinishedSessions } from '@/features/training/hooks';
@@ -95,6 +96,7 @@ export default function Today() {
       <FriendsPrs />
       <InstallTip />
       <WhatsNew />
+      <HomeGymPrompt />
     </Screen>
   );
 }

@@ -12,7 +12,7 @@ Feedback from Matyáš (2026-10-23). Work top to bottom, one item at a time; ask
 - [x] **Unilateral exercises**: set menu → "Log each side" (per exercise, manual); one row with Left and Right reps; volume counts both, reps/PRs use the weaker side; summary says which side is behind. Needs `supabase/updates/2026-10-23-each-side.sql` on the live project
 - [x] **Drop sets and failure**: Drop set / Failure buttons under the set table (last done set); "•••" under set numbers
 - [x] **Warm-up sets**: "+ Warm-up" adds 50/70/85 % (fewer when light), shown as W, 1:00 rest, counted to nothing. Needs `supabase/updates/2026-10-23-warmups.sql`
-- [ ] **Gym check-in**: choose a gym at sign-in, confirm "I'm at <gym>" before starting a workout
+- [x] **Gym check-in**: asked once for a home gym when the account has none; before a workout "Training at <home gym>?" (Yes = check-in, Another gym, Not at a gym), saved as workout_sessions.gym_id. Needs `supabase/updates/2026-10-23-session-gym.sql`
 - [ ] **Favorite exercises**: star on the exercise image, a Favorites tab, favorites first in every category
 - [ ] **Suggest the next exercise** from similar past workouts
 - [ ] **Profile picture required**: a photo or at least an emoji from a set

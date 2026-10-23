@@ -33,6 +33,9 @@ interface PrefsState {
   /** Newest changelog entry this device has shown (null: none yet). */
   changelogSeen: string | null;
   setChangelogSeen: (id: string | null) => void;
+  /** Asked once for a home gym (an account without one); "Not now" keeps it from asking again. */
+  homeGymAsked: boolean;
+  setHomeGymAsked: (v: boolean) => void;
   setInstallTipPending: (v: boolean) => void;
   setArenaDots: (v: boolean) => void;
   setArenaMetrics: (m: ArenaMetric[]) => void;
@@ -54,6 +57,8 @@ export const usePrefs = create<PrefsState>()(
       setTourPending: (tourPending) => set({ tourPending }),
       changelogSeen: null,
       setChangelogSeen: (changelogSeen) => set({ changelogSeen }),
+      homeGymAsked: false,
+      setHomeGymAsked: (homeGymAsked) => set({ homeGymAsked }),
       setInstallTipPending: (installTipPending) => set({ installTipPending }),
       setArenaDots: (arenaDots) => set({ arenaDots }),
       setArenaMetrics: (arenaMetrics) => set({ arenaMetrics }),

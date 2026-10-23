@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { FillButton, IconButton, TextButton } from '@/components/Buttons';
 import { GlassCard } from '@/components/Glass';
+import { askGym } from '@/features/gyms/GymConfirm';
 import { TourTarget } from '@/features/onboarding/TourTarget';
 import { openWorkout } from '@/features/workout/actions';
 import { estimateMinutes } from '@/lib/formulas';
@@ -23,7 +24,7 @@ const askReplace = () =>
   });
 
 export function startDay(day: ProgramDay | null) {
-  void openWorkout(day, askReplace);
+  void openWorkout(day, askReplace, askGym);
 }
 
 /** "Up next" card. Today shows count + duration; Workouts lists the exercises and a "+" button. */

@@ -8,6 +8,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ConfirmHost, ToastHost } from '@/components/Overlays';
 import { startAuth, useAuth } from '@/features/auth/auth';
+import { GymConfirmHost } from '@/features/gyms/GymConfirm';
 import { Tour } from '@/features/onboarding/Tour';
 import { startSync } from '@/lib/sync';
 import { useData } from '@/stores/data';
@@ -67,6 +68,7 @@ export default function RootLayout() {
           <View style={{ flex: 1, backgroundColor: colors.bg }} />
         )}
         {ready && signedIn ? <Tour /> : null}
+        {ready && signedIn ? <GymConfirmHost /> : null}
         <ToastHost />
         <ConfirmHost />
       </SafeAreaProvider>

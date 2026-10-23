@@ -20,10 +20,14 @@ export function GymPicker({
   visible,
   onClose,
   onPick,
+  title = 'Home gym',
+  hint = 'The place you train at most.',
 }: {
   visible: boolean;
   onClose: () => void;
   onPick: (g: GymChoice) => void;
+  title?: string;
+  hint?: string;
 }) {
   const [q, setQ] = useState('');
   const [adding, setAdding] = useState(false);
@@ -105,8 +109,8 @@ export function GymPicker({
   }
 
   return (
-    <Sheet visible={visible} onClose={close} title="Home gym">
-      <Text style={type.caption}>The place you train at most.</Text>
+    <Sheet visible={visible} onClose={close} title={title}>
+      <Text style={type.caption}>{hint}</Text>
       <SearchField placeholder="Search gyms" value={q} onChangeText={setQ} />
       {gyms.isLoading ? (
         <ActivityIndicator color={colors.text2} />

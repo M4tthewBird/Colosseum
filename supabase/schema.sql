@@ -109,6 +109,7 @@ create table public.workout_sessions (
   user_id uuid not null references public.profiles(id) on delete cascade,
   program_day_id uuid references public.program_days(id) on delete set null,
   name text not null,
+  gym_id uuid references public.gyms(id) on delete set null,  -- where it was done (confirmed at start)
   started_at timestamptz not null,
   finished_at timestamptz,
   volume_kg numeric not null default 0,         -- totals written by the client on finish
@@ -489,6 +490,7 @@ language sql stable security definer set search_path = public as $$
     select s.user_id from workout_sessions s join profiles p on p.id = s.user_id, me
     where p.home_gym_id = me.home_gym_id and s.finished_at is null
       and s.started_at > now() - interval '2 hours'
+      and (s.gym_id is null or s.gym_id = me.home_gym_id)  -- not someone training at another gym
   )
   select p.id, p.username, p.display_name, p.avatar_url
   from profiles p where p.id in (select user_id from active);

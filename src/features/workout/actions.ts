@@ -68,7 +68,7 @@ function initialSets(sessionId: string, plan: PlannedExercise): SetEntry[] {
   });
 }
 
-export function startWorkout(day: ProgramDay | null): string {
+export function startWorkout(day: ProgramDay | null, gymId: string | null = null): string {
   const { userId, programs } = useData.getState();
   const id = uuid();
   // The program's phase for this week scales the sets and sets the target effort.
@@ -94,6 +94,7 @@ export function startWorkout(day: ProgramDay | null): string {
     user_id: userId,
     program_day_id: day?.id ?? null,
     name: day?.name ?? 'Workout',
+    gym_id: gymId,
     started_at: nowIso(),
     finished_at: null,
     volume_kg: 0,
@@ -107,8 +108,15 @@ export function startWorkout(day: ProgramDay | null): string {
   return id;
 }
 
-/** Opens the active workout, or starts one. Asks before replacing a running workout. */
-export async function openWorkout(day: ProgramDay | null, confirmReplace: () => Promise<boolean>) {
+/**
+ * Opens the active workout, or starts one. Asks before replacing a running workout, then where
+ * the workout happens (askGym: checks in at the home gym).
+ */
+export async function openWorkout(
+  day: ProgramDay | null,
+  confirmReplace: () => Promise<boolean>,
+  askGym?: () => Promise<{ gymId: string | null } | 'cancel'>,
+) {
   const active = session();
   if (active && !active.finished_at) {
     const replace = await confirmReplace();
@@ -116,9 +124,11 @@ export async function openWorkout(day: ProgramDay | null, confirmReplace: () => 
       resumeWorkout();
       return;
     }
-    discardWorkout();
   }
-  const id = startWorkout(day);
+  const where = askGym ? await askGym() : { gymId: null };
+  if (where === 'cancel') return;
+  if (active && !active.finished_at) discardWorkout();
+  const id = startWorkout(day, where.gymId);
   router.push({ pathname: '/workout/[id]', params: { id } });
 }
 

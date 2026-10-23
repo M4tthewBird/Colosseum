@@ -21,6 +21,8 @@ export const CHANGELOG: Release[] = [
       'Log each side: for split squats and other one-leg or one-arm exercises, tap a set number and log left and right reps. PRs go by the weaker side.',
       'Warm-up sets: “+ Warm-up” adds a ramp up to your working weight. Warm-ups never count to volume or PRs.',
       'Drop set and Failure buttons right under your sets.',
+      'Before a workout, confirm where you train. At your home gym this checks you in, so friends there see you under Training now.',
+      'No home gym yet? Colosseum asks once, so My gym in the Arena works for you.',
     ],
   },
   {

@@ -120,6 +120,8 @@ export interface Session {
   user_id: string;
   program_day_id: string | null;
   name: string;
+  /** Where it was done, confirmed when starting; null = not at a gym (or not asked yet). */
+  gym_id?: string | null;
   started_at: string;
   finished_at: string | null;
   volume_kg: number;

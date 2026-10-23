@@ -448,16 +448,19 @@ export function useMyCheckin() {
   });
 }
 
+/** Checks in at the home gym for 2 hours (the database accepts only the home gym). */
+export async function checkIn(gymId: string): Promise<void> {
+  if (isDemo) {
+    demo.checkedInAt = Date.now();
+    return;
+  }
+  check(await supabase.from('gym_checkins').insert({ user_id: me(), gym_id: gymId }));
+}
+
 export function useCheckIn() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (gymId: string) => {
-      if (isDemo) {
-        demo.checkedInAt = Date.now();
-        return;
-      }
-      check(await supabase.from('gym_checkins').insert({ user_id: me(), gym_id: gymId }));
-    },
+    mutationFn: checkIn,
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['my-checkin'] });
       void qc.invalidateQueries({ queryKey: ['training-now'] });
