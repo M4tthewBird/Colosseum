@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { FillButton, IconButton, TextButton } from '@/components/Buttons';
 import { GlassCard } from '@/components/Glass';
+import { TourTarget } from '@/features/onboarding/TourTarget';
 import { openWorkout } from '@/features/workout/actions';
 import { estimateMinutes } from '@/lib/formulas';
 import type { ProgramDay } from '@/lib/types';
@@ -38,12 +39,14 @@ export function UpNextCard({ variant }: { variant: 'today' | 'workouts' }) {
           <Text style={type.title}>No program yet</Text>
           <Text style={type.caption}>Pick a ready-made program or just start lifting.</Text>
         </View>
-        <FillButton
-          label="Start empty workout"
-          icon={Play}
-          iconFill
-          onPress={() => startDay(null)}
-        />
+        <TourTarget id={`upnext-start-${variant}`}>
+          <FillButton
+            label="Start empty workout"
+            icon={Play}
+            iconFill
+            onPress={() => startDay(null)}
+          />
+        </TourTarget>
         <FillButton
           label="Choose a program"
           icon={Plus}
@@ -86,7 +89,7 @@ export function UpNextCard({ variant }: { variant: 'today' | 'workouts' }) {
           <TextButton label="Change" onPress={() => router.push('/workouts/programs')} />
         ) : null}
       </View>
-      <View style={{ flexDirection: 'row', gap: 8 }}>
+      <TourTarget id={`upnext-start-${variant}`} style={{ flexDirection: 'row', gap: 8 }}>
         <FillButton
           label="Start workout"
           icon={Play}
@@ -102,7 +105,7 @@ export function UpNextCard({ variant }: { variant: 'today' | 'workouts' }) {
             onPress={() => startDay(null)}
           />
         ) : null}
-      </View>
+      </TourTarget>
     </GlassCard>
   );
 }

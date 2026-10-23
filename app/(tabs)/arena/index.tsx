@@ -8,6 +8,7 @@ import { ListGroup, ListRow, SectionHeader } from '@/components/List';
 import { Header, Screen } from '@/components/Screen';
 import { Sheet } from '@/components/Sheet';
 import { MyGym } from '@/features/arena/MyGym';
+import { TourTarget } from '@/features/onboarding/TourTarget';
 import { Ranks, ScopeTabs } from '@/features/arena/Ranks';
 import { useCheckIn, useFriends, useGym, useMyCheckin } from '@/features/social/api';
 import { useData } from '@/stores/data';
@@ -59,7 +60,9 @@ export default function Arena() {
           </View>
         }
       />
-      <ScopeTabs value={scope} onChange={setScope} />
+      <TourTarget id="arena-scopes" style={{ alignSelf: 'flex-start' }}>
+        <ScopeTabs value={scope} onChange={setScope} />
+      </TourTarget>
       {scope === 'gym' && !gymId ? (
         <MyGym gymId={null} />
       ) : (

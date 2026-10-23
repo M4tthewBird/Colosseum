@@ -14,6 +14,9 @@ export const CHANGELOG: Release[] = [
     items: [
       'After an update, Colosseum shows what changed since your last visit.',
       'The full history is in Profile → Settings → What’s new.',
+      'The app tour now lights up what each step talks about and shows you how to add friends.',
+      'Full names everywhere: the Forum, comments, your gym and friends’ PRs.',
+      'Names are at most two words, like “Jan Novák”.',
     ],
   },
   {

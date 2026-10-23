@@ -7,6 +7,7 @@ import { Header, Screen } from '@/components/Screen';
 import { Chip, Segmented } from '@/components/Segmented';
 import { useForumPosts } from '@/features/forum/api';
 import { PostCard } from '@/features/forum/ForumViews';
+import { TourTarget } from '@/features/onboarding/TourTarget';
 import { useFriends } from '@/features/social/api';
 import { WORKOUT_KINDS } from '@/lib/workoutType';
 import { useData } from '@/stores/data';
@@ -78,7 +79,15 @@ export default function Forum() {
       ) : list.length === 0 ? (
         <EmptyState title={empty.title} text={empty.text} />
       ) : (
-        list.map((p) => <PostCard key={p.id} post={p} />)
+        list.map((p, i) =>
+          i === 0 ? (
+            <TourTarget key={p.id} id="forum-post">
+              <PostCard post={p} />
+            </TourTarget>
+          ) : (
+            <PostCard key={p.id} post={p} />
+          ),
+        )
       )}
     </Screen>
   );

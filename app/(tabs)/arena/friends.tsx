@@ -9,6 +9,7 @@ import { FillButton, TextButton } from '@/components/Buttons';
 import { ListGroup, ListRow, SectionHeader } from '@/components/List';
 import { Header, Screen } from '@/components/Screen';
 import { SearchField } from '@/components/SearchField';
+import { TourTarget } from '@/features/onboarding/TourTarget';
 import { searchUsers, useFriendAction, useFriends } from '@/features/social/api';
 import type { PublicUser } from '@/lib/types';
 import { useData } from '@/stores/data';
@@ -46,7 +47,9 @@ export default function Friends() {
     <Screen gap={16}>
       <BackLink label="Arena" fallback="/arena" />
       <Header title="Friends" />
-      <SearchField placeholder="Search by username" value={q} onChangeText={setQ} />
+      <TourTarget id="friends-search">
+        <SearchField placeholder="Search by username" value={q} onChangeText={setQ} />
+      </TourTarget>
 
       {q.trim().length >= 2 ? (
         <View style={{ gap: 8 }}>

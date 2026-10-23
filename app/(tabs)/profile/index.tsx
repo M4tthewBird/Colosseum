@@ -8,6 +8,7 @@ import { IconButton } from '@/components/Buttons';
 import { Glass } from '@/components/Glass';
 import { Header, Screen } from '@/components/Screen';
 import { Segmented } from '@/components/Segmented';
+import { TourTarget } from '@/features/onboarding/TourTarget';
 import { BodyView } from '@/features/profile/BodyView';
 import { FeelTrend } from '@/features/profile/FeelTrend';
 import { LiftsView } from '@/features/profile/LiftsView';
@@ -50,15 +51,17 @@ export default function Profile() {
           </Text>
         </View>
       </Glass>
-      <Segmented
-        options={[
-          { value: 'body', label: 'Body' },
-          { value: 'lifts', label: 'Lifts' },
-        ]}
-        value={tab}
-        onChange={setTab}
-        accessibilityLabel="Profile sections"
-      />
+      <TourTarget id="profile-sections">
+        <Segmented
+          options={[
+            { value: 'body', label: 'Body' },
+            { value: 'lifts', label: 'Lifts' },
+          ]}
+          value={tab}
+          onChange={setTab}
+          accessibilityLabel="Profile sections"
+        />
+      </TourTarget>
       {tab === 'body' ? (
         <BodyView />
       ) : (

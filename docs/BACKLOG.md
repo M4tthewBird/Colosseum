@@ -4,9 +4,9 @@ Feedback from Matyáš (2026-10-23). Work top to bottom, one item at a time; ask
 
 - [x] **Changelog**: show what changed since the last visit (sheet after an update + Settings → What's new)
 - [x] **Onboarding**: going to a tab probably doesn't work (works after all; all 7 steps checked)
-- [ ] **Onboarding**: a Friends step after Arena (how to add friends + an Add friends button); each step also highlights the element it talks about on the screen
-- [ ] **Sign-up**: Name allows at most two words
-- [ ] **Forum**: shows the short name instead of the full name
+- [x] **Onboarding**: a Friends step after Arena (how to add friends + an Add friends button); each step also highlights the element it talks about on the screen
+- [x] **Sign-up**: Name allows at most two words (sign-up and Settings; older longer names stay until changed)
+- [x] **Forum**: shows the short name instead of the full name (full name everywhere now)
 - [ ] **Sharing bug** (screenshot pending)
 - [ ] **Czech version** of the app
 - [ ] **Images** (missing exercise images?)

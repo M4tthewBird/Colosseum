@@ -282,9 +282,7 @@ function RailCard({ post, width }: { post: ForumPost; width: number }) {
         <View style={styles.railAuthor}>
           <Avatar name={post.user.display_name} url={post.user.avatar_url} size={26} />
           <Text style={[type.small, { flex: 1 }]} numberOfLines={1}>
-            <Text style={{ color: colors.text, fontWeight: '600' }}>
-              {post.user.display_name.split(' ')[0]}
-            </Text>{' '}
+            <Text style={{ color: colors.text, fontWeight: '600' }}>{post.user.display_name}</Text>{' '}
             · {timeAgo(post.created_at)} · {formatVolume(w.volume_kg)}
           </Text>
         </View>

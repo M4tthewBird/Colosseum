@@ -1,7 +1,8 @@
 /**
  * The app tour: right after sign-up, Colosseum walks the new user through the real app. Each step
- * opens the screen it talks about; a red ring glides along the tab bar to the tab in question and
- * a card above it says what lives there. Skippable at every step; Settings can start it again.
+ * opens the screen it talks about; a red ring glides along the tab bar to the tab in question,
+ * the part of the screen the step is about is lit up (a TourTarget), and a card says what lives
+ * there. Skippable at every step; Settings can start it again.
  */
 import { router, type Href } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -34,6 +35,8 @@ import {
   TrendingUp,
   Trophy,
   User,
+  UserPlus,
+  Users,
   type LucideIcon,
 } from '@/components/icons';
 import { MAX_WIDTH } from '@/components/Screen';
@@ -41,21 +44,34 @@ import { useData } from '@/stores/data';
 import { usePrefs } from '@/stores/prefs';
 import { dur, ease, useReducedMotion } from '@/theme/motion';
 import { colors, space, type } from '@/theme/tokens';
+import { measureTarget, type TargetRect } from './TourTarget';
+
+interface Me {
+  firstName: string;
+  username: string;
+}
 
 interface Step {
   route: Href;
   /** Tab bar slot the step is about (0 Today … 3 Profile), or null off the tab bar. */
   tab: number | null;
-  title: string | ((firstName: string) => string);
-  body: string;
+  /** TourTarget id lit up on the screen, and its corner radius. */
+  target?: string;
+  radius?: number;
+  title: string | ((me: Me) => string);
+  body: string | ((me: Me) => string);
   points: { icon: LucideIcon; text: string }[];
 }
+
+const FRIENDS: Href = '/arena/friends';
 
 const STEPS: Step[] = [
   {
     route: '/',
     tab: 0,
-    title: (name) => (name ? `Welcome, ${name}` : 'Welcome to Colosseum'),
+    target: 'today-week',
+    radius: 24,
+    title: ({ firstName }) => (firstName ? `Welcome, ${firstName}` : 'Welcome to Colosseum'),
     body: 'A one-minute look around. Today is your home screen.',
     points: [
       { icon: TrendingUp, text: 'Your week at a glance: workouts, volume, streak and Arena rank' },
@@ -66,8 +82,10 @@ const STEPS: Step[] = [
   {
     route: '/workouts',
     tab: 1,
+    target: 'workouts-programs',
+    radius: 18,
     title: 'Workouts',
-    body: 'Everything you train lives here.',
+    body: 'Everything you train lives here. Programs holds your splits and ready-made templates.',
     points: [
       { icon: Layers, text: 'Programs: your own split or a template, with weekly periodization' },
       { icon: Bookmark, text: 'Saved workouts for one-off sessions' },
@@ -77,8 +95,10 @@ const STEPS: Step[] = [
   {
     route: '/workouts',
     tab: 1,
+    target: 'upnext-start-workouts',
+    radius: 25,
     title: 'During a workout',
-    body: 'Built for the gym floor, and it works without signal.',
+    body: 'Start workout opens your next day. Built for the gym floor, and it works without signal.',
     points: [
       { icon: Check, text: 'Tick a set to log it. The rest timer starts on its own' },
       { icon: Flame, text: 'Tap a set number for a drop set or to mark failure' },
@@ -88,8 +108,10 @@ const STEPS: Step[] = [
   {
     route: '/arena',
     tab: 2,
+    target: 'arena-scopes',
+    radius: 14,
     title: 'Arena',
-    body: 'Train together, compete together.',
+    body: 'Train together, compete together. Choose who you are up against.',
     points: [
       { icon: Trophy, text: 'Rank against friends by volume, workouts or any lift, in kg or DOTS' },
       { icon: Globe, text: 'Join the global leaderboard to take on everyone, if you want to' },
@@ -97,8 +119,24 @@ const STEPS: Step[] = [
     ],
   },
   {
+    route: FRIENDS,
+    tab: 2,
+    target: 'friends-search',
+    radius: 12,
+    title: 'Add your friends',
+    body: ({ username }) =>
+      `Search for your training partners here. They find you as @${username}. Open this page any time with the people icon in Arena.`,
+    points: [
+      { icon: UserPlus, text: 'Send a request; it becomes a friendship once they accept' },
+      { icon: Trophy, text: 'Friends meet you on the Arena leaderboard' },
+      { icon: Users, text: 'Their new PRs and shared workouts show up on Today' },
+    ],
+  },
+  {
     route: '/forum',
     tab: null,
+    target: 'forum-post',
+    radius: 24,
     title: 'Forum',
     body: 'Share a finished workout with your friends and your gym. Open it from Today.',
     points: [
@@ -110,6 +148,8 @@ const STEPS: Step[] = [
   {
     route: '/profile',
     tab: 3,
+    target: 'profile-sections',
+    radius: 20,
     title: 'Profile',
     body: 'Your progress, private where it matters.',
     points: [
@@ -121,6 +161,8 @@ const STEPS: Step[] = [
   {
     route: '/',
     tab: 0,
+    target: 'upnext-start-today',
+    radius: 25,
     title: 'You’re ready',
     body: 'Start your first workout from Up next, or pick a program in Workouts first. Every set you log builds your records.',
     points: [],
@@ -148,7 +190,44 @@ function useTabGeometry() {
     tabWidth,
     tabLeft: (i: number) => barLeft + BAR_PAD + i * (tabWidth + BAR_GAP),
     bottomInset: insets.bottom,
+    topInset: insets.top,
   };
+}
+
+/** Space between a lit-up element and its outline. */
+const HALO = 6;
+
+/** Where the step's target sits; re-measured while the step is open (screens settle, scroll). */
+function useTargetRect(id: string | undefined): TargetRect | null {
+  // Tagged with the id it belongs to, so the last step's rect never shows on the next one.
+  const [found, setFound] = useState<{ id: string; rect: TargetRect | null } | null>(null);
+  useEffect(() => {
+    if (!id) return;
+    let alive = true;
+    const tick = () =>
+      measureTarget(id, (r) => {
+        if (!alive) return;
+        setFound((prev) => {
+          const p = prev?.id === id ? prev.rect : undefined;
+          const same =
+            p === r ||
+            (!!p &&
+              !!r &&
+              p.x === r.x &&
+              p.y === r.y &&
+              p.width === r.width &&
+              p.height === r.height);
+          return same && prev ? prev : { id, rect: r };
+        });
+      });
+    tick();
+    const timer = setInterval(tick, 250);
+    return () => {
+      alive = false;
+      clearInterval(timer);
+    };
+  }, [id]);
+  return id && found?.id === id ? found.rect : null;
 }
 
 export function Tour() {
@@ -159,11 +238,14 @@ export function Tour() {
 function TourOverlay() {
   const setPending = usePrefs((s) => s.setTourPending);
   const firstName = useData((s) => s.profile?.display_name.trim().split(/\s+/)[0] ?? '');
+  const username = useData((s) => s.profile?.username ?? '');
   const reduced = useReducedMotion();
   const g = useTabGeometry();
   const [step, setStep] = useState(0);
+  const [cardHeight, setCardHeight] = useState(0);
   const s = STEPS[step];
   const last = step === STEPS.length - 1;
+  const target = useTargetRect(s.target);
 
   // The ring glides from tab to tab; off the tab bar it fades out.
   const ringX = useSharedValue(g.tabLeft(s.tab ?? 0));
@@ -178,25 +260,46 @@ function TourOverlay() {
     transform: [{ translateX: ringX.value }],
   }));
 
+  // The Friends page is pushed onto the Arena tab; take it off again when the tour moves on,
+  // so the Arena tab opens on the leaderboard later.
+  const leave = (next: Href) => {
+    if (s.route === FRIENDS && next !== FRIENDS) router.navigate('/arena');
+    router.navigate(next);
+  };
   const go = (i: number) => {
     setStep(i);
-    router.navigate(STEPS[i].route);
+    leave(STEPS[i].route);
   };
   const finish = (then?: Href) => {
     setPending(false);
-    router.navigate(then ?? '/');
+    leave(then ?? '/');
   };
 
+  const me = { firstName, username };
   const cardWidth = Math.min(g.width - 32, MAX_WIDTH - 32);
   const cardLeft = (g.width - cardWidth) / 2;
   const onBar = s.tab != null;
+  const cardBottom = onBar ? g.barTop + 18 : g.bottomInset + 24;
+  // A card that would cover the lit-up element moves to the top of the screen.
+  const cardTop = g.height - cardBottom - cardHeight;
+  const atTop = !!target && cardHeight > 0 && target.y + target.height + HALO + 12 > cardTop;
   const caretX = onBar ? g.tabLeft(s.tab!) + g.tabWidth / 2 - cardLeft - 8 : 0;
-  const title = typeof s.title === 'function' ? s.title(firstName) : s.title;
+  const title = typeof s.title === 'function' ? s.title(me) : s.title;
+  const body = typeof s.body === 'function' ? s.body(me) : s.body;
+  const halo = target
+    ? {
+        x: target.x - HALO,
+        y: target.y - HALO,
+        width: target.width + HALO * 2,
+        height: target.height + HALO * 2,
+        r: (s.radius ?? 16) + HALO,
+      }
+    : null;
 
   return (
     <View style={StyleSheet.absoluteFill} accessibilityViewIsModal>
-      {/* The screen stays visible but recedes; the tab bar stays bright under its ring. */}
-      <Scrim g={g} hole={onBar} />
+      {/* The screen stays visible but recedes; the tab bar and the step's target stay bright. */}
+      <Scrim g={g} hole={onBar} spot={halo} />
       {/* Taps on the tab bar wait until the tour is over. */}
       <Pressable style={StyleSheet.absoluteFill} accessible={false} onPress={() => undefined} />
       <Animated.View
@@ -207,19 +310,34 @@ function TourOverlay() {
           ring,
         ]}
       />
+      {halo ? (
+        <Animated.View
+          key={`spot-${step}`}
+          aria-hidden
+          entering={reduced ? undefined : FadeIn.duration(dur.state)}
+          style={[
+            styles.spot,
+            {
+              left: halo.x,
+              top: halo.y,
+              width: halo.width,
+              height: halo.height,
+              borderRadius: halo.r,
+            },
+          ]}
+        />
+      ) : null}
 
       <View
+        onLayout={(e) => setCardHeight(e.nativeEvent.layout.height)}
         style={[
           styles.card,
-          {
-            left: cardLeft,
-            width: cardWidth,
-            bottom: onBar ? g.barTop + 18 : g.bottomInset + 24,
-          },
+          { left: cardLeft, width: cardWidth },
+          atTop ? { top: g.topInset + 16 } : { bottom: cardBottom },
         ]}
         accessibilityLiveRegion="polite"
       >
-        {onBar ? <View aria-hidden style={[styles.caret, { left: caretX }]} /> : null}
+        {onBar && !atTop ? <View aria-hidden style={[styles.caret, { left: caretX }]} /> : null}
         <Animated.View
           key={step}
           entering={reduced ? undefined : FadeIn.duration(dur.state)}
@@ -229,7 +347,7 @@ function TourOverlay() {
             <Text style={type.title} accessibilityRole="header">
               {title}
             </Text>
-            <Text style={styles.body}>{s.body}</Text>
+            <Text style={styles.body}>{body}</Text>
           </View>
           {s.points.length ? (
             <View style={{ gap: 10 }}>
@@ -255,6 +373,11 @@ function TourOverlay() {
               label="Browse programs first"
               style={styles.secondary}
               onPress={() => finish('/workouts/programs')}
+            />
+            <TextButton
+              label="Add friends first"
+              style={styles.secondary}
+              onPress={() => finish(FRIENDS)}
             />
           </View>
         ) : (
@@ -285,20 +408,41 @@ function TourOverlay() {
   );
 }
 
-/** Dims the whole screen; on tab steps the tab bar's capsule is cut out so it stays lit. */
-function Scrim({ g, hole }: { g: ReturnType<typeof useTabGeometry>; hole: boolean }) {
-  const r = space.tabBarHeight / 2;
-  const x = g.barLeft;
-  const y = g.height - g.barTop;
-  const w = g.barWidth;
-  const h = space.tabBarHeight;
-  const capsule =
-    `M${x + r} ${y}H${x + w - r}A${r} ${r} 0 0 1 ${x + w - r} ${y + h}` +
-    `H${x + r}A${r} ${r} 0 0 1 ${x + r} ${y}Z`;
+/** A rounded rectangle as an SVG subpath. */
+function roundRect(x: number, y: number, w: number, h: number, radius: number): string {
+  const r = Math.min(radius, w / 2, h / 2);
+  return (
+    `M${x + r} ${y}H${x + w - r}A${r} ${r} 0 0 1 ${x + w} ${y + r}V${y + h - r}` +
+    `A${r} ${r} 0 0 1 ${x + w - r} ${y + h}H${x + r}A${r} ${r} 0 0 1 ${x} ${y + h - r}` +
+    `V${y + r}A${r} ${r} 0 0 1 ${x + r} ${y}Z`
+  );
+}
+
+/**
+ * Dims the whole screen; on tab steps the tab bar's capsule is cut out so it stays lit, and the
+ * step's target is cut out too.
+ */
+function Scrim({
+  g,
+  hole,
+  spot,
+}: {
+  g: ReturnType<typeof useTabGeometry>;
+  hole: boolean;
+  spot: { x: number; y: number; width: number; height: number; r: number } | null;
+}) {
+  const capsule = roundRect(
+    g.barLeft,
+    g.height - g.barTop,
+    g.barWidth,
+    space.tabBarHeight,
+    space.tabBarHeight / 2,
+  );
+  const target = spot ? roundRect(spot.x, spot.y, spot.width, spot.height, spot.r) : '';
   return (
     <Svg width={g.width} height={g.height} style={styles.scrim} aria-hidden>
       <Path
-        d={`M0 0H${g.width}V${g.height}H0Z${hole ? capsule : ''}`}
+        d={`M0 0H${g.width}V${g.height}H0Z${hole ? capsule : ''}${target}`}
         fill="rgb(28,28,30)"
         fillOpacity={0.22}
         fillRule="evenodd"
@@ -323,6 +467,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     borderRadius: 26,
+    borderWidth: 2,
+    borderColor: colors.accent,
+    pointerEvents: 'none',
+  },
+  spot: {
+    position: 'absolute',
     borderWidth: 2,
     borderColor: colors.accent,
     pointerEvents: 'none',

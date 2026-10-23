@@ -295,7 +295,7 @@ function FeedCard({ item, onComments }: { item: FeedItem; onComments: () => void
         <Avatar name={item.user.display_name} url={item.user.avatar_url} size={36} />
         <View style={{ flex: 1, gap: 1 }}>
           <Text style={type.bodyStrong} numberOfLines={1}>
-            {item.user.display_name.split(' ')[0]}{' '}
+            {item.user.display_name}{' '}
             <Text style={{ fontWeight: '400', color: colors.text2 }}>finished {item.name}</Text>
           </Text>
           <Text style={type.small}>{timeAgo(item.finished_at)}</Text>
@@ -360,8 +360,7 @@ function CommentsSheet({ sessionId, onClose }: { sessionId: string | null; onClo
           <Avatar name={c.user.display_name} url={c.user.avatar_url} size={34} />
           <View style={{ flex: 1, gap: 2 }}>
             <Text style={type.bodyStrong}>
-              {c.user.display_name.split(' ')[0]}{' '}
-              <Text style={type.small}>{timeAgo(c.created_at)}</Text>
+              {c.user.display_name} <Text style={type.small}>{timeAgo(c.created_at)}</Text>
             </Text>
             <Text style={type.body}>{c.body}</Text>
           </View>

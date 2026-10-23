@@ -115,8 +115,7 @@ export default function ForumPostScreen() {
           </Pressable>
           <View style={{ flex: 1, gap: 2 }}>
             <Text style={type.bodyStrong}>
-              {c.user.display_name.split(' ')[0]}{' '}
-              <Text style={type.small}>{timeAgo(c.created_at)}</Text>
+              {c.user.display_name} <Text style={type.small}>{timeAgo(c.created_at)}</Text>
             </Text>
             <Text style={type.body}>{c.body}</Text>
           </View>

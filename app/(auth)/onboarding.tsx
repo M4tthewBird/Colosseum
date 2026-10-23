@@ -13,6 +13,7 @@ import { GymPicker, type GymChoice } from '@/features/gyms/GymPicker';
 import { pickImage } from '@/features/profile/avatar';
 import { ExperiencePicker, GoalsPicker, SexSwitch } from '@/features/profile/ProfileFields';
 import { parseNumber } from '@/lib/formulas';
+import { limitNameWords } from '@/lib/names';
 import { cleanUsername, isDemo, USERNAME_RE } from '@/lib/supabase';
 import type { Experience, Goal, Sex } from '@/lib/types';
 import { colors, type } from '@/theme/tokens';
@@ -103,7 +104,7 @@ export default function Onboarding() {
       await signUp({
         username: uname,
         password,
-        displayName: name,
+        displayName: name.trim(),
         sex,
         experience,
         goals,
@@ -175,8 +176,8 @@ export default function Onboarding() {
           <FormField
             label="Name"
             value={name}
-            onChangeText={setName}
-            placeholder="Your name"
+            onChangeText={(t) => setName(limitNameWords(t))}
+            placeholder="First and last name"
             autoComplete="name"
           />
           <FormField
@@ -228,7 +229,7 @@ export default function Onboarding() {
         {!completing && hint[availability] ? (
           <FieldHint text={hint[availability]!.text} error={hint[availability]!.error} />
         ) : null}
-        <FieldHint text="Name is what your friends see in the Arena. Your username is for signing in and lets friends find you." />
+        <FieldHint text="Name is what your friends see in the Arena, at most two words. Your username is for signing in and lets friends find you." />
       </View>
 
       <ExperiencePicker value={experience} onChange={setExperience} />

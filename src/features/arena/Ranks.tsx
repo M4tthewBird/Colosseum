@@ -65,8 +65,6 @@ const PERIOD_TEXT: Record<ArenaPeriod, string> = {
   all: 'of all time',
 };
 
-const firstName = (n: string) => n.split(' ')[0];
-
 const SCOPES: { value: ArenaScope; label: string }[] = [
   { value: 'friends', label: 'Friends' },
   { value: 'gym', label: 'My gym' },
@@ -251,8 +249,8 @@ function gapText(me: RankRow, rows: RankRow[], metric: string): string | null {
   if (ahead?.value == null) return null;
   const d = ahead.value - me.value;
   return d > 0
-    ? `${formatGap(metric, d)} behind ${firstName(ahead.display_name)}`
-    : `Level with ${firstName(ahead.display_name)}`;
+    ? `${formatGap(metric, d)} behind ${ahead.display_name}`
+    : `Level with ${ahead.display_name}`;
 }
 
 const openUser = (id: string) => router.push({ pathname: '/user/[id]', params: { id } });
@@ -337,7 +335,7 @@ function RunnerUp({ row, me, metric }: { row: RankRow; me: boolean; metric: stri
       <Avatar name={row.display_name} url={row.avatar_url} size={40} white />
       <View style={{ flex: 1, minWidth: 0 }}>
         <Text style={type.bodyStrong} numberOfLines={1}>
-          {me ? 'You' : firstName(row.display_name)}
+          {me ? 'You' : row.display_name}
         </Text>
         {value ? <Text style={[type.caption, tabular]}>{value}</Text> : null}
       </View>

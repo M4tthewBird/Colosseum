@@ -15,6 +15,7 @@ import { ForumRail } from '@/features/forum/ForumViews';
 import { useFriendsPrs, useLeaderboard } from '@/features/social/api';
 import { useActiveProgram, useFinishedSessions } from '@/features/training/hooks';
 import { InstallTip } from '@/features/onboarding/InstallTip';
+import { TourTarget } from '@/features/onboarding/TourTarget';
 import { WhatsNew } from '@/features/onboarding/WhatsNew';
 import { UpNextCard } from '@/features/training/UpNextCard';
 import { timeAgo } from '@/lib/dates';
@@ -59,20 +60,22 @@ export default function Today() {
         }
       />
 
-      <GlassCard style={styles.week} accessibilityLabel="This week">
-        <ProgressRing value={week.workouts / target}>
-          <Text style={styles.ringValue}>
-            {week.workouts}/{target}
-          </Text>
-          <Text style={styles.ringLabel}>workouts</Text>
-        </ProgressRing>
-        <View style={styles.stats}>
-          <Stat value={formatVolume(week.volumeKg)} label="Volume" />
-          <Stat value={`${streak} wk`} label="Streak" />
-          <Stat value={myRank ? `#${myRank}` : '—'} label="Arena rank" />
-          <Stat value={String(week.prs)} label="New PRs" />
-        </View>
-      </GlassCard>
+      <TourTarget id="today-week">
+        <GlassCard style={styles.week} accessibilityLabel="This week">
+          <ProgressRing value={week.workouts / target}>
+            <Text style={styles.ringValue}>
+              {week.workouts}/{target}
+            </Text>
+            <Text style={styles.ringLabel}>workouts</Text>
+          </ProgressRing>
+          <View style={styles.stats}>
+            <Stat value={formatVolume(week.volumeKg)} label="Volume" />
+            <Stat value={`${streak} wk`} label="Streak" />
+            <Stat value={myRank ? `#${myRank}` : '—'} label="Arena rank" />
+            <Stat value={String(week.prs)} label="New PRs" />
+          </View>
+        </GlassCard>
+      </TourTarget>
 
       {deload ? (
         <GlassCard radius={22} style={{ gap: 6, padding: 16 }} accessibilityLabel="Deload hint">
@@ -162,7 +165,7 @@ function FriendsPrs() {
               left={<Avatar name={p.user.display_name} url={p.user.avatar_url} size={38} />}
               title={
                 <Text style={type.bodyStrong} numberOfLines={1}>
-                  {p.user.display_name.split(' ')[0]}{' '}
+                  {p.user.display_name}{' '}
                   <Text style={{ fontWeight: '400', color: colors.text2 }}>· {p.exercise}</Text>
                 </Text>
               }

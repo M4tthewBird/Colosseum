@@ -15,6 +15,7 @@ import { pickImage, uploadAvatar } from '@/features/profile/avatar';
 import { ExperiencePicker, GoalsPicker, SexSwitch } from '@/features/profile/ProfileFields';
 import { createGym, useGym } from '@/features/social/api';
 import { formatKg, parseNumber } from '@/lib/formulas';
+import { limitNameWords, MAX_NAME_WORDS, nameWords } from '@/lib/names';
 import { isDemo } from '@/lib/supabase';
 import { flush } from '@/lib/sync';
 import type { Profile } from '@/lib/types';
@@ -50,6 +51,12 @@ export default function Settings() {
 
   const save = async () => {
     if (!draft.display_name.trim()) return setError('Enter your name.');
+    // Older accounts may have a longer name; it only has to fit once it is changed.
+    if (
+      draft.display_name !== profile.display_name &&
+      nameWords(draft.display_name).length > MAX_NAME_WORDS
+    )
+      return setError('Use at most two words for your name.');
     setError(null);
     setBusy(true);
     try {
@@ -99,7 +106,7 @@ export default function Settings() {
         <FormField
           label="Name"
           value={draft.display_name}
-          onChangeText={(display_name) => setDraft({ ...draft, display_name })}
+          onChangeText={(t) => setDraft({ ...draft, display_name: limitNameWords(t) })}
         />
         <FormRow label="Username">
           <Text style={[type.body, { fontSize: 16, color: colors.text2 }]}>
@@ -124,7 +131,7 @@ export default function Settings() {
           <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
         </FormRow>
       </FormGroup>
-      <FieldHint text="Name is what your friends see in the Arena. Height is private: only you can see it." />
+      <FieldHint text="Name is what your friends see in the Arena, at most two words. Height is private: only you can see it." />
 
       <ExperiencePicker
         value={draft.experience}

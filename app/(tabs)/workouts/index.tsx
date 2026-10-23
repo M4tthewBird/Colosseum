@@ -6,6 +6,7 @@ import { FillButton, TextButton } from '@/components/Buttons';
 import { GlassCard } from '@/components/Glass';
 import { ListGroup, SectionHeader } from '@/components/List';
 import { Header, Screen } from '@/components/Screen';
+import { TourTarget } from '@/features/onboarding/TourTarget';
 import { SavedWorkouts } from '@/features/programs/SavedWorkouts';
 import { useActiveProgram, useFinishedSessions } from '@/features/training/hooks';
 import { MonthCalendar } from '@/features/training/MonthCalendar';
@@ -36,11 +37,13 @@ export default function Workouts() {
         above={above}
         title="Workouts"
         right={
-          <FillButton
-            label="Programs"
-            size="sm"
-            onPress={() => router.push('/workouts/programs')}
-          />
+          <TourTarget id="workouts-programs">
+            <FillButton
+              label="Programs"
+              size="sm"
+              onPress={() => router.push('/workouts/programs')}
+            />
+          </TourTarget>
         }
       />
       <UpNextCard variant="workouts" />
