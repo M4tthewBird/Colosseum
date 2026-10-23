@@ -116,6 +116,6 @@ docs/                   specs (read only unless asked)
   - Compare it against the matching `design/screens/*.dc.html`
   - Update the checkboxes in the roadmap
 - Keep sample data only in `src/dev/seed.ts`, never hard-coded in screens.
-- Every change users will notice gets a line in `src/data/changelog.ts` (plain English, no internals). Add to the newest entry until it ships; after a release, start a new entry with a new id.
+- Every change users will notice gets a line in `src/data/changelog.ts` (plain English, no internals). Add to the newest entry until it ships; after a release, start a new entry with a new id. A big new feature also gets a `highlights` card (live preview + "Show me" that opens its screen and lights it up; see `src/features/onboarding/Highlights.tsx`).
 - Feedback to work through is in `docs/BACKLOG.md`. Ask Matyáš for details before starting an item and tick it when done.
 - Write small pure functions for the formulas and unit-test them (volume, e1RM, streaks, PR detection).
