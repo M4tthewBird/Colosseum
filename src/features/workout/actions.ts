@@ -4,7 +4,16 @@ import { Platform, Vibration } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
 import { chainIds, dropChain, dropWeight, isMain } from '@/lib/dropsets';
-import { bestsByExercise, markPRs, prCount, prKinds, prLabel, volume } from '@/lib/formulas';
+import {
+  bestsByExercise,
+  isSideSet,
+  markPRs,
+  prCount,
+  prKinds,
+  prLabel,
+  sideReps,
+  volume,
+} from '@/lib/formulas';
 import { phaseFor, phasedSets } from '@/lib/periodization';
 import { programWeek } from '@/lib/programs';
 import { primaryGoal, recommend } from '@/lib/repRanges';
@@ -23,10 +32,23 @@ function session(): Session | null {
   return id ? (useData.getState().sessions[id] ?? null) : null;
 }
 
+/** Reps fields of a new set: per side when the exercise is logged per side. */
+function repsFields(prev: SetEntry | undefined, fallback: number, eachSide: boolean) {
+  if (!eachSide) return { reps: prev?.reps ?? fallback, left_reps: null, right_reps: null };
+  return sideReps(
+    prev?.left_reps ?? prev?.reps ?? fallback,
+    prev?.right_reps ?? prev?.reps ?? fallback,
+  );
+}
+
+const eachSideOf = (exerciseId: string) =>
+  !!useData.getState().exercisePrefs[exerciseId]?.each_side;
+
 /** Sets for one exercise, prefilled with last time's values (or the plan). */
 function initialSets(sessionId: string, plan: PlannedExercise): SetEntry[] {
   const sessions = Object.values(useData.getState().sessions);
   const last = lastTimeSets(sessions, plan.exercise_id, sessionId);
+  const eachSide = eachSideOf(plan.exercise_id);
   return Array.from({ length: Math.max(1, plan.sets) }, (_, i) => {
     const prev = last[i] ?? last[last.length - 1];
     return {
@@ -36,7 +58,7 @@ function initialSets(sessionId: string, plan: PlannedExercise): SetEntry[] {
       exercise_position: plan.position,
       set_number: i + 1,
       weight_kg: prev?.weight_kg ?? 0,
-      reps: prev?.reps ?? plan.reps_max,
+      ...repsFields(prev, plan.reps_max, eachSide),
       done: false,
       is_pr: false,
       superset_id: plan.superset ?? null,
@@ -128,6 +150,50 @@ export function updateSet(setId: string, patch: Partial<Pick<SetEntry, 'weight_k
   put({ ...s, sets: s.sets.map((x) => (x.id === setId ? { ...x, ...patch } : x)) });
 }
 
+/** Reps of one side of a per-side set; the set's reps follow the weaker side. */
+export function updateSide(setId: string, side: 'left' | 'right', reps: number) {
+  const s = session();
+  if (!s) return;
+  put({
+    ...s,
+    sets: s.sets.map((x) =>
+      x.id === setId
+        ? {
+            ...x,
+            ...sideReps(
+              side === 'left' ? reps : (x.left_reps ?? x.reps),
+              side === 'right' ? reps : (x.right_reps ?? x.reps),
+            ),
+          }
+        : x,
+    ),
+  });
+}
+
+/**
+ * Turns logging per side on or off for an exercise (saved for next time too). Sets of it in the
+ * active workout that are not done yet switch over; done sets keep what was logged.
+ */
+export function setEachSide(exerciseId: string, on: boolean) {
+  useData.getState().setEachSide(exerciseId, on);
+  const s = session();
+  if (!s) return;
+  put({
+    ...s,
+    sets: s.sets.map((x) => {
+      if (x.exercise_id !== exerciseId || x.done || isSideSet(x) === on) return x;
+      return on
+        ? { ...x, ...sideReps(x.reps, x.reps) }
+        : {
+            ...x,
+            reps: Math.max(x.left_reps ?? 0, x.right_reps ?? 0),
+            left_reps: null,
+            right_reps: null,
+          };
+    }),
+  });
+}
+
 export function toggleSet(setId: string) {
   const s = session();
   if (!s) return;
@@ -135,7 +201,7 @@ export function toggleSet(setId: string) {
   if (!target) return;
   const done = !target.done;
   if (done && target.reps <= 0) {
-    toast('Enter reps first');
+    toast(isSideSet(target) ? 'Enter reps for both sides first' : 'Enter reps first');
     return;
   }
   const sets = put({ ...s, sets: s.sets.map((x) => (x.id === setId ? { ...x, done } : x)) });

@@ -86,7 +86,11 @@ export interface SetEntry {
   exercise_position: number;
   set_number: number;
   weight_kg: number;
+  /** For a set logged per side: the weaker side, so 1RM and PRs hold for both. */
   reps: number;
+  /** Set logged per side (one leg or arm at a time): reps of each side. Both null otherwise. */
+  left_reps?: number | null;
+  right_reps?: number | null;
   done: boolean;
   is_pr: boolean;
   /** Sets of exercises done as one superset share this id. */
@@ -132,6 +136,8 @@ export interface ExercisePref {
   exercise_id: string;
   /** Weight of the machine itself (sled, carriage, Smith bar). Shown as information only. */
   machine_kg: number | null;
+  /** Log left and right reps separately (one leg or arm at a time). */
+  each_side?: boolean;
   updated_at: string;
 }
 

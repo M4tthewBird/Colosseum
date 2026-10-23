@@ -33,7 +33,7 @@ import { formatKg, formatVolume, roundHalf } from '@/lib/formulas';
 import { weeklyTarget } from '@/lib/programs';
 import { deloadAdvice } from '@/lib/progression';
 import { finished } from '@/lib/stats';
-import { buildSummary, percentChange, setsLine } from '@/lib/summary';
+import { buildSummary, percentChange, setsLine, weakerSide } from '@/lib/summary';
 import { useTween } from '@/lib/useTween';
 import { useData } from '@/stores/data';
 import { toast, useUi } from '@/stores/ui';
@@ -222,6 +222,11 @@ export function WorkoutSummary({ sessionId }: { sessionId: string }) {
                     <Text style={[type.small, tabular]} numberOfLines={2}>
                       {setsLine(e.sets)}
                     </Text>
+                    {weakerSide(e.sets) ? (
+                      <Text style={[type.small, { color: colors.accent }]} numberOfLines={1}>
+                        {weakerSide(e.sets)}
+                      </Text>
+                    ) : null}
                   </View>
                   <View style={{ alignItems: 'flex-end' }}>
                     <Text style={[type.bodyStrong, tabular]}>{formatVolume(e.volumeKg)}</Text>

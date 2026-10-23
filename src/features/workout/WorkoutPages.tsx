@@ -9,7 +9,15 @@ import { ExerciseImage } from '@/features/exercises/ExerciseImage';
 import { musclesLabel } from '@/features/exercises/ExercisePicker';
 import { dropChain, isMain, withDrops } from '@/lib/dropsets';
 import { isMachine } from '@/lib/exerciseName';
-import { formatKg, formatRest, formatScheme, roundHalf, type Best } from '@/lib/formulas';
+import {
+  formatKg,
+  formatRest,
+  formatScheme,
+  isSideSet,
+  repsText,
+  roundHalf,
+  type Best,
+} from '@/lib/formulas';
 import { lastTimeSets } from '@/lib/stats';
 import { interleave, letter } from '@/lib/supersets';
 import type { Exercise, Session, SetEntry } from '@/lib/types';
@@ -39,8 +47,7 @@ interface PageProps {
   onInfo: (p: PlannedExercise) => void;
 }
 
-const lastLabel = (l?: { weight_kg: number; reps: number }) =>
-  l ? `${formatKg(l.weight_kg)} × ${l.reps}` : '—';
+const lastLabel = (l?: SetEntry) => (l ? `${formatKg(l.weight_kg)} × ${repsText(l)}` : '—');
 
 async function askRemove(p: PlannedExercise, name: string) {
   const ok = await confirm({
@@ -70,7 +77,7 @@ function Records({ best, machine }: { best?: Best; machine?: { id: string; name:
   );
 }
 
-const SET_HINT = 'Tap a set number to add a drop set or mark failure.';
+const SET_HINT = 'Tap a set number to add a drop set, mark failure or log each side.';
 
 /** Set menu title: "Set 2", "A2" or "Drop set". */
 function menuTitle(set: SetEntry | null, label?: (s: SetEntry) => string) {
@@ -141,7 +148,7 @@ export function ExercisePage({
       </GlassCard>
 
       <Glass radius={22} style={styles.table}>
-        <SetHeader />
+        <SetHeader sides={sets.some(isSideSet)} />
         {withDrops(sets).map(({ set, drops }, i) => (
           <Fragment key={set.id}>
             <SetRow set={set} last={lastLabel(last[i])} onMenu={setMenu} />
@@ -253,7 +260,7 @@ export function SupersetPage({
       </GlassCard>
 
       <Glass radius={22} style={styles.table}>
-        <SetHeader />
+        <SetHeader sides={all.some(isSideSet)} />
         {sets.map((s) => {
           const prev = lastBy.get(s.exercise_position)?.[s.set_number - 1];
           const roundEnd = s.exercise_position === positions[positions.length - 1];

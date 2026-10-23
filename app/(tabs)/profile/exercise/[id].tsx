@@ -11,7 +11,7 @@ import { ExerciseImage } from '@/features/exercises/ExerciseImage';
 import { musclesLabel } from '@/features/exercises/ExercisePicker';
 import { useFinishedSessions } from '@/features/training/hooks';
 import { shortDate } from '@/lib/dates';
-import { formatKg } from '@/lib/formulas';
+import { formatKg, repsText } from '@/lib/formulas';
 import { exerciseHistory } from '@/lib/stats';
 import { useData } from '@/stores/data';
 import { colors, tabular, type } from '@/theme/tokens';
@@ -110,7 +110,7 @@ export default function ExerciseDetail() {
                   router.push({ pathname: '/session/[id]', params: { id: h.sessionId } })
                 }
               >
-                {h.sets.map((s) => `${formatKg(s.weight_kg)}×${s.reps}`).join('  ')}
+                {h.sets.map((s) => `${formatKg(s.weight_kg)}×${repsText(s)}`).join('  ')}
               </Text>
             </Glass>
           ))}

@@ -25,12 +25,12 @@ import { useData } from '@/stores/data';
 import { confirm, toast } from '@/stores/ui';
 import { colors, tabular, type } from '@/theme/tokens';
 
-/** "100 × 8, 100 × 6 F ↳ 80 × 5" */
+/** "100 × 8, 100 × 6 F ↳ 80 × 5"; per side "20 × 10/9" (left/right). */
 function setsText(sets: ForumSet[]): string {
   return sets
     .map(
       (s) =>
-        `${formatKg(s.kg)} × ${s.reps}${s.failure ? ' F' : ''}` +
+        `${formatKg(s.kg)} × ${s.sides ? s.sides.join('/') : s.reps}${s.failure ? ' F' : ''}` +
         (s.drops ?? []).map((d) => ` ↳ ${formatKg(d.kg)} × ${d.reps}`).join(''),
     )
     .join(', ');

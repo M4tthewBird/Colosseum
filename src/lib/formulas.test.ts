@@ -6,13 +6,17 @@ import {
   formatKg,
   formatScheme,
   formatVolume,
+  isSideSet,
   markPRs,
   parseNumber,
   prCount,
   prKinds,
   prLabel,
+  repsText,
+  sideReps,
   volume,
   weekStreak,
+  workReps,
 } from './formulas';
 
 describe('e1rm', () => {
@@ -31,9 +35,34 @@ describe('volume', () => {
       ]),
     ).toBe(1100);
   });
+  it('counts both sides of a per-side set', () => {
+    // 20 kg, 10 left + 9 right = 380 kg.
+    expect(volume([{ weight_kg: 20, ...sideReps(10, 9), done: true }])).toBe(380);
+  });
   it('formats tonnes from 1000 kg', () => {
     expect(formatVolume(999)).toBe('999 kg');
     expect(formatVolume(18400)).toBe('18.4 t');
+  });
+});
+
+describe('per-side sets', () => {
+  it('keeps the weaker side as reps, so 1RM and PRs hold for both sides', () => {
+    expect(sideReps(10, 8)).toEqual({ left_reps: 10, right_reps: 8, reps: 8 });
+    const [, pr] = markPRs(
+      [
+        { exercise_id: 'bss', weight_kg: 20, ...sideReps(10, 10), done: true },
+        // More reps on the left only: the weaker right side did not beat 10.
+        { exercise_id: 'bss', weight_kg: 20, ...sideReps(12, 9), done: true },
+      ],
+      { bss: { weight: 20, e1rm: e1rm(20, 10) } },
+    );
+    expect(pr).toBe(false);
+  });
+  it('shows left/right reps', () => {
+    expect(repsText({ reps: 8, left_reps: 9, right_reps: 8 })).toBe('9/8');
+    expect(repsText({ reps: 8 })).toBe('8');
+    expect(isSideSet({ left_reps: 5, right_reps: null })).toBe(false);
+    expect(workReps({ weight_kg: 0, reps: 8, done: true })).toBe(8);
   });
 });
 

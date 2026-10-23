@@ -18,6 +18,7 @@ export const CHANGELOG: Release[] = [
       'Full names everywhere: the Forum, comments, your gym and friends’ PRs.',
       'Names are at most two words, like “Jan Novák”.',
       'Fix: sharing a workout right after finishing it no longer fails with “Are you online?”.',
+      'Log each side: for split squats and other one-leg or one-arm exercises, tap a set number and log left and right reps. PRs go by the weaker side.',
     ],
   },
   {

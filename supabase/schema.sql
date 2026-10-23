@@ -126,7 +126,9 @@ create table public.set_entries (
   exercise_position int not null,
   set_number int not null,
   weight_kg numeric(6,2) not null check (weight_kg >= 0),
-  reps int not null check (reps >= 0),
+  reps int not null check (reps >= 0),          -- per-side set: the weaker side (1RM, PRs)
+  left_reps int check (left_reps >= 0),         -- per-side set (one leg/arm at a time): each side,
+  right_reps int check (right_reps >= 0),       -- both count to volume; null for a normal set
   done boolean not null default false,
   is_pr boolean not null default false,
   superset_id text,                             -- sets of exercises done as one superset share this id
@@ -152,6 +154,7 @@ create table public.exercise_prefs (
   user_id uuid not null references public.profiles(id) on delete cascade,
   exercise_id uuid not null references public.exercises(id) on delete cascade,
   machine_kg numeric(6,2) check (machine_kg >= 0),  -- weight of the machine itself, information only
+  each_side boolean not null default false,     -- log left and right reps separately
   updated_at timestamptz not null default now(),
   unique (user_id, exercise_id)
 );
@@ -297,7 +300,8 @@ language sql stable security definer set search_path = public as $$
       else '-infinity'::timestamptz end as t
   ),
   sets as (
-    select s.user_id, s.id as session_id, e.exercise_id, e.weight_kg, e.reps
+    select s.user_id, s.id as session_id, e.exercise_id, e.weight_kg, e.reps,
+           coalesce(e.left_reps + e.right_reps, e.reps) as work_reps  -- both sides of a per-side set
     from set_entries e join workout_sessions s on s.id = e.session_id, since
     where e.done and s.finished_at is not null and s.started_at >= since.t
       and s.user_id in (select id from members)
@@ -305,7 +309,7 @@ language sql stable security definer set search_path = public as $$
   vals as (
     select user_id,
       case
-        when (select key from metric) = 'volume'   then sum(weight_kg * reps)
+        when (select key from metric) = 'volume'   then sum(weight_kg * work_reps)
         when (select key from metric) = 'workouts' then count(distinct session_id)::numeric
         else max(case when exercise_id::text = (select key from metric)
                       then case when reps <= 1 then weight_kg else weight_kg * (1 + reps / 30.0) end end)
@@ -507,9 +511,9 @@ language sql stable security definer set search_path = public as $$
     select s.user_id,
       case (select metric from c)
         when 'workouts' then 1::numeric
-        when 'volume' then coalesce((select sum(e.weight_kg * e.reps) from set_entries e
-                                     where e.session_id = s.id and e.done), 0)
-        else coalesce((select sum(e.reps) from set_entries e, c
+        when 'volume' then coalesce((select sum(e.weight_kg * coalesce(e.left_reps + e.right_reps, e.reps))
+                                     from set_entries e where e.session_id = s.id and e.done), 0)
+        else coalesce((select sum(coalesce(e.left_reps + e.right_reps, e.reps)) from set_entries e, c
                        where e.session_id = s.id and e.done
                          and (c.exercise_id is null or e.exercise_id = c.exercise_id)), 0)
       end as v

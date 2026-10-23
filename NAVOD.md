@@ -117,3 +117,5 @@ Když přidám do aplikace něco, co potřebuje změnu v Supabase, najdeš to ve
 - `2026-10-04-exercise-catalog.sql` – velký katalog cviků (1 320), jednotné názvy, S/A/B tiery
 - `2026-10-05-notes-and-saved-workouts.sql` – poznámky ke cvikům a uložené jednorázové tréninky
 - `2026-10-06-supersets.sql` – supersérie (cviky dělané hned po sobě)
+- `2026-10-11-machines.sql` a `2026-10-11-feel-dropsets-forum.sql` – stroje, drop sety, hodnocení tréninku, fórum
+- `2026-10-23-each-side.sql` – zápis po stranách (levá/pravá u jednostranných cviků) a objem obou stran v žebříčku

@@ -3,12 +3,15 @@
  * copy it without access to the author's own rows. Pure — covered by forum.test.ts.
  */
 import { isMain, withDrops } from './dropsets';
-import { volume } from './formulas';
+import { isSideSet, volume } from './formulas';
 import type { ProgramExercise, Session } from './types';
 
 export interface ForumSet {
   kg: number;
+  /** For a per-side set, the weaker side. */
   reps: number;
+  /** Logged per side: [left, right] reps. */
+  sides?: [number, number];
   failure?: boolean;
   /** Drop sets done right after this set. */
   drops?: { kg: number; reps: number }[];
@@ -63,6 +66,9 @@ export function snapshotOf(
         sets: withDrops(sets).map(({ set, drops }) => ({
           kg: set.weight_kg,
           reps: set.reps,
+          ...(isSideSet(set)
+            ? { sides: [set.left_reps!, set.right_reps!] as [number, number] }
+            : null),
           ...(set.failure ? { failure: true } : null),
           ...(drops.length
             ? { drops: drops.map((d) => ({ kg: d.weight_kg, reps: d.reps })) }

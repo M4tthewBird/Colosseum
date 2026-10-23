@@ -3,7 +3,10 @@ import { addDays, isInWeek, startOfWeek } from './dates';
 
 export interface SetLike {
   weight_kg: number;
+  /** For a set logged per side, the weaker side. */
   reps: number;
+  left_reps?: number | null;
+  right_reps?: number | null;
   done: boolean;
 }
 
@@ -14,9 +17,29 @@ export function e1rm(weightKg: number, reps: number): number {
   return weightKg * (1 + reps / 30);
 }
 
-/** Σ weight × reps over completed sets. */
+/** A set logged per side (left and right reps). */
+export function isSideSet(s: { left_reps?: number | null; right_reps?: number | null }): boolean {
+  return s.left_reps != null && s.right_reps != null;
+}
+
+/** Reps that count to volume: both sides of a per-side set. */
+export function workReps(s: SetLike): number {
+  return isSideSet(s) ? s.left_reps! + s.right_reps! : s.reps;
+}
+
+/** The fields of a per-side set; reps is the weaker side. */
+export function sideReps(left: number, right: number) {
+  return { left_reps: left, right_reps: right, reps: Math.min(left, right) };
+}
+
+/** "8" or "8/7" (left/right). */
+export function repsText(s: Pick<SetLike, 'reps' | 'left_reps' | 'right_reps'>): string {
+  return isSideSet(s) ? `${s.left_reps}/${s.right_reps}` : String(s.reps);
+}
+
+/** Σ weight × reps over completed sets (both sides of a per-side set). */
 export function volume(sets: SetLike[]): number {
-  return sets.reduce((sum, s) => (s.done ? sum + s.weight_kg * s.reps : sum), 0);
+  return sets.reduce((sum, s) => (s.done ? sum + s.weight_kg * workReps(s) : sum), 0);
 }
 
 /**

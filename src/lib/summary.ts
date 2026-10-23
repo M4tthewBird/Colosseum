@@ -1,6 +1,17 @@
 /** Numbers for the post-workout summary. Pure — covered by summary.test.ts. */
 import { isMain } from './dropsets';
-import { e1rm, formatKg, prKinds, volume, weekStreak, type Best, type PrKinds } from './formulas';
+import {
+  e1rm,
+  formatKg,
+  isSideSet,
+  prKinds,
+  repsText,
+  volume,
+  weekStreak,
+  workReps,
+  type Best,
+  type PrKinds,
+} from './formulas';
 import { finished, historyBests } from './stats';
 import { supersetLetters } from './supersets';
 import type { Session, SetEntry } from './types';
@@ -145,7 +156,7 @@ export function buildSummary(
     durationMs: duration(session),
     volumeKg: volume(done),
     sets: done.length,
-    reps: done.reduce((n, s) => n + s.reps, 0),
+    reps: done.reduce((n, s) => n + workReps(s), 0),
     exercises,
     prs,
     failures: done.filter((s) => s.failure).length,
@@ -177,8 +188,22 @@ export function setsLine(all: SetEntry[]): string {
   const drops = all.length - sets.length;
   const tail = drops ? ` · ${drops} drop set${drops === 1 ? '' : 's'}` : '';
   if (sets.length && sets.every((s) => s.weight_kg === sets[0].weight_kg))
-    return `${formatKg(sets[0].weight_kg)} kg × ${sets.map((s) => s.reps).join(', ')}${tail}`;
-  return sets.map((s) => `${formatKg(s.weight_kg)} × ${s.reps}`).join(', ') + tail;
+    return `${formatKg(sets[0].weight_kg)} kg × ${sets.map(repsText).join(', ')}${tail}`;
+  return sets.map((s) => `${formatKg(s.weight_kg)} × ${repsText(s)}`).join(', ') + tail;
+}
+
+/**
+ * Reps per side over the per-side sets of an exercise, when one side did fewer:
+ * "Right side 3 reps behind (27 vs 30)". Null when even or not logged per side.
+ */
+export function weakerSide(sets: SetEntry[]): string | null {
+  const side = sets.filter(isSideSet);
+  if (!side.length) return null;
+  const left = side.reduce((n, s) => n + s.left_reps!, 0);
+  const right = side.reduce((n, s) => n + s.right_reps!, 0);
+  if (left === right) return null;
+  const [weak, a, b] = left < right ? ['Left', left, right] : ['Right', right, left];
+  return `${weak} side ${b - a} rep${b - a === 1 ? '' : 's'} behind (${a} vs ${b})`;
 }
 
 /** "+12 %" / "−3 %" / "same" */

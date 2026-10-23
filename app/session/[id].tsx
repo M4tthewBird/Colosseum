@@ -11,7 +11,7 @@ import { ShareSheet } from '@/features/forum/ForumViews';
 import { FeelRating } from '@/features/workout/FeelRating';
 import { dropChain, isMain } from '@/lib/dropsets';
 import { formatDuration, shortDate, weekdayName, isoWeekday } from '@/lib/dates';
-import { formatKg, formatVolume, volume } from '@/lib/formulas';
+import { formatKg, formatVolume, isSideSet, repsText, volume } from '@/lib/formulas';
 import { interleave, letter } from '@/lib/supersets';
 import { useData } from '@/stores/data';
 import { confirm } from '@/stores/ui';
@@ -103,7 +103,8 @@ export default function SessionDetail() {
                           : `Set ${x.set_number}`}
                     </Text>
                     <Text style={[type.body, tabular, { flex: 1 }]}>
-                      {formatKg(x.weight_kg)} kg × {x.reps}
+                      {formatKg(x.weight_kg)} kg × {repsText(x)}
+                      {isSideSet(x) ? <Text style={type.small}> L/R</Text> : null}
                       {x.failure ? <Text style={type.small}> · to failure</Text> : null}
                     </Text>
                     {x.is_pr ? (
