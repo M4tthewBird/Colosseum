@@ -145,6 +145,8 @@ export interface ExercisePref {
   machine_kg: number | null;
   /** Log left and right reps separately (one leg or arm at a time). */
   each_side?: boolean;
+  /** Starred: listed first in the exercise picker and under its Favorites chip. */
+  favorite?: boolean;
   updated_at: string;
 }
 

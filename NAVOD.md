@@ -121,3 +121,4 @@ Když přidám do aplikace něco, co potřebuje změnu v Supabase, najdeš to ve
 - `2026-10-23-each-side.sql` – zápis po stranách (levá/pravá u jednostranných cviků) a objem obou stran v žebříčku
 - `2026-10-23-warmups.sql` – rozehřívací série (nepočítají se do objemu, rekordů ani žebříčku)
 - `2026-10-23-session-gym.sql` – gym u tréninku (potvrzení před startem), „Training now“ bez lidí v jiném gymu
+- `2026-10-23-favorites.sql` – oblíbené cviky

@@ -13,7 +13,7 @@ Feedback from Matyáš (2026-10-23). Work top to bottom, one item at a time; ask
 - [x] **Drop sets and failure**: Drop set / Failure buttons under the set table (last done set); "•••" under set numbers
 - [x] **Warm-up sets**: "+ Warm-up" adds 50/70/85 % (fewer when light), shown as W, 1:00 rest, counted to nothing. Needs `supabase/updates/2026-10-23-warmups.sql`
 - [x] **Gym check-in**: asked once for a home gym when the account has none; before a workout "Training at <home gym>?" (Yes = check-in, Another gym, Not at a gym), saved as workout_sessions.gym_id. Needs `supabase/updates/2026-10-23-session-gym.sql`
-- [ ] **Favorite exercises**: star on the exercise image, a Favorites tab, favorites first in every category
+- [x] **Favorite exercises**: star on the workout image, picker rows and the exercise detail; "★ Favorites" chip (picker opens on it); favorites first in every category, exact search match stays first. Needs `supabase/updates/2026-10-23-favorites.sql`
 - [ ] **Suggest the next exercise** from similar past workouts
 - [ ] **Profile picture required**: a photo or at least an emoji from a set
 - [ ] **Add friends by QR code**

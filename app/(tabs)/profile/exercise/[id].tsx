@@ -9,6 +9,7 @@ import { ListGroup, ListRow, SectionHeader } from '@/components/List';
 import { Header, MAX_WIDTH, Screen } from '@/components/Screen';
 import { ExerciseImage } from '@/features/exercises/ExerciseImage';
 import { musclesLabel } from '@/features/exercises/ExercisePicker';
+import { FavoriteButton } from '@/features/exercises/FavoriteButton';
 import { useFinishedSessions } from '@/features/training/hooks';
 import { shortDate } from '@/lib/dates';
 import { formatKg, repsText } from '@/lib/formulas';
@@ -44,7 +45,9 @@ export default function ExerciseDetail() {
         imageKey={ex?.image_key ?? null}
         name={ex?.name ?? ''}
         height={Math.round(((chartW + 36) * 9) / 16)}
-      />
+      >
+        {ex ? <FavoriteButton exerciseId={ex.id} name={ex.name} variant="overlay" /> : null}
+      </ExerciseImage>
 
       <GlassCard style={{ gap: 12 }}>
         <Text style={type.captionStrong}>Best estimated 1RM per session</Text>

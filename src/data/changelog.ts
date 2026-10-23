@@ -23,6 +23,7 @@ export const CHANGELOG: Release[] = [
       'Drop set and Failure buttons right under your sets.',
       'Before a workout, confirm where you train. At your home gym this checks you in, so friends there see you under Training now.',
       'No home gym yet? Colosseum asks once, so My gym in the Arena works for you.',
+      'Favorite exercises: tap the star on an exercise. Favorites come first in every category and have their own chip when you add an exercise.',
     ],
   },
   {

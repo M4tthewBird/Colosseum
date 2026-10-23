@@ -6,6 +6,7 @@ import { FillButton, IconButton, TextButton } from '@/components/Buttons';
 import { Glass, GlassCard } from '@/components/Glass';
 import { Flame, Info, Layers, Link, Unlink, X } from '@/components/icons';
 import { ExerciseImage } from '@/features/exercises/ExerciseImage';
+import { FavoriteButton } from '@/features/exercises/FavoriteButton';
 import { musclesLabel } from '@/features/exercises/ExercisePicker';
 import { dropChain, isMain, withDrops } from '@/lib/dropsets';
 import { isMachine } from '@/lib/exerciseName';
@@ -165,6 +166,7 @@ export function ExercisePage({
     <>
       <GlassCard radius={26} style={styles.exCard}>
         <ExerciseImage imageKey={ex?.image_key ?? null} name={name}>
+          <FavoriteButton exerciseId={p.exercise_id} name={name} variant="overlay" />
           <IconButton
             icon={Info}
             size={30}

@@ -157,6 +157,7 @@ create table public.exercise_prefs (
   exercise_id uuid not null references public.exercises(id) on delete cascade,
   machine_kg numeric(6,2) check (machine_kg >= 0),  -- weight of the machine itself, information only
   each_side boolean not null default false,     -- log left and right reps separately
+  favorite boolean not null default false,      -- starred: first in the exercise picker
   updated_at timestamptz not null default now(),
   unique (user_id, exercise_id)
 );

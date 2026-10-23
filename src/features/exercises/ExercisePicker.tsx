@@ -9,11 +9,13 @@ import { SearchField } from '@/components/SearchField';
 import { Chip } from '@/components/Segmented';
 import { Sheet } from '@/components/Sheet';
 import { cleanExerciseName } from '@/lib/exerciseName';
+import { favoritesFirst } from '@/lib/favorites';
 import { searchExercises } from '@/lib/search';
 import type { Exercise } from '@/lib/types';
 import { uuid } from '@/lib/uuid';
 import { useData } from '@/stores/data';
 import { accentA, colors, type } from '@/theme/tokens';
+import { FavoriteButton } from './FavoriteButton';
 
 const GROUPS: Record<string, string[]> = {
   Chest: ['chest', 'upper chest'],
@@ -26,6 +28,8 @@ const GROUPS: Record<string, string[]> = {
 };
 
 const TIER_RANK = { S: 0, A: 1, B: 2 } as const;
+/** The Favorites chip, next to the muscle groups. */
+const FAVORITES = 'favorites';
 const BROWSE_LIMIT = 80;
 
 /** Small "S" / "A" / "B" badge: Jeff Nippard's tier list rating. */
@@ -56,18 +60,21 @@ export function ExercisePicker({
   onPick: (exerciseId: string) => void;
 }) {
   const exercises = useData((s) => s.exercises);
+  const prefs = useData((s) => s.exercisePrefs);
   const userId = useData((s) => s.userId);
   const saveExercise = useData((s) => s.saveExercise);
   const [creating, setCreating] = useState(false);
   const [q, setQ] = useState('');
   const [group, setGroup] = useState<string | null>(null);
-  // Every time the picker opens it starts fresh: empty search, category "All".
+  const hasFavorites = useMemo(() => Object.values(prefs).some((p) => p.favorite), [prefs]);
+  // Every time the picker opens it starts fresh: empty search, on Favorites when you have
+  // some, otherwise on "All".
   const [wasVisible, setWasVisible] = useState(visible);
   if (visible !== wasVisible) {
     setWasVisible(visible);
     if (visible) {
       setQ('');
-      setGroup(null);
+      setGroup(hasFavorites ? FAVORITES : null);
       setCreating(false);
     }
   }
@@ -76,15 +83,24 @@ export function ExercisePicker({
 
   const all = useMemo(() => Object.values(exercises), [exercises]);
   const { list, total } = useMemo(() => {
-    const inGroup = group
-      ? all.filter((e) => e.muscles.some((m) => GROUPS[group].includes(m)))
-      : all;
-    if (q.trim()) return { list: searchExercises(q, inGroup, 60), total: inGroup.length };
-    // Browsing: your own exercises, then the S / A / B tier picks, then everything else A–Z.
-    const rank = (e: Exercise) => (e.created_by ? -1 : e.tier ? TIER_RANK[e.tier] : 3);
+    const isFavorite = (id: string) => !!prefs[id]?.favorite;
+    const inGroup =
+      group === FAVORITES
+        ? all.filter((e) => isFavorite(e.id))
+        : group
+          ? all.filter((e) => e.muscles.some((m) => GROUPS[group].includes(m)))
+          : all;
+    if (q.trim())
+      return {
+        list: favoritesFirst(searchExercises(q, inGroup, 60), isFavorite, q),
+        total: inGroup.length,
+      };
+    // Browsing: favorites, your own exercises, the S / A / B tier picks, then the rest A–Z.
+    const rank = (e: Exercise) =>
+      isFavorite(e.id) ? -2 : e.created_by ? -1 : e.tier ? TIER_RANK[e.tier] : 3;
     const sorted = [...inGroup].sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
     return { list: sorted.slice(0, BROWSE_LIMIT), total: inGroup.length };
-  }, [all, q, group]);
+  }, [all, q, group, prefs]);
 
   const pick = (id: string) => {
     onPick(id);
@@ -152,6 +168,11 @@ export function ExercisePicker({
         contentContainerStyle={{ gap: 8 }}
       >
         <Chip label="All" selected={!group} onPress={() => setGroup(null)} />
+        <Chip
+          label="★ Favorites"
+          selected={group === FAVORITES}
+          onPress={() => setGroup(group === FAVORITES ? null : FAVORITES)}
+        />
         {Object.keys(GROUPS).map((g) => (
           <Chip
             key={g}
@@ -170,9 +191,11 @@ export function ExercisePicker({
               title={e.name}
               subtitle={musclesLabel(e.muscles) + (e.created_by ? ' · custom' : '')}
               chevron={false}
+              rightInteractive
               right={
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                   {e.tier ? <TierBadge tier={e.tier} /> : null}
+                  <FavoriteButton exerciseId={e.id} name={e.name} size={18} />
                   <Plus size={18} color={colors.accent} strokeWidth={2.4} />
                 </View>
               }
@@ -182,7 +205,11 @@ export function ExercisePicker({
         </ListGroup>
       ) : (
         <View style={{ paddingVertical: 12 }}>
-          <Text style={[type.caption, { textAlign: 'center' }]}>No exercises found.</Text>
+          <Text style={[type.caption, { textAlign: 'center' }]}>
+            {group === FAVORITES && !q.trim()
+              ? 'No favorites yet. Tap the star next to an exercise to add it here.'
+              : 'No exercises found.'}
+          </Text>
         </View>
       )}
       {!q.trim() && total > list.length ? (

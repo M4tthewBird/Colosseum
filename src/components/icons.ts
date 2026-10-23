@@ -24,7 +24,7 @@ export { default as Plus } from 'lucide-react-native/icons/plus';
 export { default as Search } from 'lucide-react-native/icons/search';
 export { default as Send } from 'lucide-react-native/icons/send';
 export { default as SlidersHorizontal } from 'lucide-react-native/icons/sliders-horizontal';
-export { default as Star } from 'lucide-react-native/icons/sparkles';
+export { default as Star } from 'lucide-react-native/icons/star';
 export { default as Trash2 } from 'lucide-react-native/icons/trash';
 export { default as Trophy } from 'lucide-react-native/icons/trophy';
 export { default as User } from 'lucide-react-native/icons/user';

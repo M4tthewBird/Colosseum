@@ -55,9 +55,10 @@ interface DataState extends Snapshot {
   setMachineWeight: (exerciseId: string, kg: number | null) => void;
   /** Log left and right reps separately for this exercise. */
   setEachSide: (exerciseId: string, on: boolean) => void;
+  toggleFavorite: (exerciseId: string) => void;
   saveExercisePref: (
     exerciseId: string,
-    patch: Partial<Pick<ExercisePref, 'machine_kg' | 'each_side'>>,
+    patch: Partial<Pick<ExercisePref, 'machine_kg' | 'each_side' | 'favorite'>>,
   ) => void;
 }
 
@@ -286,6 +287,10 @@ export const useData = create<DataState>()(
 
       setMachineWeight: (exerciseId, kg) => get().saveExercisePref(exerciseId, { machine_kg: kg }),
       setEachSide: (exerciseId, on) => get().saveExercisePref(exerciseId, { each_side: on }),
+      toggleFavorite: (exerciseId) =>
+        get().saveExercisePref(exerciseId, {
+          favorite: !get().exercisePrefs[exerciseId]?.favorite,
+        }),
 
       saveExercisePref: (exerciseId, patch) => {
         const { userId, exercisePrefs } = get();
@@ -293,6 +298,7 @@ export const useData = create<DataState>()(
         const row: ExercisePref = {
           machine_kg: prev?.machine_kg ?? null,
           each_side: prev?.each_side ?? false,
+          favorite: prev?.favorite ?? false,
           ...patch,
           // One row per user and exercise: every device computes the same id, so setting it on
           // two devices offline syncs as an update instead of a unique-key conflict.
