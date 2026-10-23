@@ -27,6 +27,7 @@ export const CHANGELOG: Release[] = [
       'Suggested next exercise: Colosseum looks at your workouts like today’s and offers what usually comes next.',
       'Profile pictures: a photo or an emoji on a colour you pick. Every profile has one now.',
       'Add friends in person: Friends → My QR. They scan it with the phone camera and tap Add friend.',
+      'Badges: 20 ladders from your first workout to the 1000 lb club. Find them in Profile → Badges; friends see yours on your profile.',
     ],
   },
   {

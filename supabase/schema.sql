@@ -162,6 +162,17 @@ create table public.exercise_prefs (
   unique (user_id, exercise_id)
 );
 
+-- Badges earned (highest tier per badge), written by the app from the history (src/lib/badges.ts)
+-- so friends and gym members can see them.
+create table public.user_badges (
+  id uuid primary key,                          -- generated on the device (one per user + badge)
+  user_id uuid not null references public.profiles(id) on delete cascade,
+  badge text not null,
+  tier numeric not null,                        -- threshold of the highest tier reached
+  earned_at timestamptz not null default now(),
+  unique (user_id, badge)
+);
+
 -- ───────────────────────── Private body data ─────────────────────────
 create table public.profile_private (
   user_id uuid primary key references public.profiles(id) on delete cascade,
@@ -358,6 +369,7 @@ alter table public.session_likes enable row level security;
 alter table public.session_comments enable row level security;
 alter table public.exercise_prefs enable row level security;
 alter table public.session_ratings enable row level security;
+alter table public.user_badges enable row level security;
 alter table public.forum_posts enable row level security;
 alter table public.forum_comments enable row level security;
 alter table public.forum_likes enable row level security;
@@ -425,6 +437,10 @@ create policy "session ratings owner" on public.session_ratings for all to authe
     select 1 from public.workout_sessions s where s.id = session_id and s.user_id = auth.uid()));
 
 create policy "exercise prefs owner" on public.exercise_prefs for all to authenticated
+  using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+create policy "badges read"  on public.user_badges for select to authenticated using (public.can_view_user(user_id));
+create policy "badges write" on public.user_badges for all to authenticated
   using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 create policy "forum posts read"   on public.forum_posts for select to authenticated using (public.can_view_user(user_id));

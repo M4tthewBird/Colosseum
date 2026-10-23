@@ -17,7 +17,7 @@ Feedback from Matyáš (2026-10-23). Work top to bottom, one item at a time; ask
 - [x] **Suggest the next exercise**: 3 picks on the "Add another exercise" page and a Suggested chip in the picker; what usually follows today's last exercise in similar workouts, how you usually start an empty one, else S/A-tier for untrained muscles of today's regions
 - [x] **Profile picture required**: photo or one of 24 emoji on 6 tones (avatar_url "emoji:…", no schema change); required at sign-up; older accounts are asked after sign-in, again a week after "Later"; Settings → Change picture
 - [x] **Add friends by QR code**: Friends → My QR shows a code for /add/<username> (+ Share link); the phone camera opens the profile with Add friend; signed out, it is remembered through sign-up/sign-in. Check once on the deployed Pages URL
-- [ ] **Badges / achievements**
+- [x] **Badges / achievements**: 20 ladders, 77 tiers (workouts, week streak, volume, PRs, plate/bench/squat/deadlift/total clubs incl. 1000 lb, early bird, night owl, weekend, marathon, big day, explorer, drop sets, failure, supersets, comeback, friends). Laurel medallion that grows over 5 looks, all red. Profile → Badges, new ones in the summary, others see them (user_badges). Needs `supabase/updates/2026-10-23-badges.sql`
 - [ ] **Deload status**: one week, visible to others (e.g. in the Forum)
 - [ ] **Garmin integration** (to explore)
 - [ ] **Czech version** of the app: last, after everything else. Decided: exercise names stay English (Czech search synonyms), own small typed dictionary instead of a library. Still to ask: how the language is chosen, tykání or vykání.

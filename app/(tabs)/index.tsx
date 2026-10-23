@@ -10,6 +10,7 @@ import { GlassCard } from '@/components/Glass';
 import { ListGroup, ListRow, SectionHeader } from '@/components/List';
 import { Wordmark } from '@/components/Logo';
 import { Header, Screen } from '@/components/Screen';
+import { BadgeSync } from '@/features/badges/BadgeSync';
 import { useForumPosts } from '@/features/forum/api';
 import { HomeGymPrompt } from '@/features/gyms/HomeGymPrompt';
 import { AvatarPrompt } from '@/features/profile/AvatarPrompt';
@@ -101,6 +102,7 @@ export default function Today() {
       <HomeGymPrompt />
       <AvatarPrompt />
       <FriendLinkResume />
+      <BadgeSync />
     </Screen>
   );
 }

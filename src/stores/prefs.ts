@@ -42,6 +42,9 @@ interface PrefsState {
   /** Username from a friend link opened while signed out; opened after signing in. */
   pendingFriend: string | null;
   setPendingFriend: (username: string | null) => void;
+  /** Badge tiers already sent to the server, "<userId>:<badgeId>" → threshold. */
+  badgesSynced: Record<string, number>;
+  setBadgesSynced: (v: Record<string, number>) => void;
   setInstallTipPending: (v: boolean) => void;
   setArenaDots: (v: boolean) => void;
   setArenaMetrics: (m: ArenaMetric[]) => void;
@@ -69,6 +72,8 @@ export const usePrefs = create<PrefsState>()(
       setAvatarAskedAt: (avatarAskedAt) => set({ avatarAskedAt }),
       pendingFriend: null,
       setPendingFriend: (pendingFriend) => set({ pendingFriend }),
+      badgesSynced: {},
+      setBadgesSynced: (badgesSynced) => set({ badgesSynced }),
       setInstallTipPending: (installTipPending) => set({ installTipPending }),
       setArenaDots: (arenaDots) => set({ arenaDots }),
       setArenaMetrics: (arenaMetrics) => set({ arenaMetrics }),

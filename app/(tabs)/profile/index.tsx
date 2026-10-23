@@ -8,6 +8,8 @@ import { IconButton } from '@/components/Buttons';
 import { Glass } from '@/components/Glass';
 import { Header, Screen } from '@/components/Screen';
 import { Segmented } from '@/components/Segmented';
+import { BadgeGrid } from '@/features/badges/BadgeViews';
+import { useMyBadges } from '@/features/badges/hooks';
 import { TourTarget } from '@/features/onboarding/TourTarget';
 import { BodyView } from '@/features/profile/BodyView';
 import { FeelTrend } from '@/features/profile/FeelTrend';
@@ -22,7 +24,8 @@ export default function Profile() {
   const exercises = useData((s) => s.exercises);
   const sessions = useFinishedSessions();
   const gym = useGym(profile?.home_gym_id);
-  const [tab, setTab] = useState<'body' | 'lifts'>('body');
+  const [tab, setTab] = useState<'body' | 'lifts' | 'badges'>('body');
+  const badges = useMyBadges();
 
   if (!profile) return null;
   const gymName = gym.data?.gym?.name;
@@ -56,6 +59,7 @@ export default function Profile() {
           options={[
             { value: 'body', label: 'Body' },
             { value: 'lifts', label: 'Lifts' },
+            { value: 'badges', label: 'Badges' },
           ]}
           value={tab}
           onChange={setTab}
@@ -64,6 +68,8 @@ export default function Profile() {
       </TourTarget>
       {tab === 'body' ? (
         <BodyView />
+      ) : tab === 'badges' ? (
+        <BadgeGrid badges={badges} />
       ) : (
         <>
           <FeelTrend sessions={sessions} />

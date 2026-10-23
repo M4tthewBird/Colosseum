@@ -34,6 +34,9 @@ import { weeklyTarget } from '@/lib/programs';
 import { deloadAdvice } from '@/lib/progression';
 import { finished } from '@/lib/stats';
 import { buildSummary, percentChange, setsLine, weakerSide } from '@/lib/summary';
+import { badgesFrom } from '@/lib/badges';
+import { NewBadges } from '@/features/badges/BadgeViews';
+import { useMyBadges } from '@/features/badges/hooks';
 import { useTween } from '@/lib/useTween';
 import { useData } from '@/stores/data';
 import { toast, useUi } from '@/stores/ui';
@@ -82,6 +85,12 @@ export function WorkoutSummary({ sessionId }: { sessionId: string }) {
         (p) => isSavedWorkout(p) && p.days.some((d) => d.id === session.program_day_id),
       ),
     [programs, session],
+  );
+
+  const badges = useMyBadges();
+  const newBadges = useMemo(
+    () => (session ? badgesFrom(badges, session.id) : []),
+    [badges, session],
   );
 
   const volume = useTween(sum?.volumeKg ?? 0, 900);
@@ -156,6 +165,12 @@ export function WorkoutSummary({ sessionId }: { sessionId: string }) {
             ) : null}
           </GlassCard>
         </Animated.View>
+
+        {newBadges.length ? (
+          <Animated.View entering={enter(i++, reduced)}>
+            <NewBadges items={newBadges} />
+          </Animated.View>
+        ) : null}
 
         <Animated.View entering={enter(i++, reduced)}>
           <FeelRating session={session} />

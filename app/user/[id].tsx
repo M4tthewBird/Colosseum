@@ -9,6 +9,8 @@ import { FillButton } from '@/components/Buttons';
 import { Glass } from '@/components/Glass';
 import { ListGroup, SectionHeader } from '@/components/List';
 import { Screen } from '@/components/Screen';
+import { BadgeGrid } from '@/features/badges/BadgeViews';
+import { useUserBadges } from '@/features/badges/hooks';
 import { LiftsView } from '@/features/profile/LiftsView';
 import { useFriendAction, useUserPage } from '@/features/social/api';
 import { SessionRow } from '@/features/training/SessionRow';
@@ -21,6 +23,7 @@ export default function UserPage() {
   const page = useUserPage(id);
   const exercises = useData((s) => s.exercises);
   const action = useFriendAction();
+  const badges = useUserBadges(id, page.data?.sessions);
 
   if (page.isLoading || !page.data) {
     return (
@@ -76,6 +79,13 @@ export default function UserPage() {
         />
       ) : relation === 'outgoing' ? (
         <Text style={[type.caption, { textAlign: 'center' }]}>Friend request sent</Text>
+      ) : null}
+
+      {badges.length > 0 ? (
+        <>
+          <SectionHeader title={`Badges · ${badges.length}`} />
+          <BadgeGrid badges={badges} progress={false} />
+        </>
       ) : null}
 
       {sessions.length > 0 ? (

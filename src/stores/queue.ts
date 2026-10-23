@@ -21,7 +21,8 @@ export type SyncTable =
   | 'body_measurements'
   | 'exercises'
   | 'exercise_prefs'
-  | 'session_ratings';
+  | 'session_ratings'
+  | 'user_badges';
 
 /** Primary-key column per table (all single-column). */
 export const PK: Record<SyncTable, string> = {
@@ -37,6 +38,7 @@ export const PK: Record<SyncTable, string> = {
   exercises: 'id',
   exercise_prefs: 'id',
   session_ratings: 'session_id',
+  user_badges: 'id',
 };
 
 export interface QueueItem {
