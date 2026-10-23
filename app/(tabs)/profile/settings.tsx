@@ -11,7 +11,8 @@ import { Header, Screen } from '@/components/Screen';
 import { Segmented } from '@/components/Segmented';
 import { deleteAccount, signOut } from '@/features/auth/auth';
 import { GymPicker, type GymChoice } from '@/features/gyms/GymPicker';
-import { pickImage, uploadAvatar } from '@/features/profile/avatar';
+import { uploadAvatar } from '@/features/profile/avatar';
+import { AvatarPicker } from '@/features/profile/AvatarPicker';
 import { ExperiencePicker, GoalsPicker, SexSwitch } from '@/features/profile/ProfileFields';
 import { createGym, useGym } from '@/features/social/api';
 import { formatKg, parseNumber } from '@/lib/formulas';
@@ -37,7 +38,9 @@ export default function Settings() {
   const [height, setHeight] = useState(priv?.height_cm ? formatKg(priv.height_cm) : '');
   const [gymChoice, setGymChoice] = useState<GymChoice | null>(null);
   const [gymOpen, setGymOpen] = useState(false);
+  /** A new local photo uri or emoji avatar, saved with the rest. */
   const [photo, setPhoto] = useState<string | null>(null);
+  const [picking, setPicking] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const currentGym = useGym(draft.home_gym_id);
@@ -91,16 +94,22 @@ export default function Settings() {
 
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Change profile photo"
-        onPress={async () => {
-          const uri = await pickImage();
-          if (uri) setPhoto(uri);
-        }}
+        accessibilityLabel="Change profile picture"
+        onPress={() => setPicking(true)}
         style={styles.photoRow}
       >
         <Avatar name={draft.display_name} url={photo ?? draft.avatar_url} size={62} />
-        <Text style={{ fontSize: 16, color: colors.accent, fontWeight: '600' }}>Change photo</Text>
+        <Text style={{ fontSize: 16, color: colors.accent, fontWeight: '600' }}>
+          Change picture
+        </Text>
       </Pressable>
+      <AvatarPicker
+        visible={picking}
+        name={draft.display_name}
+        current={photo ?? draft.avatar_url}
+        onClose={() => setPicking(false)}
+        onPick={setPhoto}
+      />
 
       <FormGroup>
         <FormField

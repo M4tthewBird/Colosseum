@@ -1,6 +1,7 @@
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 
+import { isEmojiAvatar } from '@/lib/avatars';
 import { isDemo, supabase } from '@/lib/supabase';
 
 /** Opens the photo library; returns a local uri or null when cancelled. */
@@ -15,8 +16,12 @@ export async function pickImage(): Promise<string | null> {
   return res.assets[0].uri;
 }
 
-/** Resizes to 512 px JPEG and uploads to avatars/<uid>/avatar.jpg. Returns the public URL. */
+/**
+ * Resizes to 512 px JPEG and uploads to avatars/<uid>/avatar.jpg. Returns the public URL. An
+ * emoji avatar is kept as it is (nothing to upload).
+ */
 export async function uploadAvatar(userId: string, uri: string): Promise<string> {
+  if (isEmojiAvatar(uri)) return uri;
   const ctx = ImageManipulator.manipulate(uri);
   ctx.resize({ width: 512 });
   const image = await ctx.renderAsync();

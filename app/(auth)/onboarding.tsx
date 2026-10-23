@@ -10,7 +10,7 @@ import { LogoMark, Wordmark } from '@/components/Logo';
 import { Screen } from '@/components/Screen';
 import { isUsernameAvailable, signUp, useAuth } from '@/features/auth/auth';
 import { GymPicker, type GymChoice } from '@/features/gyms/GymPicker';
-import { pickImage } from '@/features/profile/avatar';
+import { AvatarPicker } from '@/features/profile/AvatarPicker';
 import { ExperiencePicker, GoalsPicker, SexSwitch } from '@/features/profile/ProfileFields';
 import { parseNumber } from '@/lib/formulas';
 import { limitNameWords } from '@/lib/names';
@@ -26,7 +26,9 @@ export default function Onboarding() {
   // Signed in without a profile (e.g. sign-up was interrupted): only finish the profile.
   const completing = signedIn && !isDemo;
 
+  /** A local photo uri or an emoji avatar (lib/avatars). */
   const [photo, setPhoto] = useState<string | null>(null);
+  const [picking, setPicking] = useState(false);
   const [name, setName] = useState('');
   const [username, setUsername] = useState(completing ? (accountUsername ?? '') : '');
   const [password, setPassword] = useState('');
@@ -71,6 +73,8 @@ export default function Onboarding() {
   const heightCm = parseNumber(height);
   // Everything that still blocks Continue, in form order. Shown after the first tap.
   const problems: string[] = [];
+  if (!photo)
+    problems.push('Add a profile picture: a photo or an emoji (tap the circle at the top).');
   if (!name.trim()) problems.push('Enter your name.');
   if (!completing) {
     const usernameProblem: Record<Availability, string | null> = {
@@ -134,11 +138,8 @@ export default function Onboarding() {
       <View style={styles.head}>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Add profile photo"
-          onPress={async () => {
-            const uri = await pickImage();
-            if (uri) setPhoto(uri);
-          }}
+          accessibilityLabel={photo ? 'Change profile picture' : 'Add profile picture'}
+          onPress={() => setPicking(true)}
           style={styles.photo}
         >
           {photo ? (
@@ -161,7 +162,7 @@ export default function Onboarding() {
             {completing ? 'Finish your profile' : 'Create your profile'}
           </Text>
           <Text style={[type.caption, { fontSize: 15 }]}>
-            Your friends will see this in the arena.
+            Tap the circle for a photo or an emoji. Your friends see this in the Arena.
           </Text>
           {isDemo ? (
             <Text style={[type.small, { color: colors.accent, marginTop: 4 }]}>
@@ -265,6 +266,13 @@ export default function Onboarding() {
       </View>
 
       <GymPicker visible={gymOpen} onClose={() => setGymOpen(false)} onPick={setGym} />
+      <AvatarPicker
+        visible={picking}
+        name={name}
+        current={photo}
+        onClose={() => setPicking(false)}
+        onPick={setPhoto}
+      />
     </Screen>
   );
 }

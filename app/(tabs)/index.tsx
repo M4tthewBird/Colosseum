@@ -12,6 +12,7 @@ import { Wordmark } from '@/components/Logo';
 import { Header, Screen } from '@/components/Screen';
 import { useForumPosts } from '@/features/forum/api';
 import { HomeGymPrompt } from '@/features/gyms/HomeGymPrompt';
+import { AvatarPrompt } from '@/features/profile/AvatarPrompt';
 import { ForumRail } from '@/features/forum/ForumViews';
 import { useFriendsPrs, useLeaderboard } from '@/features/social/api';
 import { useActiveProgram, useFinishedSessions } from '@/features/training/hooks';
@@ -97,6 +98,7 @@ export default function Today() {
       <InstallTip />
       <WhatsNew />
       <HomeGymPrompt />
+      <AvatarPrompt />
     </Screen>
   );
 }

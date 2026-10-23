@@ -25,6 +25,7 @@ export const CHANGELOG: Release[] = [
       'No home gym yet? Colosseum asks once, so My gym in the Arena works for you.',
       'Favorite exercises: tap the star on an exercise. Favorites come first in every category and have their own chip when you add an exercise.',
       'Suggested next exercise: Colosseum looks at your workouts like today’s and offers what usually comes next.',
+      'Profile pictures: a photo or an emoji on a colour you pick. Every profile has one now.',
     ],
   },
   {

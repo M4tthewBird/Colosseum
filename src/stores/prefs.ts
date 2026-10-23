@@ -36,6 +36,9 @@ interface PrefsState {
   /** Asked once for a home gym (an account without one); "Not now" keeps it from asking again. */
   homeGymAsked: boolean;
   setHomeGymAsked: (v: boolean) => void;
+  /** When an account without a profile picture was last asked for one (asked again after a week). */
+  avatarAskedAt: string | null;
+  setAvatarAskedAt: (iso: string | null) => void;
   setInstallTipPending: (v: boolean) => void;
   setArenaDots: (v: boolean) => void;
   setArenaMetrics: (m: ArenaMetric[]) => void;
@@ -59,6 +62,8 @@ export const usePrefs = create<PrefsState>()(
       setChangelogSeen: (changelogSeen) => set({ changelogSeen }),
       homeGymAsked: false,
       setHomeGymAsked: (homeGymAsked) => set({ homeGymAsked }),
+      avatarAskedAt: null,
+      setAvatarAskedAt: (avatarAskedAt) => set({ avatarAskedAt }),
       setInstallTipPending: (installTipPending) => set({ installTipPending }),
       setArenaDots: (arenaDots) => set({ arenaDots }),
       setArenaMetrics: (arenaMetrics) => set({ arenaMetrics }),
