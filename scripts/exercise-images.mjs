@@ -1,11 +1,12 @@
 /**
- * Exercise illustrations.
+ * Exercise illustrations, made in Gemini.
  *
- *   npm run images          link images in assets/exercises/ and write the ChatGPT prompts
- *   npm run images:import   take images downloaded from ChatGPT (assets/exercises/_inbox/),
+ *   npm run images          link images in assets/exercises/ and rewrite the gemini-obrazky/ kit
+ *   npm run images:import   take images downloaded from Gemini (gemini-obrazky/stazene/),
  *                           name them, crop to 16:9, shrink, and link them
  *
- * Prompts go to docs/chatgpt-obrazky.md, in batches ready to paste into ChatGPT.
+ * gemini-obrazky/ holds everything Matyáš needs: NAVOD.md (Czech steps), the style reference,
+ * one prompt file per batch, the download folder and importovat.cmd (double-click to import).
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -13,7 +14,9 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dir = path.join(root, 'assets/exercises');
-const inbox = path.join(dir, '_inbox');
+const kit = path.join(root, 'gemini-obrazky');
+const inbox = path.join(kit, 'stazene');
+const REFERENCE = 'bench-press.jpg';
 const BATCH = 15;
 const OUT = { width: 1200, height: 675, quality: 80 };
 
@@ -57,9 +60,9 @@ const STYLE =
   'Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. ' +
   'Three-quarter view from slightly above, the whole body and equipment in frame, ' +
   'soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). ' +
-  'No text, no logos, no other people. ' +
-  'Landscape 3:2 image; keep the statue and equipment within the middle 80 % of the width ' +
-  'because the image will be cropped to 16:9.';
+  'No text, no logos, no watermark, no other people. ' +
+  'Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width ' +
+  'with some empty background around them, because the image may be cropped slightly.';
 
 function writeLinks() {
   const have = existingImages();
@@ -72,69 +75,117 @@ ${[...have].map(([k, f]) => `  '${k}': require('../../../assets/exercises/${f}')
   return have.size;
 }
 
-function writePrompts() {
+const pose = (e) => poses[e.name] ?? `performing a ${e.name.toLowerCase()}`;
+
+/** The first message of a batch: style, the whole list, and how to go on. */
+const batchText = (
+  list,
+) => `You are making exercise illustrations for a fitness app. I will ask for them one at a time.
+
+STYLE (identical for every image):
+${STYLE}
+The attached image ${REFERENCE} is the exact style reference: same statue, same marble, same light, same background, same camera distance.
+
+THE LIST (${list.length} images):
+${list.map((e, i) => `${i + 1}. ${e.name}. Pose: ${pose(e)}.`).join('\n')}
+
+RULES:
+- One image per reply, in the order of the list. Below the image write only its number and name.
+- When I write "next", make the next image. When I write "redo", make the same image again, fixing what I say.
+- The pose must show the exercise correctly; the statue must use the equipment the exercise needs.
+
+Make image 1 now.`;
+
+/** One image on its own, for a fresh chat or when Gemini loses track of the list. */
+const singleText = (e) =>
+  `Exercise illustration for a fitness app: ${e.name}. Pose: ${pose(e)}.\n${STYLE}\nThe attached image ${REFERENCE} is the exact style reference.`;
+
+function writeKit() {
   const all = catalog();
   const todo = missing();
   const batches = [];
   for (let i = 0; i < todo.length; i += BATCH) batches.push(todo.slice(i, i + BATCH));
+  const file = (n) => `davka-${String(n + 1).padStart(2, '0')}.txt`;
 
-  const batchText = (
-    list,
-    n,
-  ) => `Generate ${list.length} exercise illustrations for a fitness app, one image per reply.
-After each image, write only its number and file name, then wait until I write "next".
+  fs.rmSync(path.join(kit, 'davky'), { recursive: true, force: true });
+  fs.mkdirSync(path.join(kit, 'davky'), { recursive: true });
+  fs.mkdirSync(inbox, { recursive: true });
+  fs.writeFileSync(path.join(inbox, '.gitkeep'), '');
+  fs.copyFileSync(path.join(dir, REFERENCE), path.join(kit, `vzor-${REFERENCE}`));
 
-Style for every image (keep it identical across all of them):
-${STYLE}
-If I attached bench-press.jpg, treat it as the exact style reference.
+  batches.forEach((list, n) => {
+    const singles = list
+      .map((e, i) => `--- ${i + 1}. ${e.name} (${slug(e.name)}) ---\n${singleText(e)}`)
+      .join('\n\n');
+    fs.writeFileSync(
+      path.join(kit, 'davky', file(n)),
+      `${batchText(list)}\n\n\n=====================================================================\n` +
+        `ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, pošli jen jeden z nich + vzor)\n` +
+        `=====================================================================\n\n${singles}\n`,
+    );
+  });
 
-${list
-  .map(
-    (e, i) =>
-      `${i + 1}. ${slug(e.name)}.jpg | ${e.name}. Pose: ${poses[e.name] ?? `performing a ${e.name.toLowerCase()}`}.`,
-  )
-  .join('\n')}
+  fs.writeFileSync(
+    path.join(kit, 'importovat.cmd'),
+    '@echo off\r\ncd /d "%~dp0.."\r\ncall npm run images:import\r\necho.\r\npause\r\n',
+  );
 
-Start with image 1.`;
+  const list = batches
+    .map(
+      (b, n) =>
+        `| [${file(n)}](davky/${file(n)}) | ${b.length} | ${b.map((e) => e.name).join(', ')} |`,
+    )
+    .join('\n');
 
-  const doc = `# Obrázky cviků přes ChatGPT
+  fs.writeFileSync(
+    path.join(kit, 'NAVOD.md'),
+    `# Obrázky cviků v Gemini
 
-Hotovo ${all.length - todo.length} z ${all.length}. Zbývá ${todo.length} obrázků v ${batches.length} dávkách po ${BATCH}.
+Hotovo **${all.length - todo.length} z ${all.length}**. Zbývá ${todo.length} obrázků v ${batches.length} dávkách po ${BATCH}.
+Tenhle soubor i dávky se po každém importu přegenerují jen se zbývajícími cviky.
 
-## Jak na to
+## Co je v téhle složce
 
-1. Otevři nový chat v ChatGPT a **přilož \`assets/exercises/bench-press.jpg\`** (vzor stylu).
-2. Zkopíruj celý text **jedné dávky** níže (blok kódu, tlačítko „Copy“) a odešli.
-3. Po každém obrázku napiš \`next\`. Každý obrázek hned stáhni (v pořadí 1, 2, 3…) do složky
-   \`assets/exercises/_inbox/\`.
-4. Když máš dávku staženou, spusť v PowerShellu ve složce projektu:
+| Co | K čemu |
+| --- | --- |
+| \`vzor-${REFERENCE}\` | Vzor stylu. Přikládej ho ke každé dávce. |
+| \`davky/\` | Prompty, jeden soubor = jedna dávka. Nahoře hlavní prompt, dole záložní prompty po jednom. |
+| \`stazene/\` | Sem stahuj obrázky z Gemini. |
+| \`importovat.cmd\` | Dvojklik: obrázky ze \`stazene/\` pojmenuje, ořízne na 16:9, zmenší a napojí do aplikace. |
 
-   \`\`\`powershell
-   npm run images:import
-   \`\`\`
+## Postup pro jednu dávku
 
-   Obrázky se samy pojmenují podle pořadí, oříznou na 16:9, zmenší a napojí do aplikace.
-   Tento soubor se pak přegeneruje jen se zbývajícími cviky.
+1. Otevři **nový chat** v Gemini (model **Pro**, s generováním obrázků).
+2. **Přilož \`vzor-${REFERENCE}\`.**
+3. Otevři \`davky/davka-01.txt\`, zkopíruj **všechno nad čarou „ZÁLOHA“** a odešli.
+4. Gemini udělá obrázek 1. **Hned ho stáhni** (tlačítko stáhnout u obrázku) do složky \`stazene/\`.
+5. Napiš \`next\` → obrázek 2 → stáhni. Takhle až do konce dávky.
+   - Nepovedený obrázek: napiš \`redo\` a co opravit (např. \`redo, the bar must be on the back\`), stáhni až opravený.
+   - Gemini se ztratí nebo změní styl: otevři nový chat, přilož vzor a pošli **záložní prompt** toho cviku ze spodní části souboru.
+6. Na konci dávky dvojklikni na **\`importovat.cmd\`**. Ve výpisu zkontroluj, že každý soubor dostal správný název cviku.
+7. Pokračuj další dávkou (\`davka-02.txt\` …). Po importu se čísla dávek posunou, takže vždy začínej od \`davka-01.txt\`.
 
-Tipy:
-- Pořadí stahování = pořadí v dávce. Když nějaký obrázek přeskočíš, přejmenuj zbylé soubory
-  ručně na název z dávky (např. \`hack-squat.png\`) – pojmenované soubory import pozná sám.
-- Když se obrázek nepovede, napiš ChatGPT \`redo\` a stáhni až opravenou verzi.
-- Na jednu dávku je nejlepší nový chat, styl pak zůstává stejný.
+## Důležité
 
-${batches
-  .map(
-    (list, n) => `## Dávka ${n + 1} z ${batches.length}
+- **Pořadí stahování = pořadí v dávce.** Import přiřazuje názvy podle času stažení.
+  Když obrázek přeskočíš, přejmenuj ho v \`stazene/\` ručně podle názvu v závorce v záložních promptech
+  (např. \`hack-squat.png\`). Pojmenovaný soubor import pozná sám.
+- Špatně pojmenovaný obrázek po importu: přejmenuj ho v \`assets/exercises/\` a spusť \`npm run images\`.
+- Obrázky se ořezávají na střed na 16:9. Když Gemini dá čtverec, ořízne se nahoře a dole, proto prompt chce postavu uprostřed.
+- Kdyby Gemini do rohu dávalo viditelný vodoznak, dej vědět a import ho bude odřezávat.
+- Import potřebuje Node.js a v projektu jednou \`npm install\` (už je hotové).
 
-\`\`\`text
-${batchText(list, n)}
-\`\`\`
+## Dávky
+
+| Soubor | Počet | Cviky |
+| --- | --- | --- |
+${list}
 `,
-  )
-  .join('\n')}`;
-  fs.writeFileSync(path.join(root, 'docs/chatgpt-obrazky.md'), doc);
-  const old = path.join(root, 'docs/exercise-images.md');
-  if (fs.existsSync(old)) fs.rmSync(old);
+  );
+
+  for (const old of ['docs/chatgpt-obrazky.md', 'docs/exercise-images.md']) {
+    if (fs.existsSync(path.join(root, old))) fs.rmSync(path.join(root, old));
+  }
   return { todo: todo.length, batches: batches.length };
 }
 
@@ -149,7 +200,7 @@ async function importInbox() {
     .map((x) => x.f);
   if (files.length === 0) {
     console.log(
-      `No images in ${path.relative(root, inbox)}. Download them there from ChatGPT first.`,
+      `No images in ${path.relative(root, inbox)}. Download them there from Gemini first.`,
     );
     return;
   }
@@ -183,7 +234,7 @@ async function importInbox() {
 
 if (process.argv.includes('--import')) await importInbox();
 const linked = writeLinks();
-const { todo, batches } = writePrompts();
+const { todo, batches } = writeKit();
 console.log(
-  `${linked} image(s) linked; ${todo} exercises still need one (${batches} ChatGPT batches in docs/chatgpt-obrazky.md).`,
+  `${linked} image(s) linked; ${todo} exercises still need one (${batches} Gemini batches in gemini-obrazky/).`,
 );

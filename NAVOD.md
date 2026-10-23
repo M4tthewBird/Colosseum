@@ -100,17 +100,13 @@ Soubor `supabase/schema.sql` je oproti původní verzi doplněný:
 
 Zatím má obrázek jen Bench press. Ostatní cviky ukazují šedý zástupný obrázek.
 
-Celý postup i hotové texty pro ChatGPT jsou v **`docs/chatgpt-obrazky.md`**:
+Všechno pro Gemini je ve složce **`gemini-obrazky/`**. Podrobný postup je v `gemini-obrazky/NAVOD.md`, ve zkratce:
 
-1. V ChatGPT otevři nový chat a přilož `assets/exercises/bench-press.jpg` jako vzor stylu.
-2. Zkopíruj jednu dávku (15 cviků) a odešli. Po každém obrázku napiš `next` a obrázek stáhni do `assets/exercises/_inbox/`.
-3. Spusť:
+1. V Gemini (Pro) otevři nový chat a přilož `gemini-obrazky/vzor-bench-press.jpg`.
+2. Zkopíruj hlavní prompt z `gemini-obrazky/davky/davka-01.txt` a odešli. Po každém obrázku napiš `next` a obrázek stáhni do `gemini-obrazky/stazene/`.
+3. Dvojklikni na `gemini-obrazky/importovat.cmd` (nebo spusť `npm run images:import`).
 
-   ```powershell
-   npm run images:import
-   ```
-
-   Obrázky se pojmenují podle pořadí, oříznou na 16:9, zmenší (~100 kB) a napojí do aplikace. Seznam dávek se zkrátí jen na zbývající cviky.
+   Obrázky se pojmenují podle pořadí, oříznou na 16:9, zmenší (~100 kB) a napojí do aplikace. Dávky se zkrátí jen na zbývající cviky.
 
 ## Aktualizace databáze
 

@@ -1,0 +1,109 @@
+You are making exercise illustrations for a fitness app. I will ask for them one at a time.
+
+STYLE (identical for every image):
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference: same statue, same marble, same light, same background, same camera distance.
+
+THE LIST (15 images):
+1. Cable Curl. Pose: standing at a low cable, curling a straight bar up towards the shoulders.
+2. Inverse Zottman Curl. Pose: standing, curling two dumbbells up with palms facing down, turning palms up at the top.
+3. Barbell Curl. Pose: standing, curling a straight barbell up towards the shoulders, elbows at the sides.
+4. Flat Bench Dumbbell Curl. Pose: lying face up on a flat bench, arms hanging out to the sides, curling two dumbbells.
+5. Walking Lunge. Pose: mid-stride in a walking lunge, back knee close to the floor, holding dumbbells at the sides.
+6. Machine Hip Abduction. Pose: seated in a hip abduction machine, pushing the knees outwards against the pads.
+7. 45 Degree Back Extension. Pose: on a 45-degree back extension bench, hips on the pad, torso raised in line with the legs.
+8. Front Foot Elevated Smith Machine Lunge. Pose: under a Smith machine bar, front foot on a low step, in a deep split lunge.
+9. Smith Machine Lunge. Pose: under a Smith machine bar, in a deep split lunge, back knee close to the floor.
+10. Machine Hip Thrust. Pose: seated back in a hip thrust machine, pad across the hips, hips fully extended.
+11. Single Leg Dumbbell Hip Thrust. Pose: upper back on a bench, one foot on the floor and the other leg raised, a dumbbell on the hip, hips extended.
+12. Cable Glute Kickback. Pose: bent slightly forward holding a cable tower, kicking one leg straight back against an ankle cuff.
+13. Step Up. Pose: stepping up onto a box with one foot, holding dumbbells at the sides.
+14. Glute Bridge. Pose: lying on the back on the floor, knees bent, barbell across the hips, hips raised.
+15. Cable Hip Abduction. Pose: standing side-on to a low cable, an ankle cuff on the far leg, raising that leg out to the side.
+
+RULES:
+- One image per reply, in the order of the list. Below the image write only its number and name.
+- When I write "next", make the next image. When I write "redo", make the same image again, fixing what I say.
+- The pose must show the exercise correctly; the statue must use the equipment the exercise needs.
+
+Make image 1 now.
+
+
+=====================================================================
+ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, pošli jen jeden z nich + vzor)
+=====================================================================
+
+--- 1. Cable Curl (cable-curl) ---
+Exercise illustration for a fitness app: Cable Curl. Pose: standing at a low cable, curling a straight bar up towards the shoulders.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 2. Inverse Zottman Curl (inverse-zottman-curl) ---
+Exercise illustration for a fitness app: Inverse Zottman Curl. Pose: standing, curling two dumbbells up with palms facing down, turning palms up at the top.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 3. Barbell Curl (barbell-curl) ---
+Exercise illustration for a fitness app: Barbell Curl. Pose: standing, curling a straight barbell up towards the shoulders, elbows at the sides.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 4. Flat Bench Dumbbell Curl (flat-bench-dumbbell-curl) ---
+Exercise illustration for a fitness app: Flat Bench Dumbbell Curl. Pose: lying face up on a flat bench, arms hanging out to the sides, curling two dumbbells.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 5. Walking Lunge (walking-lunge) ---
+Exercise illustration for a fitness app: Walking Lunge. Pose: mid-stride in a walking lunge, back knee close to the floor, holding dumbbells at the sides.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 6. Machine Hip Abduction (machine-hip-abduction) ---
+Exercise illustration for a fitness app: Machine Hip Abduction. Pose: seated in a hip abduction machine, pushing the knees outwards against the pads.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 7. 45 Degree Back Extension (45-degree-back-extension) ---
+Exercise illustration for a fitness app: 45 Degree Back Extension. Pose: on a 45-degree back extension bench, hips on the pad, torso raised in line with the legs.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 8. Front Foot Elevated Smith Machine Lunge (front-foot-elevated-smith-machine-lunge) ---
+Exercise illustration for a fitness app: Front Foot Elevated Smith Machine Lunge. Pose: under a Smith machine bar, front foot on a low step, in a deep split lunge.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 9. Smith Machine Lunge (smith-machine-lunge) ---
+Exercise illustration for a fitness app: Smith Machine Lunge. Pose: under a Smith machine bar, in a deep split lunge, back knee close to the floor.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 10. Machine Hip Thrust (machine-hip-thrust) ---
+Exercise illustration for a fitness app: Machine Hip Thrust. Pose: seated back in a hip thrust machine, pad across the hips, hips fully extended.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 11. Single Leg Dumbbell Hip Thrust (single-leg-dumbbell-hip-thrust) ---
+Exercise illustration for a fitness app: Single Leg Dumbbell Hip Thrust. Pose: upper back on a bench, one foot on the floor and the other leg raised, a dumbbell on the hip, hips extended.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 12. Cable Glute Kickback (cable-glute-kickback) ---
+Exercise illustration for a fitness app: Cable Glute Kickback. Pose: bent slightly forward holding a cable tower, kicking one leg straight back against an ankle cuff.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 13. Step Up (step-up) ---
+Exercise illustration for a fitness app: Step Up. Pose: stepping up onto a box with one foot, holding dumbbells at the sides.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 14. Glute Bridge (glute-bridge) ---
+Exercise illustration for a fitness app: Glute Bridge. Pose: lying on the back on the floor, knees bent, barbell across the hips, hips raised.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 15. Cable Hip Abduction (cable-hip-abduction) ---
+Exercise illustration for a fitness app: Cable Hip Abduction. Pose: standing side-on to a low cable, an ankle cuff on the far leg, raising that leg out to the side.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.

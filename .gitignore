@@ -46,5 +46,7 @@ yarn-error.*
 # private, never upload
 _donotdeploy/
 
-# images downloaded from ChatGPT, waiting for npm run images:import
+# images downloaded from Gemini, waiting for npm run images:import
+gemini-obrazky/stazene/*
+!gemini-obrazky/stazene/.gitkeep
 assets/exercises/_inbox/

@@ -1,0 +1,109 @@
+You are making exercise illustrations for a fitness app. I will ask for them one at a time.
+
+STYLE (identical for every image):
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference: same statue, same marble, same light, same background, same camera distance.
+
+THE LIST (15 images):
+1. Hammer Curl. Pose: standing, curling two dumbbells with a neutral grip (thumbs up), elbows at the sides.
+2. Preacher Curl. Pose: seated at a preacher bench, upper arms resting on the angled pad, curling a barbell up.
+3. Cable Fly. Pose: standing between two high cable pulleys, bringing the handles together in front of the chest in a hugging arc.
+4. Plank. Pose: in a forearm plank on the floor, body in a straight line from head to heels.
+5. Hanging Leg Raise. Pose: hanging from a pull-up bar, legs raised straight in front to hip height.
+6. Cable Crunch. Pose: kneeling below a high cable, holding a rope at the head, crunching the torso down towards the knees.
+7. Farmers Carry. Pose: walking upright while holding a very heavy dumbbell in each hand at the sides.
+8. Good Morning. Pose: barbell on the upper back, hinging forward at the hips with a flat back until the torso is near parallel.
+9. Arnold Press. Pose: seated, pressing two dumbbells overhead while rotating the palms from facing in to facing forward.
+10. Cable Lateral Raise. Pose: standing side-on to a low cable pulley, raising the handle out to the side to shoulder height with one arm.
+11. Cable Y Raise. Pose: standing between two low cable pulleys, raising both handles up and out into a Y shape above the head.
+12. Behind the Back Cuffed Cable Lateral Raise. Pose: standing side-on to a low cable, the cable running behind the back to a cuff on the far wrist, raising that arm out to the side.
+13. Reverse Pec Deck. Pose: seated facing the pad of a pec deck machine, sweeping the handles back with straight arms to open the chest.
+14. Reverse Cable Crossover. Pose: standing between two high cable pulleys, crossing arms in front then pulling the cables back and out to the sides.
+15. Machine Shoulder Press. Pose: seated in a shoulder press machine, pressing the handles overhead.
+
+RULES:
+- One image per reply, in the order of the list. Below the image write only its number and name.
+- When I write "next", make the next image. When I write "redo", make the same image again, fixing what I say.
+- The pose must show the exercise correctly; the statue must use the equipment the exercise needs.
+
+Make image 1 now.
+
+
+=====================================================================
+ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, pošli jen jeden z nich + vzor)
+=====================================================================
+
+--- 1. Hammer Curl (hammer-curl) ---
+Exercise illustration for a fitness app: Hammer Curl. Pose: standing, curling two dumbbells with a neutral grip (thumbs up), elbows at the sides.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 2. Preacher Curl (preacher-curl) ---
+Exercise illustration for a fitness app: Preacher Curl. Pose: seated at a preacher bench, upper arms resting on the angled pad, curling a barbell up.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 3. Cable Fly (cable-fly) ---
+Exercise illustration for a fitness app: Cable Fly. Pose: standing between two high cable pulleys, bringing the handles together in front of the chest in a hugging arc.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 4. Plank (plank) ---
+Exercise illustration for a fitness app: Plank. Pose: in a forearm plank on the floor, body in a straight line from head to heels.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 5. Hanging Leg Raise (hanging-leg-raise) ---
+Exercise illustration for a fitness app: Hanging Leg Raise. Pose: hanging from a pull-up bar, legs raised straight in front to hip height.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 6. Cable Crunch (cable-crunch) ---
+Exercise illustration for a fitness app: Cable Crunch. Pose: kneeling below a high cable, holding a rope at the head, crunching the torso down towards the knees.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 7. Farmers Carry (farmers-carry) ---
+Exercise illustration for a fitness app: Farmers Carry. Pose: walking upright while holding a very heavy dumbbell in each hand at the sides.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 8. Good Morning (good-morning) ---
+Exercise illustration for a fitness app: Good Morning. Pose: barbell on the upper back, hinging forward at the hips with a flat back until the torso is near parallel.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 9. Arnold Press (arnold-press) ---
+Exercise illustration for a fitness app: Arnold Press. Pose: seated, pressing two dumbbells overhead while rotating the palms from facing in to facing forward.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 10. Cable Lateral Raise (cable-lateral-raise) ---
+Exercise illustration for a fitness app: Cable Lateral Raise. Pose: standing side-on to a low cable pulley, raising the handle out to the side to shoulder height with one arm.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 11. Cable Y Raise (cable-y-raise) ---
+Exercise illustration for a fitness app: Cable Y Raise. Pose: standing between two low cable pulleys, raising both handles up and out into a Y shape above the head.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 12. Behind the Back Cuffed Cable Lateral Raise (behind-the-back-cuffed-cable-lateral-raise) ---
+Exercise illustration for a fitness app: Behind the Back Cuffed Cable Lateral Raise. Pose: standing side-on to a low cable, the cable running behind the back to a cuff on the far wrist, raising that arm out to the side.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 13. Reverse Pec Deck (reverse-pec-deck) ---
+Exercise illustration for a fitness app: Reverse Pec Deck. Pose: seated facing the pad of a pec deck machine, sweeping the handles back with straight arms to open the chest.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 14. Reverse Cable Crossover (reverse-cable-crossover) ---
+Exercise illustration for a fitness app: Reverse Cable Crossover. Pose: standing between two high cable pulleys, crossing arms in front then pulling the cables back and out to the sides.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 15. Machine Shoulder Press (machine-shoulder-press) ---
+Exercise illustration for a fitness app: Machine Shoulder Press. Pose: seated in a shoulder press machine, pressing the handles overhead.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.

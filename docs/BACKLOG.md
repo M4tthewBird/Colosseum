@@ -8,8 +8,7 @@ Feedback from Matyáš (2026-10-23). Work top to bottom, one item at a time; ask
 - [x] **Sign-up**: Name allows at most two words (sign-up and Settings; older longer names stay until changed)
 - [x] **Forum**: shows the short name instead of the full name (full name everywhere now)
 - [x] **Sharing bug**: "Could not share. Are you online?" while online. The post linked a workout still in the offline queue, so RLS refused it; now the workout syncs first (or the post goes without the link) and only real network errors say "Are you online?" (needs a check on the live app)
-- [ ] **Czech version** of the app
-- [ ] **Images** (missing exercise images?)
+- [ ] **Images**: 151 exercise illustrations to make in Gemini. The kit is ready in `gemini-obrazky/` (NAVOD.md, prompts, double-click import); Matyáš generates them
 - [ ] **Unilateral exercises** (Bulgarian split squat, single-leg RDL…): log left and right side separately
 - [ ] **Drop sets and failure**: make the option more visible
 - [ ] **Warm-up sets**
@@ -21,3 +20,4 @@ Feedback from Matyáš (2026-10-23). Work top to bottom, one item at a time; ask
 - [ ] **Badges / achievements**
 - [ ] **Deload status**: one week, visible to others (e.g. in the Forum)
 - [ ] **Garmin integration** (to explore)
+- [ ] **Czech version** of the app: last, after everything else. Decided: exercise names stay English (Czech search synonyms), own small typed dictionary instead of a library. Still to ask: how the language is chosen, tykání or vykání.

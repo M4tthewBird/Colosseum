@@ -1,0 +1,109 @@
+You are making exercise illustrations for a fitness app. I will ask for them one at a time.
+
+STYLE (identical for every image):
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference: same statue, same marble, same light, same background, same camera distance.
+
+THE LIST (15 images):
+1. Standing Machine Lateral Raise. Pose: standing in a lateral raise machine, raising the arm pads out to the sides to shoulder height.
+2. Lean In Dumbbell Lateral Raise. Pose: holding an upright post with one hand and leaning the body towards it, raising a dumbbell out to the side with the other arm.
+3. Side Lying Dumbbell Lateral Raise. Pose: lying on the side on an incline bench, raising a dumbbell up from the hip with the top arm.
+4. Bent Over Reverse Dumbbell Fly. Pose: torso bent forward near parallel, raising two dumbbells out to the sides with slightly bent arms.
+5. Seated Machine Lateral Raise. Pose: seated in a lateral raise machine, elbows against the pads, raising them out to the sides.
+6. Lean Away Dumbbell Lateral Raise. Pose: holding an upright post with one hand and leaning the body away from it, raising a dumbbell out to the side with the other arm.
+7. Super ROM Dumbbell Lateral Raise. Pose: standing, raising two dumbbells out to the sides all the way above the head, palms facing in.
+8. Seated Barbell Overhead Press. Pose: seated on an upright bench, pressing a barbell overhead from the front of the shoulders.
+9. Upright Row. Pose: standing, pulling a barbell straight up along the body to chest height, elbows high and out.
+10. Hack Squat. Pose: in a hack squat machine, back against the angled pad, in a deep squat with shoulders under the pads.
+11. Pendulum Squat. Pose: in a pendulum squat machine, shoulders under the pads, sinking into a very deep squat.
+12. Smith Machine Squat. Pose: barbell of a Smith machine across the upper back, feet slightly forward, in a deep squat.
+13. Low Bar Squat. Pose: barbell resting low on the rear shoulders, torso leaning forward more, in a squat to parallel.
+14. Reverse Nordic. Pose: kneeling upright with feet anchored, leaning the straight torso backwards by bending only at the knees.
+15. Goblet Squat. Pose: holding one dumbbell vertically against the chest, in a deep upright squat, elbows inside the knees.
+
+RULES:
+- One image per reply, in the order of the list. Below the image write only its number and name.
+- When I write "next", make the next image. When I write "redo", make the same image again, fixing what I say.
+- The pose must show the exercise correctly; the statue must use the equipment the exercise needs.
+
+Make image 1 now.
+
+
+=====================================================================
+ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, pošli jen jeden z nich + vzor)
+=====================================================================
+
+--- 1. Standing Machine Lateral Raise (standing-machine-lateral-raise) ---
+Exercise illustration for a fitness app: Standing Machine Lateral Raise. Pose: standing in a lateral raise machine, raising the arm pads out to the sides to shoulder height.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 2. Lean In Dumbbell Lateral Raise (lean-in-dumbbell-lateral-raise) ---
+Exercise illustration for a fitness app: Lean In Dumbbell Lateral Raise. Pose: holding an upright post with one hand and leaning the body towards it, raising a dumbbell out to the side with the other arm.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 3. Side Lying Dumbbell Lateral Raise (side-lying-dumbbell-lateral-raise) ---
+Exercise illustration for a fitness app: Side Lying Dumbbell Lateral Raise. Pose: lying on the side on an incline bench, raising a dumbbell up from the hip with the top arm.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 4. Bent Over Reverse Dumbbell Fly (bent-over-reverse-dumbbell-fly) ---
+Exercise illustration for a fitness app: Bent Over Reverse Dumbbell Fly. Pose: torso bent forward near parallel, raising two dumbbells out to the sides with slightly bent arms.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 5. Seated Machine Lateral Raise (seated-machine-lateral-raise) ---
+Exercise illustration for a fitness app: Seated Machine Lateral Raise. Pose: seated in a lateral raise machine, elbows against the pads, raising them out to the sides.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 6. Lean Away Dumbbell Lateral Raise (lean-away-dumbbell-lateral-raise) ---
+Exercise illustration for a fitness app: Lean Away Dumbbell Lateral Raise. Pose: holding an upright post with one hand and leaning the body away from it, raising a dumbbell out to the side with the other arm.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 7. Super ROM Dumbbell Lateral Raise (super-rom-dumbbell-lateral-raise) ---
+Exercise illustration for a fitness app: Super ROM Dumbbell Lateral Raise. Pose: standing, raising two dumbbells out to the sides all the way above the head, palms facing in.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 8. Seated Barbell Overhead Press (seated-barbell-overhead-press) ---
+Exercise illustration for a fitness app: Seated Barbell Overhead Press. Pose: seated on an upright bench, pressing a barbell overhead from the front of the shoulders.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 9. Upright Row (upright-row) ---
+Exercise illustration for a fitness app: Upright Row. Pose: standing, pulling a barbell straight up along the body to chest height, elbows high and out.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 10. Hack Squat (hack-squat) ---
+Exercise illustration for a fitness app: Hack Squat. Pose: in a hack squat machine, back against the angled pad, in a deep squat with shoulders under the pads.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 11. Pendulum Squat (pendulum-squat) ---
+Exercise illustration for a fitness app: Pendulum Squat. Pose: in a pendulum squat machine, shoulders under the pads, sinking into a very deep squat.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 12. Smith Machine Squat (smith-machine-squat) ---
+Exercise illustration for a fitness app: Smith Machine Squat. Pose: barbell of a Smith machine across the upper back, feet slightly forward, in a deep squat.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 13. Low Bar Squat (low-bar-squat) ---
+Exercise illustration for a fitness app: Low Bar Squat. Pose: barbell resting low on the rear shoulders, torso leaning forward more, in a squat to parallel.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 14. Reverse Nordic (reverse-nordic) ---
+Exercise illustration for a fitness app: Reverse Nordic. Pose: kneeling upright with feet anchored, leaning the straight torso backwards by bending only at the knees.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
+
+--- 15. Goblet Squat (goblet-squat) ---
+Exercise illustration for a fitness app: Goblet Squat. Pose: holding one dumbbell vertically against the chest, in a deep upright squat, elbows inside the knees.
+Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete (Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. Three-quarter view from slightly above, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
+The attached image bench-press.jpg is the exact style reference.
