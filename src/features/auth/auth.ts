@@ -13,6 +13,7 @@ import {
   demoProgram,
   demoSessions,
 } from '@/dev/seed';
+import { seenMark } from '@/lib/changelog';
 import { addDays, toLocalDate } from '@/lib/dates';
 import { isServer, safeStorage } from '@/lib/storage';
 import { AUTH_STORAGE_KEY, isDemo, supabase, usernameToEmail } from '@/lib/supabase';
@@ -303,7 +304,7 @@ async function demoSignUp(input: SignUpInput) {
 
 /** A new account starts with the current app, so there is nothing "new" to show it. */
 function markChangelogSeen() {
-  usePrefs.getState().setChangelogSeen(CHANGELOG[0]?.id ?? null);
+  usePrefs.getState().setChangelogSeen(CHANGELOG[0] ? seenMark(CHANGELOG[0]) : null);
 }
 
 async function demoSignIn() {

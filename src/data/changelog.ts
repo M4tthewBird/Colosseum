@@ -8,14 +8,6 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
-    id: '2026-10-23b',
-    date: '2026-10-23',
-    title: 'A cleaner top on iPhone',
-    items: [
-      'Fix: on the Home Screen app, the dark bar behind the clock is gone. The clock is dark again and the screen starts right below it.',
-    ],
-  },
-  {
     id: '2026-10-23',
     date: '2026-10-23',
     title: 'See what changed',
@@ -36,6 +28,7 @@ export const CHANGELOG: Release[] = [
       'Profile pictures: a photo or an emoji on a colour you pick. Every profile has one now.',
       'Add friends in person: Friends → My QR. They scan it with the phone camera and tap Add friend.',
       'Badges: 20 ladders from your first workout to the 1000 lb club. Find them in Profile → Badges; friends see yours on your profile.',
+      'Fix: on the Home Screen app, the dark bar behind the clock is gone. The clock is dark again and the screen starts right below it.',
     ],
   },
   {

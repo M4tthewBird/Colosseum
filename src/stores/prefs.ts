@@ -30,9 +30,9 @@ interface PrefsState {
   /** Walk through the app once after sign-up; Settings can start it again. */
   tourPending: boolean;
   setTourPending: (v: boolean) => void;
-  /** Newest changelog entry this device has shown (null: none yet). */
+  /** Newest changelog entry this device has shown, with its item count (see seenMark). */
   changelogSeen: string | null;
-  setChangelogSeen: (id: string | null) => void;
+  setChangelogSeen: (mark: string | null) => void;
   /** Asked once for a home gym (an account without one); "Not now" keeps it from asking again. */
   homeGymAsked: boolean;
   setHomeGymAsked: (v: boolean) => void;

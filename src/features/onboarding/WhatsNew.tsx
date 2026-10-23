@@ -1,6 +1,6 @@
 /**
- * What's new: after an update, a sheet lists the releases this device has not shown yet
- * (Settings → What's new keeps the full history). Waits for the tour and the Home Screen tip,
+ * What's new: after an update, a sheet lists every release this device has not shown yet, day by
+ * day (Settings → What's new keeps the full history). Waits for the tour and the Home Screen tip,
  * so a new user gets one thing at a time; new accounts start with everything marked seen.
  */
 import { useEffect, useMemo, useState } from 'react';
@@ -11,8 +11,9 @@ import { Glass } from '@/components/Glass';
 import { LogoMark } from '@/components/Logo';
 import { Sheet } from '@/components/Sheet';
 import { CHANGELOG } from '@/data/changelog';
-import { unseenReleases, type Release } from '@/lib/changelog';
-import { fromLocalDate, shortDate } from '@/lib/dates';
+import { seenMark, unseenReleases, type Release } from '@/lib/changelog';
+import { fromLocalDate, shortDate, toLocalDate } from '@/lib/dates';
+import { useData } from '@/stores/data';
 import { usePrefs } from '@/stores/prefs';
 import { colors, type } from '@/theme/tokens';
 
@@ -24,10 +25,18 @@ export function WhatsNew() {
   const seen = usePrefs((s) => s.changelogSeen);
   const waiting = usePrefs((s) => s.tourPending || s.installTipPending);
   const setSeen = usePrefs((s) => s.setChangelogSeen);
-  const releases = useMemo(() => unseenReleases(CHANGELOG, seen), [seen]);
+  const lastWorkout = useData((s) => {
+    let max = '';
+    for (const id in s.sessions)
+      if (s.sessions[id].started_at > max) max = s.sessions[id].started_at;
+    return max;
+  });
+  // A device that never showed the changelog: the last workout stands in for the last visit.
+  const since = lastWorkout ? toLocalDate(new Date(lastWorkout)) : null;
+  const releases = useMemo(() => unseenReleases(CHANGELOG, seen, since), [seen, since]);
   const show = hydrated && !waiting && releases.length > 0;
 
-  const close = () => setSeen(CHANGELOG[0].id);
+  const close = () => setSeen(seenMark(CHANGELOG[0]));
 
   return (
     <Sheet visible={show} onClose={close} title="What’s new">
