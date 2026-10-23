@@ -16,6 +16,7 @@ import { fromLocalDate, shortDate, toLocalDate } from '@/lib/dates';
 import { useData } from '@/stores/data';
 import { usePrefs } from '@/stores/prefs';
 import { colors, type } from '@/theme/tokens';
+import { HighlightCard } from './Highlights';
 
 export function WhatsNew() {
   // Before the stored prefs load, "nothing seen" would flash the sheet for everyone.
@@ -46,28 +47,41 @@ export function WhatsNew() {
         </View>
         <Text style={[type.title, { textAlign: 'center' }]}>New in Colosseum</Text>
       </View>
-      <ReleaseList releases={releases} />
+      <ReleaseList releases={releases} beforeShow={close} />
       <FillButton label="Got it" onPress={close} style={{ marginBottom: 8 }} />
     </Sheet>
   );
 }
 
-export function ReleaseList({ releases }: { releases: Release[] }) {
+/** Each release: its big features as cards first, then the list of smaller changes. */
+export function ReleaseList({
+  releases,
+  beforeShow,
+}: {
+  releases: Release[];
+  /** Runs before a highlight's "Show me" leaves for the feature. */
+  beforeShow?: () => void;
+}) {
   return (
     <View style={{ gap: 12 }}>
       {releases.map((r) => (
-        <Glass key={r.id} radius={20} style={styles.card}>
-          <Text style={type.caption}>{shortDate(fromLocalDate(r.date))}</Text>
-          <Text style={type.bodyStrong}>{r.title}</Text>
-          <View style={{ gap: 8, marginTop: 4 }}>
-            {r.items.map((item, i) => (
-              <View key={i} style={styles.item}>
-                <View style={styles.dot} />
-                <Text style={[type.body, { flex: 1 }]}>{item}</Text>
-              </View>
-            ))}
-          </View>
-        </Glass>
+        <View key={r.id} style={{ gap: 12 }}>
+          {r.highlights?.map((h) => (
+            <HighlightCard key={h.feature} highlight={h} beforeShow={beforeShow} />
+          ))}
+          <Glass radius={20} style={styles.card}>
+            <Text style={type.caption}>{shortDate(fromLocalDate(r.date))}</Text>
+            <Text style={type.bodyStrong}>{r.highlights?.length ? 'Also new' : r.title}</Text>
+            <View style={{ gap: 8, marginTop: 4 }}>
+              {r.items.map((item, i) => (
+                <View key={i} style={styles.item}>
+                  <View style={styles.dot} />
+                  <Text style={[type.body, { flex: 1 }]}>{item}</Text>
+                </View>
+              ))}
+            </View>
+          </Glass>
+        </View>
       ))}
     </View>
   );

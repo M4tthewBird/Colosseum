@@ -5,6 +5,7 @@
 import { Pressable, StyleSheet } from 'react-native';
 
 import { Star } from '@/components/icons';
+import { TourTarget } from '@/features/onboarding/TourTarget';
 import { useData } from '@/stores/data';
 import { colors } from '@/theme/tokens';
 
@@ -13,15 +14,18 @@ export function FavoriteButton({
   name,
   variant = 'plain',
   size = 20,
+  targetId,
 }: {
   exerciseId: string;
   name: string;
   variant?: 'overlay' | 'plain';
   size?: number;
+  /** Lets What's new light the star up (a TourTarget id). */
+  targetId?: string;
 }) {
   const on = useData((s) => !!s.exercisePrefs[exerciseId]?.favorite);
   const toggle = useData((s) => s.toggleFavorite);
-  return (
+  const button = (
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ selected: on }}
@@ -30,6 +34,8 @@ export function FavoriteButton({
       hitSlop={10}
       style={({ pressed }) => [
         variant === 'overlay' ? styles.overlay : styles.plain,
+        // Inside a target, the target takes the overlay's place.
+        targetId && variant === 'overlay' && styles.inTarget,
         { opacity: pressed ? 0.6 : 1 },
       ]}
     >
@@ -40,6 +46,12 @@ export function FavoriteButton({
         strokeWidth={2.2}
       />
     </Pressable>
+  );
+  if (!targetId) return button;
+  return (
+    <TourTarget id={targetId} style={variant === 'overlay' ? styles.place : undefined}>
+      {button}
+    </TourTarget>
   );
 }
 
@@ -56,4 +68,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   plain: { minWidth: 28, minHeight: 28, alignItems: 'center', justifyContent: 'center' },
+  place: { position: 'absolute', left: 10, top: 10, borderRadius: 15 },
+  inTarget: { position: 'relative', left: 0, top: 0 },
 });

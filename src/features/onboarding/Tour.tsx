@@ -14,7 +14,6 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Svg, { Path } from 'react-native-svg';
 
 import { FillButton, IconButton, TextButton } from '@/components/Buttons';
 import {
@@ -44,7 +43,15 @@ import { useData } from '@/stores/data';
 import { usePrefs } from '@/stores/prefs';
 import { dur, ease, useReducedMotion } from '@/theme/motion';
 import { colors, space, type } from '@/theme/tokens';
-import { measureTarget, type TargetRect } from './TourTarget';
+import {
+  HALO,
+  haloAround,
+  roundRect,
+  Scrim,
+  SpotRing,
+  useTargetRect,
+  type Halo,
+} from './Spotlight';
 
 interface Me {
   firstName: string;
@@ -194,42 +201,6 @@ function useTabGeometry() {
   };
 }
 
-/** Space between a lit-up element and its outline. */
-const HALO = 6;
-
-/** Where the step's target sits; re-measured while the step is open (screens settle, scroll). */
-function useTargetRect(id: string | undefined): TargetRect | null {
-  // Tagged with the id it belongs to, so the last step's rect never shows on the next one.
-  const [found, setFound] = useState<{ id: string; rect: TargetRect | null } | null>(null);
-  useEffect(() => {
-    if (!id) return;
-    let alive = true;
-    const tick = () =>
-      measureTarget(id, (r) => {
-        if (!alive) return;
-        setFound((prev) => {
-          const p = prev?.id === id ? prev.rect : undefined;
-          const same =
-            p === r ||
-            (!!p &&
-              !!r &&
-              p.x === r.x &&
-              p.y === r.y &&
-              p.width === r.width &&
-              p.height === r.height);
-          return same && prev ? prev : { id, rect: r };
-        });
-      });
-    tick();
-    const timer = setInterval(tick, 250);
-    return () => {
-      alive = false;
-      clearInterval(timer);
-    };
-  }, [id]);
-  return id && found?.id === id ? found.rect : null;
-}
-
 export function Tour() {
   const pending = usePrefs((s) => s.tourPending);
   return pending ? <TourOverlay /> : null;
@@ -286,20 +257,12 @@ function TourOverlay() {
   const caretX = onBar ? g.tabLeft(s.tab!) + g.tabWidth / 2 - cardLeft - 8 : 0;
   const title = typeof s.title === 'function' ? s.title(me) : s.title;
   const body = typeof s.body === 'function' ? s.body(me) : s.body;
-  const halo = target
-    ? {
-        x: target.x - HALO,
-        y: target.y - HALO,
-        width: target.width + HALO * 2,
-        height: target.height + HALO * 2,
-        r: (s.radius ?? 16) + HALO,
-      }
-    : null;
+  const halo = haloAround(target, s.radius);
 
   return (
     <View style={StyleSheet.absoluteFill} accessibilityViewIsModal>
       {/* The screen stays visible but recedes; the tab bar and the step's target stay bright. */}
-      <Scrim g={g} hole={onBar} spot={halo} />
+      <TourScrim g={g} hole={onBar} spot={halo} />
       {/* Taps on the tab bar wait until the tour is over. */}
       <Pressable style={StyleSheet.absoluteFill} accessible={false} onPress={() => undefined} />
       <Animated.View
@@ -310,23 +273,7 @@ function TourOverlay() {
           ring,
         ]}
       />
-      {halo ? (
-        <Animated.View
-          key={`spot-${step}`}
-          aria-hidden
-          entering={reduced ? undefined : FadeIn.duration(dur.state)}
-          style={[
-            styles.spot,
-            {
-              left: halo.x,
-              top: halo.y,
-              width: halo.width,
-              height: halo.height,
-              borderRadius: halo.r,
-            },
-          ]}
-        />
-      ) : null}
+      {halo ? <SpotRing halo={halo} k={`spot-${step}`} /> : null}
 
       <View
         onLayout={(e) => setCardHeight(e.nativeEvent.layout.height)}
@@ -408,28 +355,18 @@ function TourOverlay() {
   );
 }
 
-/** A rounded rectangle as an SVG subpath. */
-function roundRect(x: number, y: number, w: number, h: number, radius: number): string {
-  const r = Math.min(radius, w / 2, h / 2);
-  return (
-    `M${x + r} ${y}H${x + w - r}A${r} ${r} 0 0 1 ${x + w} ${y + r}V${y + h - r}` +
-    `A${r} ${r} 0 0 1 ${x + w - r} ${y + h}H${x + r}A${r} ${r} 0 0 1 ${x} ${y + h - r}` +
-    `V${y + r}A${r} ${r} 0 0 1 ${x + r} ${y}Z`
-  );
-}
-
 /**
  * Dims the whole screen; on tab steps the tab bar's capsule is cut out so it stays lit, and the
  * step's target is cut out too.
  */
-function Scrim({
+function TourScrim({
   g,
   hole,
   spot,
 }: {
   g: ReturnType<typeof useTabGeometry>;
   hole: boolean;
-  spot: { x: number; y: number; width: number; height: number; r: number } | null;
+  spot: Halo | null;
 }) {
   const capsule = roundRect(
     g.barLeft,
@@ -439,16 +376,7 @@ function Scrim({
     space.tabBarHeight / 2,
   );
   const target = spot ? roundRect(spot.x, spot.y, spot.width, spot.height, spot.r) : '';
-  return (
-    <Svg width={g.width} height={g.height} style={styles.scrim} aria-hidden>
-      <Path
-        d={`M0 0H${g.width}V${g.height}H0Z${hole ? capsule : ''}${target}`}
-        fill="rgb(28,28,30)"
-        fillOpacity={0.22}
-        fillRule="evenodd"
-      />
-    </Svg>
-  );
+  return <Scrim width={g.width} height={g.height} holes={`${hole ? capsule : ''}${target}`} />;
 }
 
 function Dots({ count, active }: { count: number; active: number }) {
@@ -462,17 +390,10 @@ function Dots({ count, active }: { count: number; active: number }) {
 }
 
 const styles = StyleSheet.create({
-  scrim: { position: 'absolute', top: 0, left: 0, pointerEvents: 'none' },
   ring: {
     position: 'absolute',
     left: 0,
     borderRadius: 26,
-    borderWidth: 2,
-    borderColor: colors.accent,
-    pointerEvents: 'none',
-  },
-  spot: {
-    position: 'absolute',
     borderWidth: 2,
     borderColor: colors.accent,
     pointerEvents: 'none',

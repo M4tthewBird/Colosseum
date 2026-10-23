@@ -9,6 +9,7 @@ import { FillButton, TextButton } from '@/components/Buttons';
 import { MapPin } from '@/components/icons';
 import { Sheet } from '@/components/Sheet';
 import { CHANGELOG } from '@/data/changelog';
+import { useSpotlight } from '@/features/onboarding/Spotlight';
 import { createGym } from '@/features/social/api';
 import { unseenReleases } from '@/lib/changelog';
 import { useData } from '@/stores/data';
@@ -26,9 +27,10 @@ export function HomeGymPrompt() {
     (s) =>
       s.tourPending || s.installTipPending || unseenReleases(CHANGELOG, s.changelogSeen).length > 0,
   );
+  const spotlight = useSpotlight((s) => !!s.current);
   const setAsked = usePrefs((s) => s.setHomeGymAsked);
   const [picking, setPicking] = useState(false);
-  const show = hydrated && !!profile && !profile.home_gym_id && !asked && !busy;
+  const show = hydrated && !!profile && !profile.home_gym_id && !asked && !busy && !spotlight;
 
   return (
     <>

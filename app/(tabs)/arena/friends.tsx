@@ -51,7 +51,11 @@ export default function Friends() {
       <BackLink label="Arena" fallback="/arena" />
       <Header
         title="Friends"
-        right={<FillButton label="My QR" icon={QrCode} size="sm" onPress={() => setQrOpen(true)} />}
+        right={
+          <TourTarget id="friends-qr">
+            <FillButton label="My QR" icon={QrCode} size="sm" onPress={() => setQrOpen(true)} />
+          </TourTarget>
+        }
       />
       <TourTarget id="friends-search">
         <SearchField placeholder="Search by username" value={q} onChangeText={setQ} />

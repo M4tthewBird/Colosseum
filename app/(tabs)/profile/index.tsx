@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { SlidersHorizontal } from '@/components/icons';
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -19,12 +19,22 @@ import { useFinishedSessions } from '@/features/training/hooks';
 import { useData } from '@/stores/data';
 import { type } from '@/theme/tokens';
 
+type Section = 'body' | 'lifts' | 'badges';
+const isSection = (s: unknown): s is Section => s === 'body' || s === 'lifts' || s === 'badges';
+
 export default function Profile() {
   const profile = useData((s) => s.profile);
   const exercises = useData((s) => s.exercises);
   const sessions = useFinishedSessions();
   const gym = useGym(profile?.home_gym_id);
-  const [tab, setTab] = useState<'body' | 'lifts' | 'badges'>('body');
+  // ?section=badges (What's new → Show me) opens a section, also when Profile is already open.
+  const { section } = useLocalSearchParams<{ section?: string }>();
+  const [tab, setTab] = useState<Section>(() => (isSection(section) ? section : 'body'));
+  const [lastSection, setLastSection] = useState(section);
+  if (section !== lastSection) {
+    setLastSection(section);
+    if (isSection(section)) setTab(section);
+  }
   const badges = useMyBadges();
 
   if (!profile) return null;

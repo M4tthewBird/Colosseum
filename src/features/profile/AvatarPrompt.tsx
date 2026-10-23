@@ -10,6 +10,7 @@ import { Avatar } from '@/components/Avatar';
 import { FillButton, TextButton } from '@/components/Buttons';
 import { Sheet } from '@/components/Sheet';
 import { CHANGELOG } from '@/data/changelog';
+import { useSpotlight } from '@/features/onboarding/Spotlight';
 import { hasPicture } from '@/lib/avatars';
 import { unseenReleases } from '@/lib/changelog';
 import { useData } from '@/stores/data';
@@ -33,12 +34,14 @@ export function AvatarPrompt() {
       unseenReleases(CHANGELOG, s.changelogSeen).length > 0 ||
       (!profile?.home_gym_id && !s.homeGymAsked),
   );
+  const spotlight = useSpotlight((s) => !!s.current);
   const setAskedAt = usePrefs((s) => s.setAvatarAskedAt);
   const [picking, setPicking] = useState(false);
   // Read once per mount; a week-old "Later" shows it again on the next visit.
   const [now] = useState(() => Date.now());
   const due = !askedAt || now - new Date(askedAt).getTime() > WEEK;
-  const show = hydrated && !!profile && !hasPicture(profile.avatar_url) && due && !busy;
+  const show =
+    hydrated && !!profile && !hasPicture(profile.avatar_url) && due && !busy && !spotlight;
   const later = () => setAskedAt(new Date().toISOString());
 
   return (

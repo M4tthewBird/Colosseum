@@ -46,7 +46,14 @@ export default function ExerciseDetail() {
         name={ex?.name ?? ''}
         height={Math.round(((chartW + 36) * 9) / 16)}
       >
-        {ex ? <FavoriteButton exerciseId={ex.id} name={ex.name} variant="overlay" /> : null}
+        {ex ? (
+          <FavoriteButton
+            exerciseId={ex.id}
+            name={ex.name}
+            variant="overlay"
+            targetId="exercise-favorite"
+          />
+        ) : null}
       </ExerciseImage>
 
       <GlassCard style={{ gap: 12 }}>
