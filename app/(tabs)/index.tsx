@@ -15,6 +15,7 @@ import { ForumRail } from '@/features/forum/ForumViews';
 import { useFriendsPrs, useLeaderboard } from '@/features/social/api';
 import { useActiveProgram, useFinishedSessions } from '@/features/training/hooks';
 import { InstallTip } from '@/features/onboarding/InstallTip';
+import { WhatsNew } from '@/features/onboarding/WhatsNew';
 import { UpNextCard } from '@/features/training/UpNextCard';
 import { timeAgo } from '@/lib/dates';
 import { formatKg, formatVolume, weekStreak } from '@/lib/formulas';
@@ -90,6 +91,7 @@ export default function Today() {
 
       <FriendsPrs />
       <InstallTip />
+      <WhatsNew />
     </Screen>
   );
 }

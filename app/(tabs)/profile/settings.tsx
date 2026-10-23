@@ -194,6 +194,9 @@ export default function Settings() {
           >
             <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
           </FormRow>
+          <FormRow label="What’s new" onPress={() => router.push('/profile/whats-new')}>
+            <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
+          </FormRow>
         </FormGroup>
       </View>
 

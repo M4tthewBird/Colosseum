@@ -30,6 +30,9 @@ interface PrefsState {
   /** Walk through the app once after sign-up; Settings can start it again. */
   tourPending: boolean;
   setTourPending: (v: boolean) => void;
+  /** Newest changelog entry this device has shown (null: none yet). */
+  changelogSeen: string | null;
+  setChangelogSeen: (id: string | null) => void;
   setInstallTipPending: (v: boolean) => void;
   setArenaDots: (v: boolean) => void;
   setArenaMetrics: (m: ArenaMetric[]) => void;
@@ -49,6 +52,8 @@ export const usePrefs = create<PrefsState>()(
       installTipPending: false,
       tourPending: false,
       setTourPending: (tourPending) => set({ tourPending }),
+      changelogSeen: null,
+      setChangelogSeen: (changelogSeen) => set({ changelogSeen }),
       setInstallTipPending: (installTipPending) => set({ installTipPending }),
       setArenaDots: (arenaDots) => set({ arenaDots }),
       setArenaMetrics: (arenaMetrics) => set({ arenaMetrics }),

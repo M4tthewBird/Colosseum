@@ -4,6 +4,7 @@
  */
 import { create } from 'zustand';
 
+import { CHANGELOG } from '@/data/changelog';
 import {
   DEMO_EXERCISES,
   DEMO_GYMS,
@@ -200,6 +201,7 @@ export async function signUp(input: SignUpInput): Promise<void> {
   if (input.bodyweightKg) useData.getState().logBodyweight(input.bodyweightKg);
   usePrefs.getState().setInstallTipPending(true);
   usePrefs.getState().setTourPending(true);
+  markChangelogSeen();
   await onSignedIn(userId);
 }
 
@@ -294,6 +296,12 @@ async function demoSignUp(input: SignUpInput) {
     true,
   );
   usePrefs.getState().setTourPending(true);
+  markChangelogSeen();
+}
+
+/** A new account starts with the current app, so there is nothing "new" to show it. */
+function markChangelogSeen() {
+  usePrefs.getState().setChangelogSeen(CHANGELOG[0]?.id ?? null);
 }
 
 async function demoSignIn() {
