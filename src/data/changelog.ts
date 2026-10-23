@@ -8,6 +8,14 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-10-23b',
+    date: '2026-10-23',
+    title: 'A cleaner top on iPhone',
+    items: [
+      'Fix: on the Home Screen app, the dark bar behind the clock is gone. The clock is dark again and the screen starts right below it.',
+    ],
+  },
+  {
     id: '2026-10-23',
     date: '2026-10-23',
     title: 'See what changed',
