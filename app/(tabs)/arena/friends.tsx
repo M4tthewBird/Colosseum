@@ -11,6 +11,8 @@ import { Header, Screen } from '@/components/Screen';
 import { SearchField } from '@/components/SearchField';
 import { TourTarget } from '@/features/onboarding/TourTarget';
 import { searchUsers, useFriendAction, useFriends } from '@/features/social/api';
+import { MyQrSheet } from '@/features/social/FriendLink';
+import { QrCode } from '@/components/icons';
 import type { PublicUser } from '@/lib/types';
 import { useData } from '@/stores/data';
 import { confirm, toast } from '@/stores/ui';
@@ -25,6 +27,7 @@ export default function Friends() {
   const friends = useFriends();
   const action = useFriendAction();
   const [q, setQ] = useState('');
+  const [qrOpen, setQrOpen] = useState(false);
   const results = useQuery({
     queryKey: ['search-users', q],
     queryFn: () => searchUsers(q),
@@ -46,7 +49,10 @@ export default function Friends() {
   return (
     <Screen gap={16}>
       <BackLink label="Arena" fallback="/arena" />
-      <Header title="Friends" />
+      <Header
+        title="Friends"
+        right={<FillButton label="My QR" icon={QrCode} size="sm" onPress={() => setQrOpen(true)} />}
+      />
       <TourTarget id="friends-search">
         <SearchField placeholder="Search by username" value={q} onChangeText={setQ} />
       </TourTarget>
@@ -186,6 +192,7 @@ export default function Friends() {
           </ListGroup>
         </View>
       ) : null}
+      <MyQrSheet visible={qrOpen} onClose={() => setQrOpen(false)} />
     </Screen>
   );
 }

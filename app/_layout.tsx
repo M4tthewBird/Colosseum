@@ -61,6 +61,8 @@ export default function RootLayout() {
             <Stack.Protected guard={!signedIn}>
               <Stack.Screen name="(auth)" />
             </Stack.Protected>
+            {/* Friend links (QR codes) open signed in or out. */}
+            <Stack.Screen name="add/[username]" />
             <Stack.Screen name="dev/components" />
           </Stack>
         ) : (

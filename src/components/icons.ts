@@ -51,3 +51,4 @@ export { default as TrendingDown } from 'lucide-react-native/icons/trending-down
 export { default as Globe } from 'lucide-react-native/icons/globe';
 export { default as Landmark } from 'lucide-react-native/icons/landmark';
 export { default as CopyPlus } from 'lucide-react-native/icons/copy-plus';
+export { default as QrCode } from 'lucide-react-native/icons/qr-code';

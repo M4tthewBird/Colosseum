@@ -39,6 +39,9 @@ interface PrefsState {
   /** When an account without a profile picture was last asked for one (asked again after a week). */
   avatarAskedAt: string | null;
   setAvatarAskedAt: (iso: string | null) => void;
+  /** Username from a friend link opened while signed out; opened after signing in. */
+  pendingFriend: string | null;
+  setPendingFriend: (username: string | null) => void;
   setInstallTipPending: (v: boolean) => void;
   setArenaDots: (v: boolean) => void;
   setArenaMetrics: (m: ArenaMetric[]) => void;
@@ -64,6 +67,8 @@ export const usePrefs = create<PrefsState>()(
       setHomeGymAsked: (homeGymAsked) => set({ homeGymAsked }),
       avatarAskedAt: null,
       setAvatarAskedAt: (avatarAskedAt) => set({ avatarAskedAt }),
+      pendingFriend: null,
+      setPendingFriend: (pendingFriend) => set({ pendingFriend }),
       setInstallTipPending: (installTipPending) => set({ installTipPending }),
       setArenaDots: (arenaDots) => set({ arenaDots }),
       setArenaMetrics: (arenaMetrics) => set({ arenaMetrics }),

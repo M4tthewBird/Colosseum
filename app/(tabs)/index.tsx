@@ -13,6 +13,7 @@ import { Header, Screen } from '@/components/Screen';
 import { useForumPosts } from '@/features/forum/api';
 import { HomeGymPrompt } from '@/features/gyms/HomeGymPrompt';
 import { AvatarPrompt } from '@/features/profile/AvatarPrompt';
+import { FriendLinkResume } from '@/features/social/FriendLink';
 import { ForumRail } from '@/features/forum/ForumViews';
 import { useFriendsPrs, useLeaderboard } from '@/features/social/api';
 import { useActiveProgram, useFinishedSessions } from '@/features/training/hooks';
@@ -99,6 +100,7 @@ export default function Today() {
       <WhatsNew />
       <HomeGymPrompt />
       <AvatarPrompt />
+      <FriendLinkResume />
     </Screen>
   );
 }

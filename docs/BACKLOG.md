@@ -16,7 +16,7 @@ Feedback from Matyáš (2026-10-23). Work top to bottom, one item at a time; ask
 - [x] **Favorite exercises**: star on the workout image, picker rows and the exercise detail; "★ Favorites" chip (picker opens on it); favorites first in every category, exact search match stays first. Needs `supabase/updates/2026-10-23-favorites.sql`
 - [x] **Suggest the next exercise**: 3 picks on the "Add another exercise" page and a Suggested chip in the picker; what usually follows today's last exercise in similar workouts, how you usually start an empty one, else S/A-tier for untrained muscles of today's regions
 - [x] **Profile picture required**: photo or one of 24 emoji on 6 tones (avatar_url "emoji:…", no schema change); required at sign-up; older accounts are asked after sign-in, again a week after "Later"; Settings → Change picture
-- [ ] **Add friends by QR code**
+- [x] **Add friends by QR code**: Friends → My QR shows a code for /add/<username> (+ Share link); the phone camera opens the profile with Add friend; signed out, it is remembered through sign-up/sign-in. Check once on the deployed Pages URL
 - [ ] **Badges / achievements**
 - [ ] **Deload status**: one week, visible to others (e.g. in the Forum)
 - [ ] **Garmin integration** (to explore)

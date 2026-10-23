@@ -112,6 +112,15 @@ export async function searchUsers(q: string): Promise<PublicUser[]> {
   ) as PublicUser[];
 }
 
+/** The user with exactly this username (from a friend link), or null. */
+export async function userByUsername(username: string): Promise<PublicUser | null> {
+  const name = username.trim().toLowerCase().replace(/^@/, '');
+  if (isDemo) return DEMO_USERS.find((u) => u.username === name) ?? null;
+  return check(
+    await supabase.from('profiles').select(PUBLIC_COLS).eq('username', name).maybeSingle(),
+  ) as PublicUser | null;
+}
+
 type FriendAction = 'request' | 'accept' | 'decline' | 'remove';
 
 async function friendAction(action: FriendAction, other: PublicUser) {

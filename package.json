@@ -22,6 +22,7 @@
     "expo-router": "~57.0.24",
     "expo-status-bar": "~57.0.1",
     "lucide-react-native": "^1.48.0",
+    "qrcode": "1.5.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-native": "0.86.3",
@@ -35,6 +36,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
+    "@types/qrcode": "1.5.5",
     "@types/react": "~19.2.2",
     "eslint": "^9.39.5",
     "eslint-config-expo": "^57.0.2",
