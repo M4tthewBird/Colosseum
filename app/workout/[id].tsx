@@ -16,6 +16,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FillButton, IconButton, TextButton } from '@/components/Buttons';
 import { ScreenGlow } from '@/components/Charts';
 import { Glass, GlassCard } from '@/components/Glass';
+import { ListGroup, ListRow } from '@/components/List';
 import { MAX_WIDTH, useTopPadding } from '@/components/Screen';
 import { Sheet } from '@/components/Sheet';
 import { ExercisePicker, musclesLabel } from '@/features/exercises/ExercisePicker';
@@ -34,7 +35,8 @@ import { ProgressSegment, RestPulseOverlay, useRestPulse } from '@/features/work
 import { formatClock } from '@/lib/dates';
 import { formatKg, formatRest, formatScheme } from '@/lib/formulas';
 import { rpeHint } from '@/lib/periodization';
-import { historyBests } from '@/lib/stats';
+import { suggestNextExercises } from '@/lib/nextExercise';
+import { finished, historyBests } from '@/lib/stats';
 import { groupPlan } from '@/lib/supersets';
 import type { Session } from '@/lib/types';
 import { useNow } from '@/lib/useNow';
@@ -93,6 +95,16 @@ function ActiveWorkout({
     [allSessions, session.id],
   );
   const groups = useMemo(() => groupPlan(ordered), [ordered]);
+  // What usually comes next in workouts like this one.
+  const suggestions = useMemo(
+    () =>
+      suggestNextExercises(
+        [...new Set(ordered.map((p) => p.exercise_id))],
+        finished(Object.values(allSessions)).filter((s) => s.id !== session.id),
+        exercises,
+      ),
+    [ordered, allSessions, session.id, exercises],
+  );
   const pages = groups.length + 1; // last page adds an exercise
   const idx = Math.min(current, pages - 1);
 
@@ -234,7 +246,27 @@ function ActiveWorkout({
               <Text style={type.title}>
                 {ordered.length ? 'Add another exercise' : 'Empty workout'}
               </Text>
-              <Text style={type.caption}>Pick any exercise and log your sets.</Text>
+              <Text style={type.caption}>
+                {suggestions.length
+                  ? 'Suggested from your past workouts, or pick any exercise.'
+                  : 'Pick any exercise and log your sets.'}
+              </Text>
+              {suggestions.length ? (
+                <ListGroup>
+                  {suggestions.map((s) => (
+                    <ListRow
+                      key={s.exerciseId}
+                      height={56}
+                      title={exercises[s.exerciseId]?.name ?? 'Exercise'}
+                      subtitle={s.reason}
+                      chevron={false}
+                      right={<Plus size={18} color={colors.accent} strokeWidth={2.4} />}
+                      accessibilityLabel={`Add ${exercises[s.exerciseId]?.name ?? 'exercise'}. ${s.reason}`}
+                      onPress={() => addExercise(s.exerciseId)}
+                    />
+                  ))}
+                </ListGroup>
+              ) : null}
               <FillButton label="Add exercise" icon={Plus} onPress={() => setPicker(true)} />
             </GlassCard>
           </View>
@@ -272,7 +304,12 @@ function ActiveWorkout({
         </Glass>
       </View>
 
-      <ExercisePicker visible={picker} onClose={() => setPicker(false)} onPick={addExercise} />
+      <ExercisePicker
+        visible={picker}
+        onClose={() => setPicker(false)}
+        onPick={addExercise}
+        suggested={suggestions}
+      />
       <ExercisePicker
         visible={supersetFor !== null}
         onClose={() => setSupersetFor(null)}

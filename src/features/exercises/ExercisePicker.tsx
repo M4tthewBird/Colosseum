@@ -10,6 +10,7 @@ import { Chip } from '@/components/Segmented';
 import { Sheet } from '@/components/Sheet';
 import { cleanExerciseName } from '@/lib/exerciseName';
 import { favoritesFirst } from '@/lib/favorites';
+import type { NextPick } from '@/lib/nextExercise';
 import { searchExercises } from '@/lib/search';
 import type { Exercise } from '@/lib/types';
 import { uuid } from '@/lib/uuid';
@@ -28,8 +29,11 @@ const GROUPS: Record<string, string[]> = {
 };
 
 const TIER_RANK = { S: 0, A: 1, B: 2 } as const;
-/** The Favorites chip, next to the muscle groups. */
+/** The Favorites and Suggested chips, next to the muscle groups. */
 const FAVORITES = 'favorites';
+const SUGGESTED = 'suggested';
+/** Stable default, so the lists are not rebuilt on every render. */
+const NO_SUGGESTIONS: NextPick[] = [];
 const BROWSE_LIMIT = 80;
 
 /** Small "S" / "A" / "B" badge: Jeff Nippard's tier list rating. */
@@ -49,15 +53,20 @@ export function musclesLabel(muscles: string[]): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-/** Search, muscle filter and "Create custom exercise". */
+/**
+ * Search, muscle filter and "Create custom exercise". In a workout, `suggested` adds a
+ * Suggested chip first (what usually comes next) and the picker opens on it.
+ */
 export function ExercisePicker({
   visible,
   onClose,
   onPick,
+  suggested = NO_SUGGESTIONS,
 }: {
   visible: boolean;
   onClose: () => void;
   onPick: (exerciseId: string) => void;
+  suggested?: NextPick[];
 }) {
   const exercises = useData((s) => s.exercises);
   const prefs = useData((s) => s.exercisePrefs);
@@ -67,29 +76,39 @@ export function ExercisePicker({
   const [q, setQ] = useState('');
   const [group, setGroup] = useState<string | null>(null);
   const hasFavorites = useMemo(() => Object.values(prefs).some((p) => p.favorite), [prefs]);
-  // Every time the picker opens it starts fresh: empty search, on Favorites when you have
-  // some, otherwise on "All".
+  // Every time the picker opens it starts fresh: empty search, on Suggested (in a workout) or
+  // Favorites when there are any, otherwise on "All".
   const [wasVisible, setWasVisible] = useState(visible);
   if (visible !== wasVisible) {
     setWasVisible(visible);
     if (visible) {
       setQ('');
-      setGroup(hasFavorites ? FAVORITES : null);
+      setGroup(suggested.length ? SUGGESTED : hasFavorites ? FAVORITES : null);
       setCreating(false);
     }
   }
+  const reasons = useMemo(
+    () => new Map(suggested.map((s) => [s.exerciseId, s.reason])),
+    [suggested],
+  );
   const [name, setName] = useState('');
   const [muscles, setMuscles] = useState('');
 
   const all = useMemo(() => Object.values(exercises), [exercises]);
   const { list, total } = useMemo(() => {
     const isFavorite = (id: string) => !!prefs[id]?.favorite;
+    if (group === SUGGESTED && !q.trim()) {
+      const picks = suggested.map((s) => exercises[s.exerciseId]).filter(Boolean);
+      return { list: picks, total: picks.length };
+    }
     const inGroup =
-      group === FAVORITES
-        ? all.filter((e) => isFavorite(e.id))
-        : group
-          ? all.filter((e) => e.muscles.some((m) => GROUPS[group].includes(m)))
-          : all;
+      group === SUGGESTED
+        ? suggested.map((s) => exercises[s.exerciseId]).filter(Boolean)
+        : group === FAVORITES
+          ? all.filter((e) => isFavorite(e.id))
+          : group
+            ? all.filter((e) => e.muscles.some((m) => GROUPS[group].includes(m)))
+            : all;
     if (q.trim())
       return {
         list: favoritesFirst(searchExercises(q, inGroup, 60), isFavorite, q),
@@ -100,7 +119,7 @@ export function ExercisePicker({
       isFavorite(e.id) ? -2 : e.created_by ? -1 : e.tier ? TIER_RANK[e.tier] : 3;
     const sorted = [...inGroup].sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
     return { list: sorted.slice(0, BROWSE_LIMIT), total: inGroup.length };
-  }, [all, q, group, prefs]);
+  }, [all, q, group, prefs, suggested, exercises]);
 
   const pick = (id: string) => {
     onPick(id);
@@ -167,6 +186,13 @@ export function ExercisePicker({
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ gap: 8 }}
       >
+        {suggested.length ? (
+          <Chip
+            label="Suggested"
+            selected={group === SUGGESTED}
+            onPress={() => setGroup(group === SUGGESTED ? null : SUGGESTED)}
+          />
+        ) : null}
         <Chip label="All" selected={!group} onPress={() => setGroup(null)} />
         <Chip
           label="★ Favorites"
@@ -189,7 +215,10 @@ export function ExercisePicker({
               key={e.id}
               height={54}
               title={e.name}
-              subtitle={musclesLabel(e.muscles) + (e.created_by ? ' · custom' : '')}
+              subtitle={
+                (group === SUGGESTED && reasons.get(e.id)) ||
+                musclesLabel(e.muscles) + (e.created_by ? ' · custom' : '')
+              }
               chevron={false}
               rightInteractive
               right={

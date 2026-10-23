@@ -41,6 +41,11 @@ const REGION: Record<string, Region> = {
   core: 'core',
 };
 
+/** Body region of a muscle (push, pull, legs, arms, core), or null for e.g. cardio. */
+export function regionOf(muscle: string): Region | null {
+  return REGION[muscle] ?? null;
+}
+
 /** Muscle → weight. The first muscle of an exercise counts fully, the others half. */
 export type MuscleVector = Record<string, number>;
 
