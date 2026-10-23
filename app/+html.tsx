@@ -18,6 +18,9 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Colosseum" />
         <meta name="theme-color" content="#F2F2F7" />
+        {/* Light only: keeps browsers with a forced dark mode (Chrome on Android, Samsung
+            Internet) from inverting the app's colours. */}
+        <meta name="color-scheme" content="only light" />
         <link rel="manifest" href={`${base}manifest.webmanifest`} />
         <link rel="apple-touch-icon" href={`${base}brand/app-icon-180.png`} />
         <link rel="icon" href={`${base}brand/app-icon-32.png`} />
@@ -33,6 +36,7 @@ export default function Root({ children }: PropsWithChildren) {
 }
 
 const css = `
+:root { color-scheme: only light; }
 html, body { background: #F2F2F7; -webkit-font-smoothing: antialiased; overscroll-behavior: none; }
 body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; }
 input, textarea { font-family: inherit; caret-color: #B91C1C; }

@@ -11,6 +11,26 @@ export const CHANGELOG: Release[] = [
     id: '2026-10-23',
     date: '2026-10-23',
     title: 'See what changed',
+    highlights: [
+      {
+        feature: 'badges',
+        title: 'Badges',
+        body: '20 ladders, from your first workout to the 1000 lb club. Each badge grows as you climb its tiers, and friends see yours on your profile.',
+        where: 'Profile → Badges',
+      },
+      {
+        feature: 'friend-qr',
+        title: 'Add friends by QR code',
+        body: 'Training with someone new? Show your code; they scan it with the phone camera and tap Add friend.',
+        where: 'Arena → Friends → My QR',
+      },
+      {
+        feature: 'favorites',
+        title: 'Favorite exercises',
+        body: 'Tap the star on an exercise. Favorites come first in every category and get their own chip when you add an exercise.',
+        where: 'The star on any exercise',
+      },
+    ],
     items: [
       'After an update, Colosseum shows what changed since your last visit.',
       'The full history is in Profile → Settings → What’s new.',
@@ -23,12 +43,10 @@ export const CHANGELOG: Release[] = [
       'Drop set and Failure buttons right under your sets.',
       'Before a workout, confirm where you train. At your home gym this checks you in, so friends there see you under Training now.',
       'No home gym yet? Colosseum asks once, so My gym in the Arena works for you.',
-      'Favorite exercises: tap the star on an exercise. Favorites come first in every category and have their own chip when you add an exercise.',
       'Suggested next exercise: Colosseum looks at your workouts like today’s and offers what usually comes next.',
       'Profile pictures: a photo or an emoji on a colour you pick. Every profile has one now.',
-      'Add friends in person: Friends → My QR. They scan it with the phone camera and tap Add friend.',
-      'Badges: 20 ladders from your first workout to the 1000 lb club. Find them in Profile → Badges; friends see yours on your profile.',
       'Fix: on the Home Screen app, the dark bar behind the clock is gone. The clock is dark again and the screen starts right below it.',
+      'Fix: phones set to dark mode no longer turn Colosseum dark and hard to read.',
     ],
   },
   {
