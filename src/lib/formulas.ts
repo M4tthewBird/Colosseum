@@ -7,8 +7,13 @@ export interface SetLike {
   reps: number;
   left_reps?: number | null;
   right_reps?: number | null;
+  /** Warm-up sets never count to volume, PRs or bests. */
+  warmup?: boolean | null;
   done: boolean;
 }
+
+/** Completed and counting: done and not a warm-up. */
+const counts = (s: SetLike) => s.done && !s.warmup;
 
 /** Estimated 1RM (Epley). For 1 rep it is the weight itself. */
 export function e1rm(weightKg: number, reps: number): number {
@@ -37,9 +42,9 @@ export function repsText(s: Pick<SetLike, 'reps' | 'left_reps' | 'right_reps'>):
   return isSideSet(s) ? `${s.left_reps}/${s.right_reps}` : String(s.reps);
 }
 
-/** Σ weight × reps over completed sets (both sides of a per-side set). */
+/** Σ weight × reps over completed sets (both sides of a per-side set; no warm-ups). */
 export function volume(sets: SetLike[]): number {
-  return sets.reduce((sum, s) => (s.done ? sum + s.weight_kg * workReps(s) : sum), 0);
+  return sets.reduce((sum, s) => (counts(s) ? sum + s.weight_kg * workReps(s) : sum), 0);
 }
 
 /**
@@ -104,7 +109,7 @@ export interface Best {
  * Marks PRs within one session, in order. A set is a PR when it is done and its weight or
  * estimated 1RM beats every earlier completed set of that exercise (history + earlier sets in
  * this session). The first time an exercise is ever logged is not a PR: there must be history.
- * Drop sets are never PRs.
+ * Drop sets and warm-ups are never PRs.
  */
 export function markPRs<T extends SetLike & { exercise_id: string; drop_of?: string | null }>(
   sets: T[],
@@ -112,7 +117,7 @@ export function markPRs<T extends SetLike & { exercise_id: string; drop_of?: str
 ): boolean[] {
   const running: Record<string, Best | undefined> = { ...history };
   return sets.map((s) => {
-    if (!s.done || s.reps <= 0 || s.drop_of) return false;
+    if (!counts(s) || s.reps <= 0 || s.drop_of) return false;
     const prev = running[s.exercise_id];
     const est = e1rm(s.weight_kg, s.reps);
     const isPr = !!prev && (s.weight_kg > prev.weight || est > prev.e1rm + 1e-9);
@@ -124,11 +129,11 @@ export function markPRs<T extends SetLike & { exercise_id: string; drop_of?: str
   });
 }
 
-/** Best weight and best e1RM per exercise over completed sets. */
+/** Best weight and best e1RM per exercise over completed sets (no warm-ups). */
 export function bestsByExercise(sets: (SetLike & { exercise_id: string })[]): Record<string, Best> {
   const out: Record<string, Best> = {};
   for (const s of sets) {
-    if (!s.done || s.reps <= 0) continue;
+    if (!counts(s) || s.reps <= 0) continue;
     const b = out[s.exercise_id] ?? { weight: 0, e1rm: 0 };
     b.weight = Math.max(b.weight, s.weight_kg);
     b.e1rm = Math.max(b.e1rm, e1rm(s.weight_kg, s.reps));

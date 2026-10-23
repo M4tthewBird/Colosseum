@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { FillButton, IconButton, TextButton } from '@/components/Buttons';
 import { Glass, GlassCard } from '@/components/Glass';
-import { Info, Link, Unlink, X } from '@/components/icons';
+import { Flame, Info, Layers, Link, Unlink, X } from '@/components/icons';
 import { ExerciseImage } from '@/features/exercises/ExerciseImage';
 import { musclesLabel } from '@/features/exercises/ExercisePicker';
 import { dropChain, isMain, withDrops } from '@/lib/dropsets';
@@ -25,12 +25,17 @@ import { useData } from '@/stores/data';
 import { confirm } from '@/stores/ui';
 import type { PlannedExercise } from '@/stores/workout';
 import { accentA, colors, tabular, type } from '@/theme/tokens';
+import { isWork } from '@/lib/warmups';
 import {
+  addDropSet,
   addRound,
   addSet,
+  addWarmups,
+  currentSet,
   removeExercise,
   removeRound,
   removeSet,
+  toggleFailure,
   unlinkSuperset,
 } from './actions';
 import { ExerciseNote } from './ExerciseNote';
@@ -77,13 +82,49 @@ function Records({ best, machine }: { best?: Best; machine?: { id: string; name:
   );
 }
 
-const SET_HINT = 'Tap a set number to add a drop set, mark failure or log each side.';
+const SET_HINT = 'Tap a set number for more, such as logging each side.';
 
-/** Set menu title: "Set 2", "A2" or "Drop set". */
+/** Set menu title: "Set 2", "A2", "Drop set" or "Warm-up". */
 function menuTitle(set: SetEntry | null, label?: (s: SetEntry) => string) {
   if (!set) return '';
   if (set.drop_of) return 'Drop set';
+  if (set.warmup) return 'Warm-up';
   return label ? label(set) : `Set ${set.set_number}`;
+}
+
+/**
+ * Drop set and failure, one tap away under the table. They act on the last done working set
+ * (or the next one before any is done), named on the left.
+ */
+function SetActions({ sets, label }: { sets: SetEntry[]; label?: (s: SetEntry) => string }) {
+  const set = currentSet(sets);
+  if (!set) return null;
+  const name = label ? label(set) : `Set ${set.set_number}`;
+  return (
+    <View style={styles.setActions}>
+      <Text style={[type.small, styles.setActionsLabel]} numberOfLines={1}>
+        {name}
+      </Text>
+      <FillButton
+        label="Drop set"
+        icon={Layers}
+        size="sm"
+        style={{ flex: 1 }}
+        accessibilityLabel={`Add a drop set after ${name}`}
+        onPress={() => addDropSet(set.id)}
+      />
+      <FillButton
+        label={set.failure ? 'Failure ✓' : 'Failure'}
+        icon={Flame}
+        iconFill={!!set.failure}
+        size="sm"
+        style={{ flex: 1 }}
+        accessibilityLabel={`${name} to failure`}
+        accessibilityState={{ selected: !!set.failure }}
+        onPress={() => toggleFailure(set.id)}
+      />
+    </View>
+  );
 }
 
 /** One record: heaviest weight or best estimated one-rep max. */
@@ -116,7 +157,9 @@ export function ExercisePage({
   const sets = session.sets
     .filter((s) => s.exercise_position === p.position)
     .sort((a, b) => a.set_number - b.set_number);
-  const mains = sets.filter(isMain);
+  const mains = sets.filter((s) => isMain(s) && isWork(s));
+  // "Last time" lines up with the working sets; warm-ups say what they are.
+  const workIndex = new Map(mains.map((s, i) => [s.id, i]));
   const last = lastTimeSets(sessions, p.exercise_id, session.id);
   return (
     <>
@@ -149,9 +192,14 @@ export function ExercisePage({
 
       <Glass radius={22} style={styles.table}>
         <SetHeader sides={sets.some(isSideSet)} />
-        {withDrops(sets).map(({ set, drops }, i) => (
+        {withDrops(sets).map(({ set, drops }) => (
           <Fragment key={set.id}>
-            <SetRow set={set} last={lastLabel(last[i])} onMenu={setMenu} />
+            <SetRow
+              set={set}
+              last={set.warmup ? 'Warm-up' : lastLabel(last[workIndex.get(set.id) ?? -1])}
+              label={set.warmup ? 'W' : undefined}
+              onMenu={setMenu}
+            />
             {drops.map((d) => (
               <SetRow key={d.id} set={d} last="" onMenu={setMenu} />
             ))}
@@ -159,10 +207,12 @@ export function ExercisePage({
         ))}
         <View style={styles.tableActions}>
           <TextButton label="+ Add set" accent onPress={() => addSet(p.position)} />
+          <TextButton label="+ Warm-up" accent onPress={() => addWarmups(p.position)} />
           {mains.length > 1 ? (
             <TextButton label="Remove set" onPress={() => removeSet(p.position)} />
           ) : null}
         </View>
+        <SetActions sets={sets} />
       </Glass>
       <Text style={[type.small, { paddingHorizontal: 4 }]}>{SET_HINT}</Text>
       <SetMenu set={menu} title={menuTitle(menu)} onClose={() => setMenu(null)} />
@@ -198,7 +248,8 @@ export function SupersetPage({
   const letterOf = new Map(positions.map((pos, i) => [pos, letter(i)]));
   const all = session.sets.filter((s) => positions.includes(s.exercise_position));
   const sets = interleave(all.filter(isMain), positions);
-  const labelOf = (s: SetEntry) => `${letterOf.get(s.exercise_position) ?? ''}${s.set_number}`;
+  const labelOf = (s: SetEntry) =>
+    `${letterOf.get(s.exercise_position) ?? ''}${s.warmup ? 'W' : s.set_number}`;
   const lastBy = new Map(
     group.map((p) => [p.position, lastTimeSets(sessions, p.exercise_id, session.id)]),
   );
@@ -262,14 +313,19 @@ export function SupersetPage({
       <Glass radius={22} style={styles.table}>
         <SetHeader sides={all.some(isSideSet)} />
         {sets.map((s) => {
-          const prev = lastBy.get(s.exercise_position)?.[s.set_number - 1];
+          const prev = s.warmup ? undefined : lastBy.get(s.exercise_position)?.[s.set_number - 1];
           const roundEnd = s.exercise_position === positions[positions.length - 1];
           return (
             <View
               key={s.id}
               style={[{ gap: 4 }, roundEnd && s.set_number < rounds ? styles.roundGap : undefined]}
             >
-              <SetRow set={s} last={lastLabel(prev)} label={labelOf(s)} onMenu={setMenu} />
+              <SetRow
+                set={s}
+                last={s.warmup ? 'Warm-up' : lastLabel(prev)}
+                label={labelOf(s)}
+                onMenu={setMenu}
+              />
               {dropChain(all, s.id).map((d) => (
                 <SetRow key={d.id} set={d} last="" onMenu={setMenu} />
               ))}
@@ -282,6 +338,7 @@ export function SupersetPage({
             <TextButton label="Remove round" onPress={() => removeRound(positions)} />
           ) : null}
         </View>
+        <SetActions sets={sets} label={labelOf} />
       </Glass>
       <Text style={[type.small, { paddingHorizontal: 4 }]}>
         Do one set of each, back to back. The rest timer starts after the last exercise of the
@@ -339,6 +396,15 @@ const styles = StyleSheet.create({
     paddingTop: 8,
     paddingBottom: 4,
   },
+  setActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 4,
+    paddingTop: 4,
+    paddingBottom: 4,
+  },
+  setActionsLabel: { width: 44 },
   ssBadge: {
     position: 'absolute',
     left: 10,

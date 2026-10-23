@@ -117,7 +117,8 @@ function setChanged(a: SetEntry | undefined, b: SetEntry): boolean {
     a.exercise_id !== b.exercise_id ||
     (a.superset_id ?? null) !== (b.superset_id ?? null) ||
     (a.drop_of ?? null) !== (b.drop_of ?? null) ||
-    !!a.failure !== !!b.failure
+    !!a.failure !== !!b.failure ||
+    !!a.warmup !== !!b.warmup
   );
 }
 

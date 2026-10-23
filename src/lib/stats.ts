@@ -15,7 +15,10 @@ export function historyBests(sessions: Session[], excludeId?: string): Record<st
   return bestsByExercise(sets);
 }
 
-/** Main sets (no drop sets) of this exercise from the most recent finished session that has it. */
+/**
+ * Working sets (no drop sets, no warm-ups) of this exercise from the most recent finished
+ * session that has it.
+ */
 export function lastTimeSets(
   sessions: Session[],
   exerciseId: string,
@@ -25,7 +28,7 @@ export function lastTimeSets(
   for (const s of list) {
     if (s.id === excludeId) continue;
     const sets = s.sets
-      .filter((x) => x.exercise_id === exerciseId && x.done && !x.drop_of)
+      .filter((x) => x.exercise_id === exerciseId && x.done && !x.drop_of && !x.warmup)
       .sort((a, b) => a.set_number - b.set_number);
     if (sets.length) return sets;
   }
@@ -79,7 +82,7 @@ export function exerciseHistory(sessions: Session[], exerciseId: string): Exerci
   const out: ExerciseSession[] = [];
   for (const s of finished(sessions).reverse()) {
     const sets = s.sets
-      .filter((x) => x.exercise_id === exerciseId && x.done)
+      .filter((x) => x.exercise_id === exerciseId && x.done && !x.warmup)
       .sort((a, b) => a.set_number - b.set_number);
     const best = bestSetOf(sets);
     if (best)

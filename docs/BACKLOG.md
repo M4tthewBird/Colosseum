@@ -10,8 +10,8 @@ Feedback from Matyáš (2026-10-23). Work top to bottom, one item at a time; ask
 - [x] **Sharing bug**: "Could not share. Are you online?" while online. The post linked a workout still in the offline queue, so RLS refused it; now the workout syncs first (or the post goes without the link) and only real network errors say "Are you online?" (needs a check on the live app)
 - [ ] **Images**: 151 exercise illustrations to make in Gemini. The kit is ready in `gemini-obrazky/` (NAVOD.md, prompts, double-click import); Matyáš generates them
 - [x] **Unilateral exercises**: set menu → "Log each side" (per exercise, manual); one row with Left and Right reps; volume counts both, reps/PRs use the weaker side; summary says which side is behind. Needs `supabase/updates/2026-10-23-each-side.sql` on the live project
-- [ ] **Drop sets and failure**: make the option more visible
-- [ ] **Warm-up sets**
+- [x] **Drop sets and failure**: Drop set / Failure buttons under the set table (last done set); "•••" under set numbers
+- [x] **Warm-up sets**: "+ Warm-up" adds 50/70/85 % (fewer when light), shown as W, 1:00 rest, counted to nothing. Needs `supabase/updates/2026-10-23-warmups.sql`
 - [ ] **Gym check-in**: choose a gym at sign-in, confirm "I'm at <gym>" before starting a workout
 - [ ] **Favorite exercises**: star on the exercise image, a Favorites tab, favorites first in every category
 - [ ] **Suggest the next exercise** from similar past workouts

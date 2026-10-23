@@ -42,7 +42,7 @@ export function snapshotOf(
   kind: string | null,
 ): ForumWorkout {
   const done = session.sets
-    .filter((s) => s.done)
+    .filter((s) => s.done && !s.warmup)
     .sort((a, b) => a.exercise_position - b.exercise_position || a.set_number - b.set_number);
   const positions = [...new Set(done.filter(isMain).map((s) => s.exercise_position))];
   const minutes = session.finished_at

@@ -99,6 +99,11 @@ export interface SetEntry {
   drop_of?: string | null;
   /** Taken to muscular failure. */
   failure?: boolean;
+  /**
+   * A warm-up before the working sets: shown as "W", never counted to volume, set counts, PRs
+   * or suggestions. Warm-ups have set numbers below 1 (… -2, -1, 0) so they sort first.
+   */
+  warmup?: boolean;
   updated_at: string;
 }
 

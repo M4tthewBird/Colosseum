@@ -83,7 +83,7 @@ export const SetRow = memo(function SetRow({
     <Animated.View style={[styles.row, styles.body, tint]}>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`${drop ? 'Drop set' : `Set ${n}`} options${set.failure ? ', to failure' : ''}`}
+        accessibilityLabel={`${drop ? 'Drop set' : set.warmup ? 'Warm-up set' : `Set ${n}`} options${set.failure ? ', to failure' : ''}`}
         disabled={readOnly || !onMenu}
         onPress={() => onMenu?.(set)}
         hitSlop={{ top: 6, bottom: 6, left: 4 }}
@@ -96,6 +96,12 @@ export const SetRow = memo(function SetRow({
           {n}
         </Text>
         {set.failure ? <Text style={styles.fail}>F</Text> : null}
+        {/* Says the number opens the set menu. */}
+        {!readOnly && onMenu ? (
+          <Text style={styles.more} aria-hidden>
+            •••
+          </Text>
+        ) : null}
       </Pressable>
       <Text style={[styles.last, { flex: 1 }]} numberOfLines={1}>
         {drop ? 'Drop set' : last}
@@ -197,6 +203,14 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: '800',
     color: colors.accent,
+  },
+  more: {
+    position: 'absolute',
+    left: 0,
+    bottom: 5,
+    fontSize: 7,
+    letterSpacing: 1,
+    color: colors.text3,
   },
   last: { fontSize: 14, color: colors.text2 },
   pr: { color: colors.accent, fontWeight: '700', fontSize: 12 },

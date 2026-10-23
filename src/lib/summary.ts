@@ -73,8 +73,9 @@ export function buildSummary(
   weeklyTarget: number,
   musclesOf: (exerciseId: string) => string[] = () => [],
 ): WorkoutSummary {
+  // Warm-ups are logged but left out of every number here.
   const done = session.sets
-    .filter((x) => x.done)
+    .filter((x) => x.done && !x.warmup)
     .sort((a, b) => a.exercise_position - b.exercise_position || a.set_number - b.set_number);
 
   const byPos = new Map<number, SetEntry[]>();

@@ -21,6 +21,7 @@ import { historyBests, lastTimeSets } from '@/lib/stats';
 import { groupIndexOf, groupPlan, roundComplete } from '@/lib/supersets';
 import type { Feel, ProgramDay, Session, SetEntry } from '@/lib/types';
 import { nowIso, uuid } from '@/lib/uuid';
+import { isWarmup, isWork, WARMUP_REST, warmupPlan } from '@/lib/warmups';
 import { useData } from '@/stores/data';
 import { toast } from '@/stores/ui';
 import { useWorkout, type PlannedExercise } from '@/stores/workout';
@@ -208,6 +209,10 @@ export function toggleSet(setId: string) {
   if (!done) return;
   feedback(false);
   const w = useWorkout.getState();
+  if (target.warmup) {
+    w.startRest(WARMUP_REST);
+    return;
+  }
   // A drop set follows right away: the rest starts after the last drop.
   const main = mainOf(sets, target);
   if (dropChain(sets, main.id).some((x) => !x.done) || (!isMain(target) && !main.done)) {
@@ -283,16 +288,83 @@ export function toggleFailure(setId: string) {
   put({ ...s, sets: s.sets.map((x) => (x.id === setId ? { ...x, failure: !x.failure } : x)) });
 }
 
-/** Sets the weight of every main set of an exercise that is not done yet. */
+/** Sets the weight of every working set of an exercise that is not done yet. */
 export function applyWeight(position: number, weightKg: number) {
   const s = session();
   if (!s) return;
   put({
     ...s,
     sets: s.sets.map((x) =>
-      x.exercise_position === position && isMain(x) && !x.done ? { ...x, weight_kg: weightKg } : x,
+      x.exercise_position === position && isMain(x) && isWork(x) && !x.done
+        ? { ...x, weight_kg: weightKg }
+        : x,
     ),
   });
+}
+
+/**
+ * The set the buttons under the set table act on: the last done working set, or (before any
+ * is done) the first one still to do. `sets` is in table order.
+ */
+export function currentSet(sets: SetEntry[]): SetEntry | null {
+  const work = sets.filter((x) => isMain(x) && isWork(x));
+  return [...work].reverse().find((x) => x.done) ?? work.find((x) => !x.done) ?? null;
+}
+
+/**
+ * Adds warm-up sets before the working sets of an exercise: the suggested ramp to the first
+ * working weight, or one more light set in front when there are warm-ups already.
+ */
+export function addWarmups(position: number) {
+  const s = session();
+  if (!s) return;
+  const mine = s.sets.filter((x) => x.exercise_position === position && isMain(x));
+  const work = mine.filter(isWork).sort((a, b) => a.set_number - b.set_number);
+  const warm = mine.filter(isWarmup).sort((a, b) => a.set_number - b.set_number);
+  const first = work[0];
+  if (!first) return;
+  const eachSide = isSideSet(first);
+  const make = (weight_kg: number, reps: number, set_number: number): SetEntry => ({
+    ...first,
+    id: uuid(),
+    set_number,
+    weight_kg,
+    ...(eachSide ? sideReps(reps, reps) : { reps, left_reps: null, right_reps: null }),
+    done: false,
+    is_pr: false,
+    failure: false,
+    drop_of: null,
+    warmup: true,
+    updated_at: nowIso(),
+  });
+  let added: SetEntry[];
+  if (warm.length) {
+    // One more, lighter, in front of the others.
+    const lightest = warm[0];
+    added = [
+      make(
+        Math.max(0, Math.floor((lightest.weight_kg * 0.7) / 2.5) * 2.5),
+        10,
+        lightest.set_number - 1,
+      ),
+    ];
+  } else {
+    const plan = warmupPlan(first.weight_kg);
+    if (!plan.length) {
+      toast(first.weight_kg > 0 ? 'Too light to need a warm-up' : 'Enter the working weight first');
+      return;
+    }
+    // Numbered … -1, 0 so they sort before set 1.
+    added = plan.map((p, i) => make(p.weight_kg, p.reps, i - plan.length + 1));
+  }
+  put({ ...s, sets: [...s.sets, ...added] });
+}
+
+/** Removes one warm-up set. */
+export function removeWarmup(setId: string) {
+  const s = session();
+  if (!s) return;
+  put({ ...s, sets: s.sets.filter((x) => x.id !== setId || !x.warmup) });
 }
 
 /** Kind of PR for one set: against history plus the earlier done sets of this workout. */
@@ -325,10 +397,10 @@ export function setNote(position: number, text: string) {
   useData.getState().putSession({ ...s, notes });
 }
 
-/** Main sets of one exercise in order. */
+/** Working sets of one exercise in order (no drop sets, no warm-ups). */
 function mainSets(s: Session, position: number): SetEntry[] {
   return s.sets
-    .filter((x) => x.exercise_position === position && isMain(x))
+    .filter((x) => x.exercise_position === position && isMain(x) && isWork(x))
     .sort((a, b) => a.set_number - b.set_number);
 }
 
@@ -503,7 +575,7 @@ export function finishWorkout(): Summary | null {
     finished_at: finishedAt,
     sets: done,
     volume_kg: volume(done),
-    set_count: done.length,
+    set_count: done.filter(isWork).length,
     pr_count: prCount(done),
   };
   put(next);
@@ -530,7 +602,7 @@ export function saveSessionAsWorkout(sessionId: string, name: string): string | 
   const s = sessions[sessionId];
   if (!s) return null;
   const byPos = new Map<number, SetEntry[]>();
-  for (const x of s.sets.filter((x) => x.done && isMain(x)))
+  for (const x of s.sets.filter((x) => x.done && isMain(x) && isWork(x)))
     byPos.set(x.exercise_position, [...(byPos.get(x.exercise_position) ?? []), x]);
   const now = nowIso();
   const id = uuid();

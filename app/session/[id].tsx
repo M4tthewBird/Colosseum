@@ -98,9 +98,11 @@ export default function SessionDetail() {
                     <Text style={[type.caption, { width: 56 }]}>
                       {x.drop_of
                         ? '  ↳ Drop'
-                        : isSuperset
-                          ? `${letter(positions.indexOf(x.exercise_position))}${x.set_number}`
-                          : `Set ${x.set_number}`}
+                        : x.warmup
+                          ? 'Warm-up'
+                          : isSuperset
+                            ? `${letter(positions.indexOf(x.exercise_position))}${x.set_number}`
+                            : `Set ${x.set_number}`}
                     </Text>
                     <Text style={[type.body, tabular, { flex: 1 }]}>
                       {formatKg(x.weight_kg)} kg × {repsText(x)}

@@ -19,6 +19,8 @@ export const CHANGELOG: Release[] = [
       'Names are at most two words, like “Jan Novák”.',
       'Fix: sharing a workout right after finishing it no longer fails with “Are you online?”.',
       'Log each side: for split squats and other one-leg or one-arm exercises, tap a set number and log left and right reps. PRs go by the weaker side.',
+      'Warm-up sets: “+ Warm-up” adds a ramp up to your working weight. Warm-ups never count to volume or PRs.',
+      'Drop set and Failure buttons right under your sets.',
     ],
   },
   {
