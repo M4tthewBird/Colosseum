@@ -62,7 +62,9 @@ The design is **final**. Build it, don't redesign it.
 - **Home gym:** "Gym" in the profile means the user's home gym, the physical place they train at most.
 - **Onboarding** asks for bodyweight and height. Body measurements (chest, biceps…) are added later from a popup on Profile → Body.
 - **Arena:** the user chooses what the leaderboard shows (metric + time period).
-- **Exercise images:** marble-statue illustration style, 16:9, light grey background (see `assets/exercises/bench-press.jpg`).
+- **Exercise images:** a weathered stone gladiator statue doing the exercise, 16:9, light grey background (style reference: `scripts/exercise-style.jpg`).
+  - Helmets vary (galea, murmillo, thraex, hoplomachus, Corinthian, or none); no masks with two eye holes; no colour tint on muscles
+  - Made in Gemini with the `gemini-obrazky/` kit; `npm run images:import` evens out the colours and writes 960×540 WebP
   - Exercises without an image show a neutral placeholder of the same size
 
 ## Design rules (short version — full version in docs/DESIGN.md)

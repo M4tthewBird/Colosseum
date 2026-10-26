@@ -8,6 +8,14 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-10-26',
+    date: '2026-10-26',
+    title: 'Exercise pictures',
+    items: [
+      'More than 50 exercises now have a picture: a stone gladiator showing the movement, from squats and presses to cable and machine work. More are on the way.',
+    ],
+  },
+  {
     id: '2026-10-23',
     date: '2026-10-23',
     title: 'See what changed',

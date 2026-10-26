@@ -50,3 +50,5 @@ _donotdeploy/
 gemini-obrazky/stazene/*
 !gemini-obrazky/stazene/.gitkeep
 assets/exercises/_inbox/
+# originals moved here by npm run images:import
+gemini-obrazky/hotove/

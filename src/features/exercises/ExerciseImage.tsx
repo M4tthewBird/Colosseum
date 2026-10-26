@@ -8,13 +8,15 @@ import { exerciseSlug } from '@/lib/slug';
 import { EXERCISE_IMAGES } from './images';
 
 /**
- * Bundled marble-statue illustration (16:9), looked up by image_key or by the exercise name,
- * or a neutral placeholder of the same size. Add images with `npm run images`.
+ * Bundled stone-gladiator illustration, looked up by image_key or by the exercise name, or a
+ * neutral placeholder of the same size. Shown whole at 16:9 by default, so no helmet crest or
+ * foot is cut off on wide screens; a fixed height crops it to a banner. Add images with
+ * `npm run images`.
  */
 export function ExerciseImage({
   imageKey,
   name,
-  height = 188,
+  height,
   children,
 }: {
   imageKey: string | null;
@@ -24,13 +26,13 @@ export function ExerciseImage({
 }) {
   const src = EXERCISE_IMAGES[imageKey ?? ''] ?? EXERCISE_IMAGES[exerciseSlug(name)];
   return (
-    <View style={[styles.frame, { height }]}>
+    <View style={[styles.frame, height ? { height } : { aspectRatio: 16 / 9 }]}>
       {src ? (
         <Image
           source={src}
           style={StyleSheet.absoluteFill}
           contentFit="cover"
-          accessibilityLabel={`Marble statue performing ${name.toLowerCase()}`}
+          accessibilityLabel={`Stone gladiator performing ${name.toLowerCase()}`}
         />
       ) : (
         <View style={styles.placeholder} aria-hidden>

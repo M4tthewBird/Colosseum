@@ -2,8 +2,9 @@
  * Exercise illustrations, made in Gemini.
  *
  *   npm run images          link images in assets/exercises/ and rewrite the gemini-obrazky/ kit
- *   npm run images:import   take images downloaded from Gemini (gemini-obrazky/stazene/),
- *                           name them, crop to 16:9, shrink, and link them
+ *   npm run images:import   take images downloaded from Gemini (gemini-obrazky/stazene/, also
+ *                           in subfolders), name them, even out their colours, crop to 16:9,
+ *                           shrink to WebP and link them; originals move to gemini-obrazky/hotove/
  *
  * gemini-obrazky/ holds everything Matyáš needs: NAVOD.md (Czech steps), the style reference,
  * one prompt file per batch, the download folder and importovat.cmd (double-click to import).
@@ -16,9 +17,17 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dir = path.join(root, 'assets/exercises');
 const kit = path.join(root, 'gemini-obrazky');
 const inbox = path.join(kit, 'stazene');
-const REFERENCE = 'bench-press.jpg';
+const archive = path.join(kit, 'hotove');
+/** The style reference attached to every batch (scripts/exercise-style.jpg). */
+const REFERENCE = 'exercise-style.jpg';
+const REFERENCE_NAME = 'vzor-styl.jpg';
 const BATCH = 15;
-const OUT = { width: 1200, height: 675, quality: 80 };
+// 960 px is sharp on a phone (the image is ~350 pt wide) and keeps each file around 20 kB.
+const OUT = { width: 960, height: 540, quality: 72 };
+// Every image is toned to the same background and stone colour (medians of the first 53).
+const TONE = { bg: [213, 213, 210], stone: [135, 127, 119], stoneStrength: 0.7 };
+/** Have an image but go through Gemini again (the marble style before the gladiators). */
+const REDO = new Set(['bench-press']);
 
 /** Must match exerciseSlug() in src/lib/slug.ts. */
 export function slug(name) {
@@ -51,18 +60,37 @@ function existingImages() {
 
 function missing() {
   const have = existingImages();
-  return catalog().filter((e) => !have.has(slug(e.name)));
+  return catalog().filter((e) => !have.has(slug(e.name)) || REDO.has(slug(e.name)));
 }
 
 const STYLE =
-  'Photorealistic 3D render of a classical white-grey marble statue of a muscular male athlete ' +
-  '(Greco-Roman sculpture with curly hair and a short beard, a draped marble loincloth, subtle veining in the stone). ' +
-  'Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same pale marble. ' +
-  'Three-quarter view from slightly above, the whole body and equipment in frame, ' +
-  'soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). ' +
-  'No text, no logos, no watermark, no other people. ' +
+  'Photorealistic 3D render of a weathered stone statue of a muscular gladiator: warm grey-beige ' +
+  'limestone with fine cracks, pitting and worn edges, a short curly beard, a draped stone ' +
+  'loincloth, bare feet, anatomically detailed muscles. He wears the gladiator helmet named for ' +
+  'the image (or none, when the image says so), carved from the same stone. ' +
+  'Every piece of equipment (bench, barbell, plates, ' +
+  'dumbbells, machine, cables) is carved from the same weathered stone; plates are thick and ' +
+  'slightly irregular. Front three-quarter view at chest height, the whole body and equipment in ' +
+  'frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey ' +
+  'background (#DEDDDC). No text, no logos, no watermark, no other people. ' +
   'Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width ' +
   'with some empty background around them, because the image may be cropped slightly.';
+
+// Real gladiator helmet types; each exercise gets one, always the same one (by its name).
+// No secutor or provocator: the smooth masks with two eye holes are out (Matyáš's call).
+const HELMETS = [
+  'a Roman crested galea with a tall brush crest and hinged cheek guards, face visible',
+  'a murmillo helmet: broad brim, high fin-shaped crest, visor with a grille of small round holes',
+  'a thraex helmet: wide brim, crest topped with a griffin head, grilled visor',
+  'a hoplomachus helmet: wide brim, tall plume of feathers, grilled visor',
+  'no helmet: bare head with short curly hair, face fully visible',
+  'a Greek Corinthian helmet with a nose guard, cheek pieces and a horsehair crest, face partly visible',
+];
+const helmet = (e) => {
+  let h = 0;
+  for (const ch of e.name) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return HELMETS[h % HELMETS.length];
+};
 
 function writeLinks() {
   const have = existingImages();
@@ -84,10 +112,10 @@ const batchText = (
 
 STYLE (identical for every image):
 ${STYLE}
-The attached image ${REFERENCE} is the exact style reference: same statue, same marble, same light, same background, same camera distance.
+The attached image is the exact style reference: same stone, same statue build, same light, same background, same camera angle and distance. Only the helmet changes per image (it is named in the list).
 
 THE LIST (${list.length} images):
-${list.map((e, i) => `${i + 1}. ${e.name}. Pose: ${pose(e)}.`).join('\n')}
+${list.map((e, i) => `${i + 1}. ${e.name}. Pose: ${pose(e)}. Helmet: ${helmet(e)}.`).join('\n')}
 
 RULES:
 - One image per reply, in the order of the list. Below the image write only its number and name.
@@ -98,7 +126,7 @@ Make image 1 now.`;
 
 /** One image on its own, for a fresh chat or when Gemini loses track of the list. */
 const singleText = (e) =>
-  `Exercise illustration for a fitness app: ${e.name}. Pose: ${pose(e)}.\n${STYLE}\nThe attached image ${REFERENCE} is the exact style reference.`;
+  `Exercise illustration for a fitness app: ${e.name}. Pose: ${pose(e)}. Helmet: ${helmet(e)}.\n${STYLE}\nThe attached image is the exact style reference (use the helmet named here).`;
 
 function writeKit() {
   const all = catalog();
@@ -111,7 +139,9 @@ function writeKit() {
   fs.mkdirSync(path.join(kit, 'davky'), { recursive: true });
   fs.mkdirSync(inbox, { recursive: true });
   fs.writeFileSync(path.join(inbox, '.gitkeep'), '');
-  fs.copyFileSync(path.join(dir, REFERENCE), path.join(kit, `vzor-${REFERENCE}`));
+  fs.copyFileSync(path.join(root, 'scripts', REFERENCE), path.join(kit, REFERENCE_NAME));
+  // The marble reference from before the gladiator style.
+  fs.rmSync(path.join(kit, 'vzor-bench-press.jpg'), { force: true });
 
   batches.forEach((list, n) => {
     const singles = list
@@ -148,15 +178,16 @@ Tenhle soubor i dávky se po každém importu přegenerují jen se zbývajícím
 
 | Co | K čemu |
 | --- | --- |
-| \`vzor-${REFERENCE}\` | Vzor stylu. Přikládej ho ke každé dávce. |
+| \`${REFERENCE_NAME}\` | Vzor stylu. Přikládej ho ke každé dávce. |
 | \`davky/\` | Prompty, jeden soubor = jedna dávka. Nahoře hlavní prompt, dole záložní prompty po jednom. |
 | \`stazene/\` | Sem stahuj obrázky z Gemini. |
-| \`importovat.cmd\` | Dvojklik: obrázky ze \`stazene/\` pojmenuje, ořízne na 16:9, zmenší a napojí do aplikace. |
+| \`importovat.cmd\` | Dvojklik: obrázky ze \`stazene/\` (i z podsložek) přiřadí ke cvikům, sjednotí barvy, ořízne na 16:9, zmenší a napojí do aplikace. |
+| \`hotove/\` | Sem import přesune originály. Klidně je smaž, nebo je nech pro případ, že by se import opakoval. |
 
 ## Postup pro jednu dávku
 
 1. Otevři **nový chat** v Gemini (model **Pro**, s generováním obrázků).
-2. **Přilož \`vzor-${REFERENCE}\`.**
+2. **Přilož \`${REFERENCE_NAME}\`.**
 3. Otevři \`davky/davka-01.txt\`, zkopíruj **všechno nad čarou „ZÁLOHA“** a odešli.
 4. Gemini udělá obrázek 1. **Hned ho stáhni** (tlačítko stáhnout u obrázku) do složky \`stazene/\`.
 5. Napiš \`next\` → obrázek 2 → stáhni. Takhle až do konce dávky.
@@ -167,9 +198,10 @@ Tenhle soubor i dávky se po každém importu přegenerují jen se zbývajícím
 
 ## Důležité
 
-- **Pořadí stahování = pořadí v dávce.** Import přiřazuje názvy podle času stažení.
-  Když obrázek přeskočíš, přejmenuj ho v \`stazene/\` ručně podle názvu v závorce v záložních promptech
-  (např. \`hack-squat.png\`). Pojmenovaný soubor import pozná sám.
+- **Nejjistější je pojmenovat soubor názvem cviku**, např. \`Hack Squat.jpg\` (velikost písmen ani drobné překlepy nevadí).
+  Nepojmenované soubory dostanou názvy podle pořadí stažení, takže pak musí sedět pořadí v dávce.
+- **Nepovedený obrázek** označ v názvu slovem \`wrong\` (např. \`Pec Deck - wrong.jpg\`), import ho přeskočí.
+- V \`stazene/\` můžeš mít obrázky klidně v podsložkách po dávkách.
 - Špatně pojmenovaný obrázek po importu: přejmenuj ho v \`assets/exercises/\` a spusť \`npm run images\`.
 - Obrázky se ořezávají na střed na 16:9. Když Gemini dá čtverec, ořízne se nahoře a dole, proto prompt chce postavu uprostřed.
 - Kdyby Gemini do rohu dávalo viditelný vodoznak, dej vědět a import ho bude odřezávat.
@@ -189,44 +221,169 @@ ${list}
   return { todo: todo.length, batches: batches.length };
 }
 
+/** Files in a folder and its subfolders, oldest download first. */
+function filesIn(folder) {
+  const out = [];
+  for (const f of fs.readdirSync(folder, { withFileTypes: true })) {
+    const full = path.join(folder, f.name);
+    if (f.isDirectory()) out.push(...filesIn(full));
+    else if (/\.(jpe?g|png|webp)$/i.test(f.name)) out.push(full);
+  }
+  return out
+    .map((f) => ({ f, t: fs.statSync(f).mtimeMs }))
+    .sort((x, y) => x.t - y.t)
+    .map((x) => x.f);
+}
+
+/** Marked as bad by hand: "Squat - wrong.jpg", "Pec Deck not good.jpg", "spatne". */
+const REJECTED = /\b(wrong|not good|spatne|špatně|spatně|bad)\b/i;
+const ALIASES = {
+  rdl: 'romanian-deadlift',
+  'dumbell-row': 'dumbbell-row',
+  'machine-leg-extension': 'leg-extension',
+  'machine-leg-curl': 'leg-curl',
+  'seated-leg-curl': 'leg-curl',
+};
+/** Gemini's own download names ("Gemini_Generated_Image_….png"): these go by download order. */
+const UNNAMED = /^(gemini|generated|image|download|img)[\W_]|^\d/i;
+
+/** The exercise a file is named after ("Hack Squat.jpg", "hack-squat.png"), or null. */
+function keyOf(file, keys) {
+  const k = slug(path.basename(file).replace(/\.[^.]+$/, ''));
+  if (keys.has(k)) return k;
+  if (ALIASES[k]) return ALIASES[k];
+  // Small typos ("Inlcine Dumbbell Press"): one or two letters off, and only one candidate.
+  const near = [...keys].filter((c) => Math.abs(c.length - k.length) <= 2 && typos(c, k) <= 2);
+  return near.length === 1 ? near[0] : null;
+}
+
+function typos(a, b) {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
+  for (let j = 1; j <= b.length; j++) d[0][j] = j;
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++)
+      d[i][j] = Math.min(
+        d[i - 1][j] + 1,
+        d[i][j - 1] + 1,
+        d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1),
+      );
+  return d[a.length][b.length];
+}
+
+/**
+ * Per-channel levels that move this image's background and stone to the shared ones, so a
+ * warmer or darker render matches the rest. Measured on a small copy: the background from the
+ * edges of each row, the stone from pixels clearly darker than that.
+ */
+async function toneOf(sharp, file) {
+  const W = 320;
+  const H = 180;
+  const { data } = await sharp(file)
+    .resize(W, H, { fit: 'cover' })
+    .removeAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const bg = [0, 0, 0];
+  const stone = [0, 0, 0];
+  let nb = 0;
+  let ns = 0;
+  for (let y = 0; y < H; y++) {
+    let rowL = 0;
+    for (const x of [0, 1, 2, 3, W - 4, W - 3, W - 2, W - 1]) {
+      const i = (y * W + x) * 3;
+      rowL += (data[i] + data[i + 1] + data[i + 2]) / 3 / 8;
+      for (let c = 0; c < 3; c++) bg[c] += data[i + c];
+      nb++;
+    }
+    for (let x = 0; x < W; x++) {
+      const i = (y * W + x) * 3;
+      if (rowL - (data[i] + data[i + 1] + data[i + 2]) / 3 > 28) {
+        for (let c = 0; c < 3; c++) stone[c] += data[i + c];
+        ns++;
+      }
+    }
+  }
+  const mul = [];
+  const add = [];
+  for (let c = 0; c < 3; c++) {
+    const b0 = bg[c] / nb;
+    const s0 = ns ? stone[c] / ns : TONE.stone[c];
+    const s1 = s0 + (TONE.stone[c] - s0) * TONE.stoneStrength;
+    let m = b0 - s0 > 20 ? (TONE.bg[c] - s1) / (b0 - s0) : 1;
+    m = Math.min(1.35, Math.max(0.75, m));
+    mul.push(m);
+    add.push(TONE.bg[c] - m * b0);
+  }
+  return { mul, add };
+}
+
 async function importInbox() {
   const sharp = (await import('sharp')).default;
   if (!fs.existsSync(inbox)) fs.mkdirSync(inbox, { recursive: true });
-  const files = fs
-    .readdirSync(inbox)
-    .filter((f) => /\.(jpe?g|png|webp)$/i.test(f))
-    .map((f) => ({ f, t: fs.statSync(path.join(inbox, f)).mtimeMs }))
-    .sort((a, b) => a.t - b.t)
-    .map((x) => x.f);
+  const replace = process.argv.includes('--replace');
+  const files = filesIn(inbox);
   if (files.length === 0) {
     console.log(
       `No images in ${path.relative(root, inbox)}. Download them there from Gemini first.`,
     );
     return;
   }
+  const all = new Set(catalog().map((e) => slug(e.name)));
   const queue = missing().map((e) => slug(e.name));
-  const named = new Set(
-    files.map((f) => f.replace(/\.[^.]+$/, '')).filter((k) => queue.includes(k)),
-  );
-  const order = queue.filter((k) => !named.has(k));
   const rows = [];
+  const plan = [];
+  const taken = new Set();
   for (const f of files) {
-    const base = f.replace(/\.[^.]+$/, '');
-    const key = named.has(base) ? base : order.shift();
-    if (!key) {
-      rows.push([f, '(skipped: every exercise already has an image)']);
+    if (REJECTED.test(path.basename(f))) {
+      rows.push([f, '(skipped: marked as bad)']);
       continue;
     }
-    const out = path.join(dir, `${key}.jpg`);
-    await sharp(path.join(inbox, f))
+    const key = keyOf(f, all);
+    if (!key) continue;
+    if (!queue.includes(key) && !replace) {
+      rows.push([f, `(skipped: ${key} already has an image)`]);
+      continue;
+    }
+    plan.push([f, key]);
+    taken.add(key);
+  }
+  // Files still named by Gemini take the exercises left in the batch order, by download time.
+  // A file named by hand that matches no exercise is left alone: a guess could mislabel it.
+  const order = queue.filter((k) => !taken.has(k));
+  for (const f of files) {
+    if (REJECTED.test(path.basename(f)) || keyOf(f, all)) continue;
+    if (!UNNAMED.test(path.basename(f))) {
+      rows.push([f, '(skipped: no exercise has this name; rename the file to the exercise)']);
+      continue;
+    }
+    const key = order.shift();
+    if (key) plan.push([f, key]);
+    else rows.push([f, '(skipped: every exercise already has an image)']);
+  }
+
+  fs.mkdirSync(archive, { recursive: true });
+  for (const [f, key] of plan) {
+    const out = path.join(dir, `${key}.webp`);
+    const { mul, add } = await toneOf(sharp, f);
+    await sharp(f)
+      .removeAlpha()
+      .linear(mul, add)
       .resize(OUT.width, OUT.height, { fit: 'cover', position: 'centre' })
-      .jpeg({ quality: OUT.quality, mozjpeg: true })
+      .webp({ quality: OUT.quality, effort: 6 })
       .toFile(out);
-    fs.rmSync(path.join(inbox, f));
-    rows.push([f, `${key}.jpg (${Math.round(fs.statSync(out).size / 1024)} kB)`]);
+    // One image per exercise: drop an older JPG of it.
+    for (const ext of ['.jpg', '.jpeg', '.png']) {
+      const old = path.join(dir, key + ext);
+      if (fs.existsSync(old)) fs.rmSync(old);
+    }
+    // Keep the original, out of the inbox.
+    const kept = path.join(archive, path.relative(inbox, f));
+    fs.mkdirSync(path.dirname(kept), { recursive: true });
+    fs.renameSync(f, kept);
+    rows.push([f, `${key}.webp (${Math.round(fs.statSync(out).size / 1024)} kB)`]);
   }
   console.log('Imported:');
-  for (const [from, to] of rows) console.log(`  ${from}  ->  ${to}`);
+  for (const [from, to] of rows) console.log(`  ${path.relative(inbox, from)}  ->  ${to}`);
   console.log(
     'Check the names above. A wrong one? Rename the file in assets/exercises/ and run npm run images.',
   );
