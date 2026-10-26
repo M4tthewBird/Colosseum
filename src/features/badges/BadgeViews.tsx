@@ -125,7 +125,7 @@ function BadgeSheet({
               return (
                 <View key={t} style={styles.tier}>
                   {/* Tiers still to earn show what they will look like, faded. */}
-                  <View style={{ opacity: got ? 1 : 0.3 }}>
+                  <View style={{ opacity: got ? 1 : 0.38 }}>
                     <Medallion
                       icon={b.def.icon}
                       level={badgeLevel(i, b.def.tiers.length)}

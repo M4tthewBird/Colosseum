@@ -8,6 +8,16 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-10-26b',
+    date: '2026-10-26',
+    title: 'New badges',
+    items: [
+      'Every badge has new artwork: a laurel wreath that grows fuller with each tier, up to a ribbon and three stars at the top.',
+      'Plate club shows one more plate per side for each tier, and Squad one more gladiator.',
+      'Bench, Squat and Deadlift clubs show the lift above the weight.',
+    ],
+  },
+  {
     id: '2026-10-26',
     date: '2026-10-26',
     title: 'Exercise pictures',
