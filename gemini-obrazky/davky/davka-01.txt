@@ -5,7 +5,7 @@ Photorealistic 3D render of a weathered stone statue of a muscular gladiator: wa
 The attached image is the exact style reference: same stone, same statue build, same light, same background, same camera angle and distance. Only the helmet changes per image (it is named in the list).
 
 THE LIST (15 images):
-1. Bench Press. Pose: performing a bench press. Helmet: a Greek Corinthian helmet with a nose guard, cheek pieces and a horsehair crest, face partly visible.
+1. Bench Press. Pose: lying on a flat bench, pressing a barbell up from the chest, arms nearly locked out, feet flat on the floor. Helmet: a Greek Corinthian helmet with a nose guard, cheek pieces and a horsehair crest, face partly visible.
 2. Leg Curl. Pose: seated in a leg curl machine, curling the heels down and back against the pad. Helmet: a Roman crested galea with a tall brush crest and hinged cheek guards, face visible.
 3. Dumbbell Row. Pose: one knee and hand on a flat bench, rowing a dumbbell to the hip with the other arm. Helmet: a hoplomachus helmet: wide brim, tall plume of feathers, grilled visor.
 4. Chin Up. Pose: hanging from a bar with an underhand shoulder-width grip, chin pulled above the bar. Helmet: a murmillo helmet: broad brim, high fin-shaped crest, visor with a grille of small round holes.
@@ -34,7 +34,7 @@ ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, pošli jen jeden z 
 =====================================================================
 
 --- 1. Bench Press (bench-press) ---
-Exercise illustration for a fitness app: Bench Press. Pose: performing a bench press. Helmet: a Greek Corinthian helmet with a nose guard, cheek pieces and a horsehair crest, face partly visible.
+Exercise illustration for a fitness app: Bench Press. Pose: lying on a flat bench, pressing a barbell up from the chest, arms nearly locked out, feet flat on the floor. Helmet: a Greek Corinthian helmet with a nose guard, cheek pieces and a horsehair crest, face partly visible.
 Photorealistic 3D render of a weathered stone statue of a muscular gladiator: warm grey-beige limestone with fine cracks, pitting and worn edges, a short curly beard, a draped stone loincloth, bare feet, anatomically detailed muscles. He wears the gladiator helmet named for the image (or none, when the image says so), carved from the same stone. Every piece of equipment (bench, barbell, plates, dumbbells, machine, cables) is carved from the same weathered stone; plates are thick and slightly irregular. Front three-quarter view at chest height, the whole body and equipment in frame, soft diffused studio light with a gentle contact shadow, seamless plain light grey background (#DEDDDC). No text, no logos, no watermark, no other people. Landscape 16:9 image; keep the statue and equipment within the middle 80 % of the width with some empty background around them, because the image may be cropped slightly.
 The attached image is the exact style reference (use the helmet named here).
 

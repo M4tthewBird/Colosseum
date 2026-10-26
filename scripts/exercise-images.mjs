@@ -215,7 +215,51 @@ ${list}
 `,
   );
 
-  for (const old of ['docs/chatgpt-obrazky.md', 'docs/exercise-images.md']) {
+  // The same batches for ChatGPT: one file, every batch prompt in a block that copies whole.
+  fs.writeFileSync(
+    path.join(kit, 'CHATGPT.md'),
+    `# Obrázky cviků v ChatGPT
+
+Zbývá **${todo.length} obrázků** v ${batches.length} dávkách po ${BATCH}. Soubor se po každém importu přegeneruje jen se zbývajícími cviky.
+
+Postup je stejný jako u Gemini.
+
+## Jedna dávka
+
+1. Otevři **nový chat** v ChatGPT.
+2. **Přilož \`${REFERENCE_NAME}\`** (je v této složce).
+3. Zkopíruj celý blok dávky níže (tlačítko kopírovat v rohu bloku) a odešli.
+4. ChatGPT udělá obrázek 1. **Stáhni ho** do \`stazene/\` (klidně do podsložky, např. \`stazene/Dávka 1\`)
+   a **pojmenuj ho názvem cviku**, např. \`Bench Press.png\`.
+5. Napiš \`next\` → obrázek 2 → stáhni a pojmenuj. Takhle do konce dávky.
+   - Nepovedený obrázek: napiš \`redo\` a co opravit (např. \`redo, the bar must be on the back\`), stáhni až opravený.
+   - Nebo ho ulož se slovem \`wrong\` v názvu (např. \`Shrug - wrong.png\`) a import ho přeskočí; cvik zůstane na příště.
+6. Na konci dávky dvojklikni na **\`importovat.cmd\`** a pošli mi výpis, ať obrázky zkontroluju.
+
+Pojmenování podle cviku je nejjistější: velikost písmen ani drobné překlepy nevadí. Soubory, které nepřejmenuješ
+(\`ChatGPT Image …\`), dostanou názvy podle pořadí stažení, takže pak musí sedět pořadí v dávce.
+
+${batches
+  .map(
+    (b, n) => `## Dávka ${n + 1} (${b.length})
+
+${b.map((e) => e.name).join(', ')}
+
+\`\`\`text
+${batchText(b)}
+Use the landscape format.
+\`\`\`
+`,
+  )
+  .join('\n')}`,
+  );
+
+  for (const old of [
+    'docs/chatgpt-obrazky.md',
+    'docs/exercise-images.md',
+    'gemini-obrazky/CODEX.md',
+    'gemini-obrazky/zbyva.json',
+  ]) {
     if (fs.existsSync(path.join(root, old))) fs.rmSync(path.join(root, old));
   }
   return { todo: todo.length, batches: batches.length };
@@ -245,7 +289,7 @@ const ALIASES = {
   'seated-leg-curl': 'leg-curl',
 };
 /** Gemini's own download names ("Gemini_Generated_Image_….png"): these go by download order. */
-const UNNAMED = /^(gemini|generated|image|download|img)[\W_]|^\d/i;
+const UNNAMED = /^(gemini|chatgpt|generated|image|download|img)[\W_]|^\d/i;
 
 /** The exercise a file is named after ("Hack Squat.jpg", "hack-squat.png"), or null. */
 function keyOf(file, keys) {
