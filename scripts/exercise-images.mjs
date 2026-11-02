@@ -26,8 +26,8 @@ const BATCH = 15;
 const OUT = { width: 960, height: 540, quality: 72 };
 // Every image is toned to the same background and stone colour (medians of the first 53).
 const TONE = { bg: [213, 213, 210], stone: [135, 127, 119], stoneStrength: 0.7 };
-/** Have an image but go through Gemini again (the marble style before the gladiators). */
-const REDO = new Set(['bench-press']);
+/** Have an image but go through Gemini again (add a slug to have one redone). */
+const REDO = new Set();
 
 /** Must match exerciseSlug() in src/lib/slug.ts. */
 export function slug(name) {

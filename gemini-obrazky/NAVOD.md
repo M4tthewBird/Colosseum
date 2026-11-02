@@ -1,6 +1,6 @@
 # Obrázky cviků v Gemini
 
-Hotovo **53 z 152**. Zbývá 99 obrázků v 7 dávkách po 15.
+Hotovo **128 z 152**. Zbývá 24 obrázků v 2 dávkách po 15.
 Tenhle soubor i dávky se po každém importu přegenerují jen se zbývajícími cviky.
 
 ## Co je v téhle složce
@@ -40,10 +40,5 @@ Tenhle soubor i dávky se po každém importu přegenerují jen se zbývajícím
 
 | Soubor | Počet | Cviky |
 | --- | --- | --- |
-| [davka-01.txt](davky/davka-01.txt) | 15 | Bench Press, Leg Curl, Dumbbell Row, Chin Up, Lat Pulldown, Seated Cable Row, Shrug, Biceps Curl, Hammer Curl, Cable Crunch, Good Morning, Arnold Press, Cable Lateral Raise, Cable Y Raise, Behind the Back Cuffed Cable Lateral Raise |
-| [davka-02.txt](davky/davka-02.txt) | 15 | Reverse Pec Deck, Reverse Cable Crossover, Machine Shoulder Press, Standing Machine Lateral Raise, Seated Machine Lateral Raise, Super ROM Dumbbell Lateral Raise, Seated Barbell Overhead Press, Pendulum Squat, Sissy Squat, Machine Chest Press, Seated Cable Pec Fly, Dumbbell Guillotine Press, Incline Smith Machine Bench Press, Cable Crossover, Dumbbell Fly |
-| [davka-03.txt](davky/davka-03.txt) | 15 | Decline Bench Press, Decline Dumbbell Press, Banded Push Up, Neutral Grip Lat Pulldown, Cross Body One Arm Lat Pulldown, Meadows Row, Chest Supported Row, Neutral Grip Pull Up, Cable Lat Prayer, Dumbbell Pullover, Overhead Cable Triceps Extension, Katana Cable Triceps Extension, Dumbbell Skull Crusher, Smith Machine JM Press, JM Press |
-| [davka-04.txt](davky/davka-04.txt) | 15 | Close Grip Bench Press, Machine Dips, Diamond Push Up, Bayesian Cable Curl, Preacher Hammer Curl, EZ Bar Curl, Incline Dumbbell Curl, Lying Dumbbell Curl, Cable Curl, Inverse Zottman Curl, Barbell Curl, Flat Bench Dumbbell Curl, Walking Lunge, Machine Hip Abduction, 45 Degree Back Extension |
-| [davka-05.txt](davky/davka-05.txt) | 15 | Front Foot Elevated Smith Machine Lunge, Smith Machine Lunge, Machine Hip Thrust, Single Leg Dumbbell Hip Thrust, Cable Glute Kickback, Step Up, Glute Bridge, Cable Hip Abduction, Curtsy Lunge, Sumo Deadlift, Cable Pull Through, Machine Seated Row, Machine High Row, Machine Lat Pulldown, Machine Incline Chest Press |
-| [davka-06.txt](davky/davka-06.txt) | 15 | Machine Decline Chest Press, Machine Biceps Curl, Machine Triceps Extension, Lying Leg Curl, Seated Calf Raise, Machine Hip Adduction, Machine Crunch, Machine Shrug, T Bar Row, Machine Pullover, Machine Back Extension, Reverse Hyperextension, Machine Glute Kickback, Smith Machine Shoulder Press, Smith Machine Row |
-| [davka-07.txt](davky/davka-07.txt) | 9 | Belt Squat, V Squat, Reverse Hack Squat, Horizontal Leg Press, Standing Leg Curl, Chest Supported T Bar Row, Smith Machine Romanian Deadlift, Smith Machine Calf Raise, Assisted Dip |
+| [davka-01.txt](davky/davka-01.txt) | 15 | Leg Curl, Lat Pulldown, Seated Cable Row, Hammer Curl, Good Morning, Behind the Back Cuffed Cable Lateral Raise, Reverse Pec Deck, Reverse Cable Crossover, Pendulum Squat, Dumbbell Fly, Neutral Grip Lat Pulldown, Cross Body One Arm Lat Pulldown, Neutral Grip Pull Up, Smith Machine JM Press, JM Press |
+| [davka-02.txt](davky/davka-02.txt) | 9 | Cable Curl, Inverse Zottman Curl, Flat Bench Dumbbell Curl, Cable Pull Through, Machine Decline Chest Press, Machine Triceps Extension, Machine Hip Adduction, Reverse Hyperextension, Reverse Hack Squat |

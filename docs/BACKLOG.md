@@ -38,6 +38,7 @@ Feedback from Matyáš (2026-10-23). Work top to bottom, one item at a time; ask
 - [x] **Crop the profile photo** (2026-11-02): own cropper (drag, pinch, + and −), since the photo picker's cropping does not exist on the web; at sign-up and in Settings
 - [x] **Failure in the set row** (2026-11-02): an F on every working and drop set, instead of the button under the table and the set menu
 - [x] **Audit fixes** (2026-11-02): change password, edit a finished workout, weight cap, refused sync items set aside, crash screen, rest sound and screen on, delete own comment, report, avatar removed with the account
+- [ ] **Exercise images**: 24 of 152 left (gemini-obrazky/davky). Worth redoing: Cable Y Raise (hands stay low, no Y), Seated Machine Lateral Raise (legs cut off)
 - [ ] **Forgotten password**: needs a decision (real email needs an SMTP service)
 - [ ] **Privacy policy**: draft in the app at /privacy, not linked until a name and contact are filled in (src/data/privacy.ts)
 - [ ] **Screen on and rest sound on native**: expo-keep-awake and a sound file when the iOS and Android builds start
