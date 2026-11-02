@@ -8,6 +8,7 @@ import { FillButton } from '@/components/Buttons';
 import { Glass, GlassCard } from '@/components/Glass';
 import { Header, Screen } from '@/components/Screen';
 import { ShareSheet } from '@/features/forum/ForumViews';
+import { TogetherCard } from '@/features/together/TogetherViews';
 import { FeelRating } from '@/features/workout/FeelRating';
 import { dropChain, isMain } from '@/lib/dropsets';
 import { formatDuration, shortDate, weekdayName, isoWeekday } from '@/lib/dates';
@@ -68,6 +69,7 @@ export default function SessionDetail() {
         <Stat value={String(session.sets.filter((s) => s.done).length)} label="Sets" />
         <Stat value={String(session.pr_count)} label="PRs" accent={session.pr_count > 0} />
       </GlassCard>
+      <TogetherCard session={session} />
 
       {cards.map((card) => {
         const positions = card.map(([pos]) => pos);

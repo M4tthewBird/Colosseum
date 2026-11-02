@@ -19,6 +19,7 @@ import {
   roundHalf,
   type Best,
 } from '@/lib/formulas';
+import { isBarbellLift } from '@/lib/plates';
 import { lastTimeSets } from '@/lib/stats';
 import { interleave, letter } from '@/lib/supersets';
 import type { Exercise, Session, SetEntry } from '@/lib/types';
@@ -42,6 +43,7 @@ import {
 import { ExerciseNote } from './ExerciseNote';
 import { MachineWeight } from './MachineWeight';
 import { NextSuggestion } from './NextSuggestion';
+import { PlateHint } from './PlateHint';
 import { SetMenu } from './SetMenu';
 import { SetHeader, SetRow } from './SetRow';
 
@@ -217,6 +219,11 @@ export function ExercisePage({
           ) : null}
         </View>
         <SetActions sets={sets} />
+        {isBarbellLift(name) ? (
+          <PlateHint
+            weightKg={(mains.find((s) => !s.done) ?? mains[mains.length - 1])?.weight_kg ?? 0}
+          />
+        ) : null}
       </Glass>
       <Text style={[type.small, { paddingHorizontal: 4 }]}>{SET_HINT}</Text>
       <SetMenu set={menu} title={menuTitle(menu)} onClose={() => setMenu(null)} />

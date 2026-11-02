@@ -26,6 +26,7 @@ import { LogoMark } from '@/components/Logo';
 import { MAX_WIDTH, useTopPadding } from '@/components/Screen';
 import { Sheet } from '@/components/Sheet';
 import { ShareSheet } from '@/features/forum/ForumViews';
+import { TogetherCard } from '@/features/together/TogetherViews';
 import { isSavedWorkout } from '@/features/programs/ops';
 import { useActiveProgram } from '@/features/training/hooks';
 import { formatDuration, isoWeekday, shortDate, weekdayName } from '@/lib/dates';
@@ -174,6 +175,10 @@ export function WorkoutSummary({ sessionId }: { sessionId: string }) {
 
         <Animated.View entering={enter(i++, reduced)}>
           <FeelRating session={session} />
+        </Animated.View>
+
+        <Animated.View entering={enter(i++, reduced)}>
+          <TogetherCard session={session} />
         </Animated.View>
 
         {deload ? (

@@ -474,3 +474,29 @@ export const DEMO_FORUM_COMMENTS = [
   { user: 'tomas', body: 'Copied it, trying it on Thursday', minutesAgo: 70 },
   { user: 'jakub', body: 'The row + pulldown superset is a great idea', minutesAgo: 40 },
 ];
+
+/** Plans to train: minutes from now, a note, who is already in; one invites the demo user. */
+export const DEMO_PLANS: {
+  user: string;
+  inMinutes: number;
+  note: string;
+  going: string[];
+  invitesMe?: boolean;
+}[] = [
+  { user: 'adam', inMinutes: 90, note: 'Legs, need a spotter for squats', going: ['filip'] },
+  { user: 'tomas', inMinutes: 180, note: 'Push day, join me?', going: [], invitesMe: true },
+];
+
+/** Workouts confirmed as done together. */
+export const DEMO_TOGETHER: { owner: string; user: string; minutesAgo: number }[] = [
+  { owner: 'tomas', user: 'adam', minutesAgo: 150 },
+  { owner: 'ondrej', user: 'filip', minutesAgo: 1500 },
+];
+
+/** Confirmed workouts together per friend, this week. */
+export const DEMO_TOGETHER_COUNTS: Record<string, number> = {
+  tomas: 3,
+  adam: 2,
+  filip: 2,
+  ondrej: 1,
+};

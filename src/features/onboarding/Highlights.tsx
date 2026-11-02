@@ -7,17 +7,20 @@ import type { Href } from 'expo-router';
 import type { ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { Avatar } from '@/components/Avatar';
 import { FillButton } from '@/components/Buttons';
 import { Glass } from '@/components/Glass';
-import { ChevronRight, MapPin, Star } from '@/components/icons';
+import { ChevronRight, MapPin, Star, Zap } from '@/components/icons';
 import { QrCode } from '@/components/QrCode';
 import { Chip } from '@/components/Segmented';
 import { Medallion } from '@/features/badges/Medallion';
+import { NewTag } from '@/features/onboarding/NewTag';
 import { friendLink } from '@/features/social/FriendLink';
 import type { FeatureId, Highlight } from '@/lib/changelog';
 import { useData } from '@/stores/data';
+import { usePrefs } from '@/stores/prefs';
 import { colors, type } from '@/theme/tokens';
-import { showSpotlight } from './Spotlight';
+import { showGuide, showSpotlight } from './Spotlight';
 
 /** The exercise the user logged most (sets), else Bench Press, else any. */
 function favoriteDemoExercise(): string | null {
@@ -69,7 +72,90 @@ const SHOW: Record<FeatureId, () => void> = {
       );
     else showSpotlight({ ...request, target: 'profile-sections' }, '/profile');
   },
+  generate: () =>
+    showGuide([
+      {
+        route: '/workouts',
+        target: 'workouts-generate',
+        radius: 27,
+        title: 'Generate a workout',
+        body: 'It starts here, in Workouts. Let’s build one together.',
+      },
+      {
+        route: { pathname: '/generate', params: { preset: 'full' } },
+        target: 'gen-train',
+        radius: 18,
+        title: 'What to train',
+        body: 'Pick Full body, Upper, Lower, Push or Pull. Prefer to choose? Tap single muscles below.',
+      },
+      {
+        route: { pathname: '/generate', params: { preset: 'full' } },
+        target: 'gen-equipment',
+        radius: 18,
+        title: 'What you have',
+        body: 'A full gym, dumbbells, your bodyweight with a bar, or at home with nothing. Switch any time.',
+      },
+      {
+        route: { pathname: '/generate', params: { preset: 'full' } },
+        target: 'gen-time',
+        radius: 18,
+        title: 'How long you have',
+        body: 'Colosseum tells you what fits, like 5 exercises with 2 sets each, and how hard to go. Prefer fewer exercises with more sets? One tap.',
+      },
+      {
+        route: { pathname: '/generate', params: { preset: 'full' } },
+        target: 'gen-plan',
+        radius: 22,
+        title: 'Your workout',
+        body: 'Swap any exercise, shuffle them all, then start it or save it. New to the gym? A guide below explains how to do it.',
+      },
+    ]),
+  'train-together': () => {
+    usePrefs.getState().setArenaScope('friends');
+    showGuide([
+      {
+        route: '/forum',
+        target: 'forum-plans',
+        radius: 27,
+        title: 'Say you are going',
+        body: 'Tap Going to train and pick a time. Friends and people from your gym see it here and on Today, and can say they are in.',
+      },
+      {
+        route: '/arena/friends',
+        via: '/arena',
+        target: 'friends-search',
+        radius: 16,
+        title: 'Or invite one friend',
+        body: 'Open a friend’s profile and tap Invite to train. They see the invite in the app and answer I’m in or Can’t.',
+      },
+      {
+        route: '/arena',
+        preview: <TogetherPreview />,
+        title: 'After the workout',
+        body: 'At the end of a workout, tap Confirm together. One of you shows this code, the other scans it and confirms. There you can also tap Share on the Forum.',
+      },
+      {
+        route: '/arena',
+        target: 'arena-together',
+        radius: 22,
+        title: 'It counts in the Arena',
+        body: 'Workouts you confirm show up here, and on the Together board at the top of the Arena.',
+      },
+    ]);
+  },
 };
+
+/** A code to show in the guide: only a picture, it leads nowhere. */
+function TogetherPreview() {
+  const username = useData((s) => s.profile?.username ?? 'you');
+  return (
+    <View style={styles.qr}>
+      <QrCode value={friendLink(username)} size={96} />
+    </View>
+  );
+}
+
+const GUIDED: FeatureId[] = ['generate', 'train-together'];
 
 function Preview({ feature }: { feature: FeatureId }) {
   const username = useData((s) => s.profile?.username ?? 'you');
@@ -90,6 +176,32 @@ function Preview({ feature }: { feature: FeatureId }) {
       );
     case 'favorites':
       return <FavoritesPreview />;
+    case 'generate':
+      return (
+        <View style={{ gap: 10, alignItems: 'center' }}>
+          <View style={[styles.row, { gap: 6 }]}>
+            <Chip label="Full body" selected />
+            <Chip label="Upper" />
+            <Chip label="Lower" />
+          </View>
+          <View style={styles.list}>
+            <View style={styles.item}>
+              <Zap size={16} color={colors.accent} strokeWidth={2.2} />
+              <Text style={type.bodyStrong}>45 min: 5 exercises, 2 sets each</Text>
+            </View>
+          </View>
+        </View>
+      );
+    case 'train-together':
+      return (
+        <View style={[styles.row, { gap: 10 }]}>
+          <Avatar name="Tomáš Král" size={44} />
+          <View style={{ gap: 6 }}>
+            <Text style={type.bodyStrong}>Today 17:30</Text>
+            <Chip label="I'm in" selected />
+          </View>
+        </View>
+      );
   }
 }
 
@@ -125,8 +237,11 @@ function FavoritesPreview() {
 export function HighlightCard({
   highlight: h,
   beforeShow,
+  fresh,
 }: {
   highlight: Highlight;
+  /** Just arrived: says so on the card. */
+  fresh?: boolean;
   /** Runs before "Show me" leaves for the feature (What's new closes its sheet). */
   beforeShow?: () => void;
 }) {
@@ -136,6 +251,7 @@ export function HighlightCard({
         <Preview feature={h.feature} />
       </PreviewFrame>
       <View style={{ gap: 4, paddingHorizontal: 2 }}>
+        {fresh ? <NewTag /> : null}
         <Text style={type.title}>{h.title}</Text>
         <Text style={styles.body}>{h.body}</Text>
         <View style={styles.where}>
@@ -144,7 +260,7 @@ export function HighlightCard({
         </View>
       </View>
       <FillButton
-        label="Show me"
+        label={GUIDED.includes(h.feature) ? 'Show me how it works' : 'Show me'}
         icon={ChevronRight}
         size="sm"
         style={{ alignSelf: 'flex-start', height: 44, paddingRight: 18 }}

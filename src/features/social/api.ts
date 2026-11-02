@@ -12,10 +12,12 @@ import {
   DEMO_GYM_MEMBERS,
   DEMO_GYMS,
   DEMO_STATS,
+  DEMO_TOGETHER_COUNTS,
   DEMO_TRAINING_NOW,
   DEMO_USERS,
   demoUser,
 } from '@/dev/seed';
+import { demoTogetherCount } from '@/features/together/api';
 import { addDays, startOfMonth, startOfWeek, toLocalDate } from '@/lib/dates';
 import { dotsCoefficient, e1rm, volume } from '@/lib/formulas';
 import { finished } from '@/lib/stats';
@@ -211,6 +213,7 @@ function myValue(metric: string, period: ArenaPeriod): number | null {
   );
   if (metric === 'volume') return sessions.reduce((sum, s) => sum + volume(s.sets), 0);
   if (metric === 'workouts') return sessions.length;
+  if (metric === 'together') return demoTogetherCount() || null;
   let best = 0;
   for (const s of sessions)
     for (const x of s.sets)
@@ -218,9 +221,9 @@ function myValue(metric: string, period: ArenaPeriod): number | null {
   return best > 0 ? Math.round(best * 10) / 10 : null;
 }
 
-/** True when the metric is a lift (ranked by e1RM), not volume or workouts. */
+/** True when the metric is a lift (ranked by e1RM), not a count of volume or workouts. */
 export function isLiftMetric(metric: string): boolean {
-  return metric !== 'volume' && metric !== 'workouts';
+  return metric !== 'volume' && metric !== 'workouts' && metric !== 'together';
 }
 
 /** My latest bodyweight-adjusted factor, or null when sex or bodyweight is missing. */
@@ -277,6 +280,7 @@ function demoLeaderboard(key: string, period: ArenaPeriod, global = false): Rank
     let value: number | null = null;
     if (metric === 'volume') value = st.weekVolume * scale;
     else if (metric === 'workouts') value = Math.round(st.workouts * scale);
+    else if (metric === 'together') value = DEMO_TOGETHER_COUNTS[u.username] ?? null;
     else if (exName === 'Bench Press') value = st.bench;
     else if (exName === 'Squat') value = st.squat;
     else if (exName === 'Deadlift') value = st.deadlift;

@@ -33,6 +33,7 @@ const TOP = 20;
 export function metricLabel(m: ArenaMetric, exercises: Record<string, { name: string }>): string {
   if (m === 'volume') return 'Volume';
   if (m === 'workouts') return 'Workouts';
+  if (m === 'together') return 'Together';
   if (m.startsWith('name:')) {
     const n = m.slice(5);
     return n.toLowerCase() === 'bench press' ? 'Bench' : n;
@@ -40,18 +41,18 @@ export function metricLabel(m: ArenaMetric, exercises: Record<string, { name: st
   return exercises[m]?.name ?? 'Exercise';
 }
 
-/** metric is 'volume' | 'workouts' | 'dots' | an exercise id (kg). Null = rank only. */
+/** metric is 'volume' | 'workouts' | 'together' | 'dots' | an exercise id (kg). Null = rank only. */
 function formatValue(metric: string, v: number | null): string {
   if (v == null) return '';
   if (metric === 'dots') return v.toFixed(1);
   if (metric === 'volume') return `${(v / 1000).toFixed(1)} t`;
-  if (metric === 'workouts') return `${Math.round(v)}`;
+  if (metric === 'workouts' || metric === 'together') return `${Math.round(v)}`;
   return `${formatKg(v)} kg`;
 }
 
 /** A difference in the board's unit: "1.2 t", "2 workouts", "7.5 kg", "3.1 points". */
 function formatGap(metric: string, v: number): string {
-  if (metric === 'workouts') {
+  if (metric === 'workouts' || metric === 'together') {
     const n = Math.round(v);
     return `${n} workout${n === 1 ? '' : 's'}`;
   }
@@ -167,6 +168,8 @@ export function Ranks({ scope, friendCount }: { scope: ArenaScope; friendCount: 
               accessibilityLabel="Rank by"
             />
           </View>
+        ) : metric === 'together' ? (
+          <Text style={type.small}>Workouts confirmed with someone by QR code</Text>
         ) : null}
       </View>
 
@@ -226,7 +229,9 @@ export function Ranks({ scope, friendCount }: { scope: ArenaScope; friendCount: 
             <Text style={[type.small, { textAlign: 'center' }]}>
               {dots && !canDots
                 ? 'Set your sex in Settings and log your bodyweight in Profile → Body to get a DOTS score.'
-                : 'You are not on this board yet. Log a finished workout to join.'}
+                : metric === 'together'
+                  ? 'You are not on this board yet. Confirm a workout with someone by QR code to join.'
+                  : 'You are not on this board yet. Log a finished workout to join.'}
             </Text>
           ) : null}
         </>
@@ -467,6 +472,9 @@ function MetricsSheet({ visible, onClose }: { visible: boolean; onClose: () => v
           ) : null}
           {!metrics.includes('workouts') ? (
             <Chip label="+ Workouts" onPress={() => add('workouts')} />
+          ) : null}
+          {!metrics.includes('together') ? (
+            <Chip label="+ Together" onPress={() => add('together')} />
           ) : null}
         </View>
         <FillButton label="Add exercise" icon={Plus} onPress={() => setPicking(true)} />

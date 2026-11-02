@@ -11,6 +11,7 @@ import { startAuth, useAuth } from '@/features/auth/auth';
 import { GymConfirmHost } from '@/features/gyms/GymConfirm';
 import { SpotlightHost } from '@/features/onboarding/Spotlight';
 import { Tour } from '@/features/onboarding/Tour';
+import { WorkoutGuard } from '@/features/workout/WorkoutGuard';
 import { startSync } from '@/lib/sync';
 import { useData } from '@/stores/data';
 import { colors } from '@/theme/tokens';
@@ -54,6 +55,7 @@ export default function RootLayout() {
                 }}
               />
               <Stack.Screen name="program/[id]" options={{ presentation: 'modal' }} />
+              <Stack.Screen name="generate" options={{ presentation: 'modal' }} />
               <Stack.Screen name="session/[id]" />
               <Stack.Screen name="user/[id]" />
               <Stack.Screen name="forum/index" />
@@ -62,8 +64,9 @@ export default function RootLayout() {
             <Stack.Protected guard={!signedIn}>
               <Stack.Screen name="(auth)" />
             </Stack.Protected>
-            {/* Friend links (QR codes) open signed in or out. */}
+            {/* Friend and workout links (QR codes) open signed in or out. */}
             <Stack.Screen name="add/[username]" />
+            <Stack.Screen name="together/[id]" />
             <Stack.Screen name="dev/components" />
           </Stack>
         ) : (
@@ -73,6 +76,7 @@ export default function RootLayout() {
         {ready && signedIn ? <Tour /> : null}
         {ready && signedIn ? <SpotlightHost /> : null}
         {ready && signedIn ? <GymConfirmHost /> : null}
+        {ready && signedIn ? <WorkoutGuard /> : null}
         <ToastHost />
         <ConfirmHost />
       </SafeAreaProvider>

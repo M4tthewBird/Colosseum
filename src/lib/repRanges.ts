@@ -79,7 +79,7 @@ export function orderedGoals(goals: Goal[]): Goal[] {
 }
 
 const ISOLATION =
-  /curl|raise|fly|flye|extension|kickback|pushdown|pec deck|crossover|abduction|shrug|calf|pullover|prayer|face pull|press-around|crunch|nordic|sissy|plank|pull-through|bridge/i;
+  /curl|raise|fly|flye|extension|kickback|pushdown|pec deck|crossover|abduction|shrug|calf|pullover|prayer|face pull|press-around|crunch|nordic|sissy|plank|pull-through|bridge|skull crusher/i;
 
 export function exerciseKind(name: string): Kind {
   return ISOLATION.test(name) ? 'isolation' : 'compound';

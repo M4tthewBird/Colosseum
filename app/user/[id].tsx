@@ -1,6 +1,7 @@
 /** Another user's profile: avatar, name, gym, Lifts and recent workouts. Never Body data. */
 import { useLocalSearchParams } from 'expo-router';
-import { UserPlus } from '@/components/icons';
+import { Calendar, UserPlus } from '@/components/icons';
+import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/Avatar';
@@ -13,6 +14,8 @@ import { BadgeGrid } from '@/features/badges/BadgeViews';
 import { useUserBadges } from '@/features/badges/hooks';
 import { LiftsView } from '@/features/profile/LiftsView';
 import { useFriendAction, useUserPage } from '@/features/social/api';
+import { useTogetherCount } from '@/features/together/api';
+import { PlanSheet } from '@/features/together/PlanViews';
 import { SessionRow } from '@/features/training/SessionRow';
 import { useData } from '@/stores/data';
 import { toast } from '@/stores/ui';
@@ -24,6 +27,8 @@ export default function UserPage() {
   const exercises = useData((s) => s.exercises);
   const action = useFriendAction();
   const badges = useUserBadges(id, page.data?.sessions);
+  const together = useTogetherCount(id);
+  const [inviting, setInviting] = useState(false);
 
   if (page.isLoading || !page.data) {
     return (
@@ -79,7 +84,15 @@ export default function UserPage() {
         />
       ) : relation === 'outgoing' ? (
         <Text style={[type.caption, { textAlign: 'center' }]}>Friend request sent</Text>
+      ) : relation === 'friend' ? (
+        <FillButton label="Invite to train" icon={Calendar} onPress={() => setInviting(true)} />
       ) : null}
+      {together.data ? (
+        <Text style={[type.caption, { textAlign: 'center' }]}>
+          Trained together {together.data} {together.data === 1 ? 'time' : 'times'}
+        </Text>
+      ) : null}
+      {inviting ? <PlanSheet visible friend={user} onClose={() => setInviting(false)} /> : null}
 
       {badges.length > 0 ? (
         <>

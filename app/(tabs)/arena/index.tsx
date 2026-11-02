@@ -11,6 +11,7 @@ import { MyGym } from '@/features/arena/MyGym';
 import { TourTarget } from '@/features/onboarding/TourTarget';
 import { Ranks, ScopeTabs } from '@/features/arena/Ranks';
 import { useCheckIn, useFriends, useGym, useMyCheckin } from '@/features/social/api';
+import { TogetherFeed } from '@/features/together/TogetherViews';
 import { useData } from '@/stores/data';
 import { usePrefs, type ArenaPeriod } from '@/stores/prefs';
 import { toast } from '@/stores/ui';
@@ -74,6 +75,7 @@ export default function Arena() {
               <MyGym gymId={gymId} />
             </View>
           ) : null}
+          {scope !== 'global' ? <TogetherFeed /> : null}
         </>
       )}
     </Screen>

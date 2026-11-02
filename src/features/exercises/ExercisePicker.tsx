@@ -35,7 +35,7 @@ const FAVORITES = 'favorites';
 const NO_SUGGESTIONS: NextPick[] = [];
 const BROWSE_LIMIT = 80;
 
-/** Small "S" / "A" / "B" badge: Jeff Nippard's tier list rating. */
+/** Small "S" / "A" / "B" badge: the exercise's rating. */
 export function TierBadge({ tier }: { tier: 'S' | 'A' | 'B' }) {
   return (
     <View
@@ -253,7 +253,7 @@ export function ExercisePicker({
         </Text>
       ) : null}
       <Text style={[type.small, { textAlign: 'center' }]}>
-        S / A / B = Jeff Nippard&apos;s tier list rating.
+        S / A / B = exercise rating, S is best.
       </Text>
       <FillButton
         label="Create custom exercise"

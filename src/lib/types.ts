@@ -36,7 +36,7 @@ export interface Exercise {
   muscles: string[];
   image_key: string | null;
   created_by: string | null;
-  /** Jeff Nippard tier list rating for built-ins. */
+  /** Exercise rating for built-ins (source: THIRD_PARTY_NOTICES.md). */
   tier?: 'S' | 'A' | 'B' | null;
 }
 

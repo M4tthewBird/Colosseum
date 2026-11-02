@@ -52,6 +52,7 @@ export { default as Globe } from 'lucide-react-native/icons/globe';
 export { default as Landmark } from 'lucide-react-native/icons/landmark';
 export { default as CopyPlus } from 'lucide-react-native/icons/copy-plus';
 export { default as QrCode } from 'lucide-react-native/icons/qr-code';
+export { default as ScanLine } from 'lucide-react-native/icons/scan-line';
 export { default as Weight } from 'lucide-react-native/icons/weight';
 export { default as Sunrise } from 'lucide-react-native/icons/sunrise';
 export { default as Moon } from 'lucide-react-native/icons/moon';

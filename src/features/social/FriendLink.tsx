@@ -71,15 +71,21 @@ export function MyQrSheet({ visible, onClose }: { visible: boolean; onClose: () 
   );
 }
 
-/** After signing in, opens a friend link that came in while signed out. */
+/** After signing in, opens a friend or workout link that came in while signed out. */
 export function FriendLinkResume() {
   const pending = usePrefs((s) => s.pendingFriend);
+  const together = usePrefs((s) => s.pendingTogether);
   const tour = usePrefs((s) => s.tourPending);
   useEffect(() => {
-    if (!pending || tour) return;
-    usePrefs.getState().setPendingFriend(null);
-    router.push({ pathname: '/add/[username]', params: { username: pending } });
-  }, [pending, tour]);
+    if (tour) return;
+    if (pending) {
+      usePrefs.getState().setPendingFriend(null);
+      router.push({ pathname: '/add/[username]', params: { username: pending } });
+    } else if (together) {
+      usePrefs.getState().setPendingTogether(null);
+      router.push({ pathname: '/together/[id]', params: { id: together } });
+    }
+  }, [pending, together, tour]);
   return null;
 }
 

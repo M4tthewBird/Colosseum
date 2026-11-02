@@ -14,9 +14,11 @@ import { BadgeSync } from '@/features/badges/BadgeSync';
 import { useForumPosts } from '@/features/forum/api';
 import { HomeGymPrompt } from '@/features/gyms/HomeGymPrompt';
 import { AvatarPrompt } from '@/features/profile/AvatarPrompt';
+import { LevelUpPrompt } from '@/features/profile/LevelUpPrompt';
 import { FriendLinkResume } from '@/features/social/FriendLink';
 import { ForumRail } from '@/features/forum/ForumViews';
 import { useFriendsPrs, useLeaderboard } from '@/features/social/api';
+import { PlansSection } from '@/features/together/PlanViews';
 import { useActiveProgram, useFinishedSessions } from '@/features/training/hooks';
 import { InstallTip } from '@/features/onboarding/InstallTip';
 import { TourTarget } from '@/features/onboarding/TourTarget';
@@ -94,12 +96,15 @@ export default function Today() {
 
       <UpNextCard variant="today" />
 
+      <PlansSection limit={2} />
+
       <ForumSection />
 
       <FriendsPrs />
       <InstallTip />
       <WhatsNew />
       <HomeGymPrompt />
+      <LevelUpPrompt />
       <AvatarPrompt />
       <FriendLinkResume />
       <BadgeSync />

@@ -8,6 +8,35 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-11-02b',
+    date: '2026-11-02',
+    title: 'Generate a workout, and train together',
+    highlights: [
+      {
+        feature: 'generate',
+        title: 'Generate a workout',
+        body: 'Choose what to train, how long you have and what equipment: a full gym, dumbbells, bodyweight or at home with no equipment. Colosseum tells you what you get, like 5 exercises with 2 sets each or 4 with 3, adds warm-up sets and guides you if you are new to the gym.',
+        where: 'Workouts → Generate a workout',
+      },
+      {
+        feature: 'train-together',
+        title: 'Train together',
+        body: 'Post when you are going to train, or invite a friend. After the workout, confirm it with a QR code and it counts in the Arena.',
+        where: 'Today → Forum → Going to train',
+      },
+    ],
+    items: [
+      'Going to train? Post the time, and friends and people from your gym can say they are in.',
+      'Invite one friend to train from their profile.',
+      'After a workout, show your QR code or scan your partner’s to confirm you trained together.',
+      'New Arena board: Together. The newest confirmed workouts are listed in the Arena too.',
+      'Sets per muscle this week, in Profile → Lifts, next to the recommended 10–20.',
+      'Plate calculator: barbell lifts show which plates go on each side.',
+      'After 10 workouts, beginners are asked whether to move up a level.',
+      'A workout you forgot to finish now ends by itself after 3 hours without activity, or 6 hours at most. Your sets are saved with the right length, and an empty one is closed.',
+    ],
+  },
+  {
     id: '2026-11-02',
     date: '2026-11-02',
     title: 'Swap exercises',

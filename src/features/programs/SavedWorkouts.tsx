@@ -1,18 +1,23 @@
 import { router } from 'expo-router';
 import { useMemo } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { FillButton } from '@/components/Buttons';
-import { Play, Plus } from '@/components/icons';
+import { Play, Plus, Zap } from '@/components/icons';
 import { ListGroup, ListRow, SectionHeader } from '@/components/List';
+import { NewTag } from '@/features/onboarding/NewTag';
+import { TourTarget } from '@/features/onboarding/TourTarget';
 import { startDay } from '@/features/training/UpNextCard';
 import { estimateMinutes } from '@/lib/formulas';
 import { useData } from '@/stores/data';
+import { usePrefs } from '@/stores/prefs';
 import { colors, type } from '@/theme/tokens';
 import { isSavedWorkout } from './ops';
 
 /** Saved one-off workouts, started on demand outside the program. */
 export function SavedWorkouts() {
+  const newGenerate = usePrefs((s) => !s.newSeen.includes('generate'));
+  const markNewSeen = usePrefs((s) => s.markNewSeen);
   const programs = useData((s) => s.programs);
   const list = useMemo(
     () =>
@@ -69,6 +74,17 @@ export function SavedWorkouts() {
           One-off workouts outside your program, like a quick arm day or a hotel gym session.
         </Text>
       )}
+      <TourTarget id="workouts-generate">
+        <FillButton
+          label="Generate a workout"
+          icon={Zap}
+          onPress={() => {
+            markNewSeen('generate');
+            router.push('/generate');
+          }}
+        />
+        {newGenerate ? <NewTag style={styles.newTag} /> : null}
+      </TourTarget>
       <FillButton
         label="New saved workout"
         icon={Plus}
@@ -79,3 +95,7 @@ export function SavedWorkouts() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  newTag: { position: 'absolute', right: 14, top: 18, pointerEvents: 'none' },
+});

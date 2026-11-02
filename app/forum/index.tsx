@@ -9,6 +9,7 @@ import { useForumPosts } from '@/features/forum/api';
 import { PostCard } from '@/features/forum/ForumViews';
 import { TourTarget } from '@/features/onboarding/TourTarget';
 import { useFriends } from '@/features/social/api';
+import { PlansSection } from '@/features/together/PlanViews';
 import { WORKOUT_KINDS } from '@/lib/workoutType';
 import { useData } from '@/stores/data';
 import { type } from '@/theme/tokens';
@@ -47,6 +48,7 @@ export default function Forum() {
     >
       <BackLink label="Today" fallback="/" />
       <Header above="Shared workouts" title="Forum" />
+      <PlansSection />
       <Segmented
         options={[
           { value: 'friends', label: 'Friends' },

@@ -44,3 +44,11 @@ export function measureTarget(id: string, onRect: (r: TargetRect | null) => void
     onRect(width > 0 && height > 0 ? { x, y, width, height } : null),
   );
 }
+
+/** Brings a target into view, so a guide can point at what sits further down the screen. */
+export function scrollTargetIntoView(id: string) {
+  const node = targets.get(id)?.current as unknown as {
+    scrollIntoView?: (o: { block: string; behavior: string }) => void;
+  } | null;
+  node?.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+}

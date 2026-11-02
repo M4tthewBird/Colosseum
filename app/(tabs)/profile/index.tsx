@@ -13,6 +13,7 @@ import { useMyBadges } from '@/features/badges/hooks';
 import { TourTarget } from '@/features/onboarding/TourTarget';
 import { BodyView } from '@/features/profile/BodyView';
 import { FeelTrend } from '@/features/profile/FeelTrend';
+import { WeeklySets } from '@/features/profile/WeeklySets';
 import { LiftsView } from '@/features/profile/LiftsView';
 import { useGym } from '@/features/social/api';
 import { useFinishedSessions } from '@/features/training/hooks';
@@ -82,6 +83,7 @@ export default function Profile() {
         <BadgeGrid badges={badges} />
       ) : (
         <>
+          <WeeklySets sessions={sessions} exercises={exercises} />
           <FeelTrend sessions={sessions} />
           <LiftsView
             sessions={sessions}

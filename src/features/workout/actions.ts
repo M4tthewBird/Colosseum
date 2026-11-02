@@ -23,6 +23,7 @@ import { swapSets, workSetsAt } from '@/lib/swap';
 import type { Feel, ProgramDay, Session, SetEntry } from '@/lib/types';
 import { nowIso, uuid } from '@/lib/uuid';
 import { isWarmup, isWork, WARMUP_REST, warmupPlan } from '@/lib/warmups';
+import { staleWorkoutEnd } from '@/lib/workoutLimits';
 import { useData } from '@/stores/data';
 import { toast } from '@/stores/ui';
 import { useWorkout, type PlannedExercise } from '@/stores/workout';
@@ -69,7 +70,31 @@ function initialSets(sessionId: string, plan: PlannedExercise): SetEntry[] {
   });
 }
 
-export function startWorkout(day: ProgramDay | null, gymId: string | null = null): string {
+/** Warm-up sets for a set's working weight, numbered … -1, 0 so they sort before set 1. */
+function warmupSets(first: SetEntry): SetEntry[] {
+  const eachSide = isSideSet(first);
+  const plan = warmupPlan(first.weight_kg);
+  return plan.map((p, i) => ({
+    ...first,
+    id: uuid(),
+    set_number: i - plan.length + 1,
+    weight_kg: p.weight_kg,
+    ...(eachSide ? sideReps(p.reps, p.reps) : { reps: p.reps, left_reps: null, right_reps: null }),
+    done: false,
+    is_pr: false,
+    failure: false,
+    drop_of: null,
+    warmup: true,
+    updated_at: nowIso(),
+  }));
+}
+
+/** `warmupFor`: exercises that start with warm-up sets (when last time's weight is known). */
+export function startWorkout(
+  day: ProgramDay | null,
+  gymId: string | null = null,
+  warmupFor: string[] = [],
+): string {
   const { userId, programs } = useData.getState();
   const id = uuid();
   // The program's phase for this week scales the sets and sets the target effort.
@@ -93,7 +118,8 @@ export function startWorkout(day: ProgramDay | null, gymId: string | null = null
   const s: Session = {
     id,
     user_id: userId,
-    program_day_id: day?.id ?? null,
+    // A generated workout that was not saved has no program day to point to.
+    program_day_id: program ? day!.id : null,
     name: day?.name ?? 'Workout',
     gym_id: gymId,
     started_at: nowIso(),
@@ -102,7 +128,10 @@ export function startWorkout(day: ProgramDay | null, gymId: string | null = null
     set_count: 0,
     pr_count: 0,
     updated_at: nowIso(),
-    sets: plan.flatMap((p) => initialSets(id, p)),
+    sets: plan.flatMap((p) => {
+      const sets = initialSets(id, p);
+      return warmupFor.includes(p.exercise_id) ? [...warmupSets(sets[0]), ...sets] : sets;
+    }),
   };
   useData.getState().putSession(s);
   useWorkout.getState().start(id, plan);
@@ -117,6 +146,7 @@ export async function openWorkout(
   day: ProgramDay | null,
   confirmReplace: () => Promise<boolean>,
   askGym?: () => Promise<{ gymId: string | null } | 'cancel'>,
+  warmupFor: string[] = [],
 ) {
   const active = session();
   if (active && !active.finished_at) {
@@ -129,7 +159,7 @@ export async function openWorkout(
   const where = askGym ? await askGym() : { gymId: null };
   if (where === 'cancel') return;
   if (active && !active.finished_at) discardWorkout();
-  const id = startWorkout(day, where.gymId);
+  const id = startWorkout(day, where.gymId, warmupFor);
   router.push({ pathname: '/workout/[id]', params: { id } });
 }
 
@@ -602,7 +632,7 @@ export interface Summary {
 }
 
 /** Marks the session finished. Sets that were not done are dropped (with their drop sets). */
-export function finishWorkout(): Summary | null {
+export function finishWorkout(finishedAt: string = nowIso()): Summary | null {
   const s = session();
   if (!s) return null;
   const done = s.sets.filter((x) => x.done && isMain(x));
@@ -612,7 +642,6 @@ export function finishWorkout(): Summary | null {
       done.push(d);
     }
   }
-  const finishedAt = nowIso();
   const next: Session = {
     ...s,
     finished_at: finishedAt,
@@ -704,6 +733,25 @@ export function discardWorkout() {
   const s = session();
   if (s) useData.getState().deleteSession(s.id);
   useWorkout.getState().end();
+}
+
+/**
+ * Ends a workout left running (see workoutLimits). What was logged is kept and dated at the last
+ * activity; a workout with nothing logged is dropped. True when it ended one.
+ */
+export function endStaleWorkout(): boolean {
+  const s = session();
+  if (!s || s.finished_at) return false;
+  const end = staleWorkoutEnd(s);
+  if (!end) return false;
+  if (s.sets.some((x) => x.done && isMain(x) && isWork(x))) {
+    finishWorkout(end);
+    toast(`${s.name} was left running, so it ended itself. Your sets are saved.`);
+  } else {
+    discardWorkout();
+    toast(`${s.name} was left running with nothing logged, so it was closed.`);
+  }
+  return true;
 }
 
 export function feedback(strong: boolean) {

@@ -39,7 +39,15 @@
           "photosPermission": "Colosseum uses your photos to set a profile picture."
         }
       ],
-      "expo-image"
+      "expo-image",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Colosseum uses the camera to read a training partner's QR code.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

@@ -1,21 +1,22 @@
 /**
  * Lighting up one part of a screen: the screen dims, the TourTarget stays bright inside a red
  * outline. Used by the app tour, and on its own by What's new ("Show me" opens the screen and
- * lights up where a new feature lives, with a short card and Got it).
+ * lights up where a new feature lives, with a short card and Got it). A guide does the same for a
+ * few steps in a row, moving between screens to walk through how a feature works.
  */
 import { router, type Href } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Platform, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 import { create } from 'zustand';
 
-import { FillButton } from '@/components/Buttons';
+import { FillButton, TextButton } from '@/components/Buttons';
 import { MAX_WIDTH } from '@/components/Screen';
 import { dur, useReducedMotion } from '@/theme/motion';
 import { colors, space, type } from '@/theme/tokens';
-import { measureTarget, type TargetRect } from './TourTarget';
+import { measureTarget, scrollTargetIntoView, type TargetRect } from './TourTarget';
 
 /** Space between a lit-up element and its outline. */
 export const HALO = 6;
@@ -113,25 +114,53 @@ export function SpotRing({ halo, k }: { halo: Halo; k?: string | number }) {
   );
 }
 
-// ───────────── A single spotlight (What's new → Show me) ─────────────
+// ───────────── A spotlight or a guide (What's new → Show me) ─────────────
 
 export interface SpotlightRequest {
-  /** TourTarget id to light up, and its corner radius. */
-  target: string;
+  /** TourTarget id to light up, and its corner radius. No target: only the card. */
+  target?: string;
   radius?: number;
   title: string;
   body: string;
+  /** Something to show in the card, for what cannot be pointed at on a screen. */
+  preview?: ReactNode;
 }
 
-export const useSpotlight = create<{ current: SpotlightRequest | null }>()(() => ({
+/** One step of a guide: the screen it happens on, and what to point at there. */
+export interface GuideStep extends SpotlightRequest {
+  route: Href;
+  /** The screen under it, when it sits on top of another. */
+  via?: Href;
+}
+
+export const useSpotlight = create<{
+  current: SpotlightRequest | null;
+  /** The steps of a running guide, and which one is showing. */
+  steps: GuideStep[];
+  index: number;
+}>()(() => ({
   current: null,
+  steps: [],
+  index: 0,
 }));
+
+function goToStep(steps: GuideStep[], index: number) {
+  const step = steps[index];
+  if (step.via) router.navigate(step.via);
+  router.navigate(step.route);
+  useSpotlight.setState({ current: step, steps, index });
+}
+
+/** Walks through a feature, screen by screen. */
+export function showGuide(steps: GuideStep[]) {
+  goToStep(steps, 0);
+}
 
 /** Opens `route` (after `via`, when the screen sits on top of another) and lights up a target. */
 export function showSpotlight(request: SpotlightRequest, route: Href, via?: Href) {
   if (via) router.navigate(via);
   router.navigate(route);
-  useSpotlight.setState({ current: request });
+  useSpotlight.setState({ current: request, steps: [], index: 0 });
 }
 
 export function SpotlightHost() {
@@ -145,7 +174,20 @@ function SpotlightOverlay({ request }: { request: SpotlightRequest }) {
   const reduced = useReducedMotion();
   const [cardHeight, setCardHeight] = useState(0);
   const halo = haloAround(useTargetRect(request.target), request.radius);
-  const close = () => useSpotlight.setState({ current: null });
+  const steps = useSpotlight((s) => s.steps);
+  const index = useSpotlight((s) => s.index);
+  const guide = steps.length > 1;
+  const last = index >= steps.length - 1;
+  const close = () => useSpotlight.setState({ current: null, steps: [], index: 0 });
+  const next = () => (last ? close() : goToStep(steps, index + 1));
+
+  // The next screen needs a moment before what it points at can be scrolled to.
+  useEffect(() => {
+    if (!request.target) return;
+    const id = request.target;
+    const timer = setTimeout(() => scrollTargetIntoView(id), 350);
+    return () => clearTimeout(timer);
+  }, [request.target]);
 
   const cardWidth = Math.min(width - 32, MAX_WIDTH - 32);
   const cardLeft = (width - cardWidth) / 2;
@@ -158,8 +200,12 @@ function SpotlightOverlay({ request }: { request: SpotlightRequest }) {
   return (
     <View style={StyleSheet.absoluteFill} accessibilityViewIsModal>
       <Scrim width={width} height={height} holes={hole} />
-      {/* A tap anywhere closes it, like Got it. */}
-      <Pressable style={StyleSheet.absoluteFill} accessible={false} onPress={close} />
+      {/* A tap anywhere closes it, like Got it. A guide waits for Next or Skip. */}
+      <Pressable
+        style={StyleSheet.absoluteFill}
+        accessible={false}
+        onPress={guide ? undefined : close}
+      />
       {halo ? <SpotRing halo={halo} /> : null}
       <Animated.View
         entering={reduced ? undefined : FadeIn.duration(dur.state)}
@@ -171,13 +217,27 @@ function SpotlightOverlay({ request }: { request: SpotlightRequest }) {
         ]}
         accessibilityLiveRegion="polite"
       >
+        {request.preview ? <View style={styles.preview}>{request.preview}</View> : null}
         <View style={{ gap: 4 }}>
+          {guide ? (
+            <Text style={type.captionStrong}>
+              Step {index + 1} of {steps.length}
+            </Text>
+          ) : null}
           <Text style={type.title} accessibilityRole="header">
             {request.title}
           </Text>
           <Text style={styles.body}>{request.body}</Text>
         </View>
-        <FillButton label="Got it" size="sm" onPress={close} style={styles.done} />
+        <View style={styles.actions}>
+          {guide && !last ? <TextButton label="Skip" onPress={close} /> : null}
+          <FillButton
+            label={guide && !last ? 'Next' : 'Got it'}
+            size="sm"
+            onPress={next}
+            style={styles.done}
+          />
+        </View>
       </Animated.View>
     </View>
   );
@@ -203,5 +263,7 @@ const styles = StyleSheet.create({
     ...(Platform.OS === 'web' ? ({ backdropFilter: 'blur(30px) saturate(180%)' } as object) : null),
   },
   body: { fontSize: 15, lineHeight: 21, color: colors.text2 },
-  done: { alignSelf: 'flex-end', minWidth: 96, height: 44 },
+  actions: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 16 },
+  done: { minWidth: 96, height: 44 },
+  preview: { alignItems: 'center' },
 });

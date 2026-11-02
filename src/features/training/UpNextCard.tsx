@@ -23,8 +23,8 @@ const askReplace = () =>
     destructive: true,
   });
 
-export function startDay(day: ProgramDay | null) {
-  void openWorkout(day, askReplace, askGym);
+export function startDay(day: ProgramDay | null, warmupFor: string[] = []) {
+  void openWorkout(day, askReplace, askGym, warmupFor);
 }
 
 /** "Up next" card. Today shows count + duration; Workouts lists the exercises and a "+" button. */

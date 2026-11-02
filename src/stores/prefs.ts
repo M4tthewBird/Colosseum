@@ -2,6 +2,8 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+import type { Equipment } from '@/data/equipmentExercises';
+import type { BarKg } from '@/lib/plates';
 import { safeStorage } from '@/lib/storage';
 
 /** 'volume' | 'workouts' | `name:<exercise name>` (built-in) | <exercise uuid> */
@@ -15,6 +17,7 @@ export const DEFAULT_METRICS: ArenaMetric[] = [
   'name:Bench Press',
   'name:Squat',
   'name:Deadlift',
+  'together',
 ];
 
 interface PrefsState {
@@ -42,6 +45,21 @@ interface PrefsState {
   /** Username from a friend link opened while signed out; opened after signing in. */
   pendingFriend: string | null;
   setPendingFriend: (username: string | null) => void;
+  /** Features whose "New" mark the user has already tapped through. */
+  newSeen: string[];
+  markNewSeen: (feature: string) => void;
+  /** What the workout generator may use. */
+  generatorEquipment: Equipment;
+  setGeneratorEquipment: (e: Equipment) => void;
+  /** How many workouts until a beginner is asked about moving up (see lib/levelUp). */
+  levelUpAskAt: number;
+  setLevelUpAskAt: (n: number) => void;
+  /** The bar the plate calculator loads (kg). */
+  barKg: BarKg;
+  setBarKg: (kg: BarKg) => void;
+  /** Workout from a QR code opened while signed out; opened after signing in. */
+  pendingTogether: string | null;
+  setPendingTogether: (sessionId: string | null) => void;
   /** Badge tiers already sent to the server, "<userId>:<badgeId>" → threshold. */
   badgesSynced: Record<string, number>;
   setBadgesSynced: (v: Record<string, number>) => void;
@@ -72,6 +90,17 @@ export const usePrefs = create<PrefsState>()(
       setAvatarAskedAt: (avatarAskedAt) => set({ avatarAskedAt }),
       pendingFriend: null,
       setPendingFriend: (pendingFriend) => set({ pendingFriend }),
+      newSeen: [],
+      markNewSeen: (feature) =>
+        set((s) => (s.newSeen.includes(feature) ? s : { newSeen: [...s.newSeen, feature] })),
+      generatorEquipment: 'gym',
+      setGeneratorEquipment: (generatorEquipment) => set({ generatorEquipment }),
+      levelUpAskAt: 10,
+      setLevelUpAskAt: (levelUpAskAt) => set({ levelUpAskAt }),
+      barKg: 20,
+      setBarKg: (barKg) => set({ barKg }),
+      pendingTogether: null,
+      setPendingTogether: (pendingTogether) => set({ pendingTogether }),
       badgesSynced: {},
       setBadgesSynced: (badgesSynced) => set({ badgesSynced }),
       setInstallTipPending: (installTipPending) => set({ installTipPending }),
@@ -80,6 +109,17 @@ export const usePrefs = create<PrefsState>()(
       setArenaMetric: (arenaMetric) => set({ arenaMetric }),
       setArenaPeriod: (arenaPeriod) => set({ arenaPeriod }),
     }),
-    { name: 'colosseum-prefs', storage: createJSONStorage(() => safeStorage) },
+    {
+      name: 'colosseum-prefs',
+      storage: createJSONStorage(() => safeStorage),
+      version: 1,
+      // Version 1: everyone gets the Together board once; they can still remove it.
+      migrate: (saved, version) => {
+        const s = saved as PrefsState;
+        if (version < 1 && s.arenaMetrics && !s.arenaMetrics.includes('together'))
+          return { ...s, arenaMetrics: [...s.arenaMetrics, 'together'] };
+        return s;
+      },
+    },
   ),
 );

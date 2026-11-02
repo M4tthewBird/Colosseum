@@ -7,6 +7,7 @@ import { addDays, startOfWeek } from './dates';
 import { isMain } from './dropsets';
 import { formatKg, volume } from './formulas';
 import type { Session } from './types';
+import { realMinutes } from './workoutLimits';
 
 export type BadgeIcon =
   | 'dumbbell'
@@ -284,11 +285,6 @@ function streakRuns(
   return out;
 }
 
-const minutes = (s: Session) =>
-  s.finished_at
-    ? (new Date(s.finished_at).getTime() - new Date(s.started_at).getTime()) / 60000
-    : 0;
-
 const LIFTS: Record<string, 'bench' | 'squat' | 'deadlift'> = {
   'bench press': 'bench',
   squat: 'squat',
@@ -354,7 +350,7 @@ export function computeBadges(
     if (start.getHours() < 7) early++;
     if (start.getHours() >= 21) night++;
     if (start.getDay() === 0 || start.getDay() === 6) weekend++;
-    longest = Math.max(longest, minutes(s));
+    longest = Math.max(longest, realMinutes(s));
     bigDay = Math.max(bigDay, v);
     drops += work.filter((x) => !isMain(x)).length;
     failures += work.filter((x) => x.failure).length;

@@ -595,7 +595,7 @@ function ExerciseSheet({
             </Glass>
             {similar.length ? (
               <Text style={[type.small, { paddingHorizontal: 4 }]}>
-                Top-rated picks for the same main muscle. S / A / B = Jeff Nippard&apos;s tier list.
+                Top-rated picks for the same main muscle. S / A / B = exercise rating, S is best.
               </Text>
             ) : null}
           </View>

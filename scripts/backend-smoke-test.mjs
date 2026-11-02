@@ -101,7 +101,7 @@ try {
 
   const ex = await A.c.from('exercises').select('id,name').is('created_by', null);
   ok('seed exercises present', (ex.data ?? []).length >= 1000, `${ex.data?.length} built-ins`);
-  const bench = ex.data?.find((e) => e.name === 'Bench press');
+  const bench = ex.data?.find((e) => e.name === 'Bench Press');
 
   const pid = randomUUID();
   const did = randomUUID();
@@ -325,6 +325,203 @@ try {
     "B reads A's sets (friend)",
     (otherSets.data ?? []).length === 2,
     otherSets.error?.message ?? `${otherSets.data?.length}`,
+  );
+
+  // The generator's hand-made lists must exist in the live catalog (src/data/equipmentExercises.ts).
+  const listed = [
+    'Goblet Squat',
+    'Bulgarian Split Squat',
+    'Lunge',
+    'Dumbbell Row',
+    'Dumbbell Incline Row',
+    'Dumbbell Pullover',
+    'Shrug',
+    'Dumbbell Bench Press',
+    'Incline Dumbbell Press',
+    'Dumbbell Fly',
+    'Push Up',
+    'Dumbbell Romanian Deadlift',
+    'Dumbbell Single Leg Deadlift',
+    'Walking Lunge',
+    'Step Up',
+    'Glute Bridge',
+    'Single Leg Dumbbell Hip Thrust',
+    'Dumbbell Shoulder Press',
+    'Lateral Raise',
+    'Lean In Dumbbell Lateral Raise',
+    'Bent Over Reverse Dumbbell Fly',
+    'Dumbbell Kickback',
+    'One Arm Dumbbell Overhead Extension',
+    'Dumbbell French Press',
+    'Diamond Push Up',
+    'Biceps Curl',
+    'Hammer Curl',
+    'Incline Dumbbell Curl',
+    'Dumbbell Concentration Curl',
+    'Dumbbell Standing Calf Raise',
+    'Dumbbell Single Leg Calf Raise',
+    'Crunch Floor',
+    'Reverse Crunch',
+    'Russian Twist',
+    'Dumbbell Side Bend',
+    'Squat to Overhead Reach',
+    'Split Squats',
+    'Curtsey Squat',
+    'Inverted Row',
+    'Pull Up',
+    'Inverted Row Bent Knees',
+    'Chin Up',
+    'Neutral Grip Pull Up',
+    'Dips',
+    'Incline Push Up',
+    'Decline Push Up',
+    'Archer Push Up',
+    'Glute Bridge March',
+    'Single Leg Bridge with Outstretched Leg',
+    'Low Glute Bridge on Floor',
+    'Standing Single Leg Curl',
+    'Forward Lunge',
+    'Side Hip Abduction',
+    'Pike to Cobra Push Up',
+    'Shoulder Tap',
+    'Kneeling Plank Tap Shoulder',
+    'Close Grip Push Up',
+    'Bench Dip Knees Bent',
+    'Triceps Dips Floor',
+    'Bodyweight Side Lying Biceps Curl',
+    'Close Grip Chin Up',
+    'Bodyweight Standing Calf Raise',
+    'One Leg Floor Calf Raise',
+    'Standing Calf Raise on a Staircase',
+    'Hanging Leg Raise',
+    'Dead Bug',
+    'Bodyweight Standing Row with Towel',
+    'Bodyweight Squatting Row with Towel',
+    'Lower Back Curl',
+    'One Arm Towel Row',
+    'Kneeling Push Up',
+    'Wide Hand Push Up',
+    'Close Grip Push Up on Knees',
+    'Biceps Leg Concentration Curl',
+    'Sit Up',
+    'Oblique Crunches Floor',
+    'Flutter Kicks',
+  ];
+  const found = await A.c
+    .from('exercises')
+    .select('name')
+    .is('created_by', null)
+    .in('name', listed);
+  const foundNames = new Set((found.data ?? []).map((e) => e.name));
+  const absent = listed.filter((n) => !foundNames.has(n));
+  ok('generator lists are in the live catalog', absent.length === 0, absent.join(', '));
+
+  // Training together: plans, invites, and a workout confirmed by QR code.
+  const PUB = 'id,username,display_name,avatar_url';
+  const planQuery = `id, planned_at, note, invitee_id,
+    user:profiles!training_plans_user_id_fkey(${PUB}),
+    invitee:profiles!training_plans_invitee_id_fkey(${PUB}),
+    gym:gyms(name),
+    answers:training_plan_answers(going, user:profiles!training_plan_answers_user_id_fkey(${PUB}))`;
+  const soon = new Date(Date.now() + 3600000).toISOString();
+  const open = must(
+    await A.c
+      .from('training_plans')
+      .insert({ user_id: A.id, planned_at: soon, note: 'Legs', gym_id: gym?.id })
+      .select('id')
+      .single(),
+    'post a plan',
+  );
+  const invite = must(
+    await A.c
+      .from('training_plans')
+      .insert({ user_id: A.id, planned_at: soon, invitee_id: B.id })
+      .select('id')
+      .single(),
+    'invite a friend',
+  );
+  const seen = await B.c.from('training_plans').select(planQuery).eq('user_id', A.id);
+  ok(
+    'friend sees the plan and the invite',
+    (seen.data ?? []).length === 2 && seen.data.some((p) => p.gym?.name),
+    seen.error?.message ?? `${seen.data?.length}`,
+  );
+  must(
+    await B.c
+      .from('training_plan_answers')
+      .upsert({ plan_id: open?.id, user_id: B.id, going: true }, { onConflict: 'plan_id,user_id' }),
+    'answer a plan',
+  );
+  must(
+    await B.c
+      .from('training_plan_answers')
+      .upsert(
+        { plan_id: open?.id, user_id: B.id, going: false },
+        { onConflict: 'plan_id,user_id' },
+      ),
+    'change the answer',
+  );
+  const answers = await A.c.from('training_plans').select(planQuery).eq('id', open?.id).single();
+  ok(
+    'owner sees the answer',
+    answers.data?.answers?.[0]?.going === false && answers.data.answers[0].user?.id === B.id,
+    answers.error?.message ?? JSON.stringify(answers.data?.answers),
+  );
+  const notMine = await B.c.from('training_plans').delete().eq('id', open?.id).select('id');
+  ok("can't delete someone else's plan", (notMine.data ?? []).length === 0);
+  must(await A.c.from('training_plans').delete().eq('id', invite?.id), 'cancel a plan');
+
+  const togetherId = randomUUID();
+  const doneAt = new Date().toISOString();
+  must(
+    await A.c.from('workout_sessions').upsert({
+      id: togetherId,
+      user_id: A.id,
+      name: 'Together',
+      started_at: new Date(Date.now() - 3600000).toISOString(),
+      finished_at: doneAt,
+      volume_kg: 0,
+      set_count: 0,
+      pr_count: 0,
+      updated_at: doneAt,
+    }),
+    'finished workout to confirm',
+  );
+  const info = await B.c.rpc('together_session', { p_session: togetherId });
+  ok(
+    'code tells who, without numbers',
+    info.data?.[0]?.owner_id === A.id && !('volume_kg' in (info.data?.[0] ?? {})),
+    info.error?.message ?? JSON.stringify(info.data),
+  );
+  const own = await A.c.rpc('confirm_together', { p_session: togetherId });
+  ok("can't confirm your own workout", !!own.error);
+  must(await B.c.rpc('confirm_together', { p_session: togetherId }), 'confirm together');
+  must(await B.c.rpc('confirm_together', { p_session: togetherId }), 'confirm again is harmless');
+  const again = await B.c.rpc('together_session', { p_session: togetherId });
+  ok('code says confirmed', again.data?.[0]?.confirmed === true, JSON.stringify(again.data));
+  const pairs = await A.c
+    .from('trained_together')
+    .select(
+      `session_id, confirmed_at,
+       owner:profiles!trained_together_owner_id_fkey(${PUB}),
+       user:profiles!trained_together_user_id_fkey(${PUB})`,
+    )
+    .eq('session_id', togetherId);
+  ok('feed lists the pair', pairs.data?.[0]?.user?.id === B.id, pairs.error?.message ?? '');
+  const forged = await B.c
+    .from('trained_together')
+    .insert({ session_id: togetherId, owner_id: A.id, user_id: B.id });
+  ok("can't write the table directly", !!forged.error);
+  const together = await A.c.rpc('get_leaderboard', {
+    p_scope: 'friends',
+    p_metric: 'together',
+    p_period: 'week',
+    p_tz: 'Europe/Prague',
+  });
+  ok(
+    'Together board counts both',
+    (together.data ?? []).length === 2 && together.data.every((r) => Number(r.value) === 1),
+    together.error?.message ?? JSON.stringify(together.data),
   );
 
   const img = new Uint8Array([0xff, 0xd8, 0xff, 0xd9]);

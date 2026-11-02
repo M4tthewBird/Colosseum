@@ -47,7 +47,7 @@ export function WhatsNew() {
         </View>
         <Text style={[type.title, { textAlign: 'center' }]}>New in Colosseum</Text>
       </View>
-      <ReleaseList releases={releases} beforeShow={close} />
+      <ReleaseList releases={releases} beforeShow={close} fresh />
       <FillButton label="Got it" onPress={close} style={{ marginBottom: 8 }} />
     </Sheet>
   );
@@ -57,8 +57,11 @@ export function WhatsNew() {
 export function ReleaseList({
   releases,
   beforeShow,
+  fresh,
 }: {
   releases: Release[];
+  /** These just arrived: their big features say New. */
+  fresh?: boolean;
   /** Runs before a highlight's "Show me" leaves for the feature. */
   beforeShow?: () => void;
 }) {
@@ -67,7 +70,7 @@ export function ReleaseList({
       {releases.map((r) => (
         <View key={r.id} style={{ gap: 12 }}>
           {r.highlights?.map((h) => (
-            <HighlightCard key={h.feature} highlight={h} beforeShow={beforeShow} />
+            <HighlightCard key={h.feature} highlight={h} beforeShow={beforeShow} fresh={fresh} />
           ))}
           <Glass radius={20} style={styles.card}>
             <Text style={type.caption}>{shortDate(fromLocalDate(r.date))}</Text>
