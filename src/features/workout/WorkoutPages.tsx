@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { FillButton, IconButton, TextButton } from '@/components/Buttons';
 import { Glass, GlassCard } from '@/components/Glass';
-import { Flame, Info, Layers, Link, Repeat, Unlink, X } from '@/components/icons';
+import { Info, Layers, Link, Repeat, Unlink, X } from '@/components/icons';
 import { ExerciseImage } from '@/features/exercises/ExerciseImage';
 import { FavoriteButton } from '@/features/exercises/FavoriteButton';
 import { musclesLabel } from '@/features/exercises/ExercisePicker';
@@ -37,7 +37,6 @@ import {
   removeExercise,
   removeRound,
   removeSet,
-  toggleFailure,
   unlinkSuperset,
 } from './actions';
 import { ExerciseNote } from './ExerciseNote';
@@ -86,7 +85,7 @@ function Records({ best, machine }: { best?: Best; machine?: { id: string; name:
   );
 }
 
-const SET_HINT = 'Tap a set number for more, such as logging each side.';
+const SET_HINT = 'F: the set went to failure. Tap a set number for more, like logging each side.';
 
 /** Set menu title: "Set 2", "A2", "Drop set" or "Warm-up". */
 function menuTitle(set: SetEntry | null, label?: (s: SetEntry) => string) {
@@ -97,8 +96,8 @@ function menuTitle(set: SetEntry | null, label?: (s: SetEntry) => string) {
 }
 
 /**
- * Drop set and failure, one tap away under the table. They act on the last done working set
- * (or the next one before any is done), named on the left.
+ * Drop set, one tap away under the table. It acts on the last done working set (or the next one
+ * before any is done), named on the left.
  */
 function SetActions({ sets, label }: { sets: SetEntry[]; label?: (s: SetEntry) => string }) {
   const set = currentSet(sets);
@@ -116,16 +115,6 @@ function SetActions({ sets, label }: { sets: SetEntry[]; label?: (s: SetEntry) =
         style={{ flex: 1 }}
         accessibilityLabel={`Add a drop set after ${name}`}
         onPress={() => addDropSet(set.id)}
-      />
-      <FillButton
-        label={set.failure ? 'Failure ✓' : 'Failure'}
-        icon={Flame}
-        iconFill={!!set.failure}
-        size="sm"
-        style={{ flex: 1 }}
-        accessibilityLabel={`${name} to failure`}
-        accessibilityState={{ selected: !!set.failure }}
-        onPress={() => toggleFailure(set.id)}
       />
     </View>
   );

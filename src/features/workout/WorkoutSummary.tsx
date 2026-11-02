@@ -32,6 +32,7 @@ import { useActiveProgram } from '@/features/training/hooks';
 import { formatDuration, isoWeekday, shortDate, weekdayName } from '@/lib/dates';
 import { formatKg, formatVolume, roundHalf } from '@/lib/formulas';
 import { weeklyTarget } from '@/lib/programs';
+import { breakBefore } from '@/lib/progress';
 import { deloadAdvice } from '@/lib/progression';
 import { finished } from '@/lib/stats';
 import { buildSummary, percentChange, setsLine, weakerSide } from '@/lib/summary';
@@ -45,6 +46,7 @@ import { dur, ease, easeIn, useReducedMotion } from '@/theme/motion';
 import { accentA, colors, tabular, type } from '@/theme/tokens';
 import { saveSessionAsWorkout } from './actions';
 import { FeelRating } from './FeelRating';
+import { ProgressCard } from './ProgressCard';
 
 /** "Upper", "full body" — as it reads inside a sentence. */
 const kindLabel = (k: string | null) => (k === 'Full body' ? 'full body' : (k ?? ''));
@@ -79,6 +81,10 @@ export function WorkoutSummary({ sessionId }: { sessionId: string }) {
     [session, sessions, program, exercises],
   );
   const deload = useMemo(() => deloadAdvice(finished(Object.values(sessions))), [sessions]);
+  const cameBack = useMemo(
+    () => !!session && breakBefore(session, Object.values(sessions)) !== null,
+    [session, sessions],
+  );
   const fromSaved = useMemo(
     () =>
       !!session?.program_day_id &&
@@ -130,7 +136,8 @@ export function WorkoutSummary({ sessionId }: { sessionId: string }) {
               <Stat value={String(sum.sets)} label="Sets" />
               <Stat value={String(Math.round(reps))} label="Reps" />
             </View>
-            {sum.previous ? (
+            {/* The first workout after a break is a win: no comparing it with before. */}
+            {cameBack ? null : sum.previous ? (
               <View style={styles.compare}>
                 <TrendingUp size={15} color={colors.accent} strokeWidth={2.2} />
                 <Text style={[type.small, { flex: 1 }]}>
@@ -166,6 +173,8 @@ export function WorkoutSummary({ sessionId }: { sessionId: string }) {
             ) : null}
           </GlassCard>
         </Animated.View>
+
+        <ProgressCard session={session} entering={enter(i++, reduced)} />
 
         {newBadges.length ? (
           <Animated.View entering={enter(i++, reduced)}>

@@ -8,6 +8,22 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-11-02c',
+    date: '2026-11-02',
+    title: 'See your progress',
+    items: [
+      'After a workout, Colosseum tells you what got better: more weight or more reps in your recent workouts, and how far you have come since your first time.',
+      'Back after a break? Colosseum welcomes you and offers a short workout, instead of showing a streak at zero.',
+      'Started a gym challenge? You can now change it or cancel it.',
+      'A gym challenge can count several exercises, like pull-ups and chin-ups.',
+      'What’s new now stays open until you close it, so you can try each new feature in turn.',
+      'Went to failure? Tap the F right in that set’s row.',
+      'Choose what your profile photo shows: move and zoom it before you use it.',
+      'Fix: a new profile picture is saved as soon as you choose it, so friends see it. Before, it needed Save changes further down the page.',
+      'Going to train moved to Today, right under the Forum, and you can invite a friend from Friends. Invites waiting for your answer stay near the top of Today.',
+    ],
+  },
+  {
     id: '2026-11-02b',
     date: '2026-11-02',
     title: 'Generate a workout, and train together',
@@ -22,7 +38,7 @@ export const CHANGELOG: Release[] = [
         feature: 'train-together',
         title: 'Train together',
         body: 'Post when you are going to train, or invite a friend. After the workout, confirm it with a QR code and it counts in the Arena.',
-        where: 'Today → Forum → Going to train',
+        where: 'Today, under the Forum · Arena → Friends',
       },
     ],
     items: [

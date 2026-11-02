@@ -2,8 +2,11 @@
  * What's new: after an update, a sheet lists every release this device has not shown yet, day by
  * day (Settings → What's new keeps the full history). Waits for the tour and the Home Screen tip,
  * so a new user gets one thing at a time; new accounts start with everything marked seen.
+ * Only closing the sheet marks it seen: "Show me" steps away, and the sheet comes back afterwards,
+ * so the other new features can still be looked at.
  */
-import { useEffect, useMemo, useState } from 'react';
+import { router } from 'expo-router';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { FillButton } from '@/components/Buttons';
@@ -17,6 +20,7 @@ import { useData } from '@/stores/data';
 import { usePrefs } from '@/stores/prefs';
 import { colors, type } from '@/theme/tokens';
 import { HighlightCard } from './Highlights';
+import { useSpotlight } from './Spotlight';
 
 export function WhatsNew() {
   // Before the stored prefs load, "nothing seen" would flash the sheet for everyone.
@@ -35,9 +39,20 @@ export function WhatsNew() {
   // A device that never showed the changelog: the last workout stands in for the last visit.
   const since = lastWorkout ? toLocalDate(new Date(lastWorkout)) : null;
   const releases = useMemo(() => unseenReleases(CHANGELOG, seen, since), [seen, since]);
-  const show = hydrated && !waiting && releases.length > 0;
+  const spotlight = useSpotlight((s) => !!s.current);
+  const show = hydrated && !waiting && releases.length > 0 && !spotlight;
 
   const close = () => setSeen(seenMark(CHANGELOG[0]));
+
+  // Back from "Show me": the sheet returns on Today, wherever the guide ended.
+  const away = useRef(false);
+  useEffect(() => {
+    if (spotlight && releases.length > 0) away.current = true;
+    else if (!spotlight && away.current) {
+      away.current = false;
+      router.navigate('/');
+    }
+  }, [spotlight, releases.length]);
 
   return (
     <Sheet visible={show} onClose={close} title="What’s new">
@@ -47,7 +62,7 @@ export function WhatsNew() {
         </View>
         <Text style={[type.title, { textAlign: 'center' }]}>New in Colosseum</Text>
       </View>
-      <ReleaseList releases={releases} beforeShow={close} fresh />
+      <ReleaseList releases={releases} fresh />
       <FillButton label="Got it" onPress={close} style={{ marginBottom: 8 }} />
     </Sheet>
   );
@@ -56,21 +71,18 @@ export function WhatsNew() {
 /** Each release: its big features as cards first, then the list of smaller changes. */
 export function ReleaseList({
   releases,
-  beforeShow,
   fresh,
 }: {
   releases: Release[];
   /** These just arrived: their big features say New. */
   fresh?: boolean;
-  /** Runs before a highlight's "Show me" leaves for the feature. */
-  beforeShow?: () => void;
 }) {
   return (
     <View style={{ gap: 12 }}>
       {releases.map((r) => (
         <View key={r.id} style={{ gap: 12 }}>
           {r.highlights?.map((h) => (
-            <HighlightCard key={h.feature} highlight={h} beforeShow={beforeShow} fresh={fresh} />
+            <HighlightCard key={h.feature} highlight={h} fresh={fresh} />
           ))}
           <Glass radius={20} style={styles.card}>
             <Text style={type.caption}>{shortDate(fromLocalDate(r.date))}</Text>

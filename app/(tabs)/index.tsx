@@ -18,15 +18,17 @@ import { LevelUpPrompt } from '@/features/profile/LevelUpPrompt';
 import { FriendLinkResume } from '@/features/social/FriendLink';
 import { ForumRail } from '@/features/forum/ForumViews';
 import { useFriendsPrs, useLeaderboard } from '@/features/social/api';
-import { PlansSection } from '@/features/together/PlanViews';
+import { PlansSection, WaitingInvites } from '@/features/together/PlanViews';
 import { useActiveProgram, useFinishedSessions } from '@/features/training/hooks';
 import { InstallTip } from '@/features/onboarding/InstallTip';
 import { TourTarget } from '@/features/onboarding/TourTarget';
 import { WhatsNew } from '@/features/onboarding/WhatsNew';
+import { ComebackCard } from '@/features/training/ComebackCard';
 import { UpNextCard } from '@/features/training/UpNextCard';
 import { timeAgo } from '@/lib/dates';
 import { formatKg, formatVolume, weekStreak } from '@/lib/formulas';
 import { weeklyTarget } from '@/lib/programs';
+import { currentBreak, durationText } from '@/lib/progress';
 import { deloadAdvice } from '@/lib/progression';
 import { weekStats } from '@/lib/stats';
 import { useData } from '@/stores/data';
@@ -47,6 +49,7 @@ export default function Today() {
     [sessions, target],
   );
   const deload = useMemo(() => deloadAdvice(sessions), [sessions]);
+  const away = useMemo(() => currentBreak(sessions), [sessions]);
   const ranks = useLeaderboard('friends', 'volume', 'week');
   const myRank = ranks.data?.find((r) => r.user_id === profile?.id)?.rank;
 
@@ -76,14 +79,21 @@ export default function Today() {
           </ProgressRing>
           <View style={styles.stats}>
             <Stat value={formatVolume(week.volumeKg)} label="Volume" />
-            <Stat value={`${streak} wk`} label="Streak" />
+            {/* After a break, the time away instead of a streak back at zero. */}
+            {away ? (
+              <Stat value={durationText(away.days)} label="Since last workout" />
+            ) : (
+              <Stat value={`${streak} wk`} label="Streak" />
+            )}
             <Stat value={myRank ? `#${myRank}` : '—'} label="Arena rank" />
             <Stat value={String(week.prs)} label="New PRs" />
           </View>
         </GlassCard>
       </TourTarget>
 
-      {deload ? (
+      {away ? <ComebackCard away={away} /> : null}
+
+      {deload && !away ? (
         <GlassCard radius={22} style={{ gap: 6, padding: 16 }} accessibilityLabel="Deload hint">
           <Text style={type.bodyStrong}>Time for a lighter week?</Text>
           <Text style={type.caption}>
@@ -96,9 +106,11 @@ export default function Today() {
 
       <UpNextCard variant="today" />
 
-      <PlansSection limit={2} />
+      <WaitingInvites />
 
       <ForumSection />
+
+      <PlansSection limit={2} targetId="today-plans" />
 
       <FriendsPrs />
       <InstallTip />

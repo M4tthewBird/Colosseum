@@ -1,19 +1,42 @@
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
+import { Image } from 'react-native';
 
 import { isEmojiAvatar } from '@/lib/avatars';
 import { isDemo, supabase } from '@/lib/supabase';
 
-/** Opens the photo library; returns a local uri or null when cancelled. */
-export async function pickImage(): Promise<string | null> {
+export interface PickedPhoto {
+  uri: string;
+  width: number;
+  height: number;
+}
+
+/** Opens the photo library; null when cancelled. Our own PhotoCropper does the cropping. */
+export async function pickImage(): Promise<PickedPhoto | null> {
   const res = await ImagePicker.launchImageLibraryAsync({
     mediaTypes: ['images'],
-    allowsEditing: true,
-    aspect: [1, 1],
+    allowsEditing: false,
     quality: 1,
   });
-  if (res.canceled || !res.assets[0]) return null;
-  return res.assets[0].uri;
+  const asset = res.canceled ? null : res.assets[0];
+  if (!asset) return null;
+  if (asset.width && asset.height)
+    return { uri: asset.uri, width: asset.width, height: asset.height };
+  return new Promise((resolve, reject) =>
+    Image.getSize(asset.uri, (width, height) => resolve({ uri: asset.uri, width, height }), reject),
+  );
+}
+
+/** The chosen part of a photo, as a new local image. */
+export async function cropPhoto(
+  uri: string,
+  area: { originX: number; originY: number; width: number; height: number },
+): Promise<string> {
+  const ctx = ImageManipulator.manipulate(uri);
+  ctx.crop(area);
+  const image = await ctx.renderAsync();
+  const result = await image.saveAsync({ format: SaveFormat.JPEG, compress: 0.95 });
+  return result.uri;
 }
 
 /**

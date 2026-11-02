@@ -102,8 +102,9 @@ export default function GenerateWorkout() {
   const sessions = useFinishedSessions();
   const experience = profile?.experience ?? 'beginner';
   // New to the gym: a sensible workout is there right away.
-  // ?preset=full (the guide in What's new) starts with a workout to point at.
-  const { preset } = useLocalSearchParams<{ preset?: string }>();
+  // ?preset=full&minutes=30 (the guide in What's new, a comeback) starts with a workout ready.
+  const params = useLocalSearchParams<{ preset?: string; minutes?: string }>();
+  const { preset } = params;
   const [groups, setGroups] = useState<MuscleGroup[]>(
     experience === 'beginner' || preset === 'full' ? FULL_BODY : [],
   );
@@ -113,7 +114,9 @@ export default function GenerateWorkout() {
   // No weight to ramp up to.
   const noWeights = equipment === 'bodyweight' || equipment === 'home';
   const warmups = warmupChoice && !noWeights;
-  const [minutes, setMinutes] = useState('45');
+  const [minutes, setMinutes] = useState(
+    TIMES.some((t) => t.value === params.minutes) ? params.minutes! : '45',
+  );
   // "Choose sets and rest myself": otherwise the sets follow from the time and the rest from the goal.
   const [custom, setCustom] = useState(false);
   const [manualSets, setManualSets] = useState(6);

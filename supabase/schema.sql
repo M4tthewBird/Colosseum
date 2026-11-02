@@ -243,7 +243,8 @@ create table public.gym_challenges (
   id uuid primary key default gen_random_uuid(),
   gym_id uuid not null references public.gyms(id) on delete cascade,
   title text not null,
-  exercise_id uuid references public.exercises(id),   -- null = metric below
+  exercise_id uuid references public.exercises(id),   -- older challenges; exercise_ids is what counts
+  exercise_ids uuid[] not null default '{}',           -- metric 'reps': which exercises count; empty = all
   metric text not null default 'reps' check (metric in ('reps','volume','workouts')),
   target numeric not null,
   starts_on date not null,
@@ -468,6 +469,12 @@ create policy "challenges read" on public.gym_challenges for select to authentic
 create policy "challenges write" on public.gym_challenges for insert to authenticated
   with check (created_by = auth.uid() and gym_id = (select home_gym_id from profiles where id = auth.uid()));
 
+create policy "challenges update" on public.gym_challenges for update to authenticated
+  using (created_by = auth.uid())
+  with check (created_by = auth.uid() and gym_id = (select home_gym_id from profiles where id = auth.uid()));
+create policy "challenges delete" on public.gym_challenges for delete to authenticated
+  using (created_by = auth.uid());
+
 create policy "likes read"  on public.session_likes for select to authenticated
   using (exists (select 1 from workout_sessions s where s.id = session_id and public.can_view_user(s.user_id)));
 create policy "likes write" on public.session_likes for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
@@ -633,7 +640,7 @@ language sql stable security definer set search_path = public as $$
                                      from set_entries e where e.session_id = s.id and e.done and not e.warmup), 0)
         else coalesce((select sum(coalesce(e.left_reps + e.right_reps, e.reps)) from set_entries e, c
                        where e.session_id = s.id and e.done and not e.warmup
-                         and (c.exercise_id is null or e.exercise_id = c.exercise_id)), 0)
+                         and (cardinality(c.exercise_ids) = 0 or e.exercise_id = any(c.exercise_ids))), 0)
       end as v
     from sess s
   )

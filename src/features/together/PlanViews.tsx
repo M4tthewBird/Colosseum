@@ -1,4 +1,4 @@
-/** "Going to train": the plan cards, the section that lists them and the sheet that posts one. */
+/** "Going to train": the plan cards, the sections that list them and the sheet that posts one. */
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -114,45 +114,72 @@ export function PlanCard({ plan }: { plan: TrainingPlan }) {
   );
 }
 
+/** Invites waiting for my answer: Today keeps them high up, they are often for today. */
+export function WaitingInvites() {
+  const myId = useData((s) => s.userId);
+  const plans = useTrainingPlans();
+  const waiting = (plans.data ?? []).filter((p) => isWaiting(p, myId));
+  if (waiting.length === 0) return null;
+  return (
+    <View style={{ gap: 10 }}>
+      {waiting.map((p) => (
+        <PlanCard key={p.id} plan={p} />
+      ))}
+    </View>
+  );
+}
+
+const isWaiting = (p: TrainingPlan, myId: string) => p.inviteeId === myId && p.myAnswer === null;
+
 /**
- * The plans people I know posted. `limit` shows only the first few and hides the whole section when
- * there are none (Today); without it, the section is always there with its Going to train button.
+ * The plans people I know posted, and the way to post one. On Today (`limit`): a few plans, leaving
+ * out invites shown higher up. In Friends (`invite`): all of them, and the button invites a friend.
  */
-export function PlansSection({ limit }: { limit?: number }) {
+export function PlansSection({
+  limit,
+  invite,
+  targetId,
+}: {
+  limit?: number;
+  invite?: boolean;
+  /** For the guide in What's new. */
+  targetId: string;
+}) {
+  const myId = useData((s) => s.userId);
   const plans = useTrainingPlans();
   const [posting, setPosting] = useState(false);
   const newPlans = usePrefs((s) => !s.newSeen.includes('train-together'));
   const markNewSeen = usePrefs((s) => s.markNewSeen);
-  const list = plans.data ?? [];
-  if (limit && list.length === 0) return null;
+  const all = plans.data ?? [];
+  const list = limit ? all.filter((p) => !isWaiting(p, myId)) : all;
   const shown = limit ? list.slice(0, limit) : list;
   return (
     <View style={{ gap: 10 }}>
-      <SectionHeader
-        title="Training soon"
-        right={
-          limit ? (
-            <TextButton label="See all" accent onPress={() => router.push('/forum')} />
-          ) : undefined
-        }
-      />
+      {list.length > 0 ? (
+        <SectionHeader
+          title="Training soon"
+          right={
+            limit && list.length > limit ? (
+              <TextButton label="See all" accent onPress={() => router.push('/arena/friends')} />
+            ) : undefined
+          }
+        />
+      ) : null}
       {shown.map((p) => (
         <PlanCard key={p.id} plan={p} />
       ))}
-      {limit ? null : (
-        <TourTarget id="forum-plans">
-          <FillButton
-            label="Going to train"
-            icon={Calendar}
-            onPress={() => {
-              markNewSeen('train-together');
-              setPosting(true);
-            }}
-          />
-          {newPlans ? <NewTag style={styles.newTag} /> : null}
-        </TourTarget>
-      )}
-      {posting ? <PlanSheet visible onClose={() => setPosting(false)} /> : null}
+      <TourTarget id={targetId}>
+        <FillButton
+          label={invite ? 'Invite to train' : 'Going to train'}
+          icon={Calendar}
+          onPress={() => {
+            markNewSeen('train-together');
+            setPosting(true);
+          }}
+        />
+        {newPlans ? <NewTag style={styles.newTag} /> : null}
+      </TourTarget>
+      {posting ? <PlanSheet visible inviting={invite} onClose={() => setPosting(false)} /> : null}
     </View>
   );
 }
@@ -162,10 +189,13 @@ export function PlanSheet({
   visible,
   onClose,
   friend,
+  inviting,
 }: {
   visible: boolean;
   onClose: () => void;
   friend?: PublicUser;
+  /** Starts on inviting one friend, who is still to be chosen. */
+  inviting?: boolean;
 }) {
   const homeGymId = useData((s) => s.profile?.home_gym_id ?? null);
   const gym = useGym(homeGymId);
@@ -174,7 +204,7 @@ export function PlanSheet({
   const [start] = useState(() => defaultPlan());
   const [day, setDay] = useState<PlanDay>(start.day);
   const [time, setTime] = useState(start.time);
-  const [who, setWho] = useState<'open' | 'friend'>(friend ? 'friend' : 'open');
+  const [who, setWho] = useState<'open' | 'friend'>(friend || inviting ? 'friend' : 'open');
   const [invitee, setInvitee] = useState<PublicUser | null>(friend ?? null);
   const [note, setNote] = useState('');
 
@@ -276,7 +306,7 @@ export function PlanSheet({
         )
       ) : (
         <Text style={[type.small, { paddingHorizontal: 4 }]}>
-          Your friends and people from your home gym see it here and on Today.
+          Your friends and people from your home gym see it on Today and in Friends.
         </Text>
       )}
       <View style={{ height: 12 }} />

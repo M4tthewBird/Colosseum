@@ -45,6 +45,9 @@ interface PrefsState {
   /** Username from a friend link opened while signed out; opened after signing in. */
   pendingFriend: string | null;
   setPendingFriend: (username: string | null) => void;
+  /** The break the Welcome back card was dismissed for: the workout before it. */
+  comebackHidden: string | null;
+  setComebackHidden: (sessionId: string | null) => void;
   /** Features whose "New" mark the user has already tapped through. */
   newSeen: string[];
   markNewSeen: (feature: string) => void;
@@ -90,6 +93,8 @@ export const usePrefs = create<PrefsState>()(
       setAvatarAskedAt: (avatarAskedAt) => set({ avatarAskedAt }),
       pendingFriend: null,
       setPendingFriend: (pendingFriend) => set({ pendingFriend }),
+      comebackHidden: null,
+      setComebackHidden: (comebackHidden) => set({ comebackHidden }),
       newSeen: [],
       markNewSeen: (feature) =>
         set((s) => (s.newSeen.includes(feature) ? s : { newSeen: [...s.newSeen, feature] })),

@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { Heart, MapPin, MessageCircle, Plus, Send } from '@/components/icons';
+import { Heart, MapPin, MessageCircle, Plus, Send, X } from '@/components/icons';
 import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, {
@@ -10,31 +10,36 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { Avatar } from '@/components/Avatar';
-import { FillButton } from '@/components/Buttons';
+import { FillButton, TextButton } from '@/components/Buttons';
 import { ProgressBar } from '@/components/Charts';
 import { FieldHint, FormField, FormGroup, StepperRow } from '@/components/Form';
 import { Glass } from '@/components/Glass';
-import { EmptyState } from '@/components/List';
-import { Segmented } from '@/components/Segmented';
+import { EmptyState, ListGroup, ListRow } from '@/components/List';
+import { Chip, Segmented } from '@/components/Segmented';
 import { Sheet } from '@/components/Sheet';
 import { ExercisePicker } from '@/features/exercises/ExercisePicker';
 import { GymPicker } from '@/features/gyms/GymPicker';
 import {
   createGym,
   useAddComment,
+  useCancelChallenge,
   useChallenge,
   useComments,
   useCreateChallenge,
   useFeed,
   useToggleLike,
   useTrainingNow,
+  useUpdateChallenge,
+  type Challenge,
   type FeedItem,
   type NewChallenge,
 } from '@/features/social/api';
+import { CURATED_EXERCISES } from '@/data/curated';
+import { challengeExercisesText, challengeVariants } from '@/lib/challenge';
 import { fromLocalDate, formatDuration, startOfDay, timeAgo } from '@/lib/dates';
 import { formatVolume, parseNumber } from '@/lib/formulas';
 import { useData } from '@/stores/data';
-import { toast } from '@/stores/ui';
+import { confirm, toast } from '@/stores/ui';
 import { dur, ease, easeIn, useReducedMotion } from '@/theme/motion';
 import { colors, type } from '@/theme/tokens';
 
@@ -109,8 +114,10 @@ function TrainingNow({ gymId }: { gymId: string }) {
 }
 
 function ChallengeCard({ gymId }: { gymId: string }) {
+  const exercises = useData((s) => s.exercises);
   const c = useChallenge(gymId);
   const [creating, setCreating] = useState(false);
+  const [editing, setEditing] = useState(false);
   if (c.isLoading) return null;
   if (!c.data) {
     return (
@@ -137,6 +144,12 @@ function ChallengeCard({ gymId }: { gymId: string }) {
           {daysLeft} day{daysLeft === 1 ? '' : 's'} left
         </Text>
       </View>
+      {ch.exerciseIds.length ? (
+        <Text style={type.small}>
+          Counts:{' '}
+          {challengeExercisesText(ch.exerciseIds.map((id) => exercises[id]?.name ?? 'Exercise'))}
+        </Text>
+      ) : null}
       <ProgressBar value={ch.target ? ch.gymTotal / ch.target : 0} />
       <View style={styles.between}>
         <Text style={type.caption}>
@@ -149,7 +162,168 @@ function ChallengeCard({ gymId }: { gymId: string }) {
           You <Text style={{ color: colors.text, fontWeight: '600' }}>{fmt(ch.myTotal)}</Text>
         </Text>
       </View>
+      {ch.mine ? (
+        <TextButton
+          label="Edit or cancel"
+          style={{ alignSelf: 'flex-start' }}
+          onPress={() => setEditing(true)}
+        />
+      ) : null}
+      {editing ? (
+        <EditChallengeSheet challenge={ch} daysLeft={daysLeft} onClose={() => setEditing(false)} />
+      ) : null}
     </Glass>
+  );
+}
+
+/** The exercises whose repetitions count, with well-known variations to add in one tap. */
+function ChallengeExercises({
+  ids,
+  onChange,
+  onAdd,
+}: {
+  ids: string[];
+  onChange: (ids: string[]) => void;
+  onAdd: () => void;
+}) {
+  const exercises = useData((s) => s.exercises);
+  const chosen = ids.flatMap((id) => exercises[id] ?? []);
+  const variants = challengeVariants(chosen, Object.values(exercises), CURATED_EXERCISES);
+  return (
+    <View style={{ gap: 10 }}>
+      {chosen.length ? (
+        <ListGroup>
+          {chosen.map((e) => (
+            <ListRow
+              key={e.id}
+              height={48}
+              title={e.name}
+              chevron={false}
+              rightInteractive
+              right={
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={`Remove ${e.name}`}
+                  hitSlop={10}
+                  onPress={() => onChange(ids.filter((id) => id !== e.id))}
+                >
+                  <X size={18} color={colors.text2} />
+                </Pressable>
+              }
+            />
+          ))}
+        </ListGroup>
+      ) : null}
+      <FillButton
+        label={chosen.length ? 'Add another exercise' : 'Choose exercise'}
+        icon={Plus}
+        onPress={onAdd}
+      />
+      {variants.length ? (
+        <View style={{ gap: 6 }}>
+          <Text style={[type.small, { paddingHorizontal: 4 }]}>Count these too?</Text>
+          <View style={styles.chips}>
+            {variants.map((e) => (
+              <Chip key={e.id} label={`+ ${e.name}`} onPress={() => onChange([...ids, e.id])} />
+            ))}
+          </View>
+        </View>
+      ) : null}
+    </View>
+  );
+}
+
+function EditChallengeSheet({
+  challenge,
+  daysLeft,
+  onClose,
+}: {
+  challenge: Challenge;
+  daysLeft: number;
+  onClose: () => void;
+}) {
+  const update = useUpdateChallenge();
+  const cancel = useCancelChallenge();
+  const [title, setTitle] = useState(challenge.title);
+  const [target, setTarget] = useState(String(challenge.target));
+  const [days, setDays] = useState(Math.max(1, daysLeft));
+  const t = parseNumber(target);
+  const ok = title.trim().length > 2 && t != null && t > 0;
+  const busy = update.isPending || cancel.isPending;
+
+  // The question opens on its own: a sheet would cover it.
+  const [asking, setAsking] = useState(false);
+  const askCancel = async () => {
+    setAsking(true);
+    const yes = await confirm({
+      title: 'Cancel this challenge?',
+      message: 'It ends for everyone in your gym, and its progress goes away.',
+      confirmLabel: 'Cancel challenge',
+      cancelLabel: 'Keep it',
+      destructive: true,
+    });
+    if (!yes) {
+      setAsking(false);
+      return;
+    }
+    cancel.mutate(challenge.id, {
+      onSuccess: () => {
+        toast('Challenge cancelled');
+        onClose();
+      },
+      onError: (e) => {
+        setAsking(false);
+        toast(e.message);
+      },
+    });
+  };
+
+  return (
+    <Sheet
+      visible={!asking}
+      onClose={onClose}
+      title="Edit challenge"
+      doneLabel="Save"
+      doneDisabled={!ok || busy}
+      onDone={() =>
+        update.mutate(
+          { id: challenge.id, changes: { title: title.trim(), target: t!, daysLeft: days } },
+          {
+            onSuccess: () => {
+              toast('Challenge updated');
+              onClose();
+            },
+            onError: (e) => toast(e.message),
+          },
+        )
+      }
+    >
+      <FormGroup>
+        <FormField label="Title" value={title} onChangeText={setTitle} />
+        <FormField
+          label="Target"
+          value={target}
+          onChangeText={setTarget}
+          keyboardType="number-pad"
+        />
+        <StepperRow
+          label="Days left"
+          value={days}
+          min={1}
+          max={90}
+          onChange={setDays}
+          format={(d) => `${d} day${d === 1 ? '' : 's'}`}
+        />
+      </FormGroup>
+      <FieldHint text="What it measures stays the same, so everyone's progress keeps counting." />
+      <TextButton
+        label="Cancel challenge"
+        accent
+        style={{ alignSelf: 'center', marginBottom: 8 }}
+        disabled={busy}
+        onPress={() => void askCancel()}
+      />
+    </Sheet>
   );
 }
 
@@ -162,16 +336,16 @@ function NewChallengeSheet({
   visible: boolean;
   onClose: () => void;
 }) {
-  const exercises = useData((s) => s.exercises);
   const create = useCreateChallenge();
   const [title, setTitle] = useState('');
   const [metric, setMetric] = useState<NewChallenge['metric']>('reps');
-  const [exerciseId, setExerciseId] = useState<string | null>(null);
+  const [exerciseIds, setExerciseIds] = useState<string[]>([]);
   const [target, setTarget] = useState('');
   const [days, setDays] = useState(30);
   const [picking, setPicking] = useState(false);
   const t = parseNumber(target);
-  const ok = title.trim().length > 2 && t != null && t > 0 && (metric !== 'reps' || !!exerciseId);
+  const ok =
+    title.trim().length > 2 && t != null && t > 0 && (metric !== 'reps' || exerciseIds.length > 0);
   return (
     <>
       <Sheet
@@ -187,7 +361,7 @@ function NewChallengeSheet({
               c: {
                 title: title.trim(),
                 metric,
-                exercise_id: metric === 'reps' ? exerciseId : null,
+                exercise_ids: metric === 'reps' ? exerciseIds : [],
                 target: t!,
                 days,
               },
@@ -235,17 +409,24 @@ function NewChallengeSheet({
           onChange={setMetric}
         />
         {metric === 'reps' ? (
-          <FillButton
-            label={exerciseId ? (exercises[exerciseId]?.name ?? 'Exercise') : 'Choose exercise'}
-            onPress={() => setPicking(true)}
+          <ChallengeExercises
+            ids={exerciseIds}
+            onChange={setExerciseIds}
+            onAdd={() => setPicking(true)}
           />
         ) : null}
-        <FieldHint text="Everyone in your home gym counts towards the target." />
+        <FieldHint
+          text={
+            metric === 'reps'
+              ? 'Repetitions of these exercises count, for everyone in your home gym.'
+              : 'Everyone in your home gym counts towards the target.'
+          }
+        />
       </Sheet>
       <ExercisePicker
         visible={visible && picking}
         onClose={() => setPicking(false)}
-        onPick={setExerciseId}
+        onPick={(id) => setExerciseIds((ids) => (ids.includes(id) ? ids : [...ids, id]))}
       />
     </>
   );
@@ -387,6 +568,7 @@ function CommentsSheet({ sessionId, onClose }: { sessionId: string | null; onClo
 }
 
 const styles = StyleSheet.create({
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   now: {
     height: 64,
     paddingHorizontal: 16,

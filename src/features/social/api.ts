@@ -47,6 +47,13 @@ const demo = {
   liked: new Set<string>(['demo-feed-0']),
   comments: new Map<string, { id: string; user: PublicUser; body: string; created_at: string }[]>(),
   checkedInAt: null as number | null,
+  // Cancelled in this session: null. The sample challenge counts as yours, so it can be tried.
+  challenge: {
+    title: DEMO_CHALLENGE.title,
+    target: DEMO_CHALLENGE.target,
+    daysLeft: DEMO_CHALLENGE.daysLeft,
+    exerciseIds: null,
+  } as { title: string; target: number; daysLeft: number; exerciseIds: string[] | null } | null,
   gyms: [...DEMO_GYMS],
 };
 
@@ -488,6 +495,10 @@ export interface Challenge {
   ends_on: string;
   gymTotal: number;
   myTotal: number;
+  /** Whoever started it can change or cancel it. */
+  mine: boolean;
+  /** A repetitions challenge: the exercises that count. */
+  exerciseIds: string[];
 }
 
 export function useChallenge(gymId: string | null | undefined) {
@@ -496,26 +507,42 @@ export function useChallenge(gymId: string | null | undefined) {
     enabled: !!gymId,
     queryFn: async (): Promise<Challenge | null> => {
       if (isDemo) {
+        if (!demo.challenge) return null;
         return {
           id: 'demo-challenge',
-          title: DEMO_CHALLENGE.title,
-          target: DEMO_CHALLENGE.target,
-          ends_on: toLocalDate(addDays(new Date(), DEMO_CHALLENGE.daysLeft)),
+          title: demo.challenge.title,
+          target: demo.challenge.target,
+          ends_on: toLocalDate(addDays(new Date(), demo.challenge.daysLeft)),
           gymTotal: DEMO_CHALLENGE.gymTotal,
           myTotal: DEMO_CHALLENGE.myTotal,
+          mine: true,
+          exerciseIds:
+            demo.challenge.exerciseIds ??
+            Object.values(useData.getState().exercises)
+              .filter((e) => e.name === DEMO_CHALLENGE.exercise)
+              .map((e) => e.id),
         };
       }
       const today = toLocalDate(new Date());
       const rows = check(
         await supabase
           .from('gym_challenges')
-          .select('id,title,target,ends_on')
+          // Every column: exercise_ids only exists once the update has run on the database.
+          .select('*')
           .eq('gym_id', gymId!)
           .lte('starts_on', today)
           .gte('ends_on', today)
           .order('ends_on')
           .limit(1),
-      ) as { id: string; title: string; target: number; ends_on: string }[];
+      ) as {
+        id: string;
+        title: string;
+        target: number;
+        ends_on: string;
+        created_by: string | null;
+        exercise_id?: string | null;
+        exercise_ids?: string[];
+      }[];
       const c = rows[0];
       if (!c) return null;
       const prog = check(await supabase.rpc('gym_challenge_progress', { p_challenge: c.id })) as {
@@ -523,7 +550,11 @@ export function useChallenge(gymId: string | null | undefined) {
         my_total: number;
       }[];
       return {
-        ...c,
+        id: c.id,
+        title: c.title,
+        ends_on: c.ends_on,
+        mine: c.created_by === me(),
+        exerciseIds: c.exercise_ids?.length ? c.exercise_ids : c.exercise_id ? [c.exercise_id] : [],
         target: Number(c.target),
         gymTotal: Number(prog[0]?.gym_total ?? 0),
         myTotal: Number(prog[0]?.my_total ?? 0),
@@ -535,7 +566,8 @@ export function useChallenge(gymId: string | null | undefined) {
 export interface NewChallenge {
   title: string;
   metric: 'reps' | 'volume' | 'workouts';
-  exercise_id: string | null;
+  /** The exercises that count, for metric 'reps'. */
+  exercise_ids: string[];
   target: number;
   days: number;
 }
@@ -544,20 +576,79 @@ export function useCreateChallenge() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ gymId, c }: { gymId: string; c: NewChallenge }) => {
-      if (isDemo) return;
+      if (isDemo) {
+        demo.challenge = {
+          title: c.title,
+          target: c.target,
+          daysLeft: c.days,
+          exerciseIds: c.exercise_ids,
+        };
+        return;
+      }
       const start = new Date();
       check(
         await supabase.from('gym_challenges').insert({
           gym_id: gymId,
           title: c.title,
           metric: c.metric,
-          exercise_id: c.exercise_id,
+          exercise_id: c.exercise_ids[0] ?? null,
+          exercise_ids: c.exercise_ids,
           target: c.target,
           starts_on: toLocalDate(start),
           ends_on: toLocalDate(addDays(start, c.days)),
           created_by: me(),
         }),
       );
+    },
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['challenge'] }),
+  });
+}
+
+export interface ChallengeChanges {
+  title: string;
+  target: number;
+  daysLeft: number;
+}
+
+/** What is measured stays fixed: changing it would turn everyone's progress into something else. */
+export function useUpdateChallenge() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, changes }: { id: string; changes: ChallengeChanges }) => {
+      if (isDemo) {
+        demo.challenge = { exerciseIds: demo.challenge?.exerciseIds ?? null, ...changes };
+        return;
+      }
+      const rows = check(
+        await supabase
+          .from('gym_challenges')
+          .update({
+            title: changes.title,
+            target: changes.target,
+            ends_on: toLocalDate(addDays(new Date(), changes.daysLeft)),
+          })
+          .eq('id', id)
+          .select('id'),
+      ) as { id: string }[];
+      // A row the rules refuse comes back as no rows, not as an error.
+      if (rows.length === 0) throw new Error('Could not change the challenge.');
+    },
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['challenge'] }),
+  });
+}
+
+export function useCancelChallenge() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      if (isDemo) {
+        demo.challenge = null;
+        return;
+      }
+      const rows = check(
+        await supabase.from('gym_challenges').delete().eq('id', id).select('id'),
+      ) as { id: string }[];
+      if (rows.length === 0) throw new Error('Could not cancel the challenge.');
     },
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['challenge'] }),
   });

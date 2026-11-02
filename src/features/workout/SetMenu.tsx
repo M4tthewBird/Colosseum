@@ -1,8 +1,8 @@
 /**
- * Options for one set: add a drop set, mark failure, remove a drop set, and log the exercise
- * per side (left and right reps).
+ * Options for one set: add or remove a drop set, and log the exercise per side (left and right
+ * reps). Failure is the F in the set's row.
  */
-import { ArrowLeftRight, Flame, Layers, Trash2 } from '@/components/icons';
+import { ArrowLeftRight, Layers, Trash2 } from '@/components/icons';
 import { Text } from 'react-native';
 
 import { ListGroup, ListRow } from '@/components/List';
@@ -10,7 +10,7 @@ import { Sheet } from '@/components/Sheet';
 import type { SetEntry } from '@/lib/types';
 import { useData } from '@/stores/data';
 import { colors, type } from '@/theme/tokens';
-import { addDropSet, removeDropSet, removeWarmup, setEachSide, toggleFailure } from './actions';
+import { addDropSet, removeDropSet, removeWarmup, setEachSide } from './actions';
 
 export function SetMenu({
   set,
@@ -38,24 +38,14 @@ export function SetMenu({
             onPress={run(removeWarmup)}
           />
         ) : (
-          <>
-            <ListRow
-              height={60}
-              chevron={false}
-              left={<Layers size={18} color={colors.accent} strokeWidth={2} />}
-              title="Add drop set"
-              subtitle="Lower the weight and keep going right away"
-              onPress={run(addDropSet)}
-            />
-            <ListRow
-              height={60}
-              chevron={false}
-              left={<Flame size={18} color={colors.accent} strokeWidth={2} />}
-              title={set?.failure ? 'Not to failure' : 'Mark as failure'}
-              subtitle="Failure holds back the next weight increase"
-              onPress={run(toggleFailure)}
-            />
-          </>
+          <ListRow
+            height={60}
+            chevron={false}
+            left={<Layers size={18} color={colors.accent} strokeWidth={2} />}
+            title="Add drop set"
+            subtitle="Lower the weight and keep going right away"
+            onPress={run(addDropSet)}
+          />
         )}
         <ListRow
           height={60}

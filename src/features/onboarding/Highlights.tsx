@@ -114,19 +114,19 @@ const SHOW: Record<FeatureId, () => void> = {
     usePrefs.getState().setArenaScope('friends');
     showGuide([
       {
-        route: '/forum',
-        target: 'forum-plans',
+        route: '/',
+        target: 'today-plans',
         radius: 27,
         title: 'Say you are going',
-        body: 'Tap Going to train and pick a time. Friends and people from your gym see it here and on Today, and can say they are in.',
+        body: 'Tap Going to train, under the Forum, and pick a time. Friends and people from your gym see it and can say they are in.',
       },
       {
         route: '/arena/friends',
         via: '/arena',
-        target: 'friends-search',
-        radius: 16,
+        target: 'friends-plans',
+        radius: 27,
         title: 'Or invite one friend',
-        body: 'Open a friend’s profile and tap Invite to train. They see the invite in the app and answer I’m in or Can’t.',
+        body: 'In Friends, tap Invite to train and choose who. They see the invite on Today and answer I’m in or Can’t.',
       },
       {
         route: '/arena',
@@ -236,14 +236,11 @@ function FavoritesPreview() {
 
 export function HighlightCard({
   highlight: h,
-  beforeShow,
   fresh,
 }: {
   highlight: Highlight;
   /** Just arrived: says so on the card. */
   fresh?: boolean;
-  /** Runs before "Show me" leaves for the feature (What's new closes its sheet). */
-  beforeShow?: () => void;
 }) {
   return (
     <Glass radius={22} style={styles.card} accessibilityLabel={`New: ${h.title}`}>
@@ -264,10 +261,7 @@ export function HighlightCard({
         icon={ChevronRight}
         size="sm"
         style={{ alignSelf: 'flex-start', height: 44, paddingRight: 18 }}
-        onPress={() => {
-          beforeShow?.();
-          SHOW[h.feature]();
-        }}
+        onPress={() => SHOW[h.feature]()}
       />
     </Glass>
   );

@@ -82,6 +82,7 @@ async function pullExercises(userId: string): Promise<Exercise[]> {
 
 export async function pullAll(userId: string): Promise<void> {
   if (isDemo) return;
+  const profileBefore = useData.getState().profile;
   const [
     profileRows,
     privRows,
@@ -186,7 +187,9 @@ export async function pullAll(userId: string): Promise<void> {
     ),
   }));
 
-  const profilePending = pendingKeys.has(`profiles:${userId}`);
+  // Saved while this pull ran: what it read from the server may already be out of date.
+  const profilePending =
+    pendingKeys.has(`profiles:${userId}`) || (!!profileBefore && local.profile !== profileBefore);
   const privPending = pendingKeys.has(`profile_private:${userId}`);
 
   useData.getState().load({

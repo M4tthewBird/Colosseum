@@ -311,6 +311,61 @@ try {
     !cp.error && Number(cp.data?.[0]?.gym_total) === 2080,
     cp.error?.message ?? JSON.stringify(cp.data),
   );
+  const otherExercise = ex.data?.find((e) => e.name === 'Squat');
+  const repsChallenge = async (ids) => {
+    const made = await A.c
+      .from('gym_challenges')
+      .insert({
+        gym_id: gym?.id,
+        title: 'Reps',
+        metric: 'reps',
+        exercise_id: ids[0],
+        exercise_ids: ids,
+        target: 100,
+        starts_on: '2026-09-01',
+        ends_on: '2026-12-31',
+        created_by: A.id,
+      })
+      .select('id')
+      .single();
+    const progress = await A.c.rpc('gym_challenge_progress', { p_challenge: made.data?.id });
+    await A.c.from('gym_challenges').delete().eq('id', made.data?.id);
+    return made.error ? null : Number(progress.data?.[0]?.gym_total);
+  };
+  const benchReps = await repsChallenge([bench?.id]);
+  const bothReps = await repsChallenge([bench?.id, otherExercise?.id]);
+  const squatReps = await repsChallenge([otherExercise?.id]);
+  ok(
+    'a challenge counts only its exercises',
+    benchReps > 0 && bothReps === benchReps && squatReps === 0,
+    `bench ${benchReps}, both ${bothReps}, squat ${squatReps}; needs 2026-11-02-challenge-edit.sql`,
+  );
+
+  const notYours = await B.c
+    .from('gym_challenges')
+    .update({ title: 'Hacked' })
+    .eq('id', ch?.id)
+    .select('id');
+  ok("can't change someone else's challenge", (notYours.data ?? []).length === 0);
+  const edited = await A.c
+    .from('gym_challenges')
+    .update({ title: 'Changed', target: 3000 })
+    .eq('id', ch?.id)
+    .select('title');
+  ok(
+    'creator changes the challenge',
+    edited.data?.[0]?.title === 'Changed',
+    edited.error?.message ?? 'needs 2026-11-02-challenge-edit.sql',
+  );
+  const notYours2 = await B.c.from('gym_challenges').delete().eq('id', ch?.id).select('id');
+  ok("can't cancel someone else's challenge", (notYours2.data ?? []).length === 0);
+  const cancelled = await A.c.from('gym_challenges').delete().eq('id', ch?.id).select('id');
+  ok(
+    'creator cancels the challenge',
+    (cancelled.data ?? []).length === 1,
+    cancelled.error?.message ?? 'needs 2026-11-02-challenge-edit.sql',
+  );
+
   const members = await A.c
     .from('profiles')
     .select('id', { count: 'exact', head: true })

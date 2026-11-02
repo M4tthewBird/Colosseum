@@ -5,11 +5,20 @@ import Animated from 'react-native-reanimated';
 import { formatKg, isSideSet, parseNumber } from '@/lib/formulas';
 import type { SetEntry } from '@/lib/types';
 import { colors, tabular } from '@/theme/tokens';
-import { toggleSet, updateSet, updateSide } from './actions';
+import { toggleFailure, toggleSet, updateSet, updateSide } from './actions';
 import { DoneCheck, useDoneProgress, useRowTint } from './DoneCheck';
 
 /** A per-side set has two reps boxes (left, right) of `side` each, `sideGap` apart. */
-export const SET_GRID = { n: 30, kg: 64, reps: 52, side: 44, sideGap: 4, check: 36, gap: 8 };
+export const SET_GRID = {
+  n: 30,
+  kg: 64,
+  reps: 52,
+  side: 44,
+  sideGap: 4,
+  fail: 26,
+  check: 36,
+  gap: 8,
+};
 const SIDES_WIDTH = SET_GRID.side * 2 + SET_GRID.sideGap;
 
 export function SetHeader({ sides }: { sides?: boolean }) {
@@ -26,6 +35,7 @@ export function SetHeader({ sides }: { sides?: boolean }) {
       ) : (
         <Text style={[styles.head, { width: SET_GRID.reps, textAlign: 'center' }]}>Reps</Text>
       )}
+      <Text style={[styles.head, { width: SET_GRID.fail, textAlign: 'center' }]}>F</Text>
       <View style={{ width: SET_GRID.check }} />
     </View>
   );
@@ -35,8 +45,9 @@ export function SetHeader({ sides }: { sides?: boolean }) {
 const cleanReps = (t: string) => t.replace(/[^0-9]/g, '').slice(0, 3);
 
 /**
- * Grid 30 / 1fr / 64 / 52 / 36. A done row gets a 7 % accent tint and a red check. Tapping the
- * set number opens the set menu (drop set, failure). A drop set sits under its set, marked "↳".
+ * Grid 30 / 1fr / 64 / 52 / 26 / 36. A done row gets a 7 % accent tint and a red check. F marks the
+ * set as taken to failure (not on warm-ups). Tapping the set number opens the set menu (drop set,
+ * each side). A drop set sits under its set, marked "↳".
  * A per-side set has a left and a right reps box instead of one.
  */
 export const SetRow = memo(function SetRow({
@@ -83,7 +94,7 @@ export const SetRow = memo(function SetRow({
     <Animated.View style={[styles.row, styles.body, tint]}>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`${drop ? 'Drop set' : set.warmup ? 'Warm-up set' : `Set ${n}`} options${set.failure ? ', to failure' : ''}`}
+        accessibilityLabel={`${drop ? 'Drop set' : set.warmup ? 'Warm-up set' : `Set ${n}`} options`}
         disabled={readOnly || !onMenu}
         onPress={() => onMenu?.(set)}
         hitSlop={{ top: 6, bottom: 6, left: 4 }}
@@ -95,7 +106,6 @@ export const SetRow = memo(function SetRow({
         >
           {n}
         </Text>
-        {set.failure ? <Text style={styles.fail}>F</Text> : null}
         {/* Says the number opens the set menu. */}
         {!readOnly && onMenu ? (
           <Text style={styles.more} aria-hidden>
@@ -173,6 +183,21 @@ export const SetRow = memo(function SetRow({
           style={[styles.input, tabular, { width: SET_GRID.reps }]}
         />
       )}
+      {set.warmup || (readOnly && !set.failure) ? (
+        <View style={{ width: SET_GRID.fail }} />
+      ) : (
+        <Pressable
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: !!set.failure }}
+          accessibilityLabel={`Set ${n} taken to failure`}
+          disabled={readOnly}
+          onPress={() => toggleFailure(set.id)}
+          hitSlop={{ top: 9, bottom: 9, left: 4, right: 4 }}
+          style={[styles.fail, set.failure && styles.failOn]}
+        >
+          <Text style={[styles.failText, set.failure && styles.failTextOn]}>F</Text>
+        </Pressable>
+      )}
       <Pressable
         accessibilityRole="checkbox"
         accessibilityState={{ checked: set.done }}
@@ -197,13 +222,16 @@ const styles = StyleSheet.create({
   numCell: { height: 44, justifyContent: 'center' },
   num: { fontSize: 15, fontWeight: '600' },
   fail: {
-    position: 'absolute',
-    right: -2,
-    top: 5,
-    fontSize: 9,
-    fontWeight: '800',
-    color: colors.accent,
+    width: SET_GRID.fail,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: colors.fill,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  failOn: { backgroundColor: colors.accent },
+  failText: { fontSize: 12, fontWeight: '800', color: colors.text2 },
+  failTextOn: { color: colors.white },
   more: {
     position: 'absolute',
     left: 0,

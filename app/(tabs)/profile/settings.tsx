@@ -18,7 +18,7 @@ import { createGym, useGym } from '@/features/social/api';
 import { formatKg, parseNumber } from '@/lib/formulas';
 import { limitNameWords, MAX_NAME_WORDS, nameWords } from '@/lib/names';
 import { isDemo } from '@/lib/supabase';
-import { flush } from '@/lib/sync';
+import { flush, syncRow } from '@/lib/sync';
 import type { Profile } from '@/lib/types';
 import { useData } from '@/stores/data';
 import { usePrefs } from '@/stores/prefs';
@@ -38,7 +38,7 @@ export default function Settings() {
   const [height, setHeight] = useState(priv?.height_cm ? formatKg(priv.height_cm) : '');
   const [gymChoice, setGymChoice] = useState<GymChoice | null>(null);
   const [gymOpen, setGymOpen] = useState(false);
-  /** A new local photo uri or emoji avatar, saved with the rest. */
+  /** The picture being saved, shown until it is done. */
   const [photo, setPhoto] = useState<string | null>(null);
   const [picking, setPicking] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -49,8 +49,30 @@ export default function Settings() {
   const dirty =
     JSON.stringify(draft) !== JSON.stringify(profile) ||
     (heightCm ?? null) !== (priv?.height_cm ?? null) ||
-    !!photo ||
     !!gymChoice;
+
+  // A picture is saved as soon as it is chosen: the preview looks done, so nobody would look for a
+  // Save button further down. Name and the rest of the form stay as they are until saved.
+  const savePicture = async (value: string) => {
+    setError(null);
+    setPhoto(value);
+    setBusy(true);
+    try {
+      const avatar_url = await uploadAvatar(profile.id, value);
+      const current = useData.getState().profile ?? profile;
+      saveProfile({ ...current, avatar_url });
+      setDraft((d) => ({ ...d, avatar_url }));
+      const synced = isDemo || (await syncRow('profiles', profile.id));
+      toast(
+        synced ? 'Picture saved' : 'Picture saved. It reaches your friends once you are online.',
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setPhoto(null);
+      setBusy(false);
+    }
+  };
 
   const save = async () => {
     if (!draft.display_name.trim()) return setError('Enter your name.');
@@ -68,12 +90,10 @@ export default function Settings() {
         next.home_gym_id =
           'id' in gymChoice ? gymChoice.id : (await createGym(gymChoice.name, gymChoice.city)).id;
       }
-      if (photo) next.avatar_url = await uploadAvatar(profile.id, photo);
       saveProfile(next);
       if ((heightCm ?? null) !== (priv?.height_cm ?? null))
         savePrivate({ user_id: profile.id, height_cm: heightCm });
       setDraft(next);
-      setPhoto(null);
       setGymChoice(null);
       toast('Profile saved');
     } catch (e) {
@@ -108,7 +128,7 @@ export default function Settings() {
         name={draft.display_name}
         current={photo ?? draft.avatar_url}
         onClose={() => setPicking(false)}
-        onPick={setPhoto}
+        onPick={(value) => void savePicture(value)}
       />
 
       <FormGroup>

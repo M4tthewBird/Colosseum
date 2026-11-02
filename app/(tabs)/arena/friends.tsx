@@ -12,6 +12,7 @@ import { SearchField } from '@/components/SearchField';
 import { TourTarget } from '@/features/onboarding/TourTarget';
 import { searchUsers, useFriendAction, useFriends } from '@/features/social/api';
 import { MyQrSheet } from '@/features/social/FriendLink';
+import { PlansSection } from '@/features/together/PlanViews';
 import { QrCode } from '@/components/icons';
 import type { PublicUser } from '@/lib/types';
 import { useData } from '@/stores/data';
@@ -60,6 +61,8 @@ export default function Friends() {
       <TourTarget id="friends-search">
         <SearchField placeholder="Search by username" value={q} onChangeText={setQ} />
       </TourTarget>
+
+      {q.trim().length >= 2 ? null : <PlansSection invite targetId="friends-plans" />}
 
       {q.trim().length >= 2 ? (
         <View style={{ gap: 8 }}>
