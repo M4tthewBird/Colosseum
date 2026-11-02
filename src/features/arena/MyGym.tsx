@@ -22,6 +22,7 @@ import { GymPicker } from '@/features/gyms/GymPicker';
 import {
   createGym,
   useAddComment,
+  useDeleteComment,
   useCancelChallenge,
   useChallenge,
   useComments,
@@ -34,6 +35,7 @@ import {
   type FeedItem,
   type NewChallenge,
 } from '@/features/social/api';
+import { CommentActions } from '@/features/social/CommentActions';
 import { CURATED_EXERCISES } from '@/data/curated';
 import { challengeExercisesText, challengeVariants } from '@/lib/challenge';
 import { fromLocalDate, formatDuration, startOfDay, timeAgo } from '@/lib/dates';
@@ -525,7 +527,10 @@ function FeedCard({ item, onComments }: { item: FeedItem; onComments: () => void
 function CommentsSheet({ sessionId, onClose }: { sessionId: string | null; onClose: () => void }) {
   const comments = useComments(sessionId);
   const add = useAddComment();
+  const del = useDeleteComment();
+  const myId = useData((s) => s.userId);
   const [body, setBody] = useState('');
+  const [asking, setAsking] = useState(false);
   const send = () => {
     const text = body.trim();
     if (!text || !sessionId) return;
@@ -535,7 +540,7 @@ function CommentsSheet({ sessionId, onClose }: { sessionId: string | null; onClo
     );
   };
   return (
-    <Sheet visible={!!sessionId} onClose={onClose} title="Comments">
+    <Sheet visible={!!sessionId && !asking} onClose={onClose} title="Comments">
       {(comments.data ?? []).map((c) => (
         <View key={c.id} style={{ flexDirection: 'row', gap: 10 }}>
           <Avatar name={c.user.display_name} url={c.user.avatar_url} size={34} />
@@ -544,6 +549,18 @@ function CommentsSheet({ sessionId, onClose }: { sessionId: string | null; onClo
               {c.user.display_name} <Text style={type.small}>{timeAgo(c.created_at)}</Text>
             </Text>
             <Text style={type.body}>{c.body}</Text>
+            <CommentActions
+              mine={c.user.id === myId}
+              target="session_comment"
+              id={c.id}
+              onAsking={setAsking}
+              onDelete={() =>
+                del.mutate(
+                  { sessionId: sessionId!, id: c.id },
+                  { onError: () => toast('Could not delete. Are you online?') },
+                )
+              }
+            />
           </View>
         </View>
       ))}

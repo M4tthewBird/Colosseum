@@ -2,7 +2,7 @@ import { memo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 
-import { formatKg, isSideSet, parseNumber } from '@/lib/formulas';
+import { clampWeight, formatKg, isSideSet, parseNumber } from '@/lib/formulas';
 import type { SetEntry } from '@/lib/types';
 import { colors, tabular } from '@/theme/tokens';
 import { toggleFailure, toggleSet, updateSet, updateSide } from './actions';
@@ -42,7 +42,7 @@ export function SetHeader({ sides }: { sides?: boolean }) {
 }
 
 /** Digits only, at most 3. */
-const cleanReps = (t: string) => t.replace(/[^0-9]/g, '').slice(0, 3);
+export const cleanReps = (t: string) => t.replace(/[^0-9]/g, '').slice(0, 3);
 
 /**
  * Grid 30 / 1fr / 64 / 52 / 26 / 36. A done row gets a 7 % accent tint and a red check. F marks the
@@ -126,9 +126,10 @@ export const SetRow = memo(function SetRow({
         placeholder="0"
         placeholderTextColor={colors.text3}
         onChangeText={(t) => {
-          setKg(t);
           const v = parseNumber(t);
-          if (v != null) updateSet(set.id, { weight_kg: v });
+          const capped = v == null ? null : clampWeight(v);
+          setKg(capped !== v ? String(capped) : t);
+          if (capped != null) updateSet(set.id, { weight_kg: capped });
           else if (t.trim() === '') updateSet(set.id, { weight_kg: 0 });
         }}
         style={[styles.input, tabular, { width: SET_GRID.kg }]}

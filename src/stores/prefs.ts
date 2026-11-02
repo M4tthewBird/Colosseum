@@ -47,6 +47,9 @@ interface PrefsState {
   setPendingFriend: (username: string | null) => void;
   /** The break the Welcome back card was dismissed for: the workout before it. */
   comebackHidden: string | null;
+  /** Play a sound when rest ends. */
+  restSound: boolean;
+  setRestSound: (on: boolean) => void;
   setComebackHidden: (sessionId: string | null) => void;
   /** Features whose "New" mark the user has already tapped through. */
   newSeen: string[];
@@ -94,6 +97,8 @@ export const usePrefs = create<PrefsState>()(
       pendingFriend: null,
       setPendingFriend: (pendingFriend) => set({ pendingFriend }),
       comebackHidden: null,
+      restSound: true,
+      setRestSound: (restSound) => set({ restSound }),
       setComebackHidden: (comebackHidden) => set({ comebackHidden }),
       newSeen: [],
       markNewSeen: (feature) =>

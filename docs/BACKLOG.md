@@ -37,6 +37,10 @@ Feedback from Matyáš (2026-10-23). Work top to bottom, one item at a time; ask
 - [x] **Profile picture not reaching others** (2026-11-02): Settings only previewed a new picture until Save changes; now it saves when chosen and says so if it could not sync yet. A pull already running no longer overwrites a change made meanwhile
 - [x] **Crop the profile photo** (2026-11-02): own cropper (drag, pinch, + and −), since the photo picker's cropping does not exist on the web; at sign-up and in Settings
 - [x] **Failure in the set row** (2026-11-02): an F on every working and drop set, instead of the button under the table and the set menu
+- [x] **Audit fixes** (2026-11-02): change password, edit a finished workout, weight cap, refused sync items set aside, crash screen, rest sound and screen on, delete own comment, report, avatar removed with the account
+- [ ] **Forgotten password**: needs a decision (real email needs an SMTP service)
+- [ ] **Privacy policy**: draft in the app at /privacy, not linked until a name and contact are filled in (src/data/privacy.ts)
+- [ ] **Screen on and rest sound on native**: expo-keep-awake and a sound file when the iOS and Android builds start
 - [ ] **Workout generator, whole plan**: a week of days from the same rules (Matyáš: after the single workout)
 - [x] **Sets per muscle per week** (2026-11-02): Profile → Lifts, against 10–20 sets
 - [x] **Plate calculator** (2026-11-02): barbell lifts show the plates per side under the set table; tap to change the bar. Not on superset pages yet

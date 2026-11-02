@@ -127,6 +127,7 @@ create table public.set_entries (
   exercise_position int not null,
   set_number int not null,
   weight_kg numeric(6,2) not null check (weight_kg >= 0),
+  constraint set_entries_weight_cap check (weight_kg <= 1000),
   reps int not null check (reps >= 0),          -- per-side set: the weaker side (1RM, PRs)
   left_reps int check (left_reps >= 0),         -- per-side set (one leg/arm at a time): each side,
   right_reps int check (right_reps >= 0),       -- both count to volume; null for a normal set
@@ -289,6 +290,16 @@ create table public.forum_comments (
 );
 create index forum_comments_post on public.forum_comments(post_id, created_at);
 
+-- Reports of posts, comments and people. Read in the Supabase dashboard, never through the app.
+create table public.reports (
+  id uuid primary key default gen_random_uuid(),
+  reporter_id uuid not null references public.profiles(id) on delete cascade,
+  target_type text not null check (target_type in ('forum_post','forum_comment','session_comment','user')),
+  target_id uuid not null,
+  created_at timestamptz not null default now(),
+  unique (reporter_id, target_type, target_id)
+);
+
 create table public.forum_likes (
   post_id uuid not null references public.forum_posts(id) on delete cascade,
   user_id uuid not null references public.profiles(id) on delete cascade,
@@ -415,6 +426,7 @@ alter table public.session_ratings enable row level security;
 alter table public.user_badges enable row level security;
 alter table public.forum_posts enable row level security;
 alter table public.forum_comments enable row level security;
+alter table public.reports enable row level security;
 alter table public.forum_likes enable row level security;
 alter table public.training_plans enable row level security;
 alter table public.training_plan_answers enable row level security;
@@ -500,6 +512,8 @@ create policy "forum posts write"  on public.forum_posts for insert to authentic
   with check (user_id = auth.uid() and (session_id is null or exists (
     select 1 from public.workout_sessions s where s.id = session_id and s.user_id = auth.uid())));
 create policy "forum posts delete" on public.forum_posts for delete to authenticated using (user_id = auth.uid());
+create policy "reports insert" on public.reports for insert to authenticated
+  with check (reporter_id = auth.uid());
 create policy "forum comments read"  on public.forum_comments for select to authenticated
   using (exists (select 1 from forum_posts p where p.id = post_id and public.can_view_user(p.user_id)));
 create policy "forum comments write" on public.forum_comments for all to authenticated

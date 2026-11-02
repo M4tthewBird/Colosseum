@@ -13,12 +13,14 @@ import { deleteAccount, signOut } from '@/features/auth/auth';
 import { GymPicker, type GymChoice } from '@/features/gyms/GymPicker';
 import { uploadAvatar } from '@/features/profile/avatar';
 import { AvatarPicker } from '@/features/profile/AvatarPicker';
+import { ChangePassword } from '@/features/profile/ChangePassword';
 import { ExperiencePicker, GoalsPicker, SexSwitch } from '@/features/profile/ProfileFields';
+import { PRIVACY_CONTACT } from '@/data/privacy';
 import { createGym, useGym } from '@/features/social/api';
 import { formatKg, parseNumber } from '@/lib/formulas';
 import { limitNameWords, MAX_NAME_WORDS, nameWords } from '@/lib/names';
 import { isDemo } from '@/lib/supabase';
-import { flush, syncRow } from '@/lib/sync';
+import { retrySync, syncRow } from '@/lib/sync';
 import type { Profile } from '@/lib/types';
 import { useData } from '@/stores/data';
 import { usePrefs } from '@/stores/prefs';
@@ -32,7 +34,10 @@ export default function Settings() {
   const saveProfile = useData((s) => s.saveProfile);
   const savePrivate = useData((s) => s.savePrivate);
   const queued = useQueue((s) => s.items.length);
+  const refused = useQueue((s) => s.items.filter((i) => i.failed).length);
   const syncError = useQueue((s) => s.lastError);
+  const restSound = usePrefs((s) => s.restSound);
+  const setRestSound = usePrefs((s) => s.setRestSound);
 
   const [draft, setDraft] = useState<Profile>(profile);
   const [height, setHeight] = useState(priv?.height_cm ? formatKg(priv.height_cm) : '');
@@ -41,6 +46,7 @@ export default function Settings() {
   /** The picture being saved, shown until it is done. */
   const [photo, setPhoto] = useState<string | null>(null);
   const [picking, setPicking] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const currentGym = useGym(draft.home_gym_id);
@@ -191,6 +197,36 @@ export default function Settings() {
       <FillButton label="Save changes" onPress={save} disabled={!dirty || busy} loading={busy} />
 
       <View style={{ gap: 6 }}>
+        <Text style={[type.caption, { paddingHorizontal: 16 }]}>Account</Text>
+        <FormGroup>
+          <FormRow label="Change password" onPress={() => setChangingPassword(true)}>
+            <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
+          </FormRow>
+        </FormGroup>
+      </View>
+      <ChangePassword visible={changingPassword} onClose={() => setChangingPassword(false)} />
+
+      <View style={{ gap: 6 }}>
+        <Text style={[type.caption, { paddingHorizontal: 16 }]}>During a workout</Text>
+        <FormGroup>
+          <FormRow label="Sound when rest ends">
+            <Segmented
+              compact
+              height={30}
+              options={[
+                { value: 'off', label: 'Off' },
+                { value: 'on', label: 'On' },
+              ]}
+              value={restSound ? 'on' : 'off'}
+              onChange={(v) => setRestSound(v === 'on')}
+              accessibilityLabel="Sound when rest ends"
+            />
+          </FormRow>
+        </FormGroup>
+        <FieldHint text="The screen stays on during a workout, so the timer can reach you. On iPhone, the silent switch mutes the sound." />
+      </View>
+
+      <View style={{ gap: 6 }}>
         <Text style={[type.caption, { paddingHorizontal: 16 }]}>Sync</Text>
         <FormGroup>
           <FormRow
@@ -205,7 +241,7 @@ export default function Settings() {
             {!isDemo && queued ? (
               <Text
                 style={{ color: colors.accent, fontSize: 15, fontWeight: '600' }}
-                onPress={() => void flush()}
+                onPress={() => void retrySync()}
               >
                 Sync now
               </Text>
@@ -213,6 +249,26 @@ export default function Settings() {
           </FormRow>
         </FormGroup>
         {syncError ? <FieldHint text={`Last error: ${syncError}`} error /> : null}
+        {refused ? (
+          <>
+            <FieldHint
+              text={`The server refused ${refused} change${refused === 1 ? '' : 's'}. Everything else still syncs. Try again later, or discard them if this keeps happening.`}
+            />
+            <FillButton
+              label="Discard refused changes"
+              icon={Trash2}
+              onPress={async () => {
+                const ok = await confirm({
+                  title: 'Discard these changes?',
+                  message: 'They will never reach your account, and can disappear from this phone.',
+                  confirmLabel: 'Discard',
+                  destructive: true,
+                });
+                if (ok) useQueue.getState().discardFailed();
+              }}
+            />
+          </>
+        ) : null}
         {isDemo ? (
           <FieldHint text="Add your Supabase keys to .env to sync and use the Arena for real." />
         ) : null}
@@ -233,6 +289,11 @@ export default function Settings() {
           <FormRow label="What’s new" onPress={() => router.push('/profile/whats-new')}>
             <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
           </FormRow>
+          {PRIVACY_CONTACT ? (
+            <FormRow label="Privacy" onPress={() => router.push('/privacy')}>
+              <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
+            </FormRow>
+          ) : null}
         </FormGroup>
       </View>
 

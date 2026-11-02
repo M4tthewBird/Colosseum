@@ -1,12 +1,13 @@
 /** Another user's profile: avatar, name, gym, Lifts and recent workouts. Never Body data. */
 import { useLocalSearchParams } from 'expo-router';
-import { Calendar, UserPlus } from '@/components/icons';
+import { Calendar, UserPlus, Flag } from '@/components/icons';
 import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/Avatar';
 import { BackLink } from '@/components/BackLink';
 import { FillButton } from '@/components/Buttons';
+import { askToReport } from '@/features/social/report';
 import { Glass } from '@/components/Glass';
 import { ListGroup, SectionHeader } from '@/components/List';
 import { Screen } from '@/components/Screen';
@@ -121,6 +122,14 @@ export default function UserPage() {
           </Text>
         </Glass>
       )}
+
+      {relation !== 'self' ? (
+        <FillButton
+          label="Report this person"
+          icon={Flag}
+          onPress={() => void askToReport('user', user.id)}
+        />
+      ) : null}
     </Screen>
   );
 }

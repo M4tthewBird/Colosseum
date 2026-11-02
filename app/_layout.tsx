@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { CrashScreen } from '@/components/CrashScreen';
 import { ConfirmHost, ToastHost } from '@/components/Overlays';
 import { startAuth, useAuth } from '@/features/auth/auth';
 import { GymConfirmHost } from '@/features/gyms/GymConfirm';
@@ -21,6 +22,8 @@ const queryClient = new QueryClient({
     queries: { staleTime: 30_000, retry: 1, refetchOnWindowFocus: true },
   },
 });
+
+export { CrashScreen as ErrorBoundary };
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({ Cinzel_700Bold });
@@ -67,6 +70,7 @@ export default function RootLayout() {
             {/* Friend and workout links (QR codes) open signed in or out. */}
             <Stack.Screen name="add/[username]" />
             <Stack.Screen name="together/[id]" />
+            <Stack.Screen name="privacy" />
             <Stack.Screen name="dev/components" />
           </Stack>
         ) : (

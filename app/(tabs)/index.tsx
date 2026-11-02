@@ -10,6 +10,7 @@ import { GlassCard } from '@/components/Glass';
 import { ListGroup, ListRow, SectionHeader } from '@/components/List';
 import { Wordmark } from '@/components/Logo';
 import { Header, Screen } from '@/components/Screen';
+import { SyncWarning } from '@/features/sync/SyncWarning';
 import { BadgeSync } from '@/features/badges/BadgeSync';
 import { useForumPosts } from '@/features/forum/api';
 import { HomeGymPrompt } from '@/features/gyms/HomeGymPrompt';
@@ -68,6 +69,7 @@ export default function Today() {
           </Pressable>
         }
       />
+      <SyncWarning />
 
       <TourTarget id="today-week">
         <GlassCard style={styles.week} accessibilityLabel="This week">

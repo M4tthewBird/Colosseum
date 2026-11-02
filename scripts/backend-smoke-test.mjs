@@ -579,6 +579,35 @@ try {
     together.error?.message ?? JSON.stringify(together.data),
   );
 
+  const reported = randomUUID();
+  const rep = await B.c
+    .from('reports')
+    .insert({ reporter_id: B.id, target_type: 'user', target_id: reported });
+  ok('report someone', !rep.error, rep.error?.message ?? '');
+  const repAgain = await B.c
+    .from('reports')
+    .insert({ reporter_id: B.id, target_type: 'user', target_id: reported });
+  ok('reporting twice is refused as a duplicate', repAgain.error?.code === '23505');
+  const repFake = await A.c
+    .from('reports')
+    .insert({ reporter_id: B.id, target_type: 'user', target_id: randomUUID() });
+  ok('reporting in someone else’s name blocked', !!repFake.error);
+  const repRead = await B.c.from('reports').select('id');
+  ok(
+    'reports cannot be read back',
+    (repRead.data ?? []).length === 0,
+    repRead.error?.message ?? '',
+  );
+
+  const newPass = 'changedpass456';
+  const pw = await A.c.auth.updateUser({ password: newPass });
+  ok('change password', !pw.error, pw.error?.message ?? '');
+  const email = `zz_a_${tag}@users.colosseum.app`;
+  const oldPw = await client().auth.signInWithPassword({ email, password: 'testpass123' });
+  ok('old password no longer works', !!oldPw.error);
+  const newPw = await client().auth.signInWithPassword({ email, password: newPass });
+  ok('new password works', !newPw.error, newPw.error?.message ?? '');
+
   const img = new Uint8Array([0xff, 0xd8, 0xff, 0xd9]);
   const up = await A.c.storage
     .from('avatars')

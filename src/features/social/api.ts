@@ -818,6 +818,26 @@ export function useComments(sessionId: string | null) {
   });
 }
 
+export function useDeleteComment() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ sessionId, id }: { sessionId: string; id: string }) => {
+      if (isDemo) {
+        demo.comments.set(
+          sessionId,
+          (demo.comments.get(sessionId) ?? []).filter((c) => c.id !== id),
+        );
+        return;
+      }
+      check(await supabase.from('session_comments').delete().eq('id', id));
+    },
+    onSuccess: (_d, v) => {
+      void qc.invalidateQueries({ queryKey: ['comments', v.sessionId] });
+      void qc.invalidateQueries({ queryKey: ['feed'] });
+    },
+  });
+}
+
 export function useAddComment() {
   const qc = useQueryClient();
   return useMutation({

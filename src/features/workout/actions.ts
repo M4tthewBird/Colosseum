@@ -17,6 +17,8 @@ import {
 import { phaseFor, phasedSets } from '@/lib/periodization';
 import { programWeek } from '@/lib/programs';
 import { primaryGoal, recommend } from '@/lib/repRanges';
+import { reflagPRs } from '@/lib/sessionEdit';
+import { playRestSound, unlockRestSound } from '@/lib/restSound';
 import { historyBests, lastTimeSets } from '@/lib/stats';
 import { groupIndexOf, groupPlan, roundComplete } from '@/lib/supersets';
 import { swapSets, workSetsAt } from '@/lib/swap';
@@ -25,6 +27,7 @@ import { nowIso, uuid } from '@/lib/uuid';
 import { isWarmup, isWork, WARMUP_REST, warmupPlan } from '@/lib/warmups';
 import { staleWorkoutEnd } from '@/lib/workoutLimits';
 import { useData } from '@/stores/data';
+import { usePrefs } from '@/stores/prefs';
 import { toast } from '@/stores/ui';
 import { useWorkout, type PlannedExercise } from '@/stores/workout';
 
@@ -242,6 +245,7 @@ export function toggleSet(setId: string) {
   const target = s.sets.find((x) => x.id === setId);
   if (!target) return;
   const done = !target.done;
+  unlockRestSound();
   if (done && target.reps <= 0) {
     toast(isSideSet(target) ? 'Enter reps for both sides first' : 'Enter reps first');
     return;
@@ -665,6 +669,16 @@ export function finishWorkout(finishedAt: string = nowIso()): Summary | null {
   return summary;
 }
 
+/** Saves a corrected finished workout, and the PRs that change with it in later workouts. */
+export function saveEditedSession(next: Session) {
+  const { sessions, putSession } = useData.getState();
+  const touched = new Set(
+    [...(sessions[next.id]?.sets ?? []), ...next.sets].map((x) => x.exercise_id),
+  );
+  const all = Object.values({ ...sessions, [next.id]: next });
+  for (const s of reflagPRs(all, next.id, touched)) putSession(s);
+}
+
 /**
  * Saves a finished workout as a one-off "saved workout": same exercises in the same order,
  * as many sets as were done, and the rep range that was done.
@@ -766,8 +780,9 @@ export function feedback(strong: boolean) {
   void p.catch(() => Vibration.vibrate(strong ? 200 : 60));
 }
 
-/** Rest finished: vibrate / buzz. */
+/** Rest finished: sound and vibrate / buzz. */
 export function restAlert() {
+  if (usePrefs.getState().restSound) playRestSound();
   if (Platform.OS === 'web') {
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator)
       navigator.vibrate?.([200, 100, 200]);

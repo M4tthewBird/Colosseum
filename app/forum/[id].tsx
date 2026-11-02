@@ -7,17 +7,20 @@ import { Avatar } from '@/components/Avatar';
 import { BackLink } from '@/components/BackLink';
 import { FillButton } from '@/components/Buttons';
 import { Glass } from '@/components/Glass';
-import { CopyPlus, Link, Send, Trash2 } from '@/components/icons';
+import { CopyPlus, Flag, Link, Send, Trash2 } from '@/components/icons';
 import { SectionHeader, Separator } from '@/components/List';
 import { Screen } from '@/components/Screen';
 import {
   useAddForumComment,
+  useDeleteForumComment,
   useDeletePost,
   useForumComments,
   useForumPost,
 } from '@/features/forum/api';
 import { copyForumWorkout } from '@/features/forum/copy';
 import { PostCard } from '@/features/forum/ForumViews';
+import { CommentActions } from '@/features/social/CommentActions';
+import { askToReport } from '@/features/social/report';
 import { timeAgo } from '@/lib/dates';
 import { formatKg } from '@/lib/formulas';
 import type { ForumSet } from '@/lib/forum';
@@ -42,6 +45,7 @@ export default function ForumPostScreen() {
   const comments = useForumComments(id);
   const add = useAddForumComment();
   const del = useDeletePost();
+  const delComment = useDeleteForumComment();
   const myId = useData((s) => s.userId);
   const [body, setBody] = useState('');
 
@@ -118,6 +122,17 @@ export default function ForumPostScreen() {
               {c.user.display_name} <Text style={type.small}>{timeAgo(c.created_at)}</Text>
             </Text>
             <Text style={type.body}>{c.body}</Text>
+            <CommentActions
+              mine={c.user.id === myId}
+              target="forum_comment"
+              id={c.id}
+              onDelete={() =>
+                delComment.mutate(
+                  { postId: p.id, id: c.id },
+                  { onError: () => toast('Could not delete. Are you online?') },
+                )
+              }
+            />
           </View>
         </View>
       ))}
@@ -164,7 +179,13 @@ export default function ForumPostScreen() {
             });
           }}
         />
-      ) : null}
+      ) : (
+        <FillButton
+          label="Report this post"
+          icon={Flag}
+          onPress={() => void askToReport('forum_post', p.id)}
+        />
+      )}
     </Screen>
   );
 }

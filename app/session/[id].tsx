@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { Landmark, Link, Trash2 } from '@/components/icons';
+import { Landmark, Link, Pencil, Trash2 } from '@/components/icons';
 import { Fragment, useState } from 'react';
 import { Text, View } from 'react-native';
 
@@ -10,6 +10,7 @@ import { Header, Screen } from '@/components/Screen';
 import { ShareSheet } from '@/features/forum/ForumViews';
 import { TogetherCard } from '@/features/together/TogetherViews';
 import { FeelRating } from '@/features/workout/FeelRating';
+import { SessionEditor } from '@/features/workout/SessionEditor';
 import { dropChain, isMain } from '@/lib/dropsets';
 import { formatDuration, shortDate, weekdayName, isoWeekday } from '@/lib/dates';
 import { formatKg, formatVolume, isSideSet, repsText, volume } from '@/lib/formulas';
@@ -18,13 +19,14 @@ import { useData } from '@/stores/data';
 import { confirm } from '@/stores/ui';
 import { colors, tabular, type } from '@/theme/tokens';
 
-/** Read-only session detail with Delete. */
+/** Session detail with Edit and Delete. */
 export default function SessionDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const session = useData((s) => s.sessions[id]);
   const exercises = useData((s) => s.exercises);
   const deleteSession = useData((s) => s.deleteSession);
   const [sharing, setSharing] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   if (!session) {
     return (
@@ -36,6 +38,17 @@ export default function SessionDetail() {
   }
 
   const d = new Date(session.started_at);
+  const heading = `${weekdayName(isoWeekday(d))}, ${shortDate(d)} ${d.getFullYear()}`;
+
+  if (editing) {
+    return (
+      <Screen tabs={false} gap={16}>
+        <Header above={heading} title="Edit workout" />
+        <SessionEditor session={session} onClose={() => setEditing(false)} />
+      </Screen>
+    );
+  }
+
   const groups = new Map<number, typeof session.sets>();
   for (const s of [...session.sets].sort(
     (a, b) => a.exercise_position - b.exercise_position || a.set_number - b.set_number,
@@ -59,10 +72,7 @@ export default function SessionDetail() {
   return (
     <Screen tabs={false} gap={16}>
       <BackLink label="Workouts" fallback="/workouts" />
-      <Header
-        above={`${weekdayName(isoWeekday(d))}, ${shortDate(d)} ${d.getFullYear()}`}
-        title={session.name}
-      />
+      <Header above={heading} title={session.name} />
       <GlassCard style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
         <Stat value={dur} label="Duration" />
         <Stat value={formatVolume(volume(session.sets))} label="Volume" />
@@ -127,6 +137,7 @@ export default function SessionDetail() {
       {session.finished_at ? (
         <>
           <FeelRating session={session} />
+          <FillButton label="Edit workout" icon={Pencil} onPress={() => setEditing(true)} />
           <FillButton label="Share on the Forum" icon={Landmark} onPress={() => setSharing(true)} />
           {sharing ? (
             <ShareSheet sessionId={session.id} visible onClose={() => setSharing(false)} />

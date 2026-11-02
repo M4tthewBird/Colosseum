@@ -93,6 +93,13 @@ export function roundHalf(kg: number): number {
 }
 
 /** Parses user input like "97,5" or "97.5". Returns null when empty or invalid. */
+/** More than any lift on record, so only a typo gets here. It would top every leaderboard. */
+export const MAX_WEIGHT_KG = 1000;
+
+export function clampWeight(kg: number): number {
+  return Math.min(kg, MAX_WEIGHT_KG);
+}
+
 export function parseNumber(input: string): number | null {
   const t = input.trim().replace(',', '.');
   if (t === '') return null;

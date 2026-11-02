@@ -1,7 +1,8 @@
 /**
  * Offline write queue. Every mutation of the user's own data lands here first and is flushed
  * to Supabase in order (see src/lib/sync.ts). Items are keyed by table + id, so a newer write
- * of the same row replaces the waiting one in place and keeps the original order.
+ * of the same row replaces the waiting one in place and keeps the original order. An item the
+ * server refused is kept but set aside (`failed`), so it cannot hold up the rest.
  */
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -47,6 +48,8 @@ export interface QueueItem {
   op: 'upsert' | 'delete';
   id: string;
   row?: Record<string, unknown>;
+  /** Why the server refused it. Tried again when the app opens, or from Settings. */
+  failed?: string;
 }
 
 interface QueueState {
@@ -54,6 +57,9 @@ interface QueueState {
   lastError: string | null;
   enqueue: (items: Omit<QueueItem, 'key'>[]) => void;
   remove: (keys: string[]) => void;
+  markFailed: (keys: string[], reason: string) => void;
+  retryFailed: () => void;
+  discardFailed: () => void;
   setError: (e: string | null) => void;
   clear: () => void;
 }
@@ -78,6 +84,18 @@ export const useQueue = create<QueueState>()(
         });
       },
       remove: (keys) => set((s) => ({ items: s.items.filter((x) => !keys.includes(x.key)) })),
+      markFailed: (keys, failed) =>
+        set((s) => ({
+          items: s.items.map((x) => (keys.includes(x.key) ? { ...x, failed } : x)),
+        })),
+      retryFailed: () =>
+        set((s) =>
+          s.items.some((x) => x.failed)
+            ? { items: s.items.map(({ failed: _failed, ...x }) => x) }
+            : s,
+        ),
+      discardFailed: () =>
+        set((s) => ({ items: s.items.filter((x) => !x.failed), lastError: null })),
       setError: (lastError) => set({ lastError }),
       clear: () => set({ items: [], lastError: null }),
     }),

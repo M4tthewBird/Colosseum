@@ -1,12 +1,13 @@
 /**
  * Flushes the offline queue to Supabase: in order, batched per table and operation, with
- * upserts on the primary key so sending twice is safe. On failure it retries with backoff and
- * never drops data.
+ * upserts on the primary key so sending twice is safe. A connection or server problem retries
+ * with backoff. A row the server refuses is set aside so the rest still gets through, and is tried
+ * again later. Data is never dropped without the user deciding to.
  */
 import NetInfo from '@react-native-community/netinfo';
 import { AppState } from 'react-native';
 
-import { PK, useQueue, type QueueItem } from '@/stores/queue';
+import { PK, useQueue, type QueueItem, type SyncTable } from '@/stores/queue';
 import { isServer } from './storage';
 import { isDemo, supabase } from './supabase';
 
@@ -33,6 +34,14 @@ export function scheduleFlush(delayMs = 800): void {
   }, delayMs);
 }
 
+/**
+ * The server looked at the row and said no (a broken rule, not allowed). Waiting will not change
+ * that. No answer, an expired sign-in, too many requests or a server error can all pass.
+ */
+export function isRefused(status: number): boolean {
+  return status >= 400 && status < 500 && ![401, 408, 429].includes(status);
+}
+
 /** Groups consecutive items with the same table and operation. */
 function batches(items: QueueItem[]): QueueItem[][] {
   const out: QueueItem[][] = [];
@@ -45,6 +54,21 @@ function batches(items: QueueItem[]): QueueItem[][] {
   return out;
 }
 
+async function send(table: SyncTable, op: QueueItem['op'], batch: QueueItem[]) {
+  return op === 'upsert'
+    ? await supabase.from(table).upsert(
+        batch.map((b) => withoutMissing(table, b.row ?? {})),
+        { onConflict: PK[table] },
+      )
+    : await supabase
+        .from(table)
+        .delete()
+        .in(
+          PK[table],
+          batch.map((b) => b.id),
+        );
+}
+
 export async function flush(): Promise<void> {
   if (isDemo || isServer || flushing || !online) return;
   const { data } = await supabase.auth.getSession();
@@ -53,7 +77,7 @@ export async function flush(): Promise<void> {
   try {
     // Items can be added while we flush; loop until the queue is empty.
     for (;;) {
-      const items = useQueue.getState().items;
+      const items = useQueue.getState().items.filter((i) => !i.failed);
       if (items.length === 0) break;
       let batch = batches(items)[0];
       const { table, op } = batch[0];
@@ -66,17 +90,7 @@ export async function flush(): Promise<void> {
         );
         if (inactive.length > 0) batch = inactive;
       }
-      const rows = batch.map((b) => withoutMissing(table, b.row ?? {}));
-      const res =
-        op === 'upsert'
-          ? await supabase.from(table).upsert(rows, { onConflict: PK[table] })
-          : await supabase
-              .from(table)
-              .delete()
-              .in(
-                PK[table],
-                batch.map((b) => b.id),
-              );
+      const res = await send(table, op, batch);
       const missing = res.error?.message.match(/Could not find the '(\w+)' column/)?.[1];
       if (op === 'upsert' && missing) {
         // The live database is behind the app (an update SQL has not run yet).
@@ -84,10 +98,28 @@ export async function flush(): Promise<void> {
         missingColumns.add(`${table}.${missing}`);
         continue;
       }
-      if (res.error) throw new Error(`${table} ${op}: ${res.error.message}`);
+      if (res.error && !isRefused(res.status))
+        throw new Error(`${table} ${op}: ${res.error.message}`);
+      if (res.error && batch.length === 1) {
+        console.warn('[sync] refused, set aside', batch[0].key, res.error.message);
+        useQueue.getState().markFailed([batch[0].key], res.error.message);
+        continue;
+      }
+      if (res.error) {
+        // One bad row fails its whole batch: send them one by one to find it.
+        for (const item of batch) {
+          const one = await send(table, op, [item]);
+          if (one.error && !isRefused(one.status))
+            throw new Error(`${table} ${op}: ${one.error.message}`);
+          if (one.error) useQueue.getState().markFailed([item.key], one.error.message);
+          else useQueue.getState().remove([item.key]);
+        }
+        continue;
+      }
       useQueue.getState().remove(batch.map((b) => b.key));
     }
-    useQueue.getState().setError(null);
+    const refused = useQueue.getState().items.find((i) => i.failed);
+    useQueue.getState().setError(refused?.failed ?? null);
     backoffMs = 2000;
   } catch (e) {
     const msg = e instanceof Error ? e.message : String(e);
@@ -106,14 +138,24 @@ export async function flush(): Promise<void> {
  * True once it is on the server. For writes that need the row to exist there first.
  */
 export async function syncRow(table: string, id: string, timeoutMs = 6000): Promise<boolean> {
-  const pending = () => useQueue.getState().items.some((i) => i.table === table && i.id === id);
+  const waiting = () => useQueue.getState().items.find((i) => i.table === table && i.id === id);
+  const inLine = () => {
+    const item = waiting();
+    return !!item && !item.failed;
+  };
   const end = Date.now() + timeoutMs;
-  while (pending() && Date.now() < end) {
+  while (inLine() && Date.now() < end) {
     // Returns at once while another flush runs; then just wait for that one.
     await flush();
-    if (pending()) await new Promise((r) => setTimeout(r, 300));
+    if (inLine()) await new Promise((r) => setTimeout(r, 300));
   }
-  return !pending();
+  return !waiting();
+}
+
+/** Sends everything again, also what the server refused before. */
+export function retrySync(): Promise<void> {
+  useQueue.getState().retryFailed();
+  return flush();
 }
 
 /** Starts the online/offline listeners. Call once from the root layout. */
@@ -127,8 +169,12 @@ export function startSync(): () => void {
   const sub = AppState.addEventListener('change', (s) => {
     if (s === 'active') scheduleFlush(200);
   });
+  // A refusal may be gone by the next time the app opens (an update reached the database).
+  const unsubHydrated = useQueue.persist.onFinishHydration(() => useQueue.getState().retryFailed());
+  if (useQueue.persist.hasHydrated()) useQueue.getState().retryFailed();
   scheduleFlush(500);
   return () => {
+    unsubHydrated();
     unsubNet();
     sub.remove();
   };

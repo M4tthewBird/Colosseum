@@ -8,6 +8,21 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-11-02d',
+    date: '2026-11-02',
+    title: 'Fix a finished workout',
+    items: [
+      'Typed a wrong number? Open a finished workout and tap Edit workout to change weights and reps, remove a set or add one you forgot. PRs update to match.',
+      'Change your password in Settings.',
+      'Rest over? You now hear a sound, and the screen stays on during a workout. You can turn the sound off in Settings.',
+      'Delete your own comments, and report posts, comments or people that do not belong here.',
+      'One change the server refuses no longer holds up the rest of your data, and Today tells you about it.',
+      'If a screen crashes, you now get a way back instead of a white page.',
+      'A set can be at most 1000 kg, so a typo cannot top a leaderboard.',
+      'Fix: deleting your account now removes your profile picture too.',
+    ],
+  },
+  {
     id: '2026-11-02c',
     date: '2026-11-02',
     title: 'See your progress',

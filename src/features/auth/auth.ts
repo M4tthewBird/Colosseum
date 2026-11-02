@@ -230,8 +230,29 @@ export async function signOut(how: 'server' | 'forgotten' = 'server'): Promise<v
   useAuth.setState({ status: 'signedOut', userId: null, accountUsername: null });
 }
 
+/** Checks the current password first, so an open phone is not enough to change it. */
+export async function changePassword(current: string, next: string): Promise<void> {
+  if (isDemo) return;
+  const { data } = await supabase.auth.getSession();
+  const email = data.session?.user.email;
+  if (!email) throw new Error('You are signed out. Sign in again first.');
+  const check = await supabase.auth.signInWithPassword({ email, password: current });
+  if (check.error) {
+    throw new Error(
+      /invalid login credentials/i.test(check.error.message)
+        ? 'The current password is wrong.'
+        : friendlyAuthError(check.error.message),
+    );
+  }
+  const { error } = await supabase.auth.updateUser({ password: next });
+  if (error) throw new Error(friendlyAuthError(error.message));
+}
+
 export async function deleteAccount(): Promise<void> {
   if (!isDemo) {
+    // Deleting the account does not reach storage, and this picture has a public address.
+    const userId = useAuth.getState().userId;
+    if (userId) await supabase.storage.from('avatars').remove([`${userId}/avatar.jpg`]);
     const { error } = await supabase.rpc('delete_my_account');
     if (error) throw new Error(error.message);
   }

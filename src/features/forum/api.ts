@@ -282,6 +282,26 @@ export function useForumComments(postId: string | null) {
   });
 }
 
+export function useDeleteForumComment() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ postId, id }: { postId: string; id: string }) => {
+      if (isDemo) {
+        demo.comments.set(
+          postId,
+          (demo.comments.get(postId) ?? []).filter((c) => c.id !== id),
+        );
+        return;
+      }
+      check(await supabase.from('forum_comments').delete().eq('id', id));
+    },
+    onSuccess: (_d, v) => {
+      void qc.invalidateQueries({ queryKey: ['forum-comments', v.postId] });
+      invalidate(qc, v.postId);
+    },
+  });
+}
+
 export function useAddForumComment() {
   const qc = useQueryClient();
   return useMutation({

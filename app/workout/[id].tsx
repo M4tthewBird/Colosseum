@@ -33,6 +33,7 @@ import { MachineWeightSheet } from '@/features/workout/MachineWeight';
 import { WorkoutSummary } from '@/features/workout/WorkoutSummary';
 import { ExercisePage, SupersetPage } from '@/features/workout/WorkoutPages';
 import { ProgressSegment, RestPulseOverlay, useRestPulse } from '@/features/workout/WorkoutMotion';
+import { useScreenAwake } from '@/lib/wakeLock';
 import { formatClock } from '@/lib/dates';
 import { formatKg, formatRest, formatScheme } from '@/lib/formulas';
 import { rpeHint } from '@/lib/periodization';
@@ -53,6 +54,7 @@ function leave() {
 }
 
 export default function WorkoutScreen() {
+  useScreenAwake();
   const sessionId = useWorkout((s) => s.sessionId);
   const session = useData((s) => (sessionId ? s.sessions[sessionId] : undefined));
   const [summary, setSummary] = useState<Summary | null>(null);
