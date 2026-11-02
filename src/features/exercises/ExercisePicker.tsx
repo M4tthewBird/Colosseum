@@ -1,4 +1,4 @@
-import { Plus } from '@/components/icons';
+import { Plus, type LucideIcon } from '@/components/icons';
 import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -29,9 +29,8 @@ const GROUPS: Record<string, string[]> = {
 };
 
 const TIER_RANK = { S: 0, A: 1, B: 2 } as const;
-/** The Favorites and Suggested chips, next to the muscle groups. */
+/** The Favorites chip, next to the muscle groups. */
 const FAVORITES = 'favorites';
-const SUGGESTED = 'suggested';
 /** Stable default, so the lists are not rebuilt on every render. */
 const NO_SUGGESTIONS: NextPick[] = [];
 const BROWSE_LIMIT = 80;
@@ -54,19 +53,25 @@ export function musclesLabel(muscles: string[]): string {
 }
 
 /**
- * Search, muscle filter and "Create custom exercise". In a workout, `suggested` adds a
- * Suggested chip first (what usually comes next) and the picker opens on it.
+ * Search, muscle filter and "Create custom exercise". In a workout, `suggested` (what usually
+ * comes next) sits at the top of All, under its own heading, and the picker opens there.
  */
 export function ExercisePicker({
   visible,
   onClose,
   onPick,
+  title = 'Add exercise',
+  pickIcon: PickIcon = Plus,
   suggested = NO_SUGGESTIONS,
+  suggestedLabel = 'Suggested',
 }: {
   visible: boolean;
   onClose: () => void;
   onPick: (exerciseId: string) => void;
+  title?: string;
+  pickIcon?: LucideIcon;
   suggested?: NextPick[];
+  suggestedLabel?: string;
 }) {
   const exercises = useData((s) => s.exercises);
   const prefs = useData((s) => s.exercisePrefs);
@@ -76,49 +81,49 @@ export function ExercisePicker({
   const [q, setQ] = useState('');
   const [group, setGroup] = useState<string | null>(null);
   const hasFavorites = useMemo(() => Object.values(prefs).some((p) => p.favorite), [prefs]);
-  // Every time the picker opens it starts fresh: empty search, on Suggested (in a workout) or
-  // Favorites when there are any, otherwise on "All".
+  // Every time the picker opens it starts fresh: empty search, on "All" when it has suggestions,
+  // otherwise on Favorites when there are any.
   const [wasVisible, setWasVisible] = useState(visible);
   if (visible !== wasVisible) {
     setWasVisible(visible);
     if (visible) {
       setQ('');
-      setGroup(suggested.length ? SUGGESTED : hasFavorites ? FAVORITES : null);
+      setGroup(!suggested.length && hasFavorites ? FAVORITES : null);
       setCreating(false);
     }
   }
-  const reasons = useMemo(
-    () => new Map(suggested.map((s) => [s.exerciseId, s.reason])),
-    [suggested],
-  );
   const [name, setName] = useState('');
   const [muscles, setMuscles] = useState('');
 
   const all = useMemo(() => Object.values(exercises), [exercises]);
-  const { list, total } = useMemo(() => {
+  const { picks, list, total } = useMemo(() => {
     const isFavorite = (id: string) => !!prefs[id]?.favorite;
-    if (group === SUGGESTED && !q.trim()) {
-      const picks = suggested.map((s) => exercises[s.exerciseId]).filter(Boolean);
-      return { list: picks, total: picks.length };
-    }
     const inGroup =
-      group === SUGGESTED
-        ? suggested.map((s) => exercises[s.exerciseId]).filter(Boolean)
-        : group === FAVORITES
-          ? all.filter((e) => isFavorite(e.id))
-          : group
-            ? all.filter((e) => e.muscles.some((m) => GROUPS[group].includes(m)))
-            : all;
+      group === FAVORITES
+        ? all.filter((e) => isFavorite(e.id))
+        : group
+          ? all.filter((e) => e.muscles.some((m) => GROUPS[group].includes(m)))
+          : all;
     if (q.trim())
       return {
+        picks: [],
         list: favoritesFirst(searchExercises(q, inGroup, 60), isFavorite, q),
         total: inGroup.length,
       };
+    // Suggestions head "All" and are not repeated below it.
+    const picks = group
+      ? []
+      : suggested.flatMap((s) => {
+          const e = exercises[s.exerciseId];
+          return e ? [{ exercise: e, reason: s.reason }] : [];
+        });
+    const pinned = new Set(picks.map((p) => p.exercise.id));
+    const rest = inGroup.filter((e) => !pinned.has(e.id));
     // Browsing: favorites, your own exercises, the S / A / B tier picks, then the rest A–Z.
     const rank = (e: Exercise) =>
       isFavorite(e.id) ? -2 : e.created_by ? -1 : e.tier ? TIER_RANK[e.tier] : 3;
-    const sorted = [...inGroup].sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
-    return { list: sorted.slice(0, BROWSE_LIMIT), total: inGroup.length };
+    const sorted = rest.sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
+    return { picks, list: sorted.slice(0, BROWSE_LIMIT), total: sorted.length };
   }, [all, q, group, prefs, suggested, exercises]);
 
   const pick = (id: string) => {
@@ -126,6 +131,25 @@ export function ExercisePicker({
     setQ('');
     onClose();
   };
+
+  const row = (e: Exercise, subtitle: string) => (
+    <ListRow
+      key={e.id}
+      height={54}
+      title={e.name}
+      subtitle={subtitle}
+      chevron={false}
+      rightInteractive
+      right={
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          {e.tier ? <TierBadge tier={e.tier} /> : null}
+          <FavoriteButton exerciseId={e.id} name={e.name} size={18} />
+          <PickIcon size={18} color={colors.accent} strokeWidth={2.4} />
+        </View>
+      }
+      onPress={() => pick(e.id)}
+    />
+  );
 
   if (creating) {
     const trimmed = name.trim();
@@ -179,20 +203,13 @@ export function ExercisePicker({
   }
 
   return (
-    <Sheet visible={visible} onClose={onClose} title="Add exercise">
+    <Sheet visible={visible} onClose={onClose} title={title}>
       <SearchField placeholder="Search exercises" value={q} onChangeText={setQ} />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ gap: 8 }}
       >
-        {suggested.length ? (
-          <Chip
-            label="Suggested"
-            selected={group === SUGGESTED}
-            onPress={() => setGroup(group === SUGGESTED ? null : SUGGESTED)}
-          />
-        ) : null}
         <Chip label="All" selected={!group} onPress={() => setGroup(null)} />
         <Chip
           label="★ Favorites"
@@ -208,29 +225,18 @@ export function ExercisePicker({
           />
         ))}
       </ScrollView>
+      {picks.length > 0 ? (
+        <>
+          <Text style={[type.captionStrong, styles.heading, { color: colors.accent }]}>
+            {suggestedLabel}
+          </Text>
+          <ListGroup>{picks.map((p) => row(p.exercise, p.reason))}</ListGroup>
+          <Text style={[type.captionStrong, styles.heading]}>All exercises</Text>
+        </>
+      ) : null}
       {list.length > 0 ? (
         <ListGroup>
-          {list.map((e) => (
-            <ListRow
-              key={e.id}
-              height={54}
-              title={e.name}
-              subtitle={
-                (group === SUGGESTED && reasons.get(e.id)) ||
-                musclesLabel(e.muscles) + (e.created_by ? ' · custom' : '')
-              }
-              chevron={false}
-              rightInteractive
-              right={
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  {e.tier ? <TierBadge tier={e.tier} /> : null}
-                  <FavoriteButton exerciseId={e.id} name={e.name} size={18} />
-                  <Plus size={18} color={colors.accent} strokeWidth={2.4} />
-                </View>
-              }
-              onPress={() => pick(e.id)}
-            />
-          ))}
+          {list.map((e) => row(e, musclesLabel(e.muscles) + (e.created_by ? ' · custom' : '')))}
         </ListGroup>
       ) : (
         <View style={{ paddingVertical: 12 }}>
@@ -262,6 +268,7 @@ export function ExercisePicker({
 }
 
 const styles = StyleSheet.create({
+  heading: { paddingHorizontal: 4 },
   badge: {
     minWidth: 22,
     height: 22,

@@ -61,5 +61,6 @@
     "images:import": "node scripts/exercise-images.mjs --import",
     "test:backend": "node --env-file=.env scripts/backend-smoke-test.mjs"
   },
-  "private": true
+  "private": true,
+  "license": "UNLICENSED"
 }

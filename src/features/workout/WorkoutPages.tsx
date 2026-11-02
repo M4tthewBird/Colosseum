@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { FillButton, IconButton, TextButton } from '@/components/Buttons';
 import { Glass, GlassCard } from '@/components/Glass';
-import { Flame, Info, Layers, Link, Unlink, X } from '@/components/icons';
+import { Flame, Info, Layers, Link, Repeat, Unlink, X } from '@/components/icons';
 import { ExerciseImage } from '@/features/exercises/ExerciseImage';
 import { FavoriteButton } from '@/features/exercises/FavoriteButton';
 import { musclesLabel } from '@/features/exercises/ExercisePicker';
@@ -51,6 +51,7 @@ interface PageProps {
   exercises: Record<string, Exercise>;
   bests: Record<string, Best>;
   onInfo: (p: PlannedExercise) => void;
+  onSwap: (position: number) => void;
 }
 
 const lastLabel = (l?: SetEntry) => (l ? `${formatKg(l.weight_kg)} × ${repsText(l)}` : '—');
@@ -150,6 +151,7 @@ export function ExercisePage({
   bests,
   onInfo,
   onSuperset,
+  onSwap,
 }: PageProps & { plan: PlannedExercise; onSuperset: (position: number) => void }) {
   const ex = exercises[p.exercise_id];
   const name = ex?.name ?? 'Exercise';
@@ -225,13 +227,16 @@ export function ExercisePage({
         onPress={() => onSuperset(p.position)}
         accessibilityHint="Pick an exercise to do right after this one, back to back"
       />
-      <ExerciseNote session={session} position={p.position} exerciseId={p.exercise_id} />
-      <TextButton
-        label="Remove exercise"
-        accent
-        style={{ alignSelf: 'center' }}
-        onPress={() => askRemove(p, name)}
+      <ExerciseNote
+        key={p.exercise_id}
+        session={session}
+        position={p.position}
+        exerciseId={p.exercise_id}
       />
+      <View style={styles.exerciseActions}>
+        <TextButton label="Swap exercise" accent onPress={() => onSwap(p.position)} />
+        <TextButton label="Remove exercise" accent onPress={() => askRemove(p, name)} />
+      </View>
     </>
   );
 }
@@ -244,6 +249,7 @@ export function SupersetPage({
   bests,
   onInfo,
   onSuperset,
+  onSwap,
 }: PageProps & { group: PlannedExercise[]; onSuperset: (position: number) => void }) {
   const [menu, setMenu] = useState<SetEntry | null>(null);
   const positions = group.map((p) => p.position);
@@ -300,6 +306,14 @@ export function SupersetPage({
                 </Text>
               </Pressable>
               <IconButton
+                icon={Repeat}
+                size={30}
+                iconSize={14}
+                color={colors.text2}
+                accessibilityLabel={`Swap ${name}`}
+                onPress={() => onSwap(p.position)}
+              />
+              <IconButton
                 icon={X}
                 size={30}
                 iconSize={14}
@@ -314,14 +328,13 @@ export function SupersetPage({
 
       <Glass radius={22} style={styles.table}>
         <SetHeader sides={all.some(isSideSet)} />
-        {sets.map((s) => {
+        {sets.map((s, i) => {
           const prev = s.warmup ? undefined : lastBy.get(s.exercise_position)?.[s.set_number - 1];
-          const roundEnd = s.exercise_position === positions[positions.length - 1];
+          // A line after each round: A1 B1 | A2 B2.
+          const next = sets[i + 1];
+          const roundEnd = !!next && next.set_number !== s.set_number;
           return (
-            <View
-              key={s.id}
-              style={[{ gap: 4 }, roundEnd && s.set_number < rounds ? styles.roundGap : undefined]}
-            >
+            <View key={s.id} style={[{ gap: 4 }, roundEnd ? styles.roundLine : undefined]}>
               <SetRow
                 set={s}
                 last={s.warmup ? 'Warm-up' : lastLabel(prev)}
@@ -369,7 +382,12 @@ export function SupersetPage({
           <Text style={[type.small, { paddingHorizontal: 6 }]}>
             {letter(i)} · {exercises[p.exercise_id]?.name ?? 'Exercise'}
           </Text>
-          <ExerciseNote session={session} position={p.position} exerciseId={p.exercise_id} />
+          <ExerciseNote
+            key={p.exercise_id}
+            session={session}
+            position={p.position}
+            exerciseId={p.exercise_id}
+          />
         </View>
       ))}
     </>
@@ -438,5 +456,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   letterText: { fontSize: 14, fontWeight: '800', color: colors.accent },
-  roundGap: { marginBottom: 8 },
+  roundLine: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.separator,
+    paddingBottom: 8,
+    marginBottom: 8,
+  },
+  exerciseActions: { flexDirection: 'row', justifyContent: 'center', gap: 24 },
 });

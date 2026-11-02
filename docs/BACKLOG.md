@@ -18,6 +18,16 @@ Feedback from Matyáš (2026-10-23). Work top to bottom, one item at a time; ask
 - [x] **Profile picture required**: photo or one of 24 emoji on 6 tones (avatar_url "emoji:…", no schema change); required at sign-up; older accounts are asked after sign-in, again a week after "Later"; Settings → Change picture
 - [x] **Add friends by QR code**: Friends → My QR shows a code for /add/<username> (+ Share link); the phone camera opens the profile with Add friend; signed out, it is remembered through sign-up/sign-in. Check once on the deployed Pages URL
 - [x] **Badges / achievements**: 20 ladders, 77 tiers (workouts, week streak, volume, PRs, plate/bench/squat/deadlift/total clubs incl. 1000 lb, early bird, night owl, weekend, marathon, big day, explorer, drop sets, failure, supersets, comeback, friends). Laurel medallion that grows over 5 looks, all red. Profile → Badges, new ones in the summary, others see them (user_badges). Needs `supabase/updates/2026-10-23-badges.sql`
+- [x] **Suggested in All** (2026-11-02): no Suggested chip any more; suggestions head All under their own heading and the picker opens there
+- [x] **Swap exercise** (2026-11-02): next to Remove, this workout only; done sets move along, open sets refill for the new exercise; similar top-rated exercises first
+- [x] **First exercise of an empty workout** (2026-11-02): stay on its card. Could not be reproduced in desktop Chrome or WebKit; the pager now holds the page after a jump. Check on an iPhone
+- [x] **Superset rounds** (2026-11-02): a line between rounds (A1 B1 | A2 B2)
+- [x] **License** (2026-11-02): proprietary `LICENSE`. The repo is still public; going private is Matyáš's call
+- [ ] **Training together**: all in one release (Matyáš, 2026-11-02): post in the Forum that you are going to train, invite a friend, show in the Arena who trained together. Confirmed by QR after the workout: the summary shows the user's code and a way to confirm. Still to decide: how an invite reaches a friend (in the app only, or push notifications)
+- [ ] **Workout generator**: one workout first, a whole plan later (Matyáš, 2026-11-02). Choose muscles, sets, rest with science-based defaults; picks exercises by Nippard tier
+- [ ] **Sets per muscle per week**: overview against the recommended range
+- [ ] **Plate calculator**: which plates to load per side for a weight
+- [ ] **Technique tips**: short tips per exercise instead of "coming soon". Matyáš checks the texts with Claude before they ship
 - [ ] **Deload status**: postponed by Matyáš (2026-10-23). When we pick it up: a "Deload" tag next to the name (Forum, leaderboard, My gym, profile); how it is switched on is still open
 - [ ] **Garmin integration**: explored, see `docs/GARMIN.md`. Matyáš wants the official API; new access to Garmin's developer program looks paused, so first check/apply on the developer portal
 - [ ] **Czech version** of the app: last, after everything else. Decided: exercise names stay English (Czech search synonyms), own small typed dictionary instead of a library. Still to ask: how the language is chosen, tykání or vykání.

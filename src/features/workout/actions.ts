@@ -19,6 +19,7 @@ import { programWeek } from '@/lib/programs';
 import { primaryGoal, recommend } from '@/lib/repRanges';
 import { historyBests, lastTimeSets } from '@/lib/stats';
 import { groupIndexOf, groupPlan, roundComplete } from '@/lib/supersets';
+import { swapSets, workSetsAt } from '@/lib/swap';
 import type { Feel, ProgramDay, Session, SetEntry } from '@/lib/types';
 import { nowIso, uuid } from '@/lib/uuid';
 import { isWarmup, isWork, WARMUP_REST, warmupPlan } from '@/lib/warmups';
@@ -558,6 +559,38 @@ export function removeExercise(position: number) {
   w.setPlan(plan);
   put({ ...s, sets });
   w.setCurrent(Math.max(0, Math.min(w.current, groupPlan(plan).length - 1)));
+}
+
+/**
+ * Swaps an exercise for another in this workout only (the program stays as it is). It keeps its
+ * place, its superset and its number of sets; see swapSets for what happens to the sets.
+ */
+export function swapExercise(position: number, exerciseId: string) {
+  const s = session();
+  if (!s) return;
+  const w = useWorkout.getState();
+  const old = w.plan.find((p) => p.position === position);
+  if (!old || old.exercise_id === exerciseId) return;
+  const { profile, exercises } = useData.getState();
+  const rec = recommend(primaryGoal(profile?.goals ?? []), exercises[exerciseId]?.name ?? '');
+  const next: PlannedExercise = {
+    ...old,
+    exercise_id: exerciseId,
+    reps_min: rec.reps_min,
+    reps_max: rec.reps_max,
+    // A superset shares one rest.
+    rest_seconds: old.superset ? old.rest_seconds : rec.rest_seconds,
+  };
+  const open = workSetsAt(s.sets, position).filter((x) => !x.done);
+  const fresh = initialSets(s.id, { ...next, sets: open.length });
+  const notes = { ...(s.notes ?? {}) };
+  delete notes[String(position)]; // it was about the old exercise
+  w.setPlan(w.plan.map((p) => (p.position === position ? next : p)));
+  put({
+    ...s,
+    notes,
+    sets: swapSets(s.sets, position, exerciseId, open.length ? fresh : [], nowIso()),
+  });
 }
 
 export interface Summary {

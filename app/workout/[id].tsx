@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { ChevronDown, ChevronRight, Plus } from '@/components/icons';
+import { ChevronDown, ChevronRight, Plus, Repeat } from '@/components/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Platform,
@@ -26,6 +26,7 @@ import {
   discardWorkout,
   finishWorkout,
   restAlert,
+  swapExercise,
   type Summary,
 } from '@/features/workout/actions';
 import { MachineWeightSheet } from '@/features/workout/MachineWeight';
@@ -36,6 +37,7 @@ import { formatClock } from '@/lib/dates';
 import { formatKg, formatRest, formatScheme } from '@/lib/formulas';
 import { rpeHint } from '@/lib/periodization';
 import { suggestNextExercises } from '@/lib/nextExercise';
+import { similarExercises } from '@/lib/similar';
 import { finished, historyBests } from '@/lib/stats';
 import { groupPlan } from '@/lib/supersets';
 import type { Session } from '@/lib/types';
@@ -85,6 +87,7 @@ function ActiveWorkout({
   const [picker, setPicker] = useState(false);
   const [info, setInfo] = useState<PlannedExercise | null>(null);
   const [supersetFor, setSupersetFor] = useState<number | null>(null);
+  const [swapFor, setSwapFor] = useState<number | null>(null);
   const [machineFor, setMachineFor] = useState<string | null>(null);
   const machineKg = useData((s) => (info ? s.exercisePrefs[info.exercise_id]?.machine_kg : null));
   const pager = useRef<ScrollView>(null);
@@ -105,6 +108,16 @@ function ActiveWorkout({
       ),
     [ordered, allSessions, session.id, exercises],
   );
+  // Top-rated exercises for the same muscle, when swapping one.
+  const swapping = ordered.find((p) => p.position === swapFor)?.exercise_id;
+  const similar = useMemo(() => {
+    const target = swapping ? exercises[swapping] : undefined;
+    if (!target) return [];
+    const inWorkout = new Set(ordered.map((p) => p.exercise_id));
+    return similarExercises(target, Object.values(exercises))
+      .filter((e) => !inWorkout.has(e.id))
+      .map((e) => ({ exerciseId: e.id, reason: `Also trains ${e.muscles[0]}` }));
+  }, [swapping, exercises, ordered]);
   const pages = groups.length + 1; // last page adds an exercise
   const idx = Math.min(current, pages - 1);
 
@@ -114,6 +127,7 @@ function ActiveWorkout({
   // exercise is added or removed the browser keeps the old page in view (scroll anchoring).
   // Scroll events caused by this (or by the browser keeping a page in view) are not swipes.
   const settling = useRef(0);
+  const holding = useRef(0);
   const pagesSeen = useRef(pages);
   useEffect(() => {
     if (pageW <= 0) return;
@@ -121,8 +135,17 @@ function ActiveWorkout({
     const jump = pagesSeen.current !== pages;
     pagesSeen.current = pages;
     settling.current = Date.now() + 700;
+    if (jump) holding.current = settling.current;
     pager.current?.scrollTo({ x: idx * pageW, animated: !jump });
   }, [idx, pageW, pages]);
+
+  // Right after that jump, a browser may snap back to the page it was on (the "add exercise" page,
+  // now one further along). Stay on the page we jumped to.
+  const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (!pageW || Date.now() >= holding.current) return;
+    if (Math.abs(e.nativeEvent.contentOffset.x - idx * pageW) > 1)
+      pager.current?.scrollTo({ x: idx * pageW, animated: false });
+  };
 
   const onScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (!pageW || Date.now() < settling.current) return;
@@ -179,6 +202,22 @@ function ActiveWorkout({
     bests,
     onInfo: setInfo,
     onSuperset: setSupersetFor,
+    onSwap: setSwapFor,
+  };
+
+  const swap = async (exerciseId: string) => {
+    if (swapFor === null) return;
+    const position = swapFor;
+    const logged = session.sets.filter((s) => s.exercise_position === position && s.done).length;
+    if (logged > 0) {
+      const ok = await confirm({
+        title: `Swap to ${exercises[exerciseId]?.name ?? 'this exercise'}?`,
+        message: `The ${logged} set${logged === 1 ? '' : 's'} you already logged will move to it.`,
+        confirmLabel: 'Swap',
+      });
+      if (!ok) return;
+    }
+    swapExercise(position, exerciseId);
   };
 
   return (
@@ -220,6 +259,8 @@ function ActiveWorkout({
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onLayout={(e) => setPageW(e.nativeEvent.layout.width)}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
         onMomentumScrollEnd={onScrollEnd}
         onScrollEndDrag={onScrollEnd}
         style={[{ flex: 1 }, Platform.OS === 'web' && ({ overflowAnchor: 'none' } as object)]}
@@ -316,6 +357,15 @@ function ActiveWorkout({
         onPick={(id) => {
           if (supersetFor !== null) addSuperset(supersetFor, id);
         }}
+      />
+      <ExercisePicker
+        visible={swapFor !== null}
+        onClose={() => setSwapFor(null)}
+        onPick={swap}
+        title="Swap exercise"
+        pickIcon={Repeat}
+        suggested={similar}
+        suggestedLabel="Similar exercises"
       />
       <Sheet
         visible={!!info}

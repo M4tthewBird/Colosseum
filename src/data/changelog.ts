@@ -8,6 +8,17 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-11-02',
+    date: '2026-11-02',
+    title: 'Swap exercises',
+    items: [
+      'Picked the wrong exercise? Swap it in the workout without removing it and adding another. Similar top-rated exercises come first.',
+      'Suggested exercises now sit at the top of All when you add an exercise, instead of having their own category.',
+      'Fix: after you pick the first exercise of an empty workout, you land on that exercise.',
+      'A line now separates the rounds of a superset.',
+    ],
+  },
+  {
     id: '2026-10-26b',
     date: '2026-10-26',
     title: 'New badges',
