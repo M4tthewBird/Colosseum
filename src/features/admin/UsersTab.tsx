@@ -1,7 +1,7 @@
 /**
- * Admin → Users: password help requests from the sign-in screen, and finding anyone by username
- * to set a temporary password. The temporary one is shown once, to send to the user; the app asks
- * them for their own right after they sign in with it.
+ * Admin → Users: an announcement to everyone, password help requests from the sign-in screen, and
+ * finding anyone by username to set a temporary password. The temporary one is shown once, to send
+ * to the user; the app asks them for their own right after they sign in with it.
  */
 import { useState } from 'react';
 import { Platform, Share as RNShare, StyleSheet, Text, View } from 'react-native';
@@ -9,14 +9,22 @@ import { Platform, Share as RNShare, StyleSheet, Text, View } from 'react-native
 import { Avatar } from '@/components/Avatar';
 import { FillButton } from '@/components/Buttons';
 import { Glass } from '@/components/Glass';
-import { Check, Copy, KeyRound } from '@/components/icons';
+import { FieldHint, FormField, FormGroup } from '@/components/Form';
+import { Check, Copy, KeyRound, Megaphone } from '@/components/icons';
 import { EmptyState, SectionHeader } from '@/components/List';
 import { SearchField } from '@/components/SearchField';
 import { Sheet } from '@/components/Sheet';
 import { timeAgo } from '@/lib/dates';
 import { confirm, toast } from '@/stores/ui';
 import { colors, type } from '@/theme/tokens';
-import { useFindUsers, usePasswordHelp, usePasswordHelpDone, useResetPassword } from './api';
+import { sendAnnouncement } from '@/features/push/push';
+import {
+  useFindUsers,
+  usePasswordHelp,
+  usePasswordHelpDone,
+  usePushReach,
+  useResetPassword,
+} from './api';
 
 export function UsersTab() {
   const help = usePasswordHelp();
@@ -43,6 +51,7 @@ export function UsersTab() {
 
   return (
     <View style={{ gap: 16 }}>
+      <Announcement />
       <View style={{ gap: 8 }}>
         <SectionHeader title="Password help" />
         {help.isPending ? (
@@ -128,6 +137,73 @@ export function UsersTab() {
       </View>
 
       <TempPasswordSheet result={result} onClose={() => setResult(null)} />
+    </View>
+  );
+}
+
+/** A notification to everyone with notifications on (e.g. a new version, maintenance). */
+function Announcement() {
+  const reach = usePushReach();
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [busy, setBusy] = useState(false);
+  const ready = title.trim().length > 0 && body.trim().length > 0;
+  const people = reach.data?.users ?? 0;
+
+  const send = async () => {
+    const ok = await confirm({
+      title: `Send to ${people} ${people === 1 ? 'person' : 'people'}?`,
+      message: `“${title.trim()}: ${body.trim()}” arrives on every device with notifications on. It cannot be taken back.`,
+      confirmLabel: 'Send',
+    });
+    if (!ok) return;
+    setBusy(true);
+    try {
+      const { sent } = await sendAnnouncement(title, body);
+      toast(`Sent to ${sent} ${sent === 1 ? 'device' : 'devices'}`);
+      setTitle('');
+      setBody('');
+    } catch (e) {
+      toast(e instanceof Error ? e.message : 'Could not send');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <View style={{ gap: 8 }}>
+      <SectionHeader title="Announcement" />
+      <FormGroup>
+        <FormField
+          label="Title"
+          value={title}
+          onChangeText={setTitle}
+          maxLength={60}
+          placeholder="New in Colosseum"
+        />
+        <FormField
+          label="Text"
+          value={body}
+          onChangeText={setBody}
+          maxLength={180}
+          multiline
+          placeholder="Badges are here. Open Profile → Badges."
+        />
+      </FormGroup>
+      <FieldHint
+        text={
+          reach.data
+            ? `${people} ${people === 1 ? 'person has' : 'people have'} notifications on, on ${reach.data.devices} ${reach.data.devices === 1 ? 'device' : 'devices'}. Tapping it opens Colosseum.`
+            : 'Goes to everyone with notifications on. Tapping it opens Colosseum.'
+        }
+      />
+      <FillButton
+        label="Send to everyone"
+        icon={Megaphone}
+        disabled={!ready || busy || people === 0}
+        loading={busy}
+        onPress={() => void send()}
+      />
     </View>
   );
 }

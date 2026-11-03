@@ -12,6 +12,7 @@ import { trackOpen } from '@/features/admin/events';
 import { startAuth, useAuth } from '@/features/auth/auth';
 import { SetOwnPassword } from '@/features/auth/SetOwnPassword';
 import { setCurrentRoute, startErrorReports } from '@/features/feedback/report';
+import { refreshPush } from '@/features/push/push';
 import { GymConfirmHost } from '@/features/gyms/GymConfirm';
 import { SpotlightHost } from '@/features/onboarding/Spotlight';
 import { Tour } from '@/features/onboarding/Tour';
@@ -50,6 +51,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (!signedIn) return;
     trackOpen();
+    void refreshPush().catch(() => {});
     const sub = AppState.addEventListener('change', (s) => {
       if (s === 'active') trackOpen();
     });

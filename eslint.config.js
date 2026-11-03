@@ -7,6 +7,7 @@ module.exports = defineConfig([
   expoConfig,
   prettier,
   {
-    ignores: ['dist/*', 'design/*', 'node_modules/*', '.expo/*'],
+    // supabase/functions runs on Deno (npm: imports), outside the app's lint and types.
+    ignores: ['dist/*', 'design/*', 'node_modules/*', '.expo/*', 'supabase/functions/**'],
   },
 ]);

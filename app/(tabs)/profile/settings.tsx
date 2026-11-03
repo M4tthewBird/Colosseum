@@ -23,6 +23,7 @@ import { useIsAdmin } from '@/features/admin/api';
 import { useHasRecoveryCode } from '@/features/auth/password';
 import { RecoveryCodeSheet } from '@/features/auth/RecoveryCode';
 import { FeedbackSheet } from '@/features/feedback/FeedbackSheet';
+import { NotificationSettings } from '@/features/push/NotificationSettings';
 import { isDemo } from '@/lib/supabase';
 import { retrySync, syncRow } from '@/lib/sync';
 import type { Profile } from '@/lib/types';
@@ -226,6 +227,8 @@ export default function Settings() {
         onClose={() => setRecoveryOpen(false)}
         replacing={!!hasCode}
       />
+
+      <NotificationSettings />
 
       <View style={{ gap: 6 }}>
         <Text style={[type.caption, { paddingHorizontal: 16 }]}>During a workout</Text>

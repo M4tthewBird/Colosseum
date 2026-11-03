@@ -63,3 +63,35 @@ self.addEventListener('fetch', (event) => {
     ),
   );
 });
+
+/* Web push (supabase/functions/push): { title, body, url, tag }. */
+self.addEventListener('push', (event) => {
+  let msg = {};
+  try {
+    msg = event.data ? event.data.json() : {};
+  } catch {
+    msg = { body: event.data ? event.data.text() : '' };
+  }
+  event.waitUntil(
+    self.registration.showNotification(msg.title || 'Colosseum', {
+      body: msg.body || '',
+      icon: `${scope}brand/app-icon-192.png`,
+      tag: msg.tag || undefined,
+      data: { url: msg.url || '/' },
+    }),
+  );
+});
+
+/* A tap opens the app on the message's screen, in the open window when there is one. */
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const path = (event.notification.data && event.notification.data.url) || '/';
+  const target = new URL(path.replace(/^\//, ''), scope).href;
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((wins) => {
+      const win = wins.find((w) => w.url.startsWith(scope));
+      if (win) return win.focus().then(() => win.navigate(target).catch(() => win));
+      return self.clients.openWindow(target);
+    }),
+  );
+});

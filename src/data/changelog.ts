@@ -8,6 +8,14 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-11-03d',
+    date: '2026-11-03',
+    title: 'Notifications',
+    items: [
+      'Colosseum can send you notifications now: Settings → Notifications. On iPhone, open the app from your Home Screen first. Training reminders and news from friends are coming next.',
+    ],
+  },
+  {
     id: '2026-11-03c',
     date: '2026-11-03',
     title: 'A way back in',

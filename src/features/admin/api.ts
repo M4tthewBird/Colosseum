@@ -309,3 +309,18 @@ export function usePasswordHelpDone() {
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin-password-help'] }),
   });
 }
+
+// ───────────── Announcements ─────────────
+
+/** How many people and devices have notifications on. */
+export function usePushReach() {
+  return useQuery({
+    queryKey: ['admin-push-reach'],
+    queryFn: async (): Promise<{ users: number; devices: number }> => {
+      if (isDemo) return { users: 34, devices: 41 };
+      const { data, error } = await supabase.rpc('admin_push_reach');
+      if (error) throw new Error(error.message);
+      return data as { users: number; devices: number };
+    },
+  });
+}
