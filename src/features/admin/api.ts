@@ -5,7 +5,7 @@
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { DEMO_FEEDBACK, DEMO_REPORTS, demoAdminStats, demoUser } from '@/dev/seed';
+import { DEMO_FEEDBACK, DEMO_REPORTS, DEMO_USERS, demoAdminStats, demoUser } from '@/dev/seed';
 import type { AdminStats } from '@/lib/adminStats';
 import { toLocalDate } from '@/lib/dates';
 import { isDemo, supabase } from '@/lib/supabase';
@@ -211,5 +211,101 @@ export function useScreenshotUrl(path: string | null) {
       if (error) throw new Error(error.message);
       return data.signedUrl;
     },
+  });
+}
+
+// ───────────── Users: password help ─────────────
+
+export interface PasswordHelpRequest {
+  id: string;
+  username: string;
+  /** Null: no account has that username (maybe misremembered). */
+  user_id: string | null;
+  display_name: string | null;
+  contact: string;
+  created_at: string;
+}
+
+export interface FoundUser {
+  id: string;
+  username: string;
+  display_name: string;
+  avatar_url: string | null;
+  created_at: string;
+}
+
+let demoHelp: PasswordHelpRequest[] | null = null;
+function demoHelpList(): PasswordHelpRequest[] {
+  demoHelp ??= [
+    {
+      id: stableUuid('help:lukas'),
+      username: 'lukas',
+      user_id: demoUser('lukas').id,
+      display_name: demoUser('lukas').display_name,
+      contact: 'Instagram @lukas.lifts',
+      created_at: new Date(Date.now() - 3 * 3600_000).toISOString(),
+    },
+  ];
+  return demoHelp;
+}
+
+export function usePasswordHelp() {
+  return useQuery({
+    queryKey: ['admin-password-help'],
+    queryFn: async (): Promise<PasswordHelpRequest[]> => {
+      if (isDemo) return demoHelpList().map((h) => ({ ...h }));
+      const { data, error } = await supabase.rpc('admin_password_help');
+      if (error) throw new Error(error.message);
+      return (data ?? []) as PasswordHelpRequest[];
+    },
+  });
+}
+
+export function useFindUsers(query: string) {
+  const q = query.trim().toLowerCase();
+  return useQuery({
+    queryKey: ['admin-find-users', q],
+    enabled: q.length >= 2,
+    queryFn: async (): Promise<FoundUser[]> => {
+      if (isDemo)
+        return DEMO_USERS.filter(
+          (u) => u.username.includes(q) || u.display_name.toLowerCase().includes(q),
+        ).map((u) => ({ ...u, created_at: new Date().toISOString() }));
+      const { data, error } = await supabase.rpc('admin_find_users', { p_query: q });
+      if (error) throw new Error(error.message);
+      return (data ?? []) as FoundUser[];
+    },
+  });
+}
+
+/** Sets a temporary password and returns it; the user must replace it after signing in. */
+export function useResetPassword() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: string): Promise<string> => {
+      if (isDemo) {
+        demoHelp = demoHelpList().filter((h) => h.user_id !== userId);
+        return 'q398sarazy';
+      }
+      const { data, error } = await supabase.rpc('admin_reset_password', { p_user: userId });
+      if (error) throw new Error(error.message);
+      return data as string;
+    },
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin-password-help'] }),
+  });
+}
+
+export function usePasswordHelpDone() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      if (isDemo) {
+        demoHelp = demoHelpList().filter((h) => h.id !== id);
+        return;
+      }
+      const { error } = await supabase.rpc('admin_password_help_done', { p_id: id });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin-password-help'] }),
   });
 }

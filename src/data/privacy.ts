@@ -10,7 +10,8 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
   {
     title: 'What we store',
     paragraphs: [
-      'Your account: username and password. The password is stored only in a scrambled form that nobody can read. We do not ask for your email.',
+      'Your account: username and password. The password and your recovery code are stored only in a scrambled form that nobody can read. We do not ask for your email.',
+      'If you ask for help with a forgotten password, your username and the contact you leave, so we can get back to you.',
       'Your profile: name, picture, sex, experience, goals and home gym.',
       'Your training: programs, workouts, sets, PRs, ratings and badges.',
       'Your body: bodyweight, height and body measurements.',

@@ -10,6 +10,7 @@ import { CrashScreen } from '@/components/CrashScreen';
 import { ConfirmHost, ToastHost } from '@/components/Overlays';
 import { trackOpen } from '@/features/admin/events';
 import { startAuth, useAuth } from '@/features/auth/auth';
+import { SetOwnPassword } from '@/features/auth/SetOwnPassword';
 import { setCurrentRoute, startErrorReports } from '@/features/feedback/report';
 import { GymConfirmHost } from '@/features/gyms/GymConfirm';
 import { SpotlightHost } from '@/features/onboarding/Spotlight';
@@ -97,6 +98,7 @@ export default function RootLayout() {
         {ready && signedIn ? <SpotlightHost /> : null}
         {ready && signedIn ? <GymConfirmHost /> : null}
         {ready && signedIn ? <WorkoutGuard /> : null}
+        {ready && signedIn ? <SetOwnPassword /> : null}
         <ToastHost />
         <ConfirmHost />
       </SafeAreaProvider>

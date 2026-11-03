@@ -1,8 +1,8 @@
 /**
  * Admin (only for accounts in public.admins; Settings shows the row to them alone, and the server
  * refuses everyone else): how many people use Colosseum and whether they come back, and what was
- * reported, and what users wrote or the app reported on its own. Password resets and announcements
- * join here later (docs/BACKLOG.md).
+ * reported, what users wrote or the app reported on its own, and password help. Announcements join
+ * here with web push (docs/BACKLOG.md).
  */
 import { useState } from 'react';
 import { Image, Linking, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
@@ -20,6 +20,7 @@ import {
   useAdminReports,
   useAdminStats,
   useIsAdmin,
+  usePasswordHelp,
   useReportAction,
   useResolveFeedback,
   useScreenshotUrl,
@@ -27,12 +28,13 @@ import {
   type AdminReport,
   type ReportAction,
 } from '@/features/admin/api';
+import { UsersTab } from '@/features/admin/UsersTab';
 import { biggestDrop, funnelSteps, pct, type AdminStats } from '@/lib/adminStats';
 import { fromLocalDate, shortDate, timeAgo } from '@/lib/dates';
 import { confirm, toast } from '@/stores/ui';
 import { colors, tabular, type } from '@/theme/tokens';
 
-type Tab = 'stats' | 'reports' | 'feedback';
+type Tab = 'stats' | 'reports' | 'feedback' | 'users';
 
 export default function Admin() {
   const isAdmin = useIsAdmin();
@@ -40,6 +42,7 @@ export default function Admin() {
   const reports = useAdminReports();
   const open = reports.data?.filter((r) => !r.gone).length ?? 0;
   const feedback = useAdminFeedback(false).data?.length ?? 0;
+  const help = usePasswordHelp().data?.length ?? 0;
 
   if (!isAdmin) {
     return (
@@ -60,12 +63,21 @@ export default function Admin() {
           { value: 'stats', label: 'Stats' },
           { value: 'reports', label: open ? `Reports · ${open}` : 'Reports' },
           { value: 'feedback', label: feedback ? `Feedback · ${feedback}` : 'Feedback' },
+          { value: 'users', label: help ? `Users · ${help}` : 'Users' },
         ]}
         value={tab}
         onChange={setTab}
         accessibilityLabel="Admin sections"
       />
-      {tab === 'stats' ? <Stats /> : tab === 'reports' ? <Reports /> : <Feedback />}
+      {tab === 'stats' ? (
+        <Stats />
+      ) : tab === 'reports' ? (
+        <Reports />
+      ) : tab === 'feedback' ? (
+        <Feedback />
+      ) : (
+        <UsersTab />
+      )}
     </Screen>
   );
 }

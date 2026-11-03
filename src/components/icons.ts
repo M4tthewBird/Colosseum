@@ -68,3 +68,4 @@ export { default as Award } from 'lucide-react-native/icons/award';
 export { default as Ban } from 'lucide-react-native/icons/ban';
 export { default as ImagePlus } from 'lucide-react-native/icons/image-plus';
 export { default as Bug } from 'lucide-react-native/icons/bug';
+export { default as KeyRound } from 'lucide-react-native/icons/key-round';

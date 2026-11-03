@@ -42,6 +42,9 @@ interface PrefsState {
   /** When an account without a profile picture was last asked for one (asked again after a week). */
   avatarAskedAt: string | null;
   setAvatarAskedAt: (iso: string | null) => void;
+  /** When an account without a recovery code was last asked to save one (again after a week). */
+  recoveryAskedAt: string | null;
+  setRecoveryAskedAt: (iso: string | null) => void;
   /** Username from a friend link opened while signed out; opened after signing in. */
   pendingFriend: string | null;
   setPendingFriend: (username: string | null) => void;
@@ -94,6 +97,8 @@ export const usePrefs = create<PrefsState>()(
       setHomeGymAsked: (homeGymAsked) => set({ homeGymAsked }),
       avatarAskedAt: null,
       setAvatarAskedAt: (avatarAskedAt) => set({ avatarAskedAt }),
+      recoveryAskedAt: null,
+      setRecoveryAskedAt: (recoveryAskedAt) => set({ recoveryAskedAt }),
       pendingFriend: null,
       setPendingFriend: (pendingFriend) => set({ pendingFriend }),
       comebackHidden: null,

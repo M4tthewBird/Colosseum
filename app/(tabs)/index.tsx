@@ -15,6 +15,7 @@ import { BadgeSync } from '@/features/badges/BadgeSync';
 import { useForumPosts } from '@/features/forum/api';
 import { HomeGymPrompt } from '@/features/gyms/HomeGymPrompt';
 import { AvatarPrompt } from '@/features/profile/AvatarPrompt';
+import { RecoveryPrompt } from '@/features/auth/RecoveryCode';
 import { LevelUpPrompt } from '@/features/profile/LevelUpPrompt';
 import { FriendLinkResume } from '@/features/social/FriendLink';
 import { ForumRail } from '@/features/forum/ForumViews';
@@ -120,6 +121,7 @@ export default function Today() {
       <HomeGymPrompt />
       <LevelUpPrompt />
       <AvatarPrompt />
+      <RecoveryPrompt />
       <FriendLinkResume />
       <BadgeSync />
     </Screen>

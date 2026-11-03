@@ -3,11 +3,12 @@ import { ChevronLeft } from '@/components/icons';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { FillButton, Tap } from '@/components/Buttons';
+import { FillButton, Tap, TextButton } from '@/components/Buttons';
 import { FieldHint, FormField, FormGroup } from '@/components/Form';
 import { Wordmark } from '@/components/Logo';
 import { Screen } from '@/components/Screen';
 import { signIn } from '@/features/auth/auth';
+import { ForgotPassword } from '@/features/auth/ForgotPassword';
 import { cleanUsername, isDemo } from '@/lib/supabase';
 import { colors, type } from '@/theme/tokens';
 
@@ -16,6 +17,7 @@ export default function SignIn() {
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [forgot, setForgot] = useState(false);
 
   const submit = async () => {
     setError(null);
@@ -89,6 +91,16 @@ export default function SignIn() {
         labelStyle={isDemo || (username && password) ? undefined : { color: colors.text2 }}
         ready={!!(username && password)}
       />
+      <TextButton
+        label="Forgot password?"
+        accent
+        style={{ alignSelf: 'center', minHeight: 44, justifyContent: 'center' }}
+        onPress={() => setForgot(true)}
+      />
+      {/* Mounted when opened, so it starts from the username typed above. */}
+      {forgot ? (
+        <ForgotPassword visible onClose={() => setForgot(false)} username={username} />
+      ) : null}
     </Screen>
   );
 }

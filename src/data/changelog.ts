@@ -8,6 +8,14 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-11-03c',
+    date: '2026-11-03',
+    title: 'A way back in',
+    items: [
+      'Forgot your password? Save a recovery code (Settings → Account → Recovery code) and set a new password yourself from the sign-in screen. No code? Ask us from there and we send you a temporary one.',
+    ],
+  },
+  {
     id: '2026-11-03b',
     date: '2026-11-03',
     title: 'Tell us what to fix',

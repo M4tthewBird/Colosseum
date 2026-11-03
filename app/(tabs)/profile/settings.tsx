@@ -20,6 +20,8 @@ import { createGym, useGym } from '@/features/social/api';
 import { formatKg, parseNumber } from '@/lib/formulas';
 import { limitNameWords, MAX_NAME_WORDS, nameWords } from '@/lib/names';
 import { useIsAdmin } from '@/features/admin/api';
+import { useHasRecoveryCode } from '@/features/auth/password';
+import { RecoveryCodeSheet } from '@/features/auth/RecoveryCode';
 import { FeedbackSheet } from '@/features/feedback/FeedbackSheet';
 import { isDemo } from '@/lib/supabase';
 import { retrySync, syncRow } from '@/lib/sync';
@@ -51,6 +53,8 @@ export default function Settings() {
   const [picking, setPicking] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [recoveryOpen, setRecoveryOpen] = useState(false);
+  const hasCode = useHasRecoveryCode();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const currentGym = useGym(draft.home_gym_id);
@@ -206,10 +210,22 @@ export default function Settings() {
           <FormRow label="Change password" onPress={() => setChangingPassword(true)}>
             <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
           </FormRow>
+          <FormRow label="Recovery code" onPress={() => setRecoveryOpen(true)}>
+            <Text style={[type.body, { fontSize: 16, color: colors.text2 }]}>
+              {hasCode ? 'Saved' : hasCode === false ? 'Not made yet' : ''}
+            </Text>
+            <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
+          </FormRow>
         </FormGroup>
+        <FieldHint text="If you forget your password, the recovery code lets you set a new one on the sign-in screen." />
       </View>
       <ChangePassword visible={changingPassword} onClose={() => setChangingPassword(false)} />
       <FeedbackSheet visible={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
+      <RecoveryCodeSheet
+        visible={recoveryOpen}
+        onClose={() => setRecoveryOpen(false)}
+        replacing={!!hasCode}
+      />
 
       <View style={{ gap: 6 }}>
         <Text style={[type.caption, { paddingHorizontal: 16 }]}>During a workout</Text>
