@@ -3,22 +3,25 @@
  * feature does, where it lives, and "Show me", which opens that screen and lights up the spot.
  * Releases name these by FeatureId (src/data/changelog.ts).
  */
-import type { Href } from 'expo-router';
-import type { ReactNode } from 'react';
+import { router, type Href } from 'expo-router';
+import { useState, type ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/Avatar';
 import { FillButton } from '@/components/Buttons';
 import { Glass } from '@/components/Glass';
-import { ChevronRight, MapPin, Star, Zap } from '@/components/icons';
+import { Bell, Check, ChevronRight, MapPin, Star, Zap } from '@/components/icons';
+import { LogoMark } from '@/components/Logo';
 import { QrCode } from '@/components/QrCode';
 import { Chip } from '@/components/Segmented';
 import { Medallion } from '@/features/badges/Medallion';
 import { NewTag } from '@/features/onboarding/NewTag';
+import { enablePush, usePushState } from '@/features/push/push';
 import { friendLink } from '@/features/social/FriendLink';
 import type { FeatureId, Highlight } from '@/lib/changelog';
 import { useData } from '@/stores/data';
 import { usePrefs } from '@/stores/prefs';
+import { toast } from '@/stores/ui';
 import { colors, type } from '@/theme/tokens';
 import { showGuide, showSpotlight } from './Spotlight';
 
@@ -143,6 +146,8 @@ const SHOW: Record<FeatureId, () => void> = {
       },
     ]);
   },
+  // Turned on right on the card (NotificationsAction); Show me is the fallback.
+  notifications: () => router.navigate('/profile/settings'),
 };
 
 /** A code to show in the guide: only a picture, it leads nowhere. */
@@ -192,6 +197,8 @@ function Preview({ feature }: { feature: FeatureId }) {
           </View>
         </View>
       );
+    case 'notifications':
+      return <NotificationPreview />;
     case 'train-together':
       return (
         <View style={[styles.row, { gap: 10 }]}>
@@ -203,6 +210,75 @@ function Preview({ feature }: { feature: FeatureId }) {
         </View>
       );
   }
+}
+
+/** A notification as it shows on the lock screen. */
+function NotificationPreview() {
+  return (
+    <View style={styles.notice}>
+      <View style={styles.noticeIcon}>
+        <LogoMark size={22} color="#fff" />
+      </View>
+      <View style={{ flex: 1, minWidth: 0, gap: 1 }}>
+        <View style={styles.row}>
+          <Text style={[type.captionStrong, { flex: 1, color: colors.text }]}>COLOSSEUM</Text>
+          <Text style={type.small}>now</Text>
+        </View>
+        <Text style={type.bodyStrong} numberOfLines={1}>
+          New in Colosseum
+        </Text>
+        <Text style={type.caption} numberOfLines={1}>
+          News and updates land here
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+/** On the notifications card: turns them on right here, or says why it cannot. */
+function NotificationsAction() {
+  const { state, setState } = usePushState();
+  const [busy, setBusy] = useState(false);
+  if (state == null) return null;
+  if (state === 'on')
+    return (
+      <View style={styles.done}>
+        <Check size={16} color={colors.accent} strokeWidth={2.6} />
+        <Text style={type.bodyStrong}>Notifications are on for this device</Text>
+      </View>
+    );
+  if (state !== 'off')
+    return (
+      <Text style={styles.body}>
+        {state === 'needs-install'
+          ? 'On iPhone they work in the app on your Home Screen: Share → Add to Home Screen, then open Colosseum from there and turn them on.'
+          : state === 'blocked'
+            ? 'Notifications are blocked for Colosseum. Allow them in your phone’s or browser’s settings.'
+            : 'This browser cannot show notifications. Open Colosseum on your phone.'}
+      </Text>
+    );
+  return (
+    <FillButton
+      label="Turn on notifications"
+      icon={Bell}
+      size="sm"
+      loading={busy}
+      disabled={busy}
+      style={{ alignSelf: 'flex-start', height: 44, paddingRight: 18 }}
+      onPress={async () => {
+        setBusy(true);
+        try {
+          const next = await enablePush();
+          setState(next);
+          if (next === 'on') toast('Notifications on');
+        } catch (e) {
+          toast(e instanceof Error ? e.message : 'Could not turn notifications on');
+        } finally {
+          setBusy(false);
+        }
+      }}
+    />
+  );
 }
 
 function FavoritesPreview() {
@@ -256,13 +332,17 @@ export function HighlightCard({
           <Text style={type.captionStrong}>{h.where}</Text>
         </View>
       </View>
-      <FillButton
-        label={GUIDED.includes(h.feature) ? 'Show me how it works' : 'Show me'}
-        icon={ChevronRight}
-        size="sm"
-        style={{ alignSelf: 'flex-start', height: 44, paddingRight: 18 }}
-        onPress={() => SHOW[h.feature]()}
-      />
+      {h.feature === 'notifications' ? (
+        <NotificationsAction />
+      ) : (
+        <FillButton
+          label={GUIDED.includes(h.feature) ? 'Show me how it works' : 'Show me'}
+          icon={ChevronRight}
+          size="sm"
+          style={{ alignSelf: 'flex-start', height: 44, paddingRight: 18 }}
+          onPress={() => SHOW[h.feature]()}
+        />
+      )}
     </Glass>
   );
 }
@@ -292,4 +372,24 @@ const styles = StyleSheet.create({
   itemLine: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.separator },
   body: { fontSize: 15, lineHeight: 21, color: colors.text2 },
   where: { flexDirection: 'row', alignItems: 'center', gap: 5, marginTop: 4 },
+  notice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    width: '100%',
+    maxWidth: 300,
+    padding: 12,
+    borderRadius: 18,
+    backgroundColor: colors.white,
+    boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
+  },
+  noticeIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 9,
+    backgroundColor: colors.accent,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  done: { flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 44 },
 });

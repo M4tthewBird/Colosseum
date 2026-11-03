@@ -8,6 +8,20 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-11-03e',
+    date: '2026-11-03',
+    title: 'Turn on notifications',
+    highlights: [
+      {
+        feature: 'notifications',
+        title: 'Notifications',
+        body: 'Turn them on so Colosseum can reach you: news and updates now, training reminders and friends’ invites next. You can switch them off any time.',
+        where: 'Settings → Notifications',
+      },
+    ],
+    items: [],
+  },
+  {
     id: '2026-11-03d',
     date: '2026-11-03',
     title: 'Notifications',

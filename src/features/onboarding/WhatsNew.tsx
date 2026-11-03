@@ -84,18 +84,21 @@ export function ReleaseList({
           {r.highlights?.map((h) => (
             <HighlightCard key={h.feature} highlight={h} fresh={fresh} />
           ))}
-          <Glass radius={20} style={styles.card}>
-            <Text style={type.caption}>{shortDate(fromLocalDate(r.date))}</Text>
-            <Text style={type.bodyStrong}>{r.highlights?.length ? 'Also new' : r.title}</Text>
-            <View style={{ gap: 8, marginTop: 4 }}>
-              {r.items.map((item, i) => (
-                <View key={i} style={styles.item}>
-                  <View style={styles.dot} />
-                  <Text style={[type.body, { flex: 1 }]}>{item}</Text>
-                </View>
-              ))}
-            </View>
-          </Glass>
+          {/* A release can be a big feature alone: then there is no list below it. */}
+          {r.items.length ? (
+            <Glass radius={20} style={styles.card}>
+              <Text style={type.caption}>{shortDate(fromLocalDate(r.date))}</Text>
+              <Text style={type.bodyStrong}>{r.highlights?.length ? 'Also new' : r.title}</Text>
+              <View style={{ gap: 8, marginTop: 4 }}>
+                {r.items.map((item, i) => (
+                  <View key={i} style={styles.item}>
+                    <View style={styles.dot} />
+                    <Text style={[type.body, { flex: 1 }]}>{item}</Text>
+                  </View>
+                ))}
+              </View>
+            </Glass>
+          ) : null}
         </View>
       ))}
     </View>
