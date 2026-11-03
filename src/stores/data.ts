@@ -6,7 +6,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { toLocalDate } from '@/lib/dates';
-import { scheduleFlush } from '@/lib/sync';
+import { scheduleFlush, setSessionLookup } from '@/lib/sync';
 import { safeStorage } from '@/lib/storage';
 import type {
   BodyMeasurement,
@@ -245,6 +245,10 @@ export const useData = create<DataState>()(
           delete sessions[id];
           return { sessions };
         });
+        // Its sets may still be waiting behind the workout. The delete takes the workout's place
+        // in the queue, so they would reach the server after it and be refused; the server drops
+        // the ones it has with the workout anyway.
+        useQueue.getState().dropForSession(id);
         enqueue([{ table: 'workout_sessions', op: 'delete', id }]);
       },
 
@@ -331,3 +335,11 @@ export const useData = create<DataState>()(
     },
   ),
 );
+
+// A refused set or rating asks whether its workout is still here (see lib/sync settleOrphan).
+setSessionLookup((id) => {
+  const st = useData.getState();
+  if (!st.hydrated) return undefined;
+  const s = st.sessions[id];
+  return s ? sessionRow(s) : null;
+});

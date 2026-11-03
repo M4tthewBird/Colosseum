@@ -1,5 +1,5 @@
 import { useQueue, type QueueItem } from '@/stores/queue';
-import { flush, isRefused, retrySync, syncRow } from './sync';
+import { flush, isRefused, retrySync, setSessionLookup, syncRow } from './sync';
 
 type Result = { error: { message: string } | null; status: number };
 /** Decides the answer for each request, from the ids in it. */
@@ -47,7 +47,10 @@ beforeEach(() => {
   jest.spyOn(console, 'warn').mockImplementation(() => {});
   jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate', 'queueMicrotask'] });
 });
-afterEach(() => jest.useRealTimers());
+afterEach(() => {
+  jest.useRealTimers();
+  setSessionLookup(() => undefined);
+});
 
 describe('isRefused', () => {
   it.each([400, 403, 404, 409])('%i will not pass by waiting', (status) => {
@@ -144,5 +147,64 @@ describe('syncRow', () => {
     useQueue.getState().enqueue([item('bad')]);
     answer = refuse('bad');
     await expect(syncRow('set_entries', 'bad', 60000)).resolves.toBe(false);
+  });
+});
+
+describe('sets of a workout the server cannot see', () => {
+  const RLS = 'new row violates row-level security policy for table "set_entries"';
+  const setOf = (id: string, session: string): Omit<QueueItem, 'key'> => ({
+    table: 'set_entries',
+    op: 'upsert',
+    id,
+    row: { id, session_id: session },
+  });
+  /** Refuses the sets until their workout has been sent. */
+  const needsWorkout = (sets: string[], workout: string) => {
+    let sent = false;
+    return (ids: string[]) => {
+      if (ids.includes(workout)) sent = true;
+      return !sent && ids.some((i) => sets.includes(i))
+        ? { error: { message: RLS }, status: 403 }
+        : { error: null, status: 201 };
+    };
+  };
+
+  it('drops them when the workout was deleted here', async () => {
+    setSessionLookup(() => null);
+    useQueue.getState().enqueue([setOf('s1', 'w1'), setOf('s2', 'w1'), item('c')]);
+    answer = needsWorkout(['s1', 's2'], 'w1');
+    await flush();
+    expect(left()).toEqual([]);
+    expect(useQueue.getState().lastError).toBeNull();
+  });
+
+  it('sends the workout again when it is still here, then the sets', async () => {
+    setSessionLookup((id) => ({ id }));
+    useQueue.getState().enqueue([setOf('s1', 'w1')]);
+    answer = needsWorkout(['s1'], 'w1');
+    await flush();
+    expect(left()).toEqual([]);
+    expect(requests).toEqual([['s1'], ['w1'], ['s1']]);
+  });
+
+  it('sets them aside as before while it is not known', async () => {
+    useQueue.getState().enqueue([setOf('s1', 'w1')]);
+    answer = needsWorkout(['s1'], 'w1');
+    await flush();
+    expect(left()).toEqual([['s1', RLS]]);
+  });
+
+  it('leaves other refusals alone', async () => {
+    setSessionLookup(() => null);
+    useQueue.getState().enqueue([setOf('bad', 'w1')]);
+    answer = refuse('bad');
+    await flush();
+    expect(left()).toEqual([['bad', 'no bad']]);
+  });
+
+  it('deleting a workout drops its waiting sets', () => {
+    useQueue.getState().enqueue([setOf('s1', 'w1'), setOf('s2', 'w2')]);
+    useQueue.getState().dropForSession('w1');
+    expect(left()).toEqual([['s2', null]]);
   });
 });

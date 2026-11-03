@@ -21,6 +21,47 @@ function withoutMissing(table: string, row: Record<string, unknown>): Record<str
     Object.entries(row).filter(([k]) => !missingColumns.has(`${table}.${k}`)),
   );
 }
+/**
+ * The local workout a set or rating belongs to, as a row to send: null when it is gone (deleted
+ * on this device), undefined when that is not known yet. Registered by the data store, which
+ * imports this file.
+ */
+type SessionLookup = (sessionId: string) => Record<string, unknown> | null | undefined;
+let sessionRowFor: SessionLookup = () => undefined;
+export function setSessionLookup(fn: SessionLookup): void {
+  sessionRowFor = fn;
+}
+
+/** Rows that need their workout to be on the server first (RLS checks its owner). */
+const CHILD_OF_SESSION: SyncTable[] = ['set_entries', 'session_ratings'];
+
+/**
+ * A set or rating the server refused because it cannot see its workout. Deleted here: the write
+ * is dropped, the workout took its sets with it. Still here: the workout goes up again, then the
+ * row. True when the item is settled (gone from the queue).
+ */
+async function settleOrphan(item: QueueItem, message: string): Promise<boolean> {
+  if (item.op !== 'upsert' || !CHILD_OF_SESSION.includes(item.table)) return false;
+  if (!/row-level security/i.test(message)) return false;
+  const sessionId = item.row?.session_id;
+  if (typeof sessionId !== 'string') return false;
+  const session = sessionRowFor(sessionId);
+  if (session === undefined) return false;
+  if (session === null) {
+    console.warn('[sync] dropped a write for a deleted workout', item.key);
+    useQueue.getState().remove([item.key]);
+    return true;
+  }
+  const up = await supabase
+    .from('workout_sessions')
+    .upsert([withoutMissing('workout_sessions', session)], { onConflict: PK.workout_sessions });
+  if (up.error) return false;
+  const again = await send(item.table, item.op, [item]);
+  if (again.error) return false;
+  useQueue.getState().remove([item.key]);
+  return true;
+}
+
 let timer: ReturnType<typeof setTimeout> | null = null;
 let backoffMs = 2000;
 let online = true;
@@ -101,6 +142,7 @@ export async function flush(): Promise<void> {
       if (res.error && !isRefused(res.status))
         throw new Error(`${table} ${op}: ${res.error.message}`);
       if (res.error && batch.length === 1) {
+        if (await settleOrphan(batch[0], res.error.message)) continue;
         console.warn('[sync] refused, set aside', batch[0].key, res.error.message);
         useQueue.getState().markFailed([batch[0].key], res.error.message);
         continue;
@@ -111,8 +153,10 @@ export async function flush(): Promise<void> {
           const one = await send(table, op, [item]);
           if (one.error && !isRefused(one.status))
             throw new Error(`${table} ${op}: ${one.error.message}`);
-          if (one.error) useQueue.getState().markFailed([item.key], one.error.message);
-          else useQueue.getState().remove([item.key]);
+          if (one.error) {
+            if (!(await settleOrphan(item, one.error.message)))
+              useQueue.getState().markFailed([item.key], one.error.message);
+          } else useQueue.getState().remove([item.key]);
         }
         continue;
       }

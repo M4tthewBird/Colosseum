@@ -8,6 +8,14 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-11-03',
+    date: '2026-11-03',
+    title: 'Sync fix',
+    items: [
+      'Fix: deleting or closing a workout before it synced no longer leaves “changes could not be saved” behind. Ones already stuck clear up on their own.',
+    ],
+  },
+  {
     id: '2026-11-02e',
     date: '2026-11-02',
     title: 'More exercise pictures',

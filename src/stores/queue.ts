@@ -57,6 +57,8 @@ interface QueueState {
   lastError: string | null;
   enqueue: (items: Omit<QueueItem, 'key'>[]) => void;
   remove: (keys: string[]) => void;
+  /** Drops the waiting writes of a workout's sets and rating (the workout is being deleted). */
+  dropForSession: (sessionId: string) => void;
   markFailed: (keys: string[], reason: string) => void;
   retryFailed: () => void;
   discardFailed: () => void;
@@ -84,6 +86,8 @@ export const useQueue = create<QueueState>()(
         });
       },
       remove: (keys) => set((s) => ({ items: s.items.filter((x) => !keys.includes(x.key)) })),
+      dropForSession: (sessionId) =>
+        set((s) => ({ items: s.items.filter((x) => x.row?.session_id !== sessionId) })),
       markFailed: (keys, failed) =>
         set((s) => ({
           items: s.items.map((x) => (keys.includes(x.key) ? { ...x, failed } : x)),
