@@ -19,6 +19,7 @@ import { PRIVACY_CONTACT } from '@/data/privacy';
 import { createGym, useGym } from '@/features/social/api';
 import { formatKg, parseNumber } from '@/lib/formulas';
 import { limitNameWords, MAX_NAME_WORDS, nameWords } from '@/lib/names';
+import { useIsAdmin } from '@/features/admin/api';
 import { isDemo } from '@/lib/supabase';
 import { retrySync, syncRow } from '@/lib/sync';
 import type { Profile } from '@/lib/types';
@@ -36,6 +37,7 @@ export default function Settings() {
   const queued = useQueue((s) => s.items.length);
   const refused = useQueue((s) => s.items.filter((i) => i.failed).length);
   const syncError = useQueue((s) => s.lastError);
+  const isAdmin = useIsAdmin();
   const restSound = usePrefs((s) => s.restSound);
   const setRestSound = usePrefs((s) => s.setRestSound);
 
@@ -296,6 +298,17 @@ export default function Settings() {
           ) : null}
         </FormGroup>
       </View>
+
+      {isAdmin ? (
+        <View style={{ gap: 6 }}>
+          <Text style={[type.caption, { paddingHorizontal: 16 }]}>Admin</Text>
+          <FormGroup>
+            <FormRow label="Stats and reports" onPress={() => router.push('/profile/admin')}>
+              <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
+            </FormRow>
+          </FormGroup>
+        </View>
+      ) : null}
 
       <View style={{ gap: 10, marginTop: 8 }}>
         <FillButton

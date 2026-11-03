@@ -3,7 +3,8 @@
  * Never import this from screens directly — go through src/features/social/api.ts.
  */
 import CATALOG from '@/data/exercises.json';
-import { addDays, startOfWeek, toLocalDate } from '@/lib/dates';
+import type { AdminStats } from '@/lib/adminStats';
+import { addDays, fromLocalDate, startOfWeek, toLocalDate } from '@/lib/dates';
 import { e1rm, markPRs, prCount, volume } from '@/lib/formulas';
 import { defaultPhases } from '@/lib/periodization';
 import type { Exercise, Gym, Program, PublicUser, Session, SetEntry } from '@/lib/types';
@@ -500,3 +501,55 @@ export const DEMO_TOGETHER_COUNTS: Record<string, number> = {
   filip: 2,
   ondrej: 1,
 };
+
+// ───────────── Admin (demo: the demo user is the admin) ─────────────
+
+export function demoAdminStats(today: string): AdminStats {
+  const weeks = [3, 5, 4, 8, 6, 9, 12, 10, 14, 11, 16, 7];
+  const monday = startOfWeek(fromLocalDate(today));
+  return {
+    today,
+    users: 128,
+    new_today: 2,
+    new_7d: 9,
+    new_30d: 41,
+    installed_30d: 57,
+    active_1d: 23,
+    active_7d: 61,
+    active_30d: 88,
+    signups_by_week: weeks.map((count, i) => ({
+      week: toLocalDate(addDays(monday, (i - weeks.length + 1) * 7)),
+      count,
+    })),
+    retention: [
+      { days: 1, eligible: 126, back: 94 },
+      { days: 7, eligible: 117, back: 71 },
+      { days: 30, eligible: 87, back: 38 },
+    ],
+    funnel: {
+      since: toLocalDate(addDays(fromLocalDate(today), -45)),
+      signed_up: 52,
+      tour_done: 44,
+      first_workout: 29,
+      week2_eligible: 40,
+      week2: 17,
+    },
+  };
+}
+
+export const DEMO_REPORTS = [
+  {
+    target_type: 'forum_post' as const,
+    author: 'filip',
+    preview: 'Buy cheap supplements here!!! link in bio',
+    reports: 3,
+    hoursAgo: 5,
+  },
+  {
+    target_type: 'forum_comment' as const,
+    author: 'petr',
+    preview: 'That form is a joke, you will hurt yourself',
+    reports: 1,
+    hoursAgo: 30,
+  },
+];

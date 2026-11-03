@@ -4,7 +4,7 @@
  */
 export const PRIVACY_CONTACT: { name: string; email: string } | null = null;
 
-export const PRIVACY_UPDATED = '2 November 2026';
+export const PRIVACY_UPDATED = '3 November 2026';
 
 export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
   {
@@ -15,6 +15,7 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
       'Your training: programs, workouts, sets, PRs, ratings and badges.',
       'Your body: bodyweight, height and body measurements.',
       'What you share: Forum posts, comments, likes, gym check-ins, training plans and friends.',
+      'Which days you opened the app, whether from the Home Screen, and whether you finished the app tour. Nothing about what you looked at or tapped.',
     ],
   },
   {
@@ -22,7 +23,8 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
     paragraphs: [
       'We use this data only to run Colosseum: to log your training, show your progress and let you compete and train with others. That is necessary to provide the service you signed up for.',
       'Bodyweight and body measurements can count as health data. You choose to enter them, and they are used only for your own tracking and to calculate a DOTS score. You can delete them at any time by deleting your account.',
-      'We do not sell your data, show ads or use analytics or tracking tools.',
+      'The days you opened the app are counted to see how many people use Colosseum and come back. We count this ourselves, in the same database; only the app’s admin sees the totals.',
+      'We do not sell your data, show ads or use outside analytics or tracking tools.',
     ],
   },
   {

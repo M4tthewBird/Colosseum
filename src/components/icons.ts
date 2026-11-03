@@ -65,3 +65,4 @@ export { default as RotateCcw } from 'lucide-react-native/icons/rotate-ccw';
 export { default as Crown } from 'lucide-react-native/icons/crown';
 export { default as Disc } from 'lucide-react-native/icons/disc';
 export { default as Award } from 'lucide-react-native/icons/award';
+export { default as Ban } from 'lucide-react-native/icons/ban';

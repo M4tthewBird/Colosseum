@@ -39,6 +39,7 @@ import {
   type LucideIcon,
 } from '@/components/icons';
 import { MAX_WIDTH } from '@/components/Screen';
+import { trackTourDone } from '@/features/admin/events';
 import { useData } from '@/stores/data';
 import { usePrefs } from '@/stores/prefs';
 import { dur, ease, useReducedMotion } from '@/theme/motion';
@@ -242,6 +243,7 @@ function TourOverlay() {
     leave(STEPS[i].route);
   };
   const finish = (then?: Href) => {
+    trackTourDone();
     setPending(false);
     leave(then ?? '/');
   };

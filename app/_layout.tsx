@@ -3,11 +3,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { View } from 'react-native';
+import { AppState, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { CrashScreen } from '@/components/CrashScreen';
 import { ConfirmHost, ToastHost } from '@/components/Overlays';
+import { trackOpen } from '@/features/admin/events';
 import { startAuth, useAuth } from '@/features/auth/auth';
 import { GymConfirmHost } from '@/features/gyms/GymConfirm';
 import { SpotlightHost } from '@/features/onboarding/Spotlight';
@@ -38,6 +39,16 @@ export default function RootLayout() {
 
   const ready = hydrated && status !== 'loading' && fontsLoaded;
   const signedIn = status === 'signedIn' && hasProfile;
+
+  // Usage stats for the admin: opened today, and again when it comes back to the front.
+  useEffect(() => {
+    if (!signedIn) return;
+    trackOpen();
+    const sub = AppState.addEventListener('change', (s) => {
+      if (s === 'active') trackOpen();
+    });
+    return () => sub.remove();
+  }, [signedIn]);
 
   return (
     <QueryClientProvider client={queryClient}>
