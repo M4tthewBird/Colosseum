@@ -20,6 +20,7 @@ import { createGym, useGym } from '@/features/social/api';
 import { formatKg, parseNumber } from '@/lib/formulas';
 import { limitNameWords, MAX_NAME_WORDS, nameWords } from '@/lib/names';
 import { useIsAdmin } from '@/features/admin/api';
+import { FeedbackSheet } from '@/features/feedback/FeedbackSheet';
 import { isDemo } from '@/lib/supabase';
 import { retrySync, syncRow } from '@/lib/sync';
 import type { Profile } from '@/lib/types';
@@ -49,6 +50,7 @@ export default function Settings() {
   const [photo, setPhoto] = useState<string | null>(null);
   const [picking, setPicking] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const currentGym = useGym(draft.home_gym_id);
@@ -207,6 +209,7 @@ export default function Settings() {
         </FormGroup>
       </View>
       <ChangePassword visible={changingPassword} onClose={() => setChangingPassword(false)} />
+      <FeedbackSheet visible={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
 
       <View style={{ gap: 6 }}>
         <Text style={[type.caption, { paddingHorizontal: 16 }]}>During a workout</Text>
@@ -291,6 +294,9 @@ export default function Settings() {
           <FormRow label="What’s new" onPress={() => router.push('/profile/whats-new')}>
             <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
           </FormRow>
+          <FormRow label="Send feedback" onPress={() => setFeedbackOpen(true)}>
+            <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
+          </FormRow>
           {PRIVACY_CONTACT ? (
             <FormRow label="Privacy" onPress={() => router.push('/privacy')}>
               <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
@@ -303,7 +309,10 @@ export default function Settings() {
         <View style={{ gap: 6 }}>
           <Text style={[type.caption, { paddingHorizontal: 16 }]}>Admin</Text>
           <FormGroup>
-            <FormRow label="Stats and reports" onPress={() => router.push('/profile/admin')}>
+            <FormRow
+              label="Stats, reports and feedback"
+              onPress={() => router.push('/profile/admin')}
+            >
               <ChevronRight size={14} color={colors.text3} strokeWidth={3} />
             </FormRow>
           </FormGroup>

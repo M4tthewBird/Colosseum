@@ -5,7 +5,7 @@
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { DEMO_REPORTS, demoAdminStats, demoUser } from '@/dev/seed';
+import { DEMO_FEEDBACK, DEMO_REPORTS, demoAdminStats, demoUser } from '@/dev/seed';
 import type { AdminStats } from '@/lib/adminStats';
 import { toLocalDate } from '@/lib/dates';
 import { isDemo, supabase } from '@/lib/supabase';
@@ -123,6 +123,93 @@ export function useReportAction() {
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['admin-reports'] });
       void qc.invalidateQueries({ queryKey: ['forum'] });
+    },
+  });
+}
+
+// ───────────── Feedback and error reports ─────────────
+
+export interface AdminFeedback {
+  id: string;
+  kind: 'message' | 'crash' | 'sync';
+  message: string;
+  details: Record<string, unknown>;
+  /** Path in the private "feedback" bucket. */
+  screenshot: string | null;
+  created_at: string;
+  resolved_at: string | null;
+  user_id: string;
+  username: string | null;
+  display_name: string | null;
+}
+
+let demoFeedback: AdminFeedback[] | null = null;
+function demoFeedbackList(): AdminFeedback[] {
+  demoFeedback ??= DEMO_FEEDBACK.map((f) => {
+    const u = demoUser(f.author);
+    return {
+      id: stableUuid(`feedback:${f.message}`),
+      kind: f.kind,
+      message: f.message,
+      details: f.details,
+      screenshot: null,
+      created_at: new Date(Date.now() - f.hoursAgo * 3600_000).toISOString(),
+      resolved_at: null,
+      user_id: u.id,
+      username: u.username,
+      display_name: u.display_name,
+    };
+  });
+  return demoFeedback;
+}
+
+/** Open ones (resolved = false) or the ones marked done. */
+export function useAdminFeedback(resolved: boolean) {
+  return useQuery({
+    queryKey: ['admin-feedback', resolved],
+    queryFn: async (): Promise<AdminFeedback[]> => {
+      if (isDemo)
+        return demoFeedbackList()
+          .filter((f) => !!f.resolved_at === resolved)
+          .map((f) => ({ ...f }));
+      const { data, error } = await supabase.rpc('admin_feedback', { p_resolved: resolved });
+      if (error) throw new Error(error.message);
+      return (data ?? []) as AdminFeedback[];
+    },
+  });
+}
+
+export function useResolveFeedback() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, resolved }: { id: string; resolved: boolean }) => {
+      if (isDemo) {
+        const f = demoFeedbackList().find((x) => x.id === id);
+        if (f) f.resolved_at = resolved ? new Date().toISOString() : null;
+        return;
+      }
+      const { error } = await supabase.rpc('admin_resolve_feedback', {
+        p_id: id,
+        p_resolved: resolved,
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin-feedback'] }),
+  });
+}
+
+/** A short-lived link to a screenshot in the private bucket. */
+export function useScreenshotUrl(path: string | null) {
+  return useQuery({
+    queryKey: ['feedback-shot', path],
+    enabled: !!path && !isDemo,
+    staleTime: 50 * 60_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.storage
+        .from('feedback')
+        .createSignedUrl(path!, 60 * 60);
+      if (error) throw new Error(error.message);
+      return data.signedUrl;
     },
   });
 }

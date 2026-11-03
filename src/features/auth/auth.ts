@@ -252,7 +252,13 @@ export async function deleteAccount(): Promise<void> {
   if (!isDemo) {
     // Deleting the account does not reach storage, and this picture has a public address.
     const userId = useAuth.getState().userId;
-    if (userId) await supabase.storage.from('avatars').remove([`${userId}/avatar.jpg`]);
+    if (userId) {
+      await supabase.storage.from('avatars').remove([`${userId}/avatar.jpg`]);
+      // Screenshots sent with feedback go too (the reports themselves go with the account).
+      const shots = await supabase.storage.from('feedback').list(userId);
+      const names = (shots.data ?? []).map((f) => `${userId}/${f.name}`);
+      if (names.length) await supabase.storage.from('feedback').remove(names);
+    }
     const { error } = await supabase.rpc('delete_my_account');
     if (error) throw new Error(error.message);
   }

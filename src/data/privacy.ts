@@ -16,6 +16,7 @@ export const PRIVACY_SECTIONS: { title: string; paragraphs: string[] }[] = [
       'Your body: bodyweight, height and body measurements.',
       'What you share: Forum posts, comments, likes, gym check-ins, training plans and friends.',
       'Which days you opened the app, whether from the Home Screen, and whether you finished the app tour. Nothing about what you looked at or tapped.',
+      'Feedback you send, with a screenshot if you add one, and error reports the app sends when something breaks. Both include the app version, your device and browser, and the screen you were on; never your workouts or body data. Only the app’s admin reads them.',
     ],
   },
   {

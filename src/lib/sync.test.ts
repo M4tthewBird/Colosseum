@@ -1,5 +1,5 @@
 import { useQueue, type QueueItem } from '@/stores/queue';
-import { flush, isRefused, retrySync, setSessionLookup, syncRow } from './sync';
+import { flush, isRefused, retrySync, setRefusedListener, setSessionLookup, syncRow } from './sync';
 
 type Result = { error: { message: string } | null; status: number };
 /** Decides the answer for each request, from the ids in it. */
@@ -206,5 +206,32 @@ describe('sets of a workout the server cannot see', () => {
     useQueue.getState().enqueue([setOf('s1', 'w1'), setOf('s2', 'w2')]);
     useQueue.getState().dropForSession('w1');
     expect(left()).toEqual([['s2', null]]);
+  });
+});
+
+describe('error reports', () => {
+  afterEach(() => setRefusedListener(() => {}));
+
+  it('hears about every write set aside, and only those', async () => {
+    const heard: [string, string][] = [];
+    setRefusedListener((it, message) => heard.push([it.id, message]));
+    useQueue.getState().enqueue([item('a'), item('bad'), item('c')]);
+    answer = refuse('bad');
+    await flush();
+    expect(heard).toEqual([['bad', 'no bad']]);
+  });
+
+  it('hears nothing about a set of a deleted workout that was dropped', async () => {
+    const heard: string[] = [];
+    setRefusedListener((it) => heard.push(it.id));
+    setSessionLookup(() => null);
+    useQueue
+      .getState()
+      .enqueue([
+        { table: 'set_entries', op: 'upsert', id: 's1', row: { id: 's1', session_id: 'w1' } },
+      ]);
+    answer = () => ({ error: { message: 'violates row-level security policy' }, status: 403 });
+    await flush();
+    expect(heard).toEqual([]);
   });
 });

@@ -66,3 +66,5 @@ export { default as Crown } from 'lucide-react-native/icons/crown';
 export { default as Disc } from 'lucide-react-native/icons/disc';
 export { default as Award } from 'lucide-react-native/icons/award';
 export { default as Ban } from 'lucide-react-native/icons/ban';
+export { default as ImagePlus } from 'lucide-react-native/icons/image-plus';
+export { default as Bug } from 'lucide-react-native/icons/bug';

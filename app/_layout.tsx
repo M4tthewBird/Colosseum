@@ -1,6 +1,6 @@
 import { Cinzel_700Bold, useFonts } from '@expo-google-fonts/cinzel';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Stack } from 'expo-router';
+import { Stack, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { AppState, View } from 'react-native';
@@ -10,6 +10,7 @@ import { CrashScreen } from '@/components/CrashScreen';
 import { ConfirmHost, ToastHost } from '@/components/Overlays';
 import { trackOpen } from '@/features/admin/events';
 import { startAuth, useAuth } from '@/features/auth/auth';
+import { setCurrentRoute, startErrorReports } from '@/features/feedback/report';
 import { GymConfirmHost } from '@/features/gyms/GymConfirm';
 import { SpotlightHost } from '@/features/onboarding/Spotlight';
 import { Tour } from '@/features/onboarding/Tour';
@@ -36,6 +37,10 @@ export default function RootLayout() {
     if (hydrated) startAuth();
   }, [hydrated]);
   useEffect(() => startSync(), []);
+  useEffect(() => startErrorReports(), []);
+  // Error reports say which screen it happened on.
+  const pathname = usePathname();
+  useEffect(() => setCurrentRoute(pathname), [pathname]);
 
   const ready = hydrated && status !== 'loading' && fontsLoaded;
   const signedIn = status === 'signedIn' && hasProfile;

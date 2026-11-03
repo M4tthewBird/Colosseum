@@ -32,6 +32,18 @@ export function setSessionLookup(fn: SessionLookup): void {
   sessionRowFor = fn;
 }
 
+/** Told about every write the server refuses and that is set aside (error reports). */
+type RefusedListener = (item: QueueItem, message: string) => void;
+let onRefused: RefusedListener = () => {};
+export function setRefusedListener(fn: RefusedListener): void {
+  onRefused = fn;
+}
+
+function setAside(item: QueueItem, message: string) {
+  useQueue.getState().markFailed([item.key], message);
+  onRefused(item, message);
+}
+
 /** Rows that need their workout to be on the server first (RLS checks its owner). */
 const CHILD_OF_SESSION: SyncTable[] = ['set_entries', 'session_ratings'];
 
@@ -144,7 +156,7 @@ export async function flush(): Promise<void> {
       if (res.error && batch.length === 1) {
         if (await settleOrphan(batch[0], res.error.message)) continue;
         console.warn('[sync] refused, set aside', batch[0].key, res.error.message);
-        useQueue.getState().markFailed([batch[0].key], res.error.message);
+        setAside(batch[0], res.error.message);
         continue;
       }
       if (res.error) {
@@ -154,8 +166,7 @@ export async function flush(): Promise<void> {
           if (one.error && !isRefused(one.status))
             throw new Error(`${table} ${op}: ${one.error.message}`);
           if (one.error) {
-            if (!(await settleOrphan(item, one.error.message)))
-              useQueue.getState().markFailed([item.key], one.error.message);
+            if (!(await settleOrphan(item, one.error.message))) setAside(item, one.error.message);
           } else useQueue.getState().remove([item.key]);
         }
         continue;

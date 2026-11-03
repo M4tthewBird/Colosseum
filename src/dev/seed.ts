@@ -553,3 +553,49 @@ export const DEMO_REPORTS = [
     hoursAgo: 30,
   },
 ];
+
+export const DEMO_FEEDBACK = [
+  {
+    kind: 'message' as const,
+    author: 'jakub',
+    message:
+      'Would love to see the plate calculator on superset pages too. Also the rest timer sound is quiet on my phone.',
+    details: {
+      version: '1.0.0',
+      release: '2026-11-03',
+      platform: 'web',
+      route: '/workout/1',
+      installed: true,
+    },
+    hoursAgo: 2,
+  },
+  {
+    kind: 'crash' as const,
+    author: 'ondrej',
+    message: "Cannot read properties of undefined (reading 'sets')",
+    details: {
+      version: '1.0.0',
+      release: '2026-11-02e',
+      platform: 'web',
+      device: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_1 like Mac OS X) AppleWebKit/605.1.15',
+      route: '/session/42',
+      where: 'screen',
+      stack:
+        "TypeError: Cannot read properties of undefined (reading 'sets')\n    at SessionDetail (session/[id].tsx:58)\n    at renderWithHooks",
+    },
+    hoursAgo: 9,
+  },
+  {
+    kind: 'sync' as const,
+    author: 'adam',
+    message: 'new row violates row-level security policy for table "set_entries"',
+    details: {
+      version: '1.0.0',
+      release: '2026-11-02e',
+      platform: 'web',
+      table: 'set_entries',
+      op: 'upsert',
+    },
+    hoursAgo: 26,
+  },
+];

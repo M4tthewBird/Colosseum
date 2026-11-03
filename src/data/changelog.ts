@@ -8,6 +8,15 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-11-03b',
+    date: '2026-11-03',
+    title: 'Tell us what to fix',
+    items: [
+      'Settings → Send feedback: tell us what is broken, confusing or missing, with a screenshot if it helps.',
+      'When something crashes, the app now lets us know on its own, so we can fix it sooner.',
+    ],
+  },
+  {
     id: '2026-11-03',
     date: '2026-11-03',
     title: 'Sync fix',

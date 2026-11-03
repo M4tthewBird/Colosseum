@@ -1,24 +1,29 @@
 /**
  * Admin (only for accounts in public.admins; Settings shows the row to them alone, and the server
  * refuses everyone else): how many people use Colosseum and whether they come back, and what was
- * reported. Feedback, password resets and announcements join here later (docs/BACKLOG.md).
+ * reported, and what users wrote or the app reported on its own. Password resets and announcements
+ * join here later (docs/BACKLOG.md).
  */
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, Linking, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { BackLink } from '@/components/BackLink';
 import { FillButton } from '@/components/Buttons';
 import { ProgressBar } from '@/components/Charts';
 import { Glass } from '@/components/Glass';
-import { Ban, Check, Trash2 } from '@/components/icons';
+import { Ban, Check, RotateCcw, Trash2 } from '@/components/icons';
 import { EmptyState, SectionHeader } from '@/components/List';
 import { Header, Screen } from '@/components/Screen';
 import { Segmented } from '@/components/Segmented';
 import {
+  useAdminFeedback,
   useAdminReports,
   useAdminStats,
   useIsAdmin,
   useReportAction,
+  useResolveFeedback,
+  useScreenshotUrl,
+  type AdminFeedback,
   type AdminReport,
   type ReportAction,
 } from '@/features/admin/api';
@@ -27,13 +32,14 @@ import { fromLocalDate, shortDate, timeAgo } from '@/lib/dates';
 import { confirm, toast } from '@/stores/ui';
 import { colors, tabular, type } from '@/theme/tokens';
 
-type Tab = 'stats' | 'reports';
+type Tab = 'stats' | 'reports' | 'feedback';
 
 export default function Admin() {
   const isAdmin = useIsAdmin();
   const [tab, setTab] = useState<Tab>('stats');
   const reports = useAdminReports();
   const open = reports.data?.filter((r) => !r.gone).length ?? 0;
+  const feedback = useAdminFeedback(false).data?.length ?? 0;
 
   if (!isAdmin) {
     return (
@@ -53,12 +59,13 @@ export default function Admin() {
         options={[
           { value: 'stats', label: 'Stats' },
           { value: 'reports', label: open ? `Reports · ${open}` : 'Reports' },
+          { value: 'feedback', label: feedback ? `Feedback · ${feedback}` : 'Feedback' },
         ]}
         value={tab}
         onChange={setTab}
         accessibilityLabel="Admin sections"
       />
-      {tab === 'stats' ? <Stats /> : <Reports />}
+      {tab === 'stats' ? <Stats /> : tab === 'reports' ? <Reports /> : <Feedback />}
     </Screen>
   );
 }
@@ -345,7 +352,160 @@ function ReportCard({ r }: { r: AdminReport }) {
   );
 }
 
+// ───────────── Feedback ─────────────
+
+const FEEDBACK_KIND: Record<AdminFeedback['kind'], string> = {
+  message: 'Message',
+  crash: 'Crash',
+  sync: 'Sync refused',
+};
+
+function Feedback() {
+  const [done, setDone] = useState(false);
+  const q = useAdminFeedback(done);
+  return (
+    <View style={{ gap: 12 }}>
+      <Segmented
+        compact
+        height={32}
+        options={[
+          { value: 'open', label: 'Open' },
+          { value: 'done', label: 'Done' },
+        ]}
+        value={done ? 'done' : 'open'}
+        onChange={(v) => setDone(v === 'done')}
+        accessibilityLabel="Open or done feedback"
+        style={{ alignSelf: 'flex-start' }}
+      />
+      {q.isPending ? (
+        <Text style={type.caption}>Loading…</Text>
+      ) : q.error ? (
+        <EmptyState
+          title="Could not load the feedback"
+          text={q.error.message}
+          action={<FillButton label="Try again" size="sm" onPress={() => void q.refetch()} />}
+        />
+      ) : !q.data.length ? (
+        <EmptyState
+          title={done ? 'Nothing marked done' : 'All caught up'}
+          text={
+            done
+              ? undefined
+              : 'Messages from Settings → Send feedback, crashes and refused syncs show up here.'
+          }
+        />
+      ) : (
+        q.data.map((f) => <FeedbackCard key={f.id} f={f} />)
+      )}
+      <Hint text="Crashes and refused syncs come in on their own, once a day per problem and device." />
+    </View>
+  );
+}
+
+/** The details worth reading, in a fixed order; the rest stays out of the way. */
+const DETAIL_LABELS: [string, string][] = [
+  ['route', 'Screen'],
+  ['release', 'Release'],
+  ['version', 'Version'],
+  ['installed', 'Home Screen'],
+  ['screen', 'Window'],
+  ['table', 'Table'],
+  ['op', 'Write'],
+  ['where', 'Caught by'],
+  ['device', 'Device'],
+];
+
+function detailText(v: unknown): string {
+  if (typeof v === 'boolean') return v ? 'yes' : 'no';
+  return String(v);
+}
+
+function FeedbackCard({ f }: { f: AdminFeedback }) {
+  const resolve = useResolveFeedback();
+  const [more, setMore] = useState(false);
+  const shot = useScreenshotUrl(f.screenshot);
+  const stack = typeof f.details.stack === 'string' ? f.details.stack : null;
+  const rows = DETAIL_LABELS.filter(([k]) => f.details[k] != null && f.details[k] !== '');
+  const openShot = () => {
+    if (!shot.data) return;
+    if (Platform.OS === 'web') window.open(shot.data, '_blank');
+    else void Linking.openURL(shot.data);
+  };
+
+  return (
+    <Glass radius={22} style={[styles.card, { gap: 10 }]}>
+      <View style={styles.row}>
+        <Text
+          style={[
+            type.captionStrong,
+            { flex: 1 },
+            f.kind !== 'message' && { color: colors.accent },
+          ]}
+        >
+          {FEEDBACK_KIND[f.kind]}
+        </Text>
+        <Text style={type.small}>{timeAgo(f.created_at)}</Text>
+      </View>
+      <Text style={type.body} selectable>
+        {f.message}
+      </Text>
+      {shot.data ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Open screenshot"
+          onPress={openShot}
+        >
+          <Image source={{ uri: shot.data }} style={styles.shot} resizeMode="cover" />
+        </Pressable>
+      ) : f.screenshot ? (
+        <Text style={type.small}>Screenshot loading…</Text>
+      ) : null}
+      <Text style={type.caption}>
+        {f.display_name ? `${f.display_name} · ` : ''}
+        {f.username ? `@${f.username}` : 'deleted account'}
+      </Text>
+      {more ? (
+        <View style={{ gap: 4 }}>
+          {rows.map(([k, label]) => (
+            <Text key={k} style={type.small} selectable>
+              {label}: {detailText(f.details[k])}
+            </Text>
+          ))}
+          {stack ? (
+            <Text style={[type.small, styles.stack]} selectable>
+              {stack}
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
+      <View style={styles.actions}>
+        <FillButton
+          label={f.resolved_at ? 'Reopen' : 'Done'}
+          icon={f.resolved_at ? RotateCcw : Check}
+          size="sm"
+          disabled={resolve.isPending}
+          onPress={() =>
+            resolve.mutate(
+              { id: f.id, resolved: !f.resolved_at },
+              { onError: (e) => toast(e.message) },
+            )
+          }
+        />
+        {rows.length || stack ? (
+          <FillButton
+            label={more ? 'Fewer details' : 'Details'}
+            size="sm"
+            onPress={() => setMore(!more)}
+          />
+        ) : null}
+      </View>
+    </Glass>
+  );
+}
+
 const styles = StyleSheet.create({
+  shot: { width: 120, height: 200, borderRadius: 14, backgroundColor: colors.fill },
+  stack: { fontFamily: Platform.OS === 'web' ? 'ui-monospace, Menlo, monospace' : 'Menlo' },
   card: { paddingHorizontal: 16, paddingVertical: 14, gap: 12 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   big: { fontSize: 17, fontWeight: '700', color: colors.text, minWidth: 52, textAlign: 'right' },
