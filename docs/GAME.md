@@ -78,7 +78,7 @@ A **season** is a calendar month. Laurels are earned per qualifying workout:
 - **Daily cap:** 45 laurels from workouts. Duels, wars and Bellum come on top.
 - **Leagues** by season score: **Bronze** 0 · **Silver** 150 · **Gold** 350 · **Imperator's Arena** 700.
 - **Partial reset:** a new season starts with half of last season's score, at most 300 (so nobody starts in Gold).
-- **Where:** Arena → League (the season's table for friends, the gym or everyone) and a small season card on Today.
+- **Where:** City → Colosseum → League (the season's table for friends, the gym or everyone) and a small season card on Today.
 
 ## Fair scoring (beginner vs. strong)
 
@@ -156,7 +156,7 @@ The ludus and the gym (tribe) each have a fortress. Any member can start a build
   - **Win:** +30, plus +1 for every 10 gloria the loser had more than the winner (at most +30 more).
   - **Loss:** −10, or nothing after a close fight (at least 90 % of the winner's score).
 - **Record:** wins, losses, attacks beaten (won as defender), giants slain (won against more gloria), the current and the longest run of wins.
-- **Ludus ranking** by gloria (then wins): Arena → Ludus, the top 10 with your own ludus, "See all" for the top 50. Tap a ludus to see its record and badges.
+- **Ludus ranking** by gloria (then wins): City → Ludus, the top 10 with your own ludus, "See all" for the top 50. Tap a ludus to see its record and badges.
 - **War history:** the last 5 wars with the gloria won or lost, "All wars" for the rest.
 - **Ludus badges** (earned by the crew, shown on the ludus and in the ranking):
 
@@ -172,11 +172,11 @@ The ludus and the gym (tribe) each have a fortress. Any member can start a build
 
 - **Duel:** challenge a friend for 7 days from the moment they accept: **most workouts** or **most kg added** to one lift's e1RM. The winner gets +25 laurels; a tie gives nothing.
 - **Bellum:** every month the gyms of a city fight. Score = verified visits (one per person per day) ÷ active members (at least 3 to rank), plus the gym's palisade bonus. Members of the winning gym who trained get +40 laurels after the month ends.
-- **Where:** Arena → Duels, Arena → Bellum.
+- **Where:** City → Colosseum → Duels and Bellum.
 
 ## 8. Attributes (character sheet)
 
-On Profile → Gladiator, 0–99 each:
+On City → Your domus, 0–99 each:
 
 - **Strength:** DOTS of the best squat + bench + deadlift e1RM ÷ 5 (needs bodyweight and sex)
 - **Endurance:** working sets in the last 90 days ÷ 12
@@ -184,7 +184,13 @@ On Profile → Gladiator, 0–99 each:
 
 ## 9. The city, fighting styles and gear
 
-**The city** (Today → The city) is the way into the game: the Colosseum (tribe wars and the map), the forge, the market and the baths (both later), the temple (the tribe fortress), your domus (Profile → Gladiator) and your ludus.
+**The city** (the City tab) is the way into the game: the Colosseum (league, duels, Bellum and the map), your ludus, the temple (your gym's tribe and its fortress), the forge, your domus (your gladiator) and the market and the baths (both later).
+
+**Names in the app.** This document keeps the code's names. The app calls a ludus a **clan** (`src/lib/game/words.ts` turns server messages into it); every other name stays as here.
+
+**Building the city (planned, Matyáš 2026-11-26).** The city is a grid that grows from its arena; there is no board to fill. Every building is a painted piece on its own diamond plot of 1×1, 2×2 or 3×3 tiles (`assets/game/painted/city/`, anchors in `manifest.json`). In edit mode the player sees the grid: the free tiles that touch the city. A new piece must share at least one edge with a piece already built, so the city only grows outwards and stays in one block. The ground exists only under built plots; the app draws earth sides along the city's outer front edges. Pieces are drawn back to front: one goes behind another when its tiles all lie at smaller i, or all at smaller j. Pieces cannot be rotated (each is painted from one side).
+
+**Playing is a choice.** Sign-up asks "Play the game" or "Just track workouts"; players from before were asked once in What's new; Settings changes it any time. Off hides the City tab and the game's cards (season, check-in, war alert, the workout reward, other players' levels); the game keeps counting on the server, so turning it on later loses nothing. The choice is the account's: kept per user on the device and in the Supabase Auth user metadata (`game: 'on' | 'off'`), see `src/features/game/gameMode.ts`.
 
 ### Fighting style
 
@@ -211,7 +217,7 @@ Five slots: helmet, weapon, shield, guards, armour. Everyone starts with the Gal
 
 ## 10. The map and tribe attacks
 
-The **map** (Arena → Bellum → Map, or the Colosseum in the city) shows the tribes (home gyms) of your city at their positions, with a territory that grows with the gym fortress level. Filters: all, at war, weaker, stronger (within 10 % counts as even).
+The **map** (City → Colosseum → Map, or Bellum → Map) shows the tribes (home gyms) of your city at their positions, with a territory that grows with the gym fortress level. Filters: all, at war, weaker, stronger (within 10 % counts as even).
 
 - **Strength** of a tribe = 20 per verified workout of its members in the last 14 days + the gear power of those members.
 - **Territory:** every gym starts holding its own. A tribe that wins an attack takes every territory the defender holds. The **city ranking** is by territories, then fortress level.

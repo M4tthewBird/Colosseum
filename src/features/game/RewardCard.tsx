@@ -15,10 +15,16 @@ import { useTween } from '@/lib/useTween';
 import { useData } from '@/stores/data';
 import { useReducedMotion } from '@/theme/motion';
 import { accentA, colors, tabular, type } from '@/theme/tokens';
+import { useGameOn } from './gameMode';
 import { LevelLine, XpBar } from './GameViews';
 import { useMyGame } from './hooks';
 
+/** Nothing when the player turned the game off (the reward still counts). */
 export function RewardCard({ sessionId }: { sessionId: string }) {
+  return useGameOn() ? <Reward sessionId={sessionId} /> : null;
+}
+
+function Reward({ sessionId }: { sessionId: string }) {
   const game = useMyGame();
   const homeGym = useData((s) => s.profile?.home_gym_id);
   const run = useData((s) => s.sessions[sessionId]?.kind === 'run');

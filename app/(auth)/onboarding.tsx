@@ -9,6 +9,8 @@ import { FieldHint, FormField, FormGroup, FormRow } from '@/components/Form';
 import { LogoMark, Wordmark } from '@/components/Logo';
 import { Screen } from '@/components/Screen';
 import { isUsernameAvailable, signUp, useAuth } from '@/features/auth/auth';
+import type { GameChoice } from '@/features/game/gameMode';
+import { GameModePicker } from '@/features/game/GameModeViews';
 import { GymPicker, type GymChoice } from '@/features/gyms/GymPicker';
 import { AvatarPicker } from '@/features/profile/AvatarPicker';
 import { ExperiencePicker, GoalsPicker, SexSwitch } from '@/features/profile/ProfileFields';
@@ -38,6 +40,7 @@ export default function Onboarding() {
   const [gym, setGym] = useState<GymChoice | null>(null);
   const [experience, setExperience] = useState<Experience | null>(null);
   const [goals, setGoals] = useState<Goal[]>([]);
+  const [game, setGame] = useState<GameChoice | null>(null);
   const [gymOpen, setGymOpen] = useState(false);
   const [checked, setChecked] = useState<{ name: string; result: Availability } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -97,6 +100,7 @@ export default function Onboarding() {
     problems.push('Bodyweight must be a number between 20 and 400 kg.');
   if (height !== '' && (heightCm == null || heightCm <= 80 || heightCm >= 260))
     problems.push('Height must be a number between 80 and 260 cm.');
+  if (!game) problems.push('Choose whether you want to play the game or just track workouts.');
   const valid = problems.length === 0;
 
   const submit = async () => {
@@ -116,6 +120,7 @@ export default function Onboarding() {
         heightCm,
         gym: gym && 'id' in gym ? { id: gym.id } : gym,
         photoUri: photo,
+        game,
       });
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -235,6 +240,7 @@ export default function Onboarding() {
 
       <ExperiencePicker value={experience} onChange={setExperience} />
       <GoalsPicker value={goals} onChange={setGoals} />
+      <GameModePicker value={game} onChange={setGame} />
 
       <View style={{ gap: 14, marginTop: 10 }}>
         {tried && problems.length > 0 ? (

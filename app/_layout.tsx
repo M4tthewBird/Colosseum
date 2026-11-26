@@ -84,7 +84,6 @@ export default function RootLayout() {
               <Stack.Screen name="forum/index" />
               <Stack.Screen name="forum/[id]" />
               <Stack.Screen name="gym-poster" />
-              <Stack.Screen name="city" />
               <Stack.Screen name="forge" />
               <Stack.Screen name="style" />
               <Stack.Screen name="tribe/[id]" />

@@ -61,6 +61,8 @@
     "format": "prettier --write .",
     "images": "node scripts/exercise-images.mjs",
     "images:import": "node scripts/exercise-images.mjs --import",
+    "art": "node scripts/painted-art.mjs",
+    "art:import": "node scripts/painted-art.mjs --import",
     "test:backend": "node --env-file=.env scripts/backend-smoke-test.mjs"
   },
   "private": true,

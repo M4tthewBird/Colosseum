@@ -12,6 +12,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="index" />
       <Tabs.Screen name="workouts" />
       <Tabs.Screen name="arena" />
+      <Tabs.Screen name="city" />
       <Tabs.Screen name="profile" />
     </Tabs>
   );

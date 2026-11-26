@@ -8,6 +8,26 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-11-26',
+    date: '2026-11-26',
+    title: 'The game moves to City',
+    highlights: [
+      {
+        feature: 'game-mode',
+        title: 'Do you want to play?',
+        body: 'The game now has its own tab, City: your gladiator, the league, duels, your clan and your gym’s wars. Rather just track workouts? Then the tab and the game’s cards go away.',
+        where: 'City tab · Profile → Settings',
+      },
+    ],
+    items: [
+      'The Arena now shows only the leaderboards and your friends.',
+      'League, duels and Bellum are in City → Colosseum, with the map of your city.',
+      'Your gladiator moved from Profile to City → Your domus.',
+      'Turn the game off or on any time in Profile → Settings. While it is off, your workouts still count, so nothing is lost.',
+      'A plainer name: a ludus is now a clan.',
+    ],
+  },
+  {
     id: '2026-11-14b',
     date: '2026-11-14',
     title: 'Running',
@@ -22,7 +42,7 @@ export const CHANGELOG: Release[] = [
     items: [
       'Log a run in Workouts: distance, time, outdoor or treadmill. Your pace is worked out for you.',
       'A run from 3 km or 20 minutes counts as a workout for XP, laurels, denarii, your weekly target and your streak.',
-      'Runs count in ludus wars, tribe attacks, Bellum and workout duels.',
+      'Runs count in clan wars, tribe attacks, Bellum and workout duels.',
       'Running PRs on 5 km, 10 km, half marathon and marathon earn XP and progress laurels.',
       'Running strength: your best VDOT earns strength laurels, like DOTS does for lifters.',
       'The Retiarius style earns its bonus for a run.',
@@ -53,7 +73,7 @@ export const CHANGELOG: Release[] = [
       'Your gladiator now stands at the top of Profile → Gladiator and changes its look with every rank, from a tunic and wooden sword to golden armour.',
       'The path of the gladiator shows every rank with its look. The last one stays a secret until you earn it.',
       'Your home is drawn too: a hut, a wooden house, a stone domus and at last a villa.',
-      'Ludus and gym fortresses are drawn as they grow, from a training ground to a wooden ludus, a stone arena and finally the Colosseum.',
+      'Clan and gym fortresses are drawn as they grow, from a training ground to a wooden fort, a stone arena and finally the Colosseum.',
       'A new rank after a workout shows your gladiator in its new look.',
     ],
   },
@@ -61,17 +81,17 @@ export const CHANGELOG: Release[] = [
     id: '2026-11-13c',
     date: '2026-11-13',
     title: 'Smaller crews can fight',
-    items: ['A ludus of 2 can declare war now, and be attacked. Points still count per member.'],
+    items: ['A clan of 2 can declare war now, and be attacked. Points still count per member.'],
   },
   {
     id: '2026-11-13b',
     date: '2026-11-13',
-    title: 'Glory for your ludus',
+    title: 'Glory for your clan',
     items: [
-      'Gloria: every war your ludus wins makes it more famous, more for beating a stronger ludus. It never resets.',
-      'The ludus ranking in Arena → Ludus. Tap any ludus to see its wins, losses and badges.',
-      'Ludus badges the crew earns together: Victories, Unbroken, Iron wall, Giant slayer and Gloria.',
-      'The full war history of your ludus, with the gloria each war brought.',
+      'Gloria: every war your clan wins makes it more famous, more for beating a stronger clan. It never resets.',
+      'The clan ranking in City → Clan. Tap any clan to see its wins, losses and badges.',
+      'Clan badges the crew earns together: Victories, Unbroken, Iron wall, Giant slayer and Gloria.',
+      'The full war history of your clan, with the gloria each war brought.',
     ],
   },
   {
@@ -81,7 +101,7 @@ export const CHANGELOG: Release[] = [
     highlights: [
       {
         feature: 'game',
-        title: 'Levels, leagues and your ludus',
+        title: 'Levels, leagues and your clan',
         body: 'Every real workout earns XP, laurels and denarii. Climb from Tiro to Rudiarius, fight for your league each month, build a fortress with your crew and win wars, duels and Bellum, the war of the gyms in your city.',
         where: 'Profile → Gladiator, Arena',
       },
@@ -91,7 +111,7 @@ export const CHANGELOG: Release[] = [
       'Ranks from Tiro to Rudiarius, and your own cell on your profile that fills up as you level up.',
       'Monthly leagues (Bronze, Silver, Gold, Imperator’s Arena). Beginners compete fairly: progress counts, not just big numbers.',
       'Check in and out at the gym by scanning its QR poster. Gym managers print the poster in Arena → My gym.',
-      'Ludus: a crew of up to 10 friends from any gym. Give denarii, build a fortress, declare wars.',
+      'Clan: a crew of up to 10 friends from any gym. Give denarii, build a fortress, declare wars.',
       'Duels with friends for a week, and Bellum: every month the gyms of a city fight.',
       'Profile → Gladiator: your attributes (Strength, Endurance, Discipline).',
     ],

@@ -1,30 +1,47 @@
 import type { BottomTabBarProps } from 'expo-router/js-tabs';
-import { ChevronUp, Dumbbell, House, Trophy, User, type LucideIcon } from '@/components/icons';
+import { ChevronUp, Dumbbell, House, Trophy, User } from '@/components/icons';
+import type { ComponentType } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useGameOn } from '@/features/game/gameMode';
 import { resumeWorkout } from '@/features/workout/actions';
 import { useNow } from '@/lib/useNow';
 import { formatClock } from '@/lib/dates';
 import { useData } from '@/stores/data';
 import { useWorkout } from '@/stores/workout';
 import { colors, space, tabular, type } from '@/theme/tokens';
+import { ColosseumIcon } from './ColosseumIcon';
 import { Glass } from './Glass';
 import { Pill, useSlidingPill } from './SlidingPill';
 import { MAX_WIDTH } from './Screen';
 
-const TABS: Record<string, { label: string; icon: LucideIcon }> = {
+type TabIcon = ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
+
+const TABS: Record<string, { label: string; icon: TabIcon; game?: boolean }> = {
   index: { label: 'Today', icon: House },
   workouts: { label: 'Workouts', icon: Dumbbell },
   arena: { label: 'Arena', icon: Trophy },
+  city: { label: 'City', icon: ColosseumIcon, game: true },
   profile: { label: 'Profile', icon: User },
 };
 
-/** Floating glass capsule with 4 tabs, plus the "Resume workout" bar above it. */
-export function TabBar({ state, navigation }: BottomTabBarProps) {
+/**
+ * Floating glass capsule with 5 tabs (4 when the game is off: no City), plus the "Resume workout"
+ * bar above it.
+ */
+export function TabBar(props: BottomTabBarProps) {
+  const gameOn = useGameOn();
+  const shown = props.state.routes.filter((r) => TABS[r.name] && (gameOn || !TABS[r.name].game));
+  // A new bar when the tabs change, so the sliding pill measures them afresh.
+  return <Bar key={shown.length} {...props} shown={shown.map((r) => r.key)} />;
+}
+
+function Bar({ state, navigation, shown }: BottomTabBarProps & { shown: string[] }) {
   const insets = useSafeAreaInsets();
   const bottom = insets.bottom + space.tabBarBottom;
-  const pill = useSlidingPill(state.routes.length, state.index);
+  // (on a hidden tab, e.g. the City opened from a link with the game off, no tab is lit)
+  const pill = useSlidingPill(shown.length, shown.indexOf(state.routes[state.index]?.key));
   return (
     <View style={[{ pointerEvents: 'box-none' }, styles.wrap, { bottom }]}>
       <ResumeBar />
@@ -32,7 +49,8 @@ export function TabBar({ state, navigation }: BottomTabBarProps) {
         {pill.animated ? <Pill pillStyle={pill.style} style={styles.lozenge} /> : null}
         {state.routes.map((route, index) => {
           const tab = TABS[route.name];
-          if (!tab) return null;
+          const at = shown.indexOf(route.key);
+          if (!tab || at === -1) return null;
           const focused = state.index === index;
           const color = focused ? colors.accent : colors.text2;
           const Icon = tab.icon;
@@ -54,7 +72,7 @@ export function TabBar({ state, navigation }: BottomTabBarProps) {
                   else navigation.navigate(route.name);
                 }
               }}
-              onLayout={pill.onItemLayout(index)}
+              onLayout={pill.onItemLayout(at)}
               style={[styles.tab, focused && !pill.animated && { backgroundColor: colors.fill }]}
             >
               <Icon size={22} color={color} strokeWidth={2} />

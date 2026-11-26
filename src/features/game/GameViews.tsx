@@ -106,7 +106,7 @@ export function SeasonCard() {
     <Tap
       accessibilityRole="button"
       accessibilityLabel={`Season, ${league.name} league, ${season.score} laurels`}
-      onPress={() => router.navigate({ pathname: '/arena', params: { mode: 'league' } })}
+      onPress={() => router.navigate({ pathname: '/city/colosseum', params: { mode: 'league' } })}
     >
       <GlassCard radius={22} style={styles.season}>
         <LeagueEmblem league={league} />

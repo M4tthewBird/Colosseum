@@ -12,8 +12,8 @@ export type ArenaPeriod = 'week' | 'month' | 'all';
 /** Who the Ranks leaderboard compares you with. */
 export type ArenaScope = 'friends' | 'gym' | 'global';
 
-/** What the Arena shows: lift and volume ranks, or the game (docs/GAME.md). */
-export type ArenaMode = 'ranks' | 'league' | 'ludus' | 'duels' | 'bellum';
+/** What the Colosseum in the City shows (docs/GAME.md). */
+export type ColosseumMode = 'league' | 'duels' | 'bellum';
 
 export const DEFAULT_METRICS: ArenaMetric[] = [
   'volume',
@@ -29,8 +29,8 @@ interface PrefsState {
   arenaPeriod: ArenaPeriod;
   arenaScope: ArenaScope;
   setArenaScope: (s: ArenaScope) => void;
-  arenaMode: ArenaMode;
-  setArenaMode: (m: ArenaMode) => void;
+  colosseumMode: ColosseumMode;
+  setColosseumMode: (m: ColosseumMode) => void;
   /** Rank lifts by bodyweight-adjusted DOTS score instead of kg. */
   arenaDots: boolean;
   /** Show the "Add to Home Screen" tip once, after sign-up (after the tour). */
@@ -92,8 +92,8 @@ export const usePrefs = create<PrefsState>()(
       arenaPeriod: 'week',
       arenaScope: 'friends',
       setArenaScope: (arenaScope) => set({ arenaScope }),
-      arenaMode: 'ranks',
-      setArenaMode: (arenaMode) => set({ arenaMode }),
+      colosseumMode: 'league',
+      setColosseumMode: (colosseumMode) => set({ colosseumMode }),
       arenaDots: false,
       installTipPending: false,
       tourPending: false,

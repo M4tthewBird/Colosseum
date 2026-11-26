@@ -7,13 +7,13 @@ import { useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ArtStage, CityArt, GearArt, GladiatorArt, StyleArt } from '@/components/art/Art';
-import { BackLink } from '@/components/BackLink';
 import { FillButton, IconButton, Tap } from '@/components/Buttons';
 import { Glass, GlassCard } from '@/components/Glass';
 import {
   Bath,
   Castle,
   ChevronLeft,
+  ChevronRight,
   Coins,
   Hammer,
   House,
@@ -25,6 +25,7 @@ import {
   type LucideIcon,
 } from '@/components/icons';
 import { ListGroup, ListRow } from '@/components/List';
+import { TourTarget } from '@/features/onboarding/TourTarget';
 import { Header, Screen } from '@/components/Screen';
 import { Segmented } from '@/components/Segmented';
 import { homeStage } from '@/lib/game/attributes';
@@ -44,11 +45,12 @@ import { nextSeason, seasonName, seasonOf } from '@/lib/game/levels';
 import { canChangeStyle, STYLES, styleDef, type StyleId } from '@/lib/game/styles';
 import { useGym } from '@/features/social/api';
 import { useData } from '@/stores/data';
-import { usePrefs, type ArenaMode } from '@/stores/prefs';
 import { toast } from '@/stores/ui';
 import { colors, shadows, tabular, type } from '@/theme/tokens';
 import { useFortress, useMyLudus, useWallet } from './api';
 import { useBuyGear, useChooseStyle, useEquipGear, useGladiator, useTribeWars } from './cityApi';
+import { chooseGame, useGameOn } from './gameMode';
+import { LevelLine, XpBar } from './GameViews';
 import { useGearProgress, useMyGame } from './hooks';
 
 const fmt = (n: number) => n.toLocaleString('en-US');
@@ -92,14 +94,11 @@ export function CityTopBar({
   );
 }
 
-const openArena = (mode: ArenaMode) => {
-  usePrefs.getState().setArenaMode(mode);
-  router.navigate({ pathname: '/arena', params: { mode } });
-};
-
 // ───────────── The city ─────────────
 
+/** The City tab: your gladiator, the city, and its places, each opening one part of the game. */
 export function CityScreen() {
+  const gameOn = useGameOn();
   const gymId = useData((s) => s.profile?.home_gym_id ?? null);
   const gym = useGym(gymId).data?.gym;
   const tribe = useFortress('gym', gymId).data;
@@ -109,7 +108,6 @@ export function CityScreen() {
   const wars = useTribeWars(gymId).data;
   const now = new Date();
   const tribeLevel = tribe ? fortressLevel(tribe.buildings, now) : 0;
-  const temple = tribe?.buildings.find((b) => b.building === 'temple');
   const ludusLevel = ludus ? fortressLevel(ludus.buildings, now) : null;
   const atWar = wars?.some((w) => !w.settled_at);
   const owned = GEAR_ITEMS.filter((g) => owns(g, progress)).length;
@@ -149,97 +147,101 @@ export function CityScreen() {
   );
 
   return (
-    <Screen glow="center" tabs={false} gap={16}>
-      <BackLink label="Today" />
+    <Screen glow="center" gap={16}>
       <Header
         above={gym ? `${gym.name} · tribe lv ${tribeLevel}` : 'No home gym yet'}
         title="City"
         right={<DenariiPill />}
       />
+      {gameOn ? null : <GameOffCard />}
+      <Tap
+        accessibilityRole="button"
+        accessibilityLabel={`Your gladiator, level ${game.level}, ${game.rank.name}`}
+        onPress={() => router.push('/city/domus')}
+      >
+        <GlassCard radius={22} style={styles.gladiator}>
+          <View style={{ flex: 1, gap: 8 }}>
+            <LevelLine level={game.level} />
+            <XpBar progress={game.progress} />
+          </View>
+          <ChevronRight size={16} color={colors.text3} strokeWidth={2.6} />
+        </GlassCard>
+      </Tap>
       <ArtStage height={226}>
         <CityArt width={340} />
       </ArtStage>
-      <ListGroup>
-        {row({
-          icon: Trophy,
-          title: 'Colosseum',
-          subtitle: 'Tribe wars and the city map',
-          right: atWar ? 'war on' : undefined,
-          to: () => router.push('/arena/map'),
-        })}
-        {row({
-          icon: Hammer,
-          title: 'Forge',
-          subtitle: 'Gear and weapons',
-          right: `${owned} pieces`,
-          to: () => router.push('/forge'),
-        })}
-        {row({
-          icon: Store,
-          title: 'Market',
-          subtitle: 'Trade for denarii',
-          right: 'Soon',
-          soon: true,
-        })}
-        {row({
-          icon: Bath,
-          title: 'Baths',
-          subtitle: 'A bonus for a rest day',
-          right: 'Soon',
-          soon: true,
-        })}
-        {row({
-          icon: Landmark,
-          title: 'Temple',
-          subtitle: 'Records of the tribe',
-          right: `lv ${temple?.level ?? 0}`,
-          to: () => openArena('bellum'),
-        })}
-        {row({
-          icon: House,
-          title: 'Your domus',
-          subtitle: 'Your gladiator’s home',
-          right: `stage ${homeStage(game.rank.id) + 1}`,
-          to: () => router.navigate({ pathname: '/profile', params: { section: 'gladiator' } }),
-        })}
-        {row({
-          icon: Castle,
-          title: ludus?.name ?? 'Ludus',
-          subtitle: 'Barracks and fortress',
-          right: ludusLevel != null ? `lv ${ludusLevel}` : 'join one',
-          to: () => openArena('ludus'),
-        })}
-      </ListGroup>
+      <TourTarget id="city-places">
+        <ListGroup>
+          {row({
+            icon: Trophy,
+            title: 'Colosseum',
+            subtitle: 'League, duels, Bellum and the map',
+            right: atWar ? 'war on' : undefined,
+            to: () => router.push('/city/colosseum'),
+          })}
+          {row({
+            icon: Castle,
+            title: ludus?.name ?? 'Clan',
+            subtitle: 'Your clan, its fortress and wars',
+            right: ludusLevel != null ? `lv ${ludusLevel}` : 'join one',
+            to: () => router.push('/city/ludus'),
+          })}
+          {row({
+            icon: Landmark,
+            title: 'Temple',
+            subtitle: 'Your gym’s tribe and its fortress',
+            right: gymId ? `lv ${tribeLevel}` : undefined,
+            to: () => router.push('/city/temple'),
+          })}
+          {row({
+            icon: Hammer,
+            title: 'Forge',
+            subtitle: 'Gear and fighting style',
+            right: `${owned} pieces`,
+            to: () => router.push('/forge'),
+          })}
+          {row({
+            icon: House,
+            title: 'Your domus',
+            subtitle: 'Your gladiator and home',
+            right: `stage ${homeStage(game.rank.id) + 1}`,
+            to: () => router.push('/city/domus'),
+          })}
+          {row({
+            icon: Store,
+            title: 'Market',
+            subtitle: 'Trade for denarii',
+            right: 'Soon',
+            soon: true,
+          })}
+          {row({
+            icon: Bath,
+            title: 'Baths',
+            subtitle: 'A bonus for a rest day',
+            right: 'Soon',
+            soon: true,
+          })}
+        </ListGroup>
+      </TourTarget>
     </Screen>
   );
 }
 
-/** Today's way into the city. */
-export function CityCard() {
-  const gymId = useData((s) => s.profile?.home_gym_id ?? null);
-  const gym = useGym(gymId).data?.gym;
-  const wars = useTribeWars(gymId).data;
-  const atWar = wars?.some((w) => !w.settled_at);
+/** The City opened from a link while the game is off. */
+function GameOffCard() {
   return (
-    <Tap
-      accessibilityRole="button"
-      accessibilityLabel="Open the city"
-      onPress={() => router.push('/city')}
-    >
-      <GlassCard radius={22} style={styles.cityCard}>
-        <View style={styles.cityThumb}>
-          <CityArt width={92} />
-        </View>
-        <View style={{ flex: 1, gap: 2 }}>
-          <Text style={[type.rpg, { fontSize: 15 }]}>The city</Text>
-          <Text style={type.caption} numberOfLines={2}>
-            {atWar
-              ? 'Your tribe is at war. Every verified workout counts.'
-              : `Forge, temple and the map of ${gym?.city ?? 'your city'}`}
-          </Text>
-        </View>
-      </GlassCard>
-    </Tap>
+    <GlassCard radius={22} style={{ gap: 10, padding: 16 }}>
+      <Text style={type.bodyStrong}>The game is off</Text>
+      <Text style={type.caption}>
+        Your workouts still count in the background. Turn the game on to get the City tab back.
+      </Text>
+      <FillButton
+        label="Turn the game on"
+        size="sm"
+        style={{ alignSelf: 'flex-start', height: 44, paddingHorizontal: 18 }}
+        onPress={() => chooseGame('on')}
+      />
+    </GlassCard>
   );
 }
 
@@ -513,15 +515,7 @@ const styles = StyleSheet.create({
   pillText: { fontSize: 17, fontWeight: '700', color: colors.text },
   topBar: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   topTitle: { flex: 1, fontSize: 20, fontWeight: '700', letterSpacing: -0.3, color: colors.text },
-  cityCard: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 12 },
-  cityThumb: {
-    width: 92,
-    height: 58,
-    borderRadius: 12,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  gladiator: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16 },
   forgeChips: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
   styleChip: {
     flexDirection: 'row',

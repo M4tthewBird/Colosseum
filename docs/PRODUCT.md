@@ -7,13 +7,14 @@ This file describes every screen: what it shows, what the user can do, and how t
 
 ## Navigation
 
-A floating glass **tab bar** has 4 tabs:
+A floating glass **tab bar** has 5 tabs (4 for players who turned the game off: no City):
 
 | Tab | Icon | Route | Screen file |
 |---|---|---|---|
 | Today | house | `/(tabs)/` | `Main.dc.html` |
 | Workouts | dumbbell | `/(tabs)/workouts` | `Workouts.dc.html` |
 | Arena | trophy | `/(tabs)/arena` | `Arena.dc.html` (Ranks) + `Gym.dc.html` (My gym) |
+| City | Colosseum (own icon) | `/(tabs)/city` | the game, see `docs/GAME.md` §9 and `docs/PAINTED-UI.md` |
 | Profile | person | `/(tabs)/profile` | `Profile.dc.html` (Body) + `ProfileLifts.dc.html` (Lifts) |
 
 Screens outside the tab bar:

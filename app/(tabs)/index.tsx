@@ -12,7 +12,7 @@ import { Wordmark } from '@/components/Logo';
 import { Header, Screen } from '@/components/Screen';
 import { SyncWarning } from '@/features/sync/SyncWarning';
 import { BadgeSync } from '@/features/badges/BadgeSync';
-import { CityCard } from '@/features/game/CityViews';
+import { useGameOn } from '@/features/game/gameMode';
 import { SeasonCard } from '@/features/game/GameViews';
 import { TribeWarAlert } from '@/features/game/MapViews';
 import { GameSync } from '@/features/game/hooks';
@@ -59,6 +59,7 @@ export default function Today() {
   const away = useMemo(() => currentBreak(sessions), [sessions]);
   const ranks = useLeaderboard('friends', 'volume', 'week');
   const myRank = ranks.data?.find((r) => r.user_id === profile?.id)?.rank;
+  const gameOn = useGameOn();
 
   return (
     <Screen glow="right">
@@ -76,7 +77,7 @@ export default function Today() {
         }
       />
       <SyncWarning />
-      <TribeWarAlert />
+      {gameOn ? <TribeWarAlert /> : null}
 
       <TourTarget id="today-week">
         <GlassCard style={styles.week} accessibilityLabel="This week">
@@ -115,15 +116,16 @@ export default function Today() {
 
       <UpNextCard variant="today" />
 
-      <TourTarget id="today-checkin">
-        <VisitCard />
-      </TourTarget>
-
-      <TourTarget id="today-season">
-        <SeasonCard />
-      </TourTarget>
-
-      <CityCard />
+      {gameOn ? (
+        <>
+          <TourTarget id="today-checkin">
+            <VisitCard />
+          </TourTarget>
+          <TourTarget id="today-season">
+            <SeasonCard />
+          </TourTarget>
+        </>
+      ) : null}
 
       <WaitingInvites />
 

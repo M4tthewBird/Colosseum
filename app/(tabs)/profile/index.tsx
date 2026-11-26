@@ -1,7 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { SlidersHorizontal } from '@/components/icons';
-import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/Avatar';
 import { IconButton } from '@/components/Buttons';
@@ -10,7 +10,7 @@ import { Header, Screen } from '@/components/Screen';
 import { Segmented } from '@/components/Segmented';
 import { BadgeGrid } from '@/features/badges/BadgeViews';
 import { useMyBadges } from '@/features/badges/hooks';
-import { GladiatorView } from '@/features/game/GladiatorView';
+import { useGameOn } from '@/features/game/gameMode';
 import { LevelLine, XpBar } from '@/features/game/GameViews';
 import { useMyGame } from '@/features/game/hooks';
 import { TourTarget } from '@/features/onboarding/TourTarget';
@@ -24,9 +24,8 @@ import { useFinishedSessions } from '@/features/training/hooks';
 import { useData } from '@/stores/data';
 import { type } from '@/theme/tokens';
 
-type Section = 'body' | 'lifts' | 'badges' | 'gladiator';
-const isSection = (s: unknown): s is Section =>
-  s === 'body' || s === 'lifts' || s === 'badges' || s === 'gladiator';
+type Section = 'body' | 'lifts' | 'badges';
+const isSection = (s: unknown): s is Section => s === 'body' || s === 'lifts' || s === 'badges';
 
 export default function Profile() {
   const profile = useData((s) => s.profile);
@@ -43,6 +42,11 @@ export default function Profile() {
   }
   const badges = useMyBadges();
   const game = useMyGame();
+  const gameOn = useGameOn();
+  // The gladiator moved to City → Your domus: old links (?section=gladiator) go there.
+  useEffect(() => {
+    if (section === 'gladiator') router.replace('/city/domus');
+  }, [section]);
 
   if (!profile) return null;
   const gymName = gym.data?.gym?.name;
@@ -72,12 +76,19 @@ export default function Profile() {
             </Text>
           </View>
         </View>
-        <TourTarget id="profile-level">
-          <View style={{ gap: 6 }}>
-            <LevelLine level={game.level} />
-            <XpBar progress={game.progress} />
-          </View>
-        </TourTarget>
+        {gameOn ? (
+          <TourTarget id="profile-level">
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`Your gladiator, level ${game.level}`}
+              onPress={() => router.navigate('/city/domus')}
+              style={{ gap: 6 }}
+            >
+              <LevelLine level={game.level} />
+              <XpBar progress={game.progress} />
+            </Pressable>
+          </TourTarget>
+        ) : null}
       </Glass>
       <TourTarget id="profile-sections">
         <Segmented
@@ -85,7 +96,6 @@ export default function Profile() {
             { value: 'body', label: 'Body' },
             { value: 'lifts', label: 'Lifts' },
             { value: 'badges', label: 'Badges' },
-            { value: 'gladiator', label: 'Gladiator' },
           ]}
           value={tab}
           onChange={setTab}
@@ -96,8 +106,6 @@ export default function Profile() {
         <BodyView />
       ) : tab === 'badges' ? (
         <BadgeGrid badges={badges} />
-      ) : tab === 'gladiator' ? (
-        <GladiatorView />
       ) : (
         <>
           <WeeklySets sessions={sessions} exercises={exercises} />

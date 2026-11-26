@@ -52,3 +52,11 @@ gemini-obrazky/stazene/*
 assets/exercises/_inbox/
 # originals moved here by npm run images:import
 gemini-obrazky/hotove/
+
+# Gemini kit for the painted game: downloads, originals and previews stay local
+gemini-obrazky/hra/stazene/*
+!gemini-obrazky/hra/stazene/.gitkeep
+gemini-obrazky/hra/hotove/
+gemini-obrazky/hra/nahled-*.png
+# the full-size city painting the style reference is made from (7.8 MB)
+gemini-obrazky/Assets/

@@ -1,4 +1,4 @@
-/** Arena → League: this season's laurels table for friends, the gym or everyone. */
+/** City → Colosseum → League: this season's laurels table for friends, the gym or everyone. */
 import { router } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 

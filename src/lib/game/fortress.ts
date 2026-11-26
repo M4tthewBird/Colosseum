@@ -177,7 +177,7 @@ export type FortressStage = 0 | 1 | 2 | 3;
 
 export const FORTRESS_STAGES: { name: string; from: number }[] = [
   { name: 'Training ground', from: 0 },
-  { name: 'Wooden ludus', from: 3 },
+  { name: 'Wooden fort', from: 3 },
   { name: 'Stone arena', from: 6 },
   { name: 'Colosseum', from: 10 },
 ];

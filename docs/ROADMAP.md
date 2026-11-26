@@ -204,6 +204,19 @@ Matyáš's plan (2026-11-13). Built and checked on web in demo mode; `supabase/u
 - [x] Changelog line and a highlights card
 - [ ] Later, with the native apps: GPS recording
 
+## Phase 21 — The City tab and the choice to play
+
+Matyáš's call (2026-11-26): the game leaves the Arena, which was too crowded, for its own tab.
+
+- [x] City tab (own Colosseum icon) between Arena and Profile; its home is the city with the places
+- [x] Colosseum: League, Duels, Bellum and the map; Ludus, Temple (the gym's fortress) and Your domus (the gladiator, from Profile) as their own screens
+- [x] Arena: only the leaderboards and friends; old links to the game's sections go to the City
+- [x] Sign-up asks: play the game or just track workouts ("You can change this any time in Profile → Settings")
+- [x] Settings → Game on/off; off hides the City tab and the game's cards, the game keeps counting
+- [x] What's new asks players from before the choice, right on its card
+- [ ] The painted, modular city on the City tab (docs/PAINTED-UI.md, pictures from `gemini-obrazky/hra/`): a grid that grows from the arena, new pieces only next to built ones (docs/GAME.md §9 "Building the city")
+- [ ] Gladiators and gear seen from the front (Gemini kit, rev 2); dressing up gear as layers if the test batch works
+
 ## Game docs
 
 - [x] `docs/GAME.md` with the rules, numbers and tables

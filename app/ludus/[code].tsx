@@ -1,4 +1,4 @@
-/** A ludus invite (link or QR code): join it, then see it in Arena → Ludus. */
+/** A ludus invite (link or QR code): join it, then see it in City → Clan. */
 import { router, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -10,7 +10,6 @@ import { useAuth } from '@/features/auth/auth';
 import { useJoinLudus, useMyLudus } from '@/features/game/api';
 import { isNetworkError } from '@/lib/errors';
 import { useData } from '@/stores/data';
-import { usePrefs } from '@/stores/prefs';
 import { toast } from '@/stores/ui';
 import { accentA, type } from '@/theme/tokens';
 
@@ -24,8 +23,7 @@ export default function JoinLudus() {
   const clean = code.toUpperCase();
 
   const open = () => {
-    usePrefs.getState().setArenaMode('ludus');
-    router.replace('/arena');
+    router.replace('/city/ludus');
   };
   const done = () => (router.canGoBack() ? router.back() : router.replace('/'));
 
@@ -33,7 +31,7 @@ export default function JoinLudus() {
     return (
       <Screen tabs={false} gap={16}>
         <Head
-          title="Join the ludus"
+          title="Join the clan"
           text="Join Colosseum or sign in first, then open the invite again."
         />
         <FillButton
@@ -54,9 +52,9 @@ export default function JoinLudus() {
       <Screen tabs={false} gap={16}>
         <Head
           title={`You are in ${mine.data.name}`}
-          text="One ludus at a time. Leave yours in Arena → Ludus first, then open the invite again."
+          text="One clan at a time. Leave yours in City → Clan first, then open the invite again."
         />
-        <FillButton label="Open my ludus" onPress={open} />
+        <FillButton label="Open my clan" onPress={open} />
         <TextButton label="Close" style={styles.secondary} onPress={done} />
       </Screen>
     );
@@ -68,15 +66,15 @@ export default function JoinLudus() {
           title={`Welcome to ${mine.data.name}`}
           text="You are in. Train at the gym to help in wars."
         />
-        <FillButton label="Open the ludus" icon={Check} onPress={open} />
+        <FillButton label="Open the clan" icon={Check} onPress={open} />
       </Screen>
     );
 
   return (
     <Screen tabs={false} gap={16}>
       <Head
-        title="Join this ludus?"
-        text={`Invite code ${clean}. Train together, build your fortress and fight other ludi.`}
+        title="Join this clan?"
+        text={`Invite code ${clean}. Train together, build your fortress and fight other clans.`}
       />
       <FillButton
         label="Join"

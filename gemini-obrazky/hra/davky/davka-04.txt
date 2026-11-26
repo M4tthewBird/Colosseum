@@ -1,0 +1,130 @@
+You are painting game art for a fitness app themed on ancient Rome. I will ask for the pictures one at a time.
+
+STYLE (identical for every image):
+Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+THE LIST (12 images):
+1. helmet_galea. A Roman helmet of bronze and iron with hinged cheek guards, a neck guard and a short red brush crest.
+2. helmet_murmillo. A bronze murmillo helmet: a broad brim, a tall fin-shaped crest and a visor with a grille of small round holes.
+3. helmet_secutor. A smooth, rounded, close-fitting bronze secutor helmet with a low fin crest and a visor grille (not a mask with two eye holes).
+4. helmet_thraex. A bronze thraex helmet: a wide brim, a crest topped with a griffin head, a grilled visor and a feather on each side.
+5. helmet_hoplomachus. A bronze hoplomachus helmet: a wide brim, a tall plume of white and red feathers and a grilled visor.
+6. helmet_provocator. An iron provocator helmet: rounded, with a visor grille and a wide neck guard, no brim, a small feather at each side.
+7. helmet_galea_gold. An ornate golden galea with engraved laurel decoration, hinged cheek guards and a tall red crest.
+8. helmet_laurel. A crown of golden laurel leaves tied with a red ribbon.
+9. shield_parmula. A small, slightly curved square shield of wood and leather with a bronze boss and a bronze rim.
+10. shield_parma. A round wooden shield painted dark red, with a bronze rim and a central bronze boss.
+11. shield_bronze. A small round convex shield of polished bronze with engraved rings.
+12. shield_scutum. A large curved rectangular shield, red with golden wings and lightning bolts and a central bronze boss.
+
+RULES:
+- One image per reply, in the order of the list. Below the image write only its number and id (for example "1. helmet_galea").
+- When I write "next", make the next image. When I write "redo", make the same image again, fixing what I say.
+- Keep the same style, angle, light and background in every image.
+
+Make image 1 now.
+
+
+=====================================================================
+ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, otevři nový chat, přilož vzor-mesto.jpg
+a pošli jen jeden z nich)
+=====================================================================
+
+--- 1. helmet_galea (Výzbroj: Galea) ---
+Game art for a fitness app themed on ancient Rome: helmet_galea. A Roman helmet of bronze and iron with hinged cheek guards, a neck guard and a short red brush crest.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 2. helmet_murmillo (Výzbroj: Murmillo) ---
+Game art for a fitness app themed on ancient Rome: helmet_murmillo. A bronze murmillo helmet: a broad brim, a tall fin-shaped crest and a visor with a grille of small round holes.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 3. helmet_secutor (Výzbroj: Secutor) ---
+Game art for a fitness app themed on ancient Rome: helmet_secutor. A smooth, rounded, close-fitting bronze secutor helmet with a low fin crest and a visor grille (not a mask with two eye holes).
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 4. helmet_thraex (Výzbroj: Thraex) ---
+Game art for a fitness app themed on ancient Rome: helmet_thraex. A bronze thraex helmet: a wide brim, a crest topped with a griffin head, a grilled visor and a feather on each side.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 5. helmet_hoplomachus (Výzbroj: Hoplomachus) ---
+Game art for a fitness app themed on ancient Rome: helmet_hoplomachus. A bronze hoplomachus helmet: a wide brim, a tall plume of white and red feathers and a grilled visor.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 6. helmet_provocator (Výzbroj: Provocator) ---
+Game art for a fitness app themed on ancient Rome: helmet_provocator. An iron provocator helmet: rounded, with a visor grille and a wide neck guard, no brim, a small feather at each side.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 7. helmet_galea_gold (Výzbroj: Zlatá galea) ---
+Game art for a fitness app themed on ancient Rome: helmet_galea_gold. An ornate golden galea with engraved laurel decoration, hinged cheek guards and a tall red crest.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 8. helmet_laurel (Výzbroj: Vavřínový věnec) ---
+Game art for a fitness app themed on ancient Rome: helmet_laurel. A crown of golden laurel leaves tied with a red ribbon.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 9. shield_parmula (Výzbroj: Parmula) ---
+Game art for a fitness app themed on ancient Rome: shield_parmula. A small, slightly curved square shield of wood and leather with a bronze boss and a bronze rim.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 10. shield_parma (Výzbroj: Parma) ---
+Game art for a fitness app themed on ancient Rome: shield_parma. A round wooden shield painted dark red, with a bronze rim and a central bronze boss.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 11. shield_bronze (Výzbroj: Bronzový štít) ---
+Game art for a fitness app themed on ancient Rome: shield_bronze. A small round convex shield of polished bronze with engraved rings.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 12. shield_scutum (Výzbroj: Scutum) ---
+Game art for a fitness app themed on ancient Rome: shield_scutum. A large curved rectangular shield, red with golden wings and lightning bolts and a central bronze boss.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.

@@ -40,7 +40,6 @@ import {
 } from '@/lib/game/tribes';
 import { useNow } from '@/lib/useNow';
 import { useData } from '@/stores/data';
-import { usePrefs } from '@/stores/prefs';
 import { toast } from '@/stores/ui';
 import { accentA, colors, tabular, type } from '@/theme/tokens';
 import {
@@ -457,7 +456,7 @@ export function EnemyScreen({ id }: { id: string }) {
   if (!tribe)
     return (
       <Screen glow="center" tabs={false} gap={16}>
-        <CityTopBar title="Tribe" fallback="/arena/map" pill={false} />
+        <CityTopBar title="Tribe" fallback="/city/map" pill={false} />
         {tribes ? (
           <EmptyState title="Not in your city" text="This tribe is not on your map." />
         ) : null}
@@ -474,7 +473,7 @@ export function EnemyScreen({ id }: { id: string }) {
 
   return (
     <Screen glow="center" tabs={false} gap={14}>
-      <CityTopBar title={`Tribe ${tribe.name}`} fallback="/arena/map" pill={false} />
+      <CityTopBar title={`Tribe ${tribe.name}`} fallback="/city/map" pill={false} />
       <ArtStage
         height={200}
         overlay={
@@ -595,7 +594,7 @@ export function CompareScreen({ gym, user }: { gym: string; user: number }) {
 
   return (
     <Screen glow="center" tabs={false} gap={14}>
-      <CityTopBar title="Compare" fallback="/arena/map" pill={false} />
+      <CityTopBar title="Compare" fallback="/city/map" pill={false} />
       <GlassCard radius={24} style={styles.vs}>
         <Side
           name="You"
@@ -687,7 +686,7 @@ export function TribeWarScreen({ id }: { id: string }) {
   if (!war || !gymId)
     return (
       <Screen glow="center" tabs={false} gap={16}>
-        <CityTopBar title="War" fallback="/arena/map" pill={false} />
+        <CityTopBar title="War" fallback="/city/map" pill={false} />
         <EmptyState title="No such war" text="It is not a war of your tribe." />
       </Screen>
     );
@@ -743,7 +742,7 @@ function WarRunning({
 
   return (
     <Screen glow="center" tabs={false} gap={14}>
-      <CityTopBar title="" fallback="/arena/map" pill={false} />
+      <CityTopBar title="" fallback="/city/map" pill={false} />
       <View style={styles.hero}>
         <View style={styles.heroKicker}>
           <Swords size={16} color={colors.white} strokeWidth={2.4} />
@@ -856,12 +855,11 @@ function WarRunning({
       />
       <View style={styles.buttons}>
         <FillButton
-          label="Call the ludus"
+          label="Call the clan"
           icon={Users}
           style={{ flex: 1 }}
           onPress={() => {
-            usePrefs.getState().setArenaMode('ludus');
-            router.navigate({ pathname: '/arena', params: { mode: 'ludus' } });
+            router.navigate('/city/ludus');
           }}
         />
         <FillButton
@@ -906,7 +904,7 @@ function WarResult({
 
   return (
     <Screen glow="center" tabs={false} gap={14}>
-      <CityTopBar title="" fallback="/arena/map" pill={false} />
+      <CityTopBar title="" fallback="/city/map" pill={false} />
       <View style={{ alignItems: 'center', gap: 4 }}>
         <Text style={styles.kicker}>THE WAR IS OVER</Text>
         <Text style={[type.rpg, styles.verdict, won && { color: colors.accent }]}>
@@ -1000,8 +998,7 @@ function WarResult({
           icon={Shield}
           style={{ flex: 1 }}
           onPress={() => {
-            usePrefs.getState().setArenaMode('bellum');
-            router.navigate({ pathname: '/arena', params: { mode: 'bellum' } });
+            router.navigate({ pathname: '/city/colosseum', params: { mode: 'bellum' } });
           }}
         />
       </View>
@@ -1084,7 +1081,7 @@ export function TribeWarAlert() {
   );
 }
 
-/** Arena → Bellum: the way to the map. */
+/** City → Colosseum → Bellum: the way to the map. */
 export function MapRow() {
   const gymId = useData((s) => s.profile?.home_gym_id ?? null);
   const gym = useGym(gymId).data?.gym;
@@ -1095,7 +1092,7 @@ export function MapRow() {
         title={`Map of ${gym.city}`}
         subtitle="Tribes, territories and attacks"
         left={<Swords size={20} color={colors.accent} strokeWidth={2} />}
-        onPress={() => router.push('/arena/map')}
+        onPress={() => router.push('/city/map')}
       />
     </ListGroup>
   );
