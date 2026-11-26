@@ -25,6 +25,7 @@ export const CHANGELOG: Release[] = [
       'Your gladiator moved from Profile to City → Your domus.',
       'Turn the game off or on any time in Profile → Settings. While it is off, your workouts still count, so nothing is lost.',
       'A plainer name: a ludus is now a clan.',
+      'City is a painted city you build yourself: tap Edit city, pick a building and put it next to the city. Streets appear between your buildings. It is in testing, so things will change.',
     ],
   },
   {

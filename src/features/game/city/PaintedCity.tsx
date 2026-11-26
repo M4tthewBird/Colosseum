@@ -613,6 +613,9 @@ export function PaintedCity() {
             ? `Level ${game.level} · ${game.rank.name}`
             : 'A new building has to touch the city'}
         </Text>
+        <View style={styles.testing}>
+          <Text style={styles.testingText}>IN TESTING PHASE, THINGS WILL CHANGE</Text>
+        </View>
       </View>
       <View style={[styles.topRight, { top: insets.top + 12 }]}>
         <DenariiPill />
@@ -1164,6 +1167,17 @@ const styles = StyleSheet.create({
   eyebrow: { fontFamily: display, fontSize: 11, letterSpacing: 2.4, color: red },
   cityName: { fontFamily: display, fontSize: 26, color: ink, letterSpacing: 0.4 },
   sub: { fontSize: 13, color: inkMuted },
+  testing: {
+    alignSelf: 'flex-start',
+    marginTop: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: red,
+    backgroundColor: 'rgba(185,28,28,0.08)',
+  },
+  testingText: { fontSize: 10.5, fontWeight: '700', letterSpacing: 0.8, color: red },
   topRight: { position: 'absolute', right: 16, flexDirection: 'row', gap: 8 },
   zoom: { position: 'absolute', right: 16, gap: 8 },
   pin: { position: 'absolute', flexDirection: 'row', alignItems: 'center', gap: 8 },
