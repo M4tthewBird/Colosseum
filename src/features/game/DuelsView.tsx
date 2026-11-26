@@ -1,5 +1,5 @@
 /**
- * Arena → Duels: a 7-day challenge with a friend, most workouts or most kg added to a lift. The
+ * City → Colosseum → Duels: a 7-day challenge with a friend, most workouts or most kg added to a lift. The
  * winner gets laurels for the season.
  */
 import { useState } from 'react';

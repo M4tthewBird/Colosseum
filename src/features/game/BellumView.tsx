@@ -1,5 +1,5 @@
 /**
- * Arena → Bellum: every month the gyms of a city fight. Score = days trained at the home gym
+ * City → Colosseum → Bellum: every month the gyms of a city fight. Score = days trained at the home gym
  * (verified visits) per active member, plus the gym's palisade. Also the gym (tribe) fortress.
  */
 import { router } from 'expo-router';
@@ -8,14 +8,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { FillButton } from '@/components/Buttons';
 import { GlassCard } from '@/components/Glass';
 import { Crown, QrCode as QrIcon } from '@/components/icons';
-import { EmptyState, ListGroup, ListRow, SectionHeader } from '@/components/List';
+import { EmptyState, ListGroup, ListRow } from '@/components/List';
 import { useGym } from '@/features/social/api';
 import { BELLUM, LAURELS } from '@/lib/game/config';
 import { seasonDaysLeft, seasonName, seasonOf } from '@/lib/game/levels';
 import { useData } from '@/stores/data';
 import { accentA, colors, tabular, type } from '@/theme/tokens';
 import { useBellum, useGymManager } from './api';
-import { FortressView } from './FortressView';
 import { MapRow } from './MapViews';
 import { useMyVisitDaysThisMonth } from './hooks';
 
@@ -122,9 +121,6 @@ export function BellumView() {
           }
         />
       )}
-
-      <SectionHeader title={`${gym?.name ?? 'Gym'} fortress`} />
-      <FortressView kind="gym" id={gymId} title={gym?.name ?? 'Gym'} />
 
       {manager.data ? (
         <FillButton

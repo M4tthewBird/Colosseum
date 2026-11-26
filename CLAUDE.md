@@ -76,7 +76,8 @@ The design is **final**. Build it, don't redesign it.
   - Exception (decided by Matyáš): a form's go button (Continue on sign-up, Sign in) turns **red with white text** once the form is valid
 - **Selection:** the selected segment or chip is a white pill with a soft shadow on a grey track.
 - **Glass:** cards are white frosted glass: `rgba(255,255,255,0.72)`, blur 30, 0.5px white border, soft shadow.
-- **Tab bar:** floating glass capsule with 4 tabs: Today, Workouts, Arena, Profile.
+- **Game names in the UI** (Matyáš, 2026-11-26): a ludus is a **Clan** in everything users see; the code, database and server keep "ludus" (server messages go through `gameWords()`, `src/lib/game/words.ts`). Denarii, laurels, gloria, tribe, domus, Bellum, the ranks and the fighting styles keep their Latin names.
+- **Tab bar:** floating glass capsule with 5 tabs: Today, Workouts, Arena, City, Profile. City (the game) shows only for players who play the game (`useGameOn()`, chosen at sign-up, changed in Settings); without it there are 4.
 - **Safe areas:** respect them. Never draw a fake status bar.
 - **Touch targets:** at least 44 px. Text contrast at least 4.5:1.
 - **Logo:** use `brand/logo-mark.svg` (laurel wreath + dumbbell). App icons are in `brand/`.

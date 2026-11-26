@@ -23,6 +23,7 @@ import { useData } from '@/stores/data';
 import { usePrefs } from '@/stores/prefs';
 import { useQueue } from '@/stores/queue';
 import { useWorkout } from '@/stores/workout';
+import { setGameChoice, syncGameChoice, type GameChoice } from '../game/gameMode';
 import { uploadAvatar } from '../profile/avatar';
 import { pullAll } from '../sync/pull';
 
@@ -47,7 +48,8 @@ function usernameFromEmail(email: string | undefined): string | null {
   return email ? email.split('@')[0] : null;
 }
 
-async function onSignedIn(userId: string, email?: string) {
+async function onSignedIn(userId: string, email?: string, metadata?: Record<string, unknown>) {
+  syncGameChoice(userId, metadata);
   const data = useData.getState();
   if (data.userId && data.userId !== userId) {
     data.reset();
@@ -93,14 +95,14 @@ export function startAuth(): void {
   }
   void supabase.auth.getSession().then(({ data }) => {
     const s = data.session;
-    if (s) void onSignedIn(s.user.id, s.user.email);
+    if (s) void onSignedIn(s.user.id, s.user.email, s.user.user_metadata);
     else useAuth.setState({ status: 'signedOut', userId: null });
   });
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_OUT')
       useAuth.setState({ status: 'signedOut', userId: null, accountUsername: null });
     if (event === 'SIGNED_IN' && session && session.user.id !== useAuth.getState().userId) {
-      void onSignedIn(session.user.id, session.user.email);
+      void onSignedIn(session.user.id, session.user.email, session.user.user_metadata);
     }
   });
 }
@@ -123,6 +125,8 @@ export interface SignUpInput {
   bodyweightKg: number | null;
   heightCm: number | null;
   gym: { id: string } | { name: string; city: string } | null;
+  /** Play the game or only track workouts (asked at sign-up). */
+  game: GameChoice | null;
   photoUri: string | null;
 }
 
@@ -138,7 +142,11 @@ function friendlyAuthError(message: string): string {
 /** Creates the account (unless already signed in without a profile) and the profile. */
 export async function signUp(input: SignUpInput): Promise<void> {
   const username = input.username.trim().toLowerCase();
-  if (isDemo) return demoSignUp(input);
+  if (isDemo) {
+    await demoSignUp(input);
+    if (input.game) setGameChoice(DEMO_USER_ID, input.game);
+    return;
+  }
 
   let userId = useAuth.getState().userId;
   if (!userId) {
@@ -203,6 +211,7 @@ export async function signUp(input: SignUpInput): Promise<void> {
   usePrefs.getState().setInstallTipPending(true);
   usePrefs.getState().setTourPending(true);
   markChangelogSeen();
+  if (input.game) setGameChoice(userId, input.game);
   await onSignedIn(userId);
 }
 

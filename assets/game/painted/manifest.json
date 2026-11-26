@@ -1,0 +1,632 @@
+{
+ "ratio": 1.67,
+ "tile": 320,
+ "assets": {
+  "arena-4": {
+   "kind": "piece",
+   "size": 3,
+   "file": "city/arena-4.webp",
+   "width": 962,
+   "height": 672,
+   "anchor": [
+    481,
+    671
+   ],
+   "rev": 1
+  },
+  "temple-3": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/temple-3.webp",
+   "width": 641,
+   "height": 425,
+   "anchor": [
+    320,
+    425
+   ],
+   "rev": 1
+  },
+  "forge": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/forge.webp",
+   "width": 641,
+   "height": 486,
+   "anchor": [
+    321,
+    486
+   ],
+   "rev": 1
+  },
+  "rack-1": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/rack-1.webp",
+   "width": 321,
+   "height": 211,
+   "anchor": [
+    160,
+    211
+   ],
+   "rev": 1
+  },
+  "arena-1": {
+   "kind": "piece",
+   "size": 3,
+   "file": "city/arena-1.webp",
+   "width": 962,
+   "height": 633,
+   "anchor": [
+    480,
+    632
+   ],
+   "rev": 1
+  },
+  "arena-2": {
+   "kind": "piece",
+   "size": 3,
+   "file": "city/arena-2.webp",
+   "width": 962,
+   "height": 586,
+   "anchor": [
+    480,
+    585
+   ],
+   "rev": 1
+  },
+  "arena-3": {
+   "kind": "piece",
+   "size": 3,
+   "file": "city/arena-3.webp",
+   "width": 962,
+   "height": 580,
+   "anchor": [
+    481,
+    579
+   ],
+   "rev": 1
+  },
+  "plot-3": {
+   "kind": "piece",
+   "size": 3,
+   "file": "city/plot-3.webp",
+   "width": 962,
+   "height": 633,
+   "anchor": [
+    479,
+    632
+   ],
+   "rev": 1
+  },
+  "scaffold-3": {
+   "kind": "piece",
+   "size": 3,
+   "file": "city/scaffold-3.webp",
+   "width": 962,
+   "height": 669,
+   "anchor": [
+    481,
+    668
+   ],
+   "rev": 1
+  },
+  "temple-1": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/temple-1.webp",
+   "width": 642,
+   "height": 611,
+   "anchor": [
+    322,
+    610
+   ],
+   "rev": 1
+  },
+  "temple-2": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/temple-2.webp",
+   "width": 642,
+   "height": 579,
+   "anchor": [
+    322,
+    578
+   ],
+   "rev": 1
+  },
+  "gate-1": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/gate-1.webp",
+   "width": 641,
+   "height": 432,
+   "anchor": [
+    320,
+    431
+   ],
+   "rev": 1
+  },
+  "gate-2": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/gate-2.webp",
+   "width": 641,
+   "height": 463,
+   "anchor": [
+    320,
+    462
+   ],
+   "rev": 1
+  },
+  "gate-3": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/gate-3.webp",
+   "width": 641,
+   "height": 508,
+   "anchor": [
+    319,
+    508
+   ],
+   "rev": 1
+  },
+  "barracks-1": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/barracks-1.webp",
+   "width": 641,
+   "height": 472,
+   "anchor": [
+    320,
+    472
+   ],
+   "rev": 1
+  },
+  "barracks-2": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/barracks-2.webp",
+   "width": 641,
+   "height": 417,
+   "anchor": [
+    318,
+    416
+   ],
+   "rev": 1
+  },
+  "barracks-3": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/barracks-3.webp",
+   "width": 641,
+   "height": 436,
+   "anchor": [
+    318,
+    435
+   ],
+   "rev": 1
+  },
+  "home-1": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/home-1.webp",
+   "width": 641,
+   "height": 473,
+   "anchor": [
+    320,
+    472
+   ],
+   "rev": 1
+  },
+  "home-2": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/home-2.webp",
+   "width": 641,
+   "height": 472,
+   "anchor": [
+    320,
+    472
+   ],
+   "rev": 1
+  },
+  "home-3": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/home-3.webp",
+   "width": 641,
+   "height": 456,
+   "anchor": [
+    320,
+    455
+   ],
+   "rev": 1
+  },
+  "home-4": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/home-4.webp",
+   "width": 641,
+   "height": 456,
+   "anchor": [
+    320,
+    455
+   ],
+   "rev": 1
+  },
+  "market": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/market.webp",
+   "width": 641,
+   "height": 429,
+   "anchor": [
+    321,
+    428
+   ],
+   "rev": 1
+  },
+  "baths": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/baths.webp",
+   "width": 641,
+   "height": 444,
+   "anchor": [
+    321,
+    444
+   ],
+   "rev": 1
+  },
+  "arch": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/arch.webp",
+   "width": 641,
+   "height": 515,
+   "anchor": [
+    321,
+    514
+   ],
+   "rev": 1
+  },
+  "plot-2": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/plot-2.webp",
+   "width": 641,
+   "height": 409,
+   "anchor": [
+    321,
+    409
+   ],
+   "rev": 1
+  },
+  "scaffold-2": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/scaffold-2.webp",
+   "width": 641,
+   "height": 466,
+   "anchor": [
+    320,
+    465
+   ],
+   "rev": 1
+  },
+  "rack-2": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/rack-2.webp",
+   "width": 321,
+   "height": 293,
+   "anchor": [
+    160,
+    293
+   ],
+   "rev": 1
+  },
+  "rack-3": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/rack-3.webp",
+   "width": 321,
+   "height": 294,
+   "anchor": [
+    160,
+    294
+   ],
+   "rev": 1
+  },
+  "bench-1": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/bench-1.webp",
+   "width": 321,
+   "height": 275,
+   "anchor": [
+    160,
+    275
+   ],
+   "rev": 1
+  },
+  "bench-2": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/bench-2.webp",
+   "width": 321,
+   "height": 275,
+   "anchor": [
+    160,
+    275
+   ],
+   "rev": 1
+  },
+  "bench-3": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/bench-3.webp",
+   "width": 321,
+   "height": 275,
+   "anchor": [
+    160,
+    275
+   ],
+   "rev": 1
+  },
+  "cable-1": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/cable-1.webp",
+   "width": 321,
+   "height": 304,
+   "anchor": [
+    160,
+    304
+   ],
+   "rev": 1
+  },
+  "cable-2": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/cable-2.webp",
+   "width": 321,
+   "height": 317,
+   "anchor": [
+    160,
+    317
+   ],
+   "rev": 1
+  },
+  "cable-3": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/cable-3.webp",
+   "width": 321,
+   "height": 300,
+   "anchor": [
+    160,
+    300
+   ],
+   "rev": 1
+  },
+  "platform-2": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/platform-2.webp",
+   "width": 321,
+   "height": 191,
+   "anchor": [
+    160,
+    191
+   ],
+   "rev": 1
+  },
+  "platform-3": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/platform-3.webp",
+   "width": 321,
+   "height": 213,
+   "anchor": [
+    160,
+    212
+   ],
+   "rev": 1
+  },
+  "tree-cypress": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/tree-cypress.webp",
+   "width": 321,
+   "height": 396,
+   "anchor": [
+    160,
+    395
+   ],
+   "rev": 1
+  },
+  "tree-pine": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/tree-pine.webp",
+   "width": 321,
+   "height": 366,
+   "anchor": [
+    160,
+    365
+   ],
+   "rev": 1
+  },
+  "statue": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/statue.webp",
+   "width": 321,
+   "height": 313,
+   "anchor": [
+    161,
+    313
+   ],
+   "rev": 1
+  },
+  "cart": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/cart.webp",
+   "width": 321,
+   "height": 215,
+   "anchor": [
+    160,
+    215
+   ],
+   "rev": 1
+  },
+  "banner": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/banner.webp",
+   "width": 321,
+   "height": 401,
+   "anchor": [
+    160,
+    401
+   ],
+   "rev": 1
+  },
+  "amphorae": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/amphorae.webp",
+   "width": 321,
+   "height": 244,
+   "anchor": [
+    160,
+    243
+   ],
+   "rev": 1
+  },
+  "plot-1": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/plot-1.webp",
+   "width": 321,
+   "height": 194,
+   "anchor": [
+    160,
+    194
+   ],
+   "rev": 1
+  },
+  "scaffold-1": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/scaffold-1.webp",
+   "width": 321,
+   "height": 220,
+   "anchor": [
+    160,
+    219
+   ],
+   "rev": 1
+  },
+  "ground-grass": {
+   "kind": "ground",
+   "file": "ground/ground-grass.webp",
+   "width": 1024,
+   "height": 1024,
+   "rev": 1
+  },
+  "ground-paving": {
+   "kind": "ground",
+   "file": "ground/ground-paving.webp",
+   "width": 1024,
+   "height": 1024,
+   "rev": 1
+  },
+  "ground-sand": {
+   "kind": "ground",
+   "file": "ground/ground-sand.webp",
+   "width": 1024,
+   "height": 1024,
+   "rev": 1
+  },
+  "rank-tiro": {
+   "kind": "figure",
+   "file": "gladiators/rank-tiro.webp",
+   "width": 720,
+   "height": 960,
+   "rev": 1
+  },
+  "rank-gladiator": {
+   "kind": "figure",
+   "file": "gladiators/rank-gladiator.webp",
+   "width": 720,
+   "height": 960,
+   "rev": 1
+  },
+  "rank-veteranus": {
+   "kind": "figure",
+   "file": "gladiators/rank-veteranus.webp",
+   "width": 720,
+   "height": 960,
+   "rev": 1
+  },
+  "rank-primus": {
+   "kind": "figure",
+   "file": "gladiators/rank-primus.webp",
+   "width": 720,
+   "height": 960,
+   "rev": 1
+  },
+  "rank-rudiarius": {
+   "kind": "figure",
+   "file": "gladiators/rank-rudiarius.webp",
+   "width": 720,
+   "height": 960,
+   "rev": 1
+  },
+  "style-murmillo": {
+   "kind": "figure",
+   "file": "gladiators/style-murmillo.webp",
+   "width": 720,
+   "height": 960,
+   "rev": 1
+  },
+  "style-thraex": {
+   "kind": "figure",
+   "file": "gladiators/style-thraex.webp",
+   "width": 720,
+   "height": 960,
+   "rev": 1
+  },
+  "style-retiarius": {
+   "kind": "figure",
+   "file": "gladiators/style-retiarius.webp",
+   "width": 720,
+   "height": 960,
+   "rev": 1
+  },
+  "style-secutor": {
+   "kind": "figure",
+   "file": "gladiators/style-secutor.webp",
+   "width": 720,
+   "height": 960,
+   "rev": 1
+  },
+  "style-hoplomachus": {
+   "kind": "figure",
+   "file": "gladiators/style-hoplomachus.webp",
+   "width": 720,
+   "height": 960,
+   "rev": 1
+  },
+  "style-bestiarius": {
+   "kind": "figure",
+   "file": "gladiators/style-bestiarius.webp",
+   "width": 720,
+   "height": 960,
+   "rev": 1
+  }
+ }
+}

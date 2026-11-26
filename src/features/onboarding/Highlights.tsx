@@ -11,11 +11,25 @@ import { Avatar } from '@/components/Avatar';
 import { CityArt } from '@/components/art/Art';
 import { FillButton } from '@/components/Buttons';
 import { Glass } from '@/components/Glass';
-import { Bell, Check, ChevronRight, Footprints, MapPin, Star, Zap } from '@/components/icons';
+import { ColosseumIcon } from '@/components/ColosseumIcon';
+import {
+  Bell,
+  Check,
+  ChevronRight,
+  Dumbbell,
+  Footprints,
+  House,
+  MapPin,
+  Star,
+  Trophy,
+  User,
+  Zap,
+} from '@/components/icons';
 import { LogoMark } from '@/components/Logo';
 import { QrCode } from '@/components/QrCode';
 import { Chip } from '@/components/Segmented';
 import { Medallion } from '@/features/badges/Medallion';
+import { GameModeAction } from '@/features/game/GameModeViews';
 import { LeagueEmblem, LevelLine } from '@/features/game/GameViews';
 import { LEAGUES } from '@/lib/game/levels';
 import { ProgressBar } from '@/components/Charts';
@@ -153,6 +167,8 @@ const SHOW: Record<FeatureId, () => void> = {
   // Turned on right on the card (NotificationsAction); Show me is the fallback.
   notifications: () => router.navigate('/profile/settings'),
   city: () => router.navigate('/city'),
+  // Answered right on the card (GameModeAction); Show me is the fallback.
+  'game-mode': () => router.navigate('/profile/settings'),
   running: () =>
     showSpotlight(
       {
@@ -164,7 +180,7 @@ const SHOW: Record<FeatureId, () => void> = {
       '/workouts',
     ),
   game: () => {
-    usePrefs.getState().setArenaMode('league');
+    usePrefs.getState().setColosseumMode('league');
     showGuide([
       {
         route: '/profile',
@@ -188,11 +204,11 @@ const SHOW: Record<FeatureId, () => void> = {
         body: 'Scan your gym’s QR poster when you arrive and when you leave. Verified workouts earn more and count in wars.',
       },
       {
-        route: { pathname: '/arena', params: { mode: 'league' } },
-        target: 'arena-modes',
-        radius: 18,
-        title: 'The Arena',
-        body: 'League tables, your ludus with its fortress and wars, duels with friends, and Bellum, the monthly war of the gyms in your city.',
+        route: '/city',
+        target: 'city-places',
+        radius: 22,
+        title: 'The City',
+        body: 'The Colosseum holds the league, duels with friends and Bellum, the monthly war of the gyms in your city. Your clan, your gym’s temple, the forge and your domus are here too.',
       },
     ]);
   },
@@ -260,6 +276,8 @@ function Preview({ feature }: { feature: FeatureId }) {
       );
     case 'city':
       return <CityArt width={240} />;
+    case 'game-mode':
+      return <TabsPreview />;
     case 'running':
       return (
         <View style={[styles.row, { gap: 14 }]}>
@@ -281,6 +299,27 @@ function Preview({ feature }: { feature: FeatureId }) {
         </View>
       );
   }
+}
+
+/** The tab bar with the new City tab lit. */
+function TabsPreview() {
+  const tabs = [
+    { label: 'Today', Icon: House },
+    { label: 'Workouts', Icon: Dumbbell },
+    { label: 'Arena', Icon: Trophy },
+    { label: 'City', Icon: ColosseumIcon, on: true },
+    { label: 'Profile', Icon: User },
+  ];
+  return (
+    <View style={styles.tabs}>
+      {tabs.map(({ label, Icon, on }) => (
+        <View key={label} style={[styles.tab, on && { backgroundColor: colors.fill }]}>
+          <Icon size={20} color={on ? colors.accent : colors.text2} strokeWidth={2} />
+          <Text style={[type.tab, { color: on ? colors.accent : colors.text2 }]}>{label}</Text>
+        </View>
+      ))}
+    </View>
+  );
 }
 
 /** A notification as it shows on the lock screen. */
@@ -405,6 +444,8 @@ export function HighlightCard({
       </View>
       {h.feature === 'notifications' ? (
         <NotificationsAction />
+      ) : h.feature === 'game-mode' ? (
+        <GameModeAction />
       ) : (
         <FillButton
           label={GUIDED.includes(h.feature) ? 'Show me how it works' : 'Show me'}
@@ -463,4 +504,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   done: { flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 44 },
+  tabs: {
+    flexDirection: 'row',
+    gap: 2,
+    padding: 4,
+    borderRadius: 26,
+    backgroundColor: colors.white,
+    boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
+  },
+  tab: {
+    width: 56,
+    height: 46,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 1,
+  },
 });

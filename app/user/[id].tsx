@@ -14,6 +14,7 @@ import { Screen } from '@/components/Screen';
 import { BadgeGrid } from '@/features/badges/BadgeViews';
 import { useUserBadges } from '@/features/badges/hooks';
 import { useGameProfile } from '@/features/game/api';
+import { useGameOn } from '@/features/game/gameMode';
 import { CellView, LevelLine } from '@/features/game/GameViews';
 import { leagueFor, levelFromXp } from '@/lib/game/levels';
 import { LiftsView } from '@/features/profile/LiftsView';
@@ -33,6 +34,7 @@ export default function UserPage() {
   const badges = useUserBadges(id, page.data?.sessions);
   const together = useTogetherCount(id);
   const game = useGameProfile(id, page.data?.sessions);
+  const gameOn = useGameOn();
   const [inviting, setInviting] = useState(false);
 
   if (page.isLoading || !page.data) {
@@ -72,7 +74,7 @@ export default function UserPage() {
             @{user.username}
             {gymName ? ` · ${gymName}` : ''}
           </Text>
-          {game.data ? (
+          {gameOn && game.data ? (
             <Text style={type.small} numberOfLines={1}>
               <LevelLine level={levelFromXp(game.data.xp)} style={{ fontSize: 12 }} />
               {'  ·  '}
@@ -113,7 +115,7 @@ export default function UserPage() {
         </>
       ) : null}
 
-      {game.data ? (
+      {gameOn && game.data ? (
         <CellView level={levelFromXp(game.data.xp)} owner={user.display_name.split(' ')[0]} />
       ) : null}
 

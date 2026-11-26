@@ -1,4 +1,4 @@
-/** Profile → Gladiator: the gladiator, rank path, character sheet, wallet and the cell. */
+/** City → Your domus: the gladiator, rank path, character sheet, wallet and the cell. */
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';

@@ -51,7 +51,7 @@ export const RANKS: Rank[] = [
     id: 'tiro',
     name: 'Tiro',
     from: 1,
-    blurb: 'A recruit, new to the ludus.',
+    blurb: 'A recruit, new to the clan.',
     look: 'Tunic, wooden sword',
   },
   {
@@ -72,7 +72,7 @@ export const RANKS: Rank[] = [
     id: 'primus',
     name: 'Primus Palus',
     from: 25,
-    blurb: 'The best of the ludus.',
+    blurb: 'The best of the clan.',
     look: 'Golden armour, red cloak',
   },
   {
