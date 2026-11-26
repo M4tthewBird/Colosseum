@@ -35,6 +35,25 @@ jobs:
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
       # Pages has no rewrites: unknown paths (e.g. /session/<id> after a reload) load the app shell.
       - run: cp dist/index.html dist/404.html && touch dist/.nojekyll
+      # A test version from the city-test branch at /test/, in demo mode (no live data, no .env).
+      # Run this workflow by hand after pushing that branch. If it fails, the app above still ships.
+      - uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: city-test
+          path: test-src
+      - name: Build the test version at /test/
+        if: hashFiles('test-src/package.json') != ''
+        continue-on-error: true
+        working-directory: test-src
+        run: |
+          rm -f .env
+          npm ci
+          npx expo export -p web --output-dir ../dist/test
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}/test
+          EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH: 1
+          EXPO_UNSTABLE_TREE_SHAKING: 1
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
