@@ -98,9 +98,12 @@ export function programRows(p: Program): Enq[] {
   return out;
 }
 
-/** The shared session row. How it felt goes to the private session_ratings table instead. */
+/**
+ * The shared session row. How it felt and a run's heart rate go to the private session_ratings
+ * table instead.
+ */
 function sessionRow(s: Session): Record<string, unknown> {
-  const { sets: _sets, rpe: _rpe, feel: _feel, ...row } = s;
+  const { sets: _sets, rpe: _rpe, feel: _feel, avg_hr: _hr, ...row } = s;
   return row;
 }
 
@@ -221,6 +224,7 @@ export const useData = create<DataState>()(
         ops.unshift({ table: 'workout_sessions', op: 'upsert', id: s.id, row: sessionRow(s) });
         if (
           (prev?.rpe ?? null) !== (s.rpe ?? null) ||
+          (prev?.avg_hr ?? null) !== (s.avg_hr ?? null) ||
           JSON.stringify(prev?.feel ?? null) !== JSON.stringify(s.feel ?? null)
         )
           ops.push({
@@ -232,6 +236,7 @@ export const useData = create<DataState>()(
               user_id: s.user_id,
               rpe: s.rpe ?? null,
               feel: s.feel ?? null,
+              ...(s.avg_hr != null || prev?.avg_hr != null ? { avg_hr: s.avg_hr ?? null } : {}),
               updated_at: now,
             },
           });

@@ -12,6 +12,11 @@ import { Wordmark } from '@/components/Logo';
 import { Header, Screen } from '@/components/Screen';
 import { SyncWarning } from '@/features/sync/SyncWarning';
 import { BadgeSync } from '@/features/badges/BadgeSync';
+import { CityCard } from '@/features/game/CityViews';
+import { SeasonCard } from '@/features/game/GameViews';
+import { TribeWarAlert } from '@/features/game/MapViews';
+import { GameSync } from '@/features/game/hooks';
+import { VisitCard } from '@/features/game/VisitViews';
 import { useForumPosts } from '@/features/forum/api';
 import { HomeGymPrompt } from '@/features/gyms/HomeGymPrompt';
 import { AvatarPrompt } from '@/features/profile/AvatarPrompt';
@@ -71,6 +76,7 @@ export default function Today() {
         }
       />
       <SyncWarning />
+      <TribeWarAlert />
 
       <TourTarget id="today-week">
         <GlassCard style={styles.week} accessibilityLabel="This week">
@@ -109,6 +115,16 @@ export default function Today() {
 
       <UpNextCard variant="today" />
 
+      <TourTarget id="today-checkin">
+        <VisitCard />
+      </TourTarget>
+
+      <TourTarget id="today-season">
+        <SeasonCard />
+      </TourTarget>
+
+      <CityCard />
+
       <WaitingInvites />
 
       <ForumSection />
@@ -124,6 +140,7 @@ export default function Today() {
       <RecoveryPrompt />
       <FriendLinkResume />
       <BadgeSync />
+      <GameSync />
     </Screen>
   );
 }

@@ -112,6 +112,9 @@ Všechno pro Gemini je ve složce **`gemini-obrazky/`**. Podrobný postup je v `
 
 Když přidám do aplikace něco, co potřebuje změnu v Supabase, najdeš to ve složce `supabase/updates/`. Každý soubor spusť **jednou** v SQL Editoru (od nejstaršího data):
 
+> **Nová databáze** (založená z aktuálního `schema.sql`): `schema.sql` už obsahuje všechny updaty kromě `2026-11-03-push.sql`. Spusť jen ten a pak updaty novější, než je tvoje databáze.
+
+
 - `2026-10-02-gyms-delete.sql` – mazání posiloven autorem, úklid testovacích posiloven
 - `2026-10-03-program-phases.sql` – periodizace programů (bez ní se programy nesynchronizují)
 - `2026-10-04-exercise-catalog.sql` – velký katalog cviků (1 320), jednotné názvy, S/A/B tiery
@@ -123,3 +126,5 @@ Když přidám do aplikace něco, co potřebuje změnu v Supabase, najdeš to ve
 - `2026-10-23-session-gym.sql` – gym u tréninku (potvrzení před startem), „Training now“ bez lidí v jiném gymu
 - `2026-10-23-favorites.sql` – oblíbené cviky
 - `2026-10-23-badges.sql` – odznaky (vidí je přátelé a lidé z gymu)
+- `2026-11-13-gloria.sql` – věhlas ludu (Gloria), bilance válek, odznaky ludu a žebříček ludů
+- `2026-11-13-war-two-members.sql` – do války stačí 2 členové ludu (místo 3)

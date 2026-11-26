@@ -16,10 +16,12 @@ import {
   DEMO_TRAINING_NOW,
   DEMO_USERS,
   demoUser,
+  DEMO_RUNS,
 } from '@/dev/seed';
 import { demoTogetherCount } from '@/features/together/api';
 import { addDays, startOfMonth, startOfWeek, toLocalDate } from '@/lib/dates';
 import { dotsCoefficient, e1rm, volume } from '@/lib/formulas';
+import { isRunMetric, isTimeMetric, runMetricValue } from '@/lib/running';
 import { finished } from '@/lib/stats';
 import { isDemo, supabase } from '@/lib/supabase';
 import type { Gym, PublicUser, Session, SetEntry } from '@/lib/types';
@@ -221,6 +223,7 @@ function myValue(metric: string, period: ArenaPeriod): number | null {
   if (metric === 'volume') return sessions.reduce((sum, s) => sum + volume(s.sets), 0);
   if (metric === 'workouts') return sessions.length;
   if (metric === 'together') return demoTogetherCount() || null;
+  if (isRunMetric(metric)) return runMetricValue(metric, sessions);
   let best = 0;
   for (const s of sessions)
     for (const x of s.sets)
@@ -228,9 +231,11 @@ function myValue(metric: string, period: ArenaPeriod): number | null {
   return best > 0 ? Math.round(best * 10) / 10 : null;
 }
 
-/** True when the metric is a lift (ranked by e1RM), not a count of volume or workouts. */
+/** True when the metric is a lift (ranked by e1RM), not a count of volume or workouts or a run. */
 export function isLiftMetric(metric: string): boolean {
-  return metric !== 'volume' && metric !== 'workouts' && metric !== 'together';
+  return (
+    metric !== 'volume' && metric !== 'workouts' && metric !== 'together' && !isRunMetric(metric)
+  );
 }
 
 /** My latest bodyweight-adjusted factor, or null when sex or bodyweight is missing. */
@@ -288,7 +293,18 @@ function demoLeaderboard(key: string, period: ArenaPeriod, global = false): Rank
     if (metric === 'volume') value = st.weekVolume * scale;
     else if (metric === 'workouts') value = Math.round(st.workouts * scale);
     else if (metric === 'together') value = DEMO_TOGETHER_COUNTS[u.username] ?? null;
-    else if (exName === 'Bench Press') value = st.bench;
+    else if (isRunMetric(metric)) {
+      const r = DEMO_RUNS[u.username];
+      if (r)
+        value =
+          metric === 'run_5k'
+            ? r.fiveK
+            : metric === 'run_10k'
+              ? r.tenK
+              : metric === 'vdot'
+                ? r.vdot
+                : r.weekKm * scale;
+    } else if (exName === 'Bench Press') value = st.bench;
     else if (exName === 'Squat') value = st.squat;
     else if (exName === 'Deadlift') value = st.deadlift;
     if (value != null && dots) value = value * dotsCoefficient(st.bodyweight, 'male')!;
@@ -314,7 +330,8 @@ function demoLeaderboard(key: string, period: ArenaPeriod, global = false): Rank
       value: mine,
     });
   }
-  rows.sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
+  if (isTimeMetric(metric)) rows.sort((a, b) => (a.value ?? 0) - (b.value ?? 0));
+  else rows.sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
   return rows.map((r, i) => ({
     ...r,
     rank: i + 1,
@@ -664,6 +681,9 @@ export interface FeedItem {
   finished_at: string;
   volume_kg: number;
   pr_count: number;
+  /** A run: distance and time instead of volume. */
+  distance_m?: number | null;
+  duration_s?: number | null;
   likes: number;
   liked: boolean;
   comments: number;
@@ -697,8 +717,8 @@ export function useFeed() {
         await supabase
           .from('workout_sessions')
           .select(
-            `id,name,started_at,finished_at,volume_kg,pr_count,user_id,
-             profiles!workout_sessions_user_id_fkey(${PUBLIC_COLS}), session_likes(count), session_comments(count)`,
+            // * so the run columns come along once 2026-11-14-running.sql has run.
+            `*, profiles!workout_sessions_user_id_fkey(${PUBLIC_COLS}), session_likes(count), session_comments(count)`,
           )
           .not('finished_at', 'is', null)
           .neq('user_id', uid)
@@ -711,6 +731,9 @@ export function useFeed() {
         finished_at: string;
         volume_kg: number;
         pr_count: number;
+        kind?: string;
+        distance_m?: number | null;
+        duration_s?: number | null;
         profiles: PublicUser;
         session_likes: { count: number }[];
         session_comments: { count: number }[];
@@ -734,6 +757,8 @@ export function useFeed() {
         finished_at: r.finished_at,
         volume_kg: Number(r.volume_kg),
         pr_count: r.pr_count,
+        distance_m: r.kind === 'run' ? r.distance_m : null,
+        duration_s: r.kind === 'run' ? r.duration_s : null,
         likes: r.session_likes[0]?.count ?? 0,
         liked: liked.has(r.id),
         comments: r.session_comments[0]?.count ?? 0,

@@ -8,6 +8,95 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-11-14b',
+    date: '2026-11-14',
+    title: 'Running',
+    highlights: [
+      {
+        feature: 'running',
+        title: 'Runners join the Arena',
+        body: 'Log a run and it earns what a lifting workout earns: XP, laurels and denarii, and points in wars. Never more for more kilometres, so runners and lifters compete fairly.',
+        where: 'Workouts → Log a run',
+      },
+    ],
+    items: [
+      'Log a run in Workouts: distance, time, outdoor or treadmill. Your pace is worked out for you.',
+      'A run from 3 km or 20 minutes counts as a workout for XP, laurels, denarii, your weekly target and your streak.',
+      'Runs count in ludus wars, tribe attacks, Bellum and workout duels.',
+      'Running PRs on 5 km, 10 km, half marathon and marathon earn XP and progress laurels.',
+      'Running strength: your best VDOT earns strength laurels, like DOTS does for lifters.',
+      'The Retiarius style earns its bonus for a run.',
+      'Your best times are in Profile → Lifts.',
+      'New Arena boards: best 5 km, best 10 km, VDOT and km run. Add them with Edit.',
+      'Heart rate is optional and only you see it.',
+    ],
+  },
+  {
+    id: '2026-11-14',
+    date: '2026-11-14',
+    title: 'Your gladiator and the city',
+    highlights: [
+      {
+        feature: 'city',
+        title: 'Your city around the Colosseum',
+        body: 'Choose how your gladiator fights, earn gear in the forge, and lead your gym’s tribe against the other gyms of your city on the map.',
+        where: 'Today → The city',
+      },
+    ],
+    items: [
+      'The city: every building opens a part of the game. Find it on Today.',
+      'Fighting style: Murmillo, Thraex, Retiarius, Secutor, Hoplomachus or Bestiarius. Your style sets your look and gives +15 XP for a workout trained its way. Change it once a season.',
+      'The forge: helmets, weapons, shields, guards and armour. Buy them with denarii or open them with levels, verified workouts and leagues. Never with money.',
+      'The map of your city: every gym’s tribe with its territory. Look at a rival tribe, compare your gear with their best, and attack.',
+      'Tribe attacks: a day’s warning, then 3 days of verified workouts. The winner takes territory and denarii and damages the walls. Pledge to train when your tribe is attacked.',
+      'Lost a defence? Answer within a day: revenge is free and scores 20 % more.',
+      'Your gladiator now stands at the top of Profile → Gladiator and changes its look with every rank, from a tunic and wooden sword to golden armour.',
+      'The path of the gladiator shows every rank with its look. The last one stays a secret until you earn it.',
+      'Your home is drawn too: a hut, a wooden house, a stone domus and at last a villa.',
+      'Ludus and gym fortresses are drawn as they grow, from a training ground to a wooden ludus, a stone arena and finally the Colosseum.',
+      'A new rank after a workout shows your gladiator in its new look.',
+    ],
+  },
+  {
+    id: '2026-11-13c',
+    date: '2026-11-13',
+    title: 'Smaller crews can fight',
+    items: ['A ludus of 2 can declare war now, and be attacked. Points still count per member.'],
+  },
+  {
+    id: '2026-11-13b',
+    date: '2026-11-13',
+    title: 'Glory for your ludus',
+    items: [
+      'Gloria: every war your ludus wins makes it more famous, more for beating a stronger ludus. It never resets.',
+      'The ludus ranking in Arena → Ludus. Tap any ludus to see its wins, losses and badges.',
+      'Ludus badges the crew earns together: Victories, Unbroken, Iron wall, Giant slayer and Gloria.',
+      'The full war history of your ludus, with the gloria each war brought.',
+    ],
+  },
+  {
+    id: '2026-11-13',
+    date: '2026-11-13',
+    title: 'Become a gladiator',
+    highlights: [
+      {
+        feature: 'game',
+        title: 'Levels, leagues and your ludus',
+        body: 'Every real workout earns XP, laurels and denarii. Climb from Tiro to Rudiarius, fight for your league each month, build a fortress with your crew and win wars, duels and Bellum, the war of the gyms in your city.',
+        where: 'Profile → Gladiator, Arena',
+      },
+    ],
+    items: [
+      'XP for every workout with 3 sets or more, extra for PRs, your streak and training verified at the gym. Never for extra sets or volume. Your past workouts count too.',
+      'Ranks from Tiro to Rudiarius, and your own cell on your profile that fills up as you level up.',
+      'Monthly leagues (Bronze, Silver, Gold, Imperator’s Arena). Beginners compete fairly: progress counts, not just big numbers.',
+      'Check in and out at the gym by scanning its QR poster. Gym managers print the poster in Arena → My gym.',
+      'Ludus: a crew of up to 10 friends from any gym. Give denarii, build a fortress, declare wars.',
+      'Duels with friends for a week, and Bellum: every month the gyms of a city fight.',
+      'Profile → Gladiator: your attributes (Strength, Endurance, Discipline).',
+    ],
+  },
+  {
     id: '2026-11-03e',
     date: '2026-11-03',
     title: 'Turn on notifications',

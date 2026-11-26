@@ -350,7 +350,8 @@ export function computeBadges(
     if (start.getHours() < 7) early++;
     if (start.getHours() >= 21) night++;
     if (start.getDay() === 0 || start.getDay() === 6) weekend++;
-    longest = Math.max(longest, realMinutes(s));
+    // Marathon is the longest lifting workout; a long run is not one.
+    if (s.kind !== 'run') longest = Math.max(longest, realMinutes(s));
     bigDay = Math.max(bigDay, v);
     drops += work.filter((x) => !isMain(x)).length;
     failures += work.filter((x) => x.failure).length;

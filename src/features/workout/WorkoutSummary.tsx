@@ -38,6 +38,7 @@ import { finished } from '@/lib/stats';
 import { buildSummary, percentChange, setsLine, weakerSide } from '@/lib/summary';
 import { badgesFrom } from '@/lib/badges';
 import { NewBadges } from '@/features/badges/BadgeViews';
+import { RewardCard } from '@/features/game/RewardCard';
 import { useMyBadges } from '@/features/badges/hooks';
 import { useTween } from '@/lib/useTween';
 import { useData } from '@/stores/data';
@@ -172,6 +173,10 @@ export function WorkoutSummary({ sessionId }: { sessionId: string }) {
               </Text>
             ) : null}
           </GlassCard>
+        </Animated.View>
+
+        <Animated.View entering={enter(i++, reduced)}>
+          <RewardCard sessionId={session.id} />
         </Animated.View>
 
         <ProgressCard session={session} entering={enter(i++, reduced)} />

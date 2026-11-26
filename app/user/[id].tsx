@@ -13,6 +13,9 @@ import { ListGroup, SectionHeader } from '@/components/List';
 import { Screen } from '@/components/Screen';
 import { BadgeGrid } from '@/features/badges/BadgeViews';
 import { useUserBadges } from '@/features/badges/hooks';
+import { useGameProfile } from '@/features/game/api';
+import { CellView, LevelLine } from '@/features/game/GameViews';
+import { leagueFor, levelFromXp } from '@/lib/game/levels';
 import { LiftsView } from '@/features/profile/LiftsView';
 import { useFriendAction, useUserPage } from '@/features/social/api';
 import { useTogetherCount } from '@/features/together/api';
@@ -29,6 +32,7 @@ export default function UserPage() {
   const action = useFriendAction();
   const badges = useUserBadges(id, page.data?.sessions);
   const together = useTogetherCount(id);
+  const game = useGameProfile(id, page.data?.sessions);
   const [inviting, setInviting] = useState(false);
 
   if (page.isLoading || !page.data) {
@@ -68,6 +72,13 @@ export default function UserPage() {
             @{user.username}
             {gymName ? ` · ${gymName}` : ''}
           </Text>
+          {game.data ? (
+            <Text style={type.small} numberOfLines={1}>
+              <LevelLine level={levelFromXp(game.data.xp)} style={{ fontSize: 12 }} />
+              {'  ·  '}
+              {leagueFor(game.data.season).name} league
+            </Text>
+          ) : null}
         </View>
       </Glass>
 
@@ -100,6 +111,10 @@ export default function UserPage() {
           <SectionHeader title={`Badges · ${badges.length}`} />
           <BadgeGrid badges={badges} progress={false} />
         </>
+      ) : null}
+
+      {game.data ? (
+        <CellView level={levelFromXp(game.data.xp)} owner={user.display_name.split(' ')[0]} />
       ) : null}
 
       {sessions.length > 0 ? (

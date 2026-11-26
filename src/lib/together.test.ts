@@ -127,6 +127,18 @@ describe('readCode', () => {
     });
   });
 
+  it('reads gym posters and ludus invites', () => {
+    expect(readCode(`https://x.github.io/Colosseum/visit/${id}.Ab-_9xYz12`)).toEqual({
+      kind: 'visit',
+      gymId: id,
+      sig: 'Ab-_9xYz12',
+    });
+    expect(readCode('https://x.github.io/Colosseum/ludus/frm7qx')).toEqual({
+      kind: 'ludus',
+      code: 'FRM7QX',
+    });
+  });
+
   it('ignores anything else', () => {
     expect(readCode('https://example.com/menu')).toBeNull();
     expect(readCode('/together/not-a-workout')).toBeNull();

@@ -40,6 +40,7 @@ import { CURATED_EXERCISES } from '@/data/curated';
 import { challengeExercisesText, challengeVariants } from '@/lib/challenge';
 import { fromLocalDate, formatDuration, startOfDay, timeAgo } from '@/lib/dates';
 import { formatVolume, parseNumber } from '@/lib/formulas';
+import { formatKm, formatPace, paceOf } from '@/lib/running';
 import { useData } from '@/stores/data';
 import { confirm, toast } from '@/stores/ui';
 import { dur, ease, easeIn, useReducedMotion } from '@/theme/motion';
@@ -486,12 +487,21 @@ function FeedCard({ item, onComments }: { item: FeedItem; onComments: () => void
       </Pressable>
       <View style={{ flexDirection: 'row', gap: 18 }}>
         <Text style={[type.caption, { color: colors.text, fontWeight: '600' }]}>{dur}</Text>
-        <Text style={type.caption}>
-          <Text style={{ color: colors.text, fontWeight: '600' }}>
-            {formatVolume(item.volume_kg)}
-          </Text>{' '}
-          volume
-        </Text>
+        {item.distance_m && item.duration_s ? (
+          <Text style={type.caption}>
+            <Text style={{ color: colors.text, fontWeight: '600' }}>
+              {formatKm(item.distance_m)}
+            </Text>{' '}
+            · {formatPace(paceOf(item.distance_m, item.duration_s))}
+          </Text>
+        ) : (
+          <Text style={type.caption}>
+            <Text style={{ color: colors.text, fontWeight: '600' }}>
+              {formatVolume(item.volume_kg)}
+            </Text>{' '}
+            volume
+          </Text>
+        )}
         <Text style={type.caption}>
           <Text style={{ color: colors.accent, fontWeight: '600' }}>{item.pr_count}</Text> PR
           {item.pr_count === 1 ? '' : 's'}

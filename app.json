@@ -43,9 +43,15 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Colosseum uses the camera to read a training partner's QR code.",
+          "cameraPermission": "Colosseum uses the camera to read QR codes: a training partner's, a friend's, or your gym's poster.",
           "microphonePermission": false,
           "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Colosseum checks that you are at your gym when you scan its QR code."
         }
       ]
     ],

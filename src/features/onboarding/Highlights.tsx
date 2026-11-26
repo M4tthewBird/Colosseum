@@ -8,13 +8,17 @@ import { useState, type ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/Avatar';
+import { CityArt } from '@/components/art/Art';
 import { FillButton } from '@/components/Buttons';
 import { Glass } from '@/components/Glass';
-import { Bell, Check, ChevronRight, MapPin, Star, Zap } from '@/components/icons';
+import { Bell, Check, ChevronRight, Footprints, MapPin, Star, Zap } from '@/components/icons';
 import { LogoMark } from '@/components/Logo';
 import { QrCode } from '@/components/QrCode';
 import { Chip } from '@/components/Segmented';
 import { Medallion } from '@/features/badges/Medallion';
+import { LeagueEmblem, LevelLine } from '@/features/game/GameViews';
+import { LEAGUES } from '@/lib/game/levels';
+import { ProgressBar } from '@/components/Charts';
 import { NewTag } from '@/features/onboarding/NewTag';
 import { enablePush, usePushState } from '@/features/push/push';
 import { friendLink } from '@/features/social/FriendLink';
@@ -148,6 +152,50 @@ const SHOW: Record<FeatureId, () => void> = {
   },
   // Turned on right on the card (NotificationsAction); Show me is the fallback.
   notifications: () => router.navigate('/profile/settings'),
+  city: () => router.navigate('/city'),
+  running: () =>
+    showSpotlight(
+      {
+        target: 'workouts-run',
+        radius: 22,
+        title: 'Log a run',
+        body: 'Type the distance and time. A run from 3 km or 20 minutes earns what a workout earns and counts in wars.',
+      },
+      '/workouts',
+    ),
+  game: () => {
+    usePrefs.getState().setArenaMode('league');
+    showGuide([
+      {
+        route: '/profile',
+        target: 'profile-level',
+        radius: 12,
+        title: 'Your level',
+        body: 'Every workout earns XP: more for PRs, your streak and training verified at the gym. Never for extra sets. Levels raise your rank from Tiro to Rudiarius.',
+      },
+      {
+        route: '/',
+        target: 'today-season',
+        radius: 22,
+        title: 'This season',
+        body: 'Laurels put you in a league: Bronze, Silver, Gold, Imperator’s Arena. A new season starts every month.',
+      },
+      {
+        route: '/',
+        target: 'today-checkin',
+        radius: 22,
+        title: 'Check in at the gym',
+        body: 'Scan your gym’s QR poster when you arrive and when you leave. Verified workouts earn more and count in wars.',
+      },
+      {
+        route: { pathname: '/arena', params: { mode: 'league' } },
+        target: 'arena-modes',
+        radius: 18,
+        title: 'The Arena',
+        body: 'League tables, your ludus with its fortress and wars, duels with friends, and Bellum, the monthly war of the gyms in your city.',
+      },
+    ]);
+  },
 };
 
 /** A code to show in the guide: only a picture, it leads nowhere. */
@@ -160,7 +208,7 @@ function TogetherPreview() {
   );
 }
 
-const GUIDED: FeatureId[] = ['generate', 'train-together'];
+const GUIDED: FeatureId[] = ['generate', 'train-together', 'game'];
 
 function Preview({ feature }: { feature: FeatureId }) {
   const username = useData((s) => s.profile?.username ?? 'you');
@@ -199,6 +247,29 @@ function Preview({ feature }: { feature: FeatureId }) {
       );
     case 'notifications':
       return <NotificationPreview />;
+    case 'game':
+      return (
+        <View style={[styles.row, { gap: 14 }]}>
+          <LeagueEmblem league={LEAGUES[2]} size={56} />
+          <View style={{ gap: 6, width: 170 }}>
+            <LevelLine level={11} />
+            <ProgressBar value={0.7} height={5} />
+            <Text style={type.small}>+140 XP · +25 laurels</Text>
+          </View>
+        </View>
+      );
+    case 'city':
+      return <CityArt width={240} />;
+    case 'running':
+      return (
+        <View style={[styles.row, { gap: 14 }]}>
+          <Footprints size={40} color={colors.accent} strokeWidth={2} />
+          <View style={{ gap: 4 }}>
+            <Text style={[type.bodyStrong, { fontSize: 22 }]}>5:12 /km</Text>
+            <Text style={type.small}>5 km · 26:00 · +100 XP</Text>
+          </View>
+        </View>
+      );
     case 'train-together':
       return (
         <View style={[styles.row, { gap: 10 }]}>
