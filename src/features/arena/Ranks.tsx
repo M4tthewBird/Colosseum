@@ -21,6 +21,7 @@ import { Pill, useSlidingPill } from '@/components/SlidingPill';
 import { ExercisePicker } from '@/features/exercises/ExercisePicker';
 import { isLiftMetric, resolveMetric, useLeaderboard, type RankRow } from '@/features/social/api';
 import { formatKg } from '@/lib/formulas';
+import { formatKm, formatRunTime, isRunMetric, isTimeMetric, RUN_METRICS } from '@/lib/running';
 import { flush } from '@/lib/sync';
 import { useData } from '@/stores/data';
 import { usePrefs, type ArenaMetric, type ArenaPeriod, type ArenaScope } from '@/stores/prefs';
@@ -34,6 +35,8 @@ export function metricLabel(m: ArenaMetric, exercises: Record<string, { name: st
   if (m === 'volume') return 'Volume';
   if (m === 'workouts') return 'Workouts';
   if (m === 'together') return 'Together';
+  const run = RUN_METRICS.find((r) => r.id === m);
+  if (run) return run.label;
   if (m.startsWith('name:')) {
     const n = m.slice(5);
     return n.toLowerCase() === 'bench press' ? 'Bench' : n;
@@ -47,6 +50,9 @@ function formatValue(metric: string, v: number | null): string {
   if (metric === 'dots') return v.toFixed(1);
   if (metric === 'volume') return `${(v / 1000).toFixed(1)} t`;
   if (metric === 'workouts' || metric === 'together') return `${Math.round(v)}`;
+  if (metric === 'run_km') return formatKm(v * 1000);
+  if (metric === 'vdot') return v.toFixed(1);
+  if (isTimeMetric(metric)) return formatRunTime(v);
   return `${formatKg(v)} kg`;
 }
 
@@ -56,7 +62,7 @@ function formatGap(metric: string, v: number): string {
     const n = Math.round(v);
     return `${n} workout${n === 1 ? '' : 's'}`;
   }
-  if (metric === 'dots') return `${v.toFixed(1)} points`;
+  if (metric === 'dots' || metric === 'vdot') return `${v.toFixed(1)} points`;
   return formatValue(metric, v);
 }
 
@@ -170,6 +176,8 @@ export function Ranks({ scope, friendCount }: { scope: ArenaScope; friendCount: 
           </View>
         ) : metric === 'together' ? (
           <Text style={type.small}>Workouts confirmed with someone by QR code</Text>
+        ) : isRunMetric(metric) ? (
+          <Text style={type.small}>{RUN_METRICS.find((r) => r.id === metric)?.about}</Text>
         ) : null}
       </View>
 
@@ -231,7 +239,9 @@ export function Ranks({ scope, friendCount }: { scope: ArenaScope; friendCount: 
                 ? 'Set your sex in Settings and log your bodyweight in Profile → Body to get a DOTS score.'
                 : metric === 'together'
                   ? 'You are not on this board yet. Confirm a workout with someone by QR code to join.'
-                  : 'You are not on this board yet. Log a finished workout to join.'}
+                  : isRunMetric(metric)
+                    ? 'You are not on this board yet. Log a run in Workouts to join.'
+                    : 'You are not on this board yet. Log a finished workout to join.'}
             </Text>
           ) : null}
         </>
@@ -242,17 +252,22 @@ export function Ranks({ scope, friendCount }: { scope: ArenaScope; friendCount: 
   );
 }
 
-/** "1.2 t behind Lukáš" / "Leading by 3.4 t"; null when the scores are hidden (DOTS). */
+/**
+ * "1.2 t behind Lukáš" / "Leading by 3.4 t"; null when the scores are hidden (DOTS). On a time
+ * board (best 5 km) lower is better, so the gaps are distances either way.
+ */
 function gapText(me: RankRow, rows: RankRow[], metric: string): string | null {
   if (me.value == null) return null;
   const i = rows.indexOf(me);
   if (i === 0) {
     const next = rows[1];
-    return next?.value != null ? `Leading by ${formatGap(metric, me.value - next.value)}` : null;
+    return next?.value != null
+      ? `Leading by ${formatGap(metric, Math.abs(me.value - next.value))}`
+      : null;
   }
   const ahead = rows[i - 1];
   if (ahead?.value == null) return null;
-  const d = ahead.value - me.value;
+  const d = Math.abs(ahead.value - me.value);
   return d > 0
     ? `${formatGap(metric, d)} behind ${ahead.display_name}`
     : `Level with ${ahead.display_name}`;
@@ -476,6 +491,9 @@ function MetricsSheet({ visible, onClose }: { visible: boolean; onClose: () => v
           {!metrics.includes('together') ? (
             <Chip label="+ Together" onPress={() => add('together')} />
           ) : null}
+          {RUN_METRICS.filter((r) => !metrics.includes(r.id)).map((r) => (
+            <Chip key={r.id} label={`+ ${r.label}`} onPress={() => add(r.id)} />
+          ))}
         </View>
         <FillButton label="Add exercise" icon={Plus} onPress={() => setPicking(true)} />
       </Sheet>

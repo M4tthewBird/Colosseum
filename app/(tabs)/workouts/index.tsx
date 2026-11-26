@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 
 import { FillButton, TextButton } from '@/components/Buttons';
 import { GlassCard } from '@/components/Glass';
+import { Footprints } from '@/components/icons';
 import { ListGroup, SectionHeader } from '@/components/List';
 import { Header, Screen } from '@/components/Screen';
 import { TourTarget } from '@/features/onboarding/TourTarget';
@@ -47,6 +48,13 @@ export default function Workouts() {
         }
       />
       <UpNextCard variant="workouts" />
+      <TourTarget id="workouts-run">
+        <FillButton
+          label="Log a run"
+          icon={Footprints}
+          onPress={() => router.push({ pathname: '/run/[id]', params: { id: 'new' } })}
+        />
+      </TourTarget>
       <SavedWorkouts />
       <MonthCalendar sessions={sessions} />
 

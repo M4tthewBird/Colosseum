@@ -62,6 +62,14 @@ export const type = {
   small: { fontSize: 12, fontWeight: '400', color: colors.text2 },
   tab: { fontSize: 10, fontWeight: '600' },
   wordmark: { fontFamily: fonts.brand, fontSize: 12, letterSpacing: 3, color: colors.accent },
+  /** Game names (ranks, fortresses, homes, leagues) in Cinzel, set in capitals. */
+  rpg: {
+    fontFamily: fonts.brand,
+    fontSize: 16,
+    letterSpacing: 1,
+    color: colors.text,
+    textTransform: 'uppercase',
+  },
 } satisfies Record<string, TextStyle>;
 
 /** Frosted white glass. On web it uses CSS backdrop-filter; native wraps it in a BlurView. */

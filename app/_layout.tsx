@@ -79,16 +79,26 @@ export default function RootLayout() {
               <Stack.Screen name="program/[id]" options={{ presentation: 'modal' }} />
               <Stack.Screen name="generate" options={{ presentation: 'modal' }} />
               <Stack.Screen name="session/[id]" />
+              <Stack.Screen name="run/[id]" />
               <Stack.Screen name="user/[id]" />
               <Stack.Screen name="forum/index" />
               <Stack.Screen name="forum/[id]" />
+              <Stack.Screen name="gym-poster" />
+              <Stack.Screen name="city" />
+              <Stack.Screen name="forge" />
+              <Stack.Screen name="style" />
+              <Stack.Screen name="tribe/[id]" />
+              <Stack.Screen name="tribe/compare" />
+              <Stack.Screen name="tribe/war/[id]" />
             </Stack.Protected>
             <Stack.Protected guard={!signedIn}>
               <Stack.Screen name="(auth)" />
             </Stack.Protected>
-            {/* Friend and workout links (QR codes) open signed in or out. */}
+            {/* Friend, workout, gym and ludus links (QR codes) open signed in or out. */}
             <Stack.Screen name="add/[username]" />
             <Stack.Screen name="together/[id]" />
+            <Stack.Screen name="visit/[code]" />
+            <Stack.Screen name="ludus/[code]" />
             <Stack.Screen name="privacy" />
             <Stack.Screen name="dev/components" />
           </Stack>

@@ -86,8 +86,22 @@ function TogetherSheet({ sessionId, onClose }: { sessionId: string; onClose: () 
   );
 }
 
+/** The screen a scanned code of ours leads to. */
+export function codePath(code: NonNullable<ReturnType<typeof readCode>>): string {
+  switch (code.kind) {
+    case 'together':
+      return `/together/${code.id}`;
+    case 'visit':
+      return `/visit/${code.gymId}.${code.sig}`;
+    case 'ludus':
+      return `/ludus/${code.code}`;
+    default:
+      return `/add/${encodeURIComponent(code.username)}`;
+  }
+}
+
 /** The camera with a QR reader. Hands back the screen a code of ours leads to. */
-function CodeScanner({ onCode }: { onCode: (path: string) => void }) {
+export function CodeScanner({ onCode }: { onCode: (path: string) => void }) {
   const [permission, requestPermission] = useCameraPermissions();
   const handled = useRef(false);
 
@@ -120,11 +134,7 @@ function CodeScanner({ onCode }: { onCode: (path: string) => void }) {
             return;
           }
           handled.current = true;
-          onCode(
-            code.kind === 'together'
-              ? `/together/${code.id}`
-              : `/add/${encodeURIComponent(code.username)}`,
-          );
+          onCode(codePath(code));
         }}
       />
     </View>

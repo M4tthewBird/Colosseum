@@ -12,6 +12,9 @@ export type ArenaPeriod = 'week' | 'month' | 'all';
 /** Who the Ranks leaderboard compares you with. */
 export type ArenaScope = 'friends' | 'gym' | 'global';
 
+/** What the Arena shows: lift and volume ranks, or the game (docs/GAME.md). */
+export type ArenaMode = 'ranks' | 'league' | 'ludus' | 'duels' | 'bellum';
+
 export const DEFAULT_METRICS: ArenaMetric[] = [
   'volume',
   'name:Bench Press',
@@ -26,6 +29,8 @@ interface PrefsState {
   arenaPeriod: ArenaPeriod;
   arenaScope: ArenaScope;
   setArenaScope: (s: ArenaScope) => void;
+  arenaMode: ArenaMode;
+  setArenaMode: (m: ArenaMode) => void;
   /** Rank lifts by bodyweight-adjusted DOTS score instead of kg. */
   arenaDots: boolean;
   /** Show the "Add to Home Screen" tip once, after sign-up (after the tour). */
@@ -87,6 +92,8 @@ export const usePrefs = create<PrefsState>()(
       arenaPeriod: 'week',
       arenaScope: 'friends',
       setArenaScope: (arenaScope) => set({ arenaScope }),
+      arenaMode: 'ranks',
+      setArenaMode: (arenaMode) => set({ arenaMode }),
       arenaDots: false,
       installTipPending: false,
       tourPending: false,

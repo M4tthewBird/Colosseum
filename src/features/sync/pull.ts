@@ -126,8 +126,8 @@ export async function pullAll(userId: string): Promise<void> {
     all<ExercisePref>(supabase.from('exercise_prefs').select('*').eq('user_id', userId)).catch(
       () => [] as ExercisePref[],
     ),
-    all<{ session_id: string; rpe: number | null; feel: Session['feel'] }>(
-      supabase.from('session_ratings').select('session_id,rpe,feel').eq('user_id', userId),
+    all<{ session_id: string; rpe: number | null; feel: Session['feel']; avg_hr?: number | null }>(
+      supabase.from('session_ratings').select('*').eq('user_id', userId),
     ).catch(() => []),
   ]);
   const ratingOf = new Map(ratings.map((r) => [r.session_id, r]));
@@ -180,6 +180,7 @@ export async function pullAll(userId: string): Promise<void> {
     ...s,
     rpe: ratingOf.get(s.id)?.rpe ?? null,
     feel: ratingOf.get(s.id)?.feel ?? null,
+    avg_hr: ratingOf.get(s.id)?.avg_hr ?? null,
     volume_kg: Number(s.volume_kg ?? 0),
     notes: s.notes ?? {},
     sets: (setsBySession.get(s.id) ?? []).sort(

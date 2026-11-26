@@ -5,3 +5,5 @@ node_modules/
 brand/
 supabase/
 *.md
+src/components/art/svgs.ts
+src/components/art/svgsF.ts

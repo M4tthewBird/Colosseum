@@ -81,12 +81,23 @@ export function trainedRecently(
   return sessions.some((s) => new Date(s.started_at).getTime() > since);
 }
 
-export type ScannedCode = { kind: 'together'; id: string } | { kind: 'friend'; username: string };
+export type ScannedCode =
+  | { kind: 'together'; id: string }
+  | { kind: 'friend'; username: string }
+  | { kind: 'visit'; gymId: string; sig: string }
+  | { kind: 'ludus'; code: string };
 
-/** What a scanned QR code points to: a workout to confirm, a friend to add, or nothing of ours. */
+/**
+ * What a scanned QR code points to: a workout to confirm, a friend to add, a gym poster, a ludus
+ * invite, or nothing of ours.
+ */
 export function readCode(text: string): ScannedCode | null {
   const together = /\/together\/([0-9a-f-]{36})(?:[/?#]|$)/i.exec(text);
   if (together) return { kind: 'together', id: together[1].toLowerCase() };
+  const visit = /\/visit\/([0-9a-f-]{36})\.([A-Za-z0-9_-]{6,64})(?:[/?#]|$)/i.exec(text);
+  if (visit) return { kind: 'visit', gymId: visit[1].toLowerCase(), sig: visit[2] };
+  const ludus = /\/ludus\/([A-Za-z0-9]{6})(?:[/?#]|$)/.exec(text);
+  if (ludus) return { kind: 'ludus', code: ludus[1].toUpperCase() };
   const friend = /\/add\/([^/?#]+)/.exec(text);
   if (friend) return { kind: 'friend', username: decodeURIComponent(friend[1]) };
   return null;

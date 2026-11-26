@@ -299,3 +299,18 @@ This is the core of the app and must work fully offline.
 - **Estimated 1RM (Epley)** = w × (1 + reps / 30); for reps = 1 it is w
 - **PR:** a completed set whose weight **or** estimated 1RM is higher than every earlier completed set of the same exercise
 - **Week:** Monday 00:00 to Sunday 23:59, in the device's local time zone
+
+---
+
+## The game layer
+
+XP and ranks, monthly leagues, verified gym visits (QR check-in/out), the ludus with its fortress and wars, duels and Bellum. Every rule, number and table is in **`docs/GAME.md`**.
+
+Where it shows:
+
+- **Today:** Check in / Check out card, season card (league, laurels, days left)
+- **Profile:** level, rank and XP bar under the name; **Gladiator** tab (XP, denarii, rank ladder, attributes, the cell)
+- **Workout summary:** "+XP" card with what it came from, level-up banner, laurels and denarii
+- **Arena:** Ranks · League · Ludus · Duels · Bellum
+- **Other profiles:** level, rank, league and their cell
+- **Links:** `/visit/<gym>.<signature>` (gym poster), `/ludus/<code>` (invite), `/gym-poster?gymId=` (manager)

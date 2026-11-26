@@ -8,20 +8,22 @@ import { FillButton } from '@/components/Buttons';
 import { Glass, GlassCard } from '@/components/Glass';
 import { Header, Screen } from '@/components/Screen';
 import { ShareSheet } from '@/features/forum/ForumViews';
+import { RunDetail } from '@/features/running/RunViews';
 import { TogetherCard } from '@/features/together/TogetherViews';
 import { FeelRating } from '@/features/workout/FeelRating';
 import { SessionEditor } from '@/features/workout/SessionEditor';
 import { dropChain, isMain } from '@/lib/dropsets';
 import { formatDuration, shortDate, weekdayName, isoWeekday } from '@/lib/dates';
 import { formatKg, formatVolume, isSideSet, repsText, volume } from '@/lib/formulas';
+import { isRun } from '@/lib/running';
 import { interleave, letter } from '@/lib/supersets';
 import { useData } from '@/stores/data';
 import { confirm } from '@/stores/ui';
 import { colors, tabular, type } from '@/theme/tokens';
 
-/** Session detail with Edit and Delete. */
+/** Session detail with Edit and Delete. A run has its own body (RunDetail). */
 export default function SessionDetail() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, fresh } = useLocalSearchParams<{ id: string; fresh?: string }>();
   const session = useData((s) => s.sessions[id]);
   const exercises = useData((s) => s.exercises);
   const deleteSession = useData((s) => s.deleteSession);
@@ -39,6 +41,16 @@ export default function SessionDetail() {
 
   const d = new Date(session.started_at);
   const heading = `${weekdayName(isoWeekday(d))}, ${shortDate(d)} ${d.getFullYear()}`;
+
+  if (isRun(session)) {
+    return (
+      <Screen tabs={false} gap={16}>
+        <BackLink label="Workouts" fallback="/workouts" />
+        <Header above={heading} title={session.name} />
+        <RunDetail session={session} fresh={fresh === '1'} />
+      </Screen>
+    );
+  }
 
   if (editing) {
     return (

@@ -41,8 +41,9 @@ interface FillButtonProps extends BaseProps {
   loading?: boolean;
   labelStyle?: StyleProp<TextStyle>;
   /**
-   * Red fill with white text. Used only for the form's go button once the form is ready
-   * (Continue, Sign in), so "you can go now" reads at a glance.
+   * Red fill with white text. Used for the form's go button once the form is ready
+   * (Continue, Sign in), so "you can go now" reads at a glance, and for the game's call to
+   * fight (Attack, Pledge, Revenge) as the design shows.
    */
   ready?: boolean;
 }
@@ -73,8 +74,8 @@ export function FillButton({
           {Icon ? (
             <Icon
               size={lg ? 16 : 14}
-              color={colors.accent}
-              fill={iconFill ? colors.accent : 'none'}
+              color={ready ? colors.white : colors.accent}
+              fill={iconFill ? (ready ? colors.white : colors.accent) : 'none'}
               strokeWidth={2.6}
             />
           ) : null}

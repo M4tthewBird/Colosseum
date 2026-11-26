@@ -10,18 +10,23 @@ import { Header, Screen } from '@/components/Screen';
 import { Segmented } from '@/components/Segmented';
 import { BadgeGrid } from '@/features/badges/BadgeViews';
 import { useMyBadges } from '@/features/badges/hooks';
+import { GladiatorView } from '@/features/game/GladiatorView';
+import { LevelLine, XpBar } from '@/features/game/GameViews';
+import { useMyGame } from '@/features/game/hooks';
 import { TourTarget } from '@/features/onboarding/TourTarget';
 import { BodyView } from '@/features/profile/BodyView';
 import { FeelTrend } from '@/features/profile/FeelTrend';
 import { WeeklySets } from '@/features/profile/WeeklySets';
 import { LiftsView } from '@/features/profile/LiftsView';
+import { RunningBests } from '@/features/running/RunViews';
 import { useGym } from '@/features/social/api';
 import { useFinishedSessions } from '@/features/training/hooks';
 import { useData } from '@/stores/data';
 import { type } from '@/theme/tokens';
 
-type Section = 'body' | 'lifts' | 'badges';
-const isSection = (s: unknown): s is Section => s === 'body' || s === 'lifts' || s === 'badges';
+type Section = 'body' | 'lifts' | 'badges' | 'gladiator';
+const isSection = (s: unknown): s is Section =>
+  s === 'body' || s === 'lifts' || s === 'badges' || s === 'gladiator';
 
 export default function Profile() {
   const profile = useData((s) => s.profile);
@@ -37,6 +42,7 @@ export default function Profile() {
     if (isSection(section)) setTab(section);
   }
   const badges = useMyBadges();
+  const game = useMyGame();
 
   if (!profile) return null;
   const gymName = gym.data?.gym?.name;
@@ -54,16 +60,24 @@ export default function Profile() {
         }
       />
       <Glass radius={22} style={styles.card}>
-        <Avatar name={profile.display_name} url={profile.avatar_url} size={54} />
-        <View style={{ gap: 2, flex: 1 }}>
-          <Text style={styles.name} numberOfLines={1}>
-            {profile.display_name}
-          </Text>
-          <Text style={type.caption} numberOfLines={1}>
-            @{profile.username}
-            {gymName ? ` · ${gymName}` : ''}
-          </Text>
+        <View style={styles.top}>
+          <Avatar name={profile.display_name} url={profile.avatar_url} size={54} />
+          <View style={{ gap: 2, flex: 1 }}>
+            <Text style={styles.name} numberOfLines={1}>
+              {profile.display_name}
+            </Text>
+            <Text style={type.caption} numberOfLines={1}>
+              @{profile.username}
+              {gymName ? ` · ${gymName}` : ''}
+            </Text>
+          </View>
         </View>
+        <TourTarget id="profile-level">
+          <View style={{ gap: 6 }}>
+            <LevelLine level={game.level} />
+            <XpBar progress={game.progress} />
+          </View>
+        </TourTarget>
       </Glass>
       <TourTarget id="profile-sections">
         <Segmented
@@ -71,6 +85,7 @@ export default function Profile() {
             { value: 'body', label: 'Body' },
             { value: 'lifts', label: 'Lifts' },
             { value: 'badges', label: 'Badges' },
+            { value: 'gladiator', label: 'Gladiator' },
           ]}
           value={tab}
           onChange={setTab}
@@ -81,6 +96,8 @@ export default function Profile() {
         <BodyView />
       ) : tab === 'badges' ? (
         <BadgeGrid badges={badges} />
+      ) : tab === 'gladiator' ? (
+        <GladiatorView />
       ) : (
         <>
           <WeeklySets sessions={sessions} exercises={exercises} />
@@ -92,6 +109,7 @@ export default function Profile() {
               router.push({ pathname: '/profile/exercise/[id]', params: { id } })
             }
           />
+          <RunningBests />
         </>
       )}
     </Screen>
@@ -99,12 +117,7 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-  },
+  card: { paddingVertical: 14, paddingHorizontal: 16, gap: 12 },
+  top: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   name: { fontSize: 18, fontWeight: '600', letterSpacing: -0.3 },
 });

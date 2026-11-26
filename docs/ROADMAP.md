@@ -109,3 +109,102 @@
 - [ ] Use native blur via `expo-blur`; haptics on set done and on PR
 - [ ] Store listing assets from `brand/`
 - [ ] Remind the user: publishing needs a paid Apple developer account (yearly) and a Google Play developer account (one-time fee)
+
+---
+
+# The game layer (`docs/GAME.md`)
+
+Matyáš's plan (2026-11-13). Built and checked on web in demo mode; `supabase/updates/2026-11-13-game.sql` still needs a run on the live project. Everything is earned only by real training. Numbers in `src/lib/game/config.ts`.
+
+## Phase 10 — XP and ranks
+
+- [x] XP per qualifying workout, PR bonus, week-streak bonus, verified bonus; never for volume
+- [x] Daily XP cap (also a database check)
+- [x] Levels and ranks: Tiro → Gladiator → Veteranus → Primus Palus → Rudiarius
+- [x] Profile: level, rank and XP bar under the name
+- [x] Workout summary: "+120 XP" counting up with a breakdown, the bar filling, level-up banner
+- [x] The cell: a cosmetic home on the profile that grows with the rank and level
+
+## Phase 11 — Leagues and seasons
+
+- [x] Monthly season, laurels, Bronze → Silver → Gold → Imperator's Arena
+- [x] Partial reset at the end of a season (half, at most 300)
+- [x] Fair scoring: progress % × level factor, 3-week baseline, attendance first, small DOTS part
+- [x] Arena → League
+- [x] Today: season card
+
+## Phase 12 — QR check-in / check-out
+
+- [x] Gym visits: scan in, scan out, minutes; GPS within 150 m
+- [x] Signed codes (HMAC) checked by a database trigger
+- [x] Forgotten check-out closes as incomplete after 3 h; under 20 min or over 4 h not counted for wars
+- [x] Workouts during a verified visit are verified; home or outdoor workouts are unverified
+- [x] Offline: scan and position saved and checked after sync
+- [x] Gym manager: QR poster to print
+- [ ] Later: a rotating code on a tablet (after agreeing with a gym)
+
+## Phase 13 — Ludus and denarii
+
+- [x] Tribe = home gym; Ludus = 3–10 people across gyms (create, join by code/link/QR, leave, remove)
+- [x] Denarii per workout, more for verified, PRs, streak, training with a ludus member; daily cap
+- [x] Wallet and gifts to the ludus or gym treasury
+
+## Phase 14 — Fortress
+
+- [x] Buildings for ludus and gym: machines, palisade, barracks, temple
+- [x] Real-time construction (ready-at timestamps, no cron)
+- [x] Bonuses applied to denarii; damaged buildings and repair
+
+## Phase 15 — Ludus wars
+
+- [x] Declare war, 3-day window, points from verified workouts, per active member, palisade bonus
+- [x] Settlement: spoils, laurels, a damaged building, nothing deleted
+
+## Phase 16 — Duels and Bellum
+
+- [x] Weekly duels with friends (most workouts / most kg added to a lift)
+- [x] Bellum: monthly war of the gyms in a city
+- [x] Arena → Duels, Arena → Bellum
+
+## Phase 17 — Attributes
+
+- [x] Character sheet: Strength, Endurance, Discipline
+
+## Phase 18 — The city, styles and gear
+
+`supabase/updates/2026-11-14-city.sql` has run on the live project (2026-11-14).
+
+- [x] Illustrations from the design: the gladiator per rank, the home, fortress stages, fighting styles, gear and the city
+- [x] The city (Today → The city): every building opens a part of the game
+- [x] Fighting styles with a +15 XP bonus, changed once a season (history kept)
+- [x] The forge: 32 pieces in 5 slots, bought with denarii or opened by level, verified workouts or league
+- [ ] The market and the baths (to decide with Matyáš)
+
+## Phase 19 — The map and tribe attacks
+
+- [x] The map of the city: tribes, territories, filters, running attacks
+- [x] An enemy tribe up close: strength, walls, spoils, weak spot, their best three
+- [x] Comparing gear with their best
+- [x] Tribe attacks: 24 h warning, 3 days, gear and wall bonus, spoils, territory, damage
+- [x] Pledges to defend, the result screen and revenge
+- [ ] Push notification when your tribe is attacked (needs the push sender)
+
+## Phase 20 — Running (next, `docs/GAME.md` → 11)
+
+`supabase/updates/2026-11-14-running.sql` has run on the live project (2026-11-14).
+
+- [x] Pure functions with tests: pace, qualifying run, standard-distance best times, VDOT, run anti-cheat (`src/lib/running.ts`)
+- [x] Runs as `workout_sessions` of kind 'run', heart rate in the private `session_ratings`, checks for impossible paces
+- [x] Workouts → Log a run: manual entry, live pace, offline queue
+- [x] Runs in the history, the friends feed and their own detail screen with the reward (+XP, laurels)
+- [x] XP, laurels, denarii, weekly target and Retiarius from runs, inside the shared daily caps
+- [x] Runs count in ludus wars, tribe attacks, Bellum and workout duels
+- [x] Arena: Running metrics (best 5 km, best 10 km, VDOT, km)
+- [x] Profile → Lifts: running bests
+- [x] Changelog line and a highlights card
+- [ ] Later, with the native apps: GPS recording
+
+## Game docs
+
+- [x] `docs/GAME.md` with the rules, numbers and tables
+- [x] `PRODUCT.md`, `DATA.md` point to it

@@ -79,6 +79,17 @@ export const DEMO_STATS: Record<
   petr: { bench: 85, squat: 110, deadlift: 150, weekVolume: 7000, workouts: 1, bodyweight: 68 },
 };
 
+/** Demo friends who run: best 5 km and 10 km (seconds), VDOT and km in a week. */
+export const DEMO_RUNS: Record<
+  string,
+  { fiveK: number; tenK: number | null; vdot: number; weekKm: number }
+> = {
+  ondrej: { fiveK: 21 * 60 + 40, tenK: 45 * 60 + 10, vdot: 45.6, weekKm: 24 },
+  lukas: { fiveK: 24 * 60 + 5, tenK: 50 * 60 + 30, vdot: 40.4, weekKm: 15 },
+  petr: { fiveK: 27 * 60 + 50, tenK: null, vdot: 34.6, weekKm: 8 },
+  filip: { fiveK: 23 * 60 + 15, tenK: 49 * 60 + 2, vdot: 42.1, weekKm: 11 },
+};
+
 /** A Push/Pull/Legs program for the demo user. */
 export function demoProgram(userId: string, now: Date): Program {
   const pe = (
@@ -236,6 +247,34 @@ export function demoSessions(userId: string, program: Program, now: Date): Sessi
         : null),
       updated_at: start.toISOString(),
       sets,
+    });
+  }
+  // A Saturday-morning run every week for the last 6 weeks, getting a little faster.
+  for (let w = 6; w >= 1; w--) {
+    const d = addDays(now, -7 * w + 2);
+    const start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 8, 15);
+    if (start > now) continue;
+    const km = w % 2 ? 5.05 : 10.1;
+    const pace = (w % 2 ? 330 : 345) - (6 - w) * 3;
+    const duration = Math.round(km * pace);
+    out.push({
+      id: sid(`run:${start.toISOString()}`),
+      user_id: userId,
+      program_day_id: null,
+      name: w === 3 ? 'Treadmill run' : 'Run',
+      started_at: start.toISOString(),
+      finished_at: new Date(start.getTime() + duration * 1000).toISOString(),
+      volume_kg: 0,
+      set_count: 0,
+      pr_count: w < 5 ? 1 : 0,
+      kind: 'run',
+      distance_m: Math.round(km * 1000),
+      duration_s: duration,
+      run_place: w === 3 ? 'treadmill' : 'outdoor',
+      elevation_m: w === 3 ? null : 40 + w * 5,
+      avg_hr: 150 + w,
+      updated_at: start.toISOString(),
+      sets: [],
     });
   }
   return out;
@@ -599,3 +638,236 @@ export const DEMO_FEEDBACK = [
     hoursAgo: 26,
   },
 ];
+
+// ───────────── The game layer (docs/GAME.md) ─────────────
+
+/** Sample XP and season laurels per friend. */
+export const DEMO_GAME: Record<string, { xp: number; season: number }> = {
+  tomas: { xp: 31800, season: 412 },
+  adam: { xp: 24100, season: 365 },
+  jakub: { xp: 9800, season: 228 },
+  ondrej: { xp: 15400, season: 301 },
+  filip: { xp: 5200, season: 164 },
+  lukas: { xp: 2600, season: 96 },
+  petr: { xp: 900, season: 40 },
+};
+
+/** The demo user's ludus: they lead it, with four friends. */
+export const DEMO_LUDUS = {
+  id: sid('ludus:ferrum'),
+  name: 'Ferrum Vincit',
+  motto: 'Iron wins. Show up.',
+  code: 'FRM7QX',
+  members: ['tomas', 'adam', 'jakub', 'filip'],
+  treasury: 640,
+  record: {
+    gloria: 185,
+    best_gloria: 195,
+    wins: 6,
+    losses: 2,
+    defences: 2,
+    upsets: 1,
+    streak: 2,
+    best_streak: 4,
+  },
+};
+
+/** Other ludi to look at and fight. */
+const warRecord = (
+  gloria: number,
+  best_gloria: number,
+  wins: number,
+  losses: number,
+  defences: number,
+  upsets: number,
+  streak: number,
+  best_streak: number,
+) => ({ gloria, best_gloria, wins, losses, defences, upsets, streak, best_streak });
+
+export const DEMO_LUDI = [
+  {
+    id: sid('ludus:lupi'),
+    name: 'Lupi Romani',
+    motto: 'The pack trains together',
+    members: 6,
+    record: warRecord(260, 280, 9, 3, 3, 2, 1, 5),
+  },
+  {
+    id: sid('ludus:aquila'),
+    name: 'Aquila',
+    motto: 'Higher every week',
+    members: 4,
+    record: warRecord(95, 120, 4, 4, 1, 1, 0, 2),
+  },
+  {
+    id: sid('ludus:ursi'),
+    name: 'Ursi',
+    motto: 'Heavy and happy',
+    members: 7,
+    record: warRecord(140, 140, 5, 2, 2, 0, 3, 3),
+  },
+  {
+    id: sid('ludus:vulpes'),
+    name: 'Vulpes',
+    motto: '',
+    members: 3,
+    record: warRecord(0, 0, 0, 1, 0, 0, 0, 0),
+  },
+];
+
+/** Gyms of the demo user's city in this month's Bellum: active members and verified visit days. */
+export const DEMO_BELLUM = [
+  { gym: 'Iron Forum', active: 41, visitDays: 389, palisade: 1 },
+  { gym: 'Olymp Fitness', active: 57, visitDays: 498, palisade: 0 },
+  { gym: 'Spartan Box', active: 12, visitDays: 131, palisade: 2 },
+  { gym: 'Fit Point Karlín', active: 2, visitDays: 15, palisade: 0 },
+];
+
+/**
+ * The tribes of the demo user's city on the map (Prague). The first two are DEMO_GYMS; positions
+ * are rough district centres. `strength` and `best` stand in for the server's city_map and
+ * tribe_info.
+ */
+export const DEMO_CITY = [
+  {
+    id: DEMO_GYMS[0].id,
+    name: 'Iron Forum',
+    lat: 50.087,
+    lng: 14.421,
+    level: 4,
+    members: 31,
+    strength: 5480,
+    palisade: 1,
+    treasury: 2480,
+    weekendShare: 0.31,
+  },
+  {
+    id: DEMO_GYMS[2].id,
+    name: 'Olymp Fitness',
+    lat: 50.104,
+    lng: 14.418,
+    level: 9,
+    members: 48,
+    strength: 6120,
+    palisade: 3,
+    treasury: 1900,
+    weekendShare: 0.12,
+  },
+  {
+    id: sid('gym:spartan'),
+    name: 'Spartan Box',
+    lat: 50.066,
+    lng: 14.474,
+    level: 6,
+    members: 22,
+    strength: 4820,
+    palisade: 2,
+    treasury: 3100,
+    weekendShare: 0.24,
+  },
+  {
+    id: sid('gym:karlin'),
+    name: 'Fit Point Karlín',
+    lat: 50.093,
+    lng: 14.452,
+    level: 2,
+    members: 9,
+    strength: 1150,
+    palisade: 0,
+    treasury: 380,
+    weekendShare: 0.4,
+  },
+  {
+    id: sid('gym:smichov'),
+    name: 'Smíchov Iron',
+    lat: 50.07,
+    lng: 14.403,
+    level: 5,
+    members: 27,
+    strength: 3900,
+    palisade: 1,
+    treasury: 1200,
+    weekendShare: 0.2,
+  },
+  {
+    id: sid('gym:holesovice'),
+    name: 'Holešovice Barbell',
+    lat: 50.11,
+    lng: 14.452,
+    level: 3,
+    members: 14,
+    strength: 2100,
+    palisade: 0,
+    treasury: 640,
+    weekendShare: 0.35,
+  },
+  {
+    id: sid('gym:vinohrady'),
+    name: 'Vinohrady Strength',
+    lat: 50.075,
+    lng: 14.437,
+    level: 7,
+    members: 35,
+    strength: 5900,
+    palisade: 2,
+    treasury: 2250,
+    weekendShare: 0.18,
+  },
+  {
+    id: sid('gym:dejvice'),
+    name: 'Dejvice Forge',
+    lat: 50.101,
+    lng: 14.375,
+    level: 1,
+    members: 6,
+    strength: 640,
+    palisade: 0,
+    treasury: 150,
+    weekendShare: 0.5,
+  },
+];
+
+/** The strongest gladiators per demo tribe (by gear power). */
+export const DEMO_TRIBE_BEST: Record<
+  string,
+  { name: string; level: number; style: string; loadout: Record<string, string> }[]
+> = {
+  default: [
+    {
+      name: 'Marek',
+      level: 22,
+      style: 'murmillo',
+      loadout: {
+        helmet: 'helmet_galea_gold',
+        weapon: 'weapon_hasta',
+        shield: 'shield_scutum',
+        guard: 'guard_fasciae',
+        armour: 'armour_lorica',
+      },
+    },
+    {
+      name: 'Dan',
+      level: 14,
+      style: 'thraex',
+      loadout: {
+        helmet: 'helmet_thraex',
+        weapon: 'weapon_sica',
+        shield: 'shield_parma',
+        guard: 'guard_ocreae',
+        armour: 'armour_subligaculum',
+      },
+    },
+    {
+      name: 'Filip',
+      level: 9,
+      style: 'retiarius',
+      loadout: {
+        helmet: 'helmet_galea',
+        weapon: 'weapon_trident',
+        shield: 'shield_parmula',
+        guard: 'guard_galerus',
+        armour: 'armour_subligaculum',
+      },
+    },
+  ],
+};
