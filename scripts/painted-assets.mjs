@@ -41,14 +41,14 @@ export const FORMAT = {
   ground: `FORMAT: a seamless, tileable square texture of ground seen straight from above (top-down, NOT isometric), painted in the same style and colours as the ground in the attached city. Even, flat light, no shadows, no objects, no paths, no border: the left edge continues into the right edge and the top edge into the bottom edge. Square image.`,
   figure: `FORMAT: one gladiator, full body from head to feet, seen straight from the front at eye level: he faces the viewer, not turned to either side, standing upright and symmetrical with his feet a little apart and his arms hanging slightly away from his body. If he carries a weapon, it is held down at his side in his right hand; if he has a shield, it is on his left forearm, its front facing the viewer. Painted in the style of the attached city (the same ink outlines, hatching and palette). The same man in every image: muscular, tanned, short dark curly hair, a short dark beard, a calm determined face; only his gear changes. A small soft shadow directly under his feet only. Background: perfectly flat plain cream #F2EBDB, no gradient, no ground, no scenery. The whole figure in frame with empty background around it: feet, crest and weapons not cut off. Portrait image, 3:4.`,
   item: `FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.`,
-  layer: `FORMAT: EDIT THE BASE IMAGE. Take the base gladiator (image 1 of this chat) and add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.`,
+  layer: `FORMAT: EDIT THE BASE IMAGE. Always start from the base gladiator (the attached base image, or image 1 of this chat): he wears only a white loincloth and sandals. Never build on an image made earlier in this chat: the gear from the previous image must not be there. Add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.`,
   map: `FORMAT: a painted map seen from directly above (top-down: not isometric, no perspective, no tilt), in the style of the attached city painting. The second attached image is the outline template. Keep the outline exactly where the template has it, with the same shape, position and size in the frame: do not move, rotate, scale or simplify it, because the app puts real places on the map by their coordinates. Blue lines in the template are rivers: paint them exactly there. Each small dark dot is a town: paint a small cluster of terracotta roofs exactly on it. Paint the land inside the outline; draw its border as a thin dark-brown ink line. Outside the outline leave plain flat cream #F2EBDB with nothing on it: no neighbouring land, no sea, no frame, no compass rose, no legend. No text, no labels, no names, no numbers, no markers, no pins. Give the image the same proportions as the template.`,
   emblem: `FORMAT: a round emblem (a medallion) seen straight from the front, centred, filling about 80 % of the image, painted in the style of the attached city (ink outlines, hatching, warm palette). All league emblems share one design and differ only in metal and ornament. Background: perfectly flat plain cream #F2EBDB, no gradient. Square image.`,
 };
 
 /** Extra attachment per kind (besides the style reference), shown in the kit's steps; a map
  * brings its own outline template (`attach`). */
-export const ATTACH = { piece: 'sablona-parcely.png' };
+export const ATTACH = { piece: 'sablona-parcely.png', layer: 'zaklad-gladiator.jpg' };
 
 /** The Czech titles of the batches, in the order they are made. */
 export const BATCHES = {
@@ -74,6 +74,10 @@ export const BATCHES = {
   mapCZ: 'Mapa Česka',
   mapBrno: 'Mapa Brna',
   emblems: 'Ligové znaky',
+  // 2026-11-27: every piece of gear on the base gladiator, so he can wear what the player owns
+  layers1: 'Oblékání: přilby a štíty na gladiátorovi',
+  layers2: 'Oblékání: zbraně a chrániče na gladiátorovi',
+  layers3: 'Oblékání: zbroj a oděv na gladiátorovi',
 };
 
 const piece = (batch, id, size, base, cs, prompt) => ({
@@ -1043,3 +1047,33 @@ export const ASSETS = [
       'The city of Brno as a hand-painted map: the rivers Svratka and Svitava as blue-green lines (the Svratka widens into the Brno reservoir in the north-west, among wooded hills), the old town in the middle around the dot with dense terracotta roofs, the Špilberk castle on its wooded hill just west of it and the cathedral on Petrov hill, city blocks of terracotta roofs thinning towards the outline into houses with gardens, fields and vineyards in the south, forested hills in the north and west. Square image.',
   },
 ];
+
+// ── Dressing up (Matyáš, 2026-11-27): every piece of gear as an edit of the base gladiator
+// (dress-base). The app cuts the piece out by comparing the edit with the base and draws it on him. ──
+const WEAR = {
+  helmet: 'Put it on his head; his face stays visible where the helmet allows.',
+  shield: 'Put it on his left forearm, its front facing the viewer.',
+  weapon: 'Put it in his right hand, held down at his side (a net hangs from his left hand).',
+  guard: 'Put it where it is worn (on his arm, his legs or his shoulder), nothing else.',
+  armour: 'Dress him in it as it is worn.',
+};
+for (const g of ASSETS.filter((a) => a.kind === 'item' && !a.id.startsWith('icon-'))) {
+  const slot = g.id.split('_')[0];
+  ASSETS.push({
+    kind: 'layer',
+    batch: g.batch === 'items1' ? 'layers1' : g.batch === 'items2' ? 'layers2' : 'layers3',
+    id: `layer-${g.id}`,
+    cs: g.cs.replace('Výzbroj:', 'Na gladiátorovi:'),
+    prompt: `${g.prompt} ${WEAR[slot] ?? ''}`.trim(),
+  });
+}
+
+// Light cloth and whitewashed walls: the cream inside them is paint, not background seen through a
+// gap, so the import keeps it (2026-11-27: holes in the tunic, the loincloth, home 2, the trough).
+for (const a of ASSETS)
+  if (
+    ['armour_tunic', 'armour_subligaculum', 'armour_exomis', 'home-2', 'water-trough'].includes(
+      a.id,
+    )
+  )
+    a.keepHoles = true;

@@ -530,15 +530,303 @@
    ],
    "rev": 1
   },
+  "ludus-1": {
+   "kind": "piece",
+   "size": 3,
+   "file": "city/ludus-1.webp",
+   "width": 962,
+   "height": 637,
+   "anchor": [
+    480,
+    636
+   ],
+   "rev": 1
+  },
+  "ludus-2": {
+   "kind": "piece",
+   "size": 3,
+   "file": "city/ludus-2.webp",
+   "width": 962,
+   "height": 764,
+   "anchor": [
+    480,
+    763
+   ],
+   "rev": 1
+  },
+  "ludus-3": {
+   "kind": "piece",
+   "size": 3,
+   "file": "city/ludus-3.webp",
+   "width": 962,
+   "height": 668,
+   "anchor": [
+    482,
+    667
+   ],
+   "rev": 1
+  },
+  "palus": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/palus.webp",
+   "width": 321,
+   "height": 236,
+   "anchor": [
+    160,
+    236
+   ],
+   "rev": 1
+  },
+  "weapon-rack": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/weapon-rack.webp",
+   "width": 321,
+   "height": 204,
+   "anchor": [
+    160,
+    203
+   ],
+   "rev": 1
+  },
+  "brazier": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/brazier.webp",
+   "width": 321,
+   "height": 234,
+   "anchor": [
+    160,
+    233
+   ],
+   "rev": 1
+  },
+  "water-trough": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/water-trough.webp",
+   "width": 321,
+   "height": 188,
+   "anchor": [
+    160,
+    188
+   ],
+   "rev": 1
+  },
+  "halteres-1": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/halteres-1.webp",
+   "width": 321,
+   "height": 205,
+   "anchor": [
+    161,
+    205
+   ],
+   "rev": 1
+  },
+  "halteres-2": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/halteres-2.webp",
+   "width": 321,
+   "height": 194,
+   "anchor": [
+    158,
+    193
+   ],
+   "rev": 1
+  },
+  "halteres-3": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/halteres-3.webp",
+   "width": 321,
+   "height": 196,
+   "anchor": [
+    159,
+    196
+   ],
+   "rev": 1
+  },
+  "pullup-1": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/pullup-1.webp",
+   "width": 321,
+   "height": 264,
+   "anchor": [
+    158,
+    264
+   ],
+   "rev": 1
+  },
+  "pullup-2": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/pullup-2.webp",
+   "width": 321,
+   "height": 266,
+   "anchor": [
+    158,
+    265
+   ],
+   "rev": 1
+  },
+  "pullup-3": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/pullup-3.webp",
+   "width": 321,
+   "height": 266,
+   "anchor": [
+    159,
+    266
+   ],
+   "rev": 1
+  },
+  "wall-1-a": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/wall-1-a.webp",
+   "width": 321,
+   "height": 202,
+   "anchor": [
+    160,
+    201
+   ],
+   "rev": 1
+  },
+  "wall-1-b": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/wall-1-b.webp",
+   "width": 321,
+   "height": 200,
+   "anchor": [
+    160,
+    200
+   ],
+   "rev": 1
+  },
+  "wall-1-tower": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/wall-1-tower.webp",
+   "width": 321,
+   "height": 211,
+   "anchor": [
+    160,
+    211
+   ],
+   "rev": 1
+  },
+  "aqueduct-a": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/aqueduct-a.webp",
+   "width": 321,
+   "height": 219,
+   "anchor": [
+    160,
+    219
+   ],
+   "rev": 1
+  },
+  "aqueduct-b": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/aqueduct-b.webp",
+   "width": 321,
+   "height": 220,
+   "anchor": [
+    160,
+    220
+   ],
+   "rev": 1
+  },
   "home-2": {
    "kind": "piece",
    "size": 2,
    "file": "city/home-2.webp",
    "width": 641,
-   "height": 472,
+   "height": 466,
+   "anchor": [
+    322,
+    465
+   ],
+   "rev": 2
+  },
+  "home-5": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/home-5.webp",
+   "width": 641,
+   "height": 462,
    "anchor": [
     320,
-    472
+    461
+   ],
+   "rev": 1
+  },
+  "hortus": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/hortus.webp",
+   "width": 321,
+   "height": 197,
+   "anchor": [
+    160,
+    196
+   ],
+   "rev": 1
+  },
+  "fountain": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/fountain.webp",
+   "width": 321,
+   "height": 193,
+   "anchor": [
+    161,
+    193
+   ],
+   "rev": 1
+  },
+  "pergola": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/pergola.webp",
+   "width": 321,
+   "height": 287,
+   "anchor": [
+    160,
+    287
+   ],
+   "rev": 1
+  },
+  "lararium": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/lararium.webp",
+   "width": 321,
+   "height": 254,
+   "anchor": [
+    159,
+    253
+   ],
+   "rev": 1
+  },
+  "palaestra": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/palaestra.webp",
+   "width": 321,
+   "height": 210,
+   "anchor": [
+    159,
+    210
    ],
    "rev": 1
   },
@@ -666,6 +954,244 @@
    "width": 720,
    "height": 960,
    "rev": 2
+  },
+  "helmet_galea": {
+   "kind": "item",
+   "file": "gear/helmet_galea.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "helmet_murmillo": {
+   "kind": "item",
+   "file": "gear/helmet_murmillo.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "helmet_secutor": {
+   "kind": "item",
+   "file": "gear/helmet_secutor.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "helmet_thraex": {
+   "kind": "item",
+   "file": "gear/helmet_thraex.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "helmet_hoplomachus": {
+   "kind": "item",
+   "file": "gear/helmet_hoplomachus.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "helmet_provocator": {
+   "kind": "item",
+   "file": "gear/helmet_provocator.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "helmet_galea_gold": {
+   "kind": "item",
+   "file": "gear/helmet_galea_gold.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "helmet_laurel": {
+   "kind": "item",
+   "file": "gear/helmet_laurel.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "shield_parmula": {
+   "kind": "item",
+   "file": "gear/shield_parmula.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "shield_parma": {
+   "kind": "item",
+   "file": "gear/shield_parma.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "shield_bronze": {
+   "kind": "item",
+   "file": "gear/shield_bronze.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "shield_scutum": {
+   "kind": "item",
+   "file": "gear/shield_scutum.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "weapon_rudis": {
+   "kind": "item",
+   "file": "gear/weapon_rudis.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "weapon_pugio": {
+   "kind": "item",
+   "file": "gear/weapon_pugio.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "weapon_sica": {
+   "kind": "item",
+   "file": "gear/weapon_sica.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "weapon_net": {
+   "kind": "item",
+   "file": "gear/weapon_net.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "weapon_trident": {
+   "kind": "item",
+   "file": "gear/weapon_trident.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "weapon_hasta": {
+   "kind": "item",
+   "file": "gear/weapon_hasta.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "weapon_gladius": {
+   "kind": "item",
+   "file": "gear/weapon_gladius.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "weapon_two_gladii": {
+   "kind": "item",
+   "file": "gear/weapon_two_gladii.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "guard_fasciae": {
+   "kind": "item",
+   "file": "gear/guard_fasciae.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "guard_ocreae": {
+   "kind": "item",
+   "file": "gear/guard_ocreae.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "guard_galerus": {
+   "kind": "item",
+   "file": "gear/guard_galerus.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "guard_manica": {
+   "kind": "item",
+   "file": "gear/guard_manica.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "armour_tunic": {
+   "kind": "item",
+   "file": "gear/armour_tunic.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "armour_exomis": {
+   "kind": "item",
+   "file": "gear/armour_exomis.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "armour_subligaculum": {
+   "kind": "item",
+   "file": "gear/armour_subligaculum.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "armour_straps": {
+   "kind": "item",
+   "file": "gear/armour_straps.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "armour_leopard": {
+   "kind": "item",
+   "file": "gear/armour_leopard.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "armour_cardiophylax": {
+   "kind": "item",
+   "file": "gear/armour_cardiophylax.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "armour_cloak": {
+   "kind": "item",
+   "file": "gear/armour_cloak.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "armour_lorica": {
+   "kind": "item",
+   "file": "gear/armour_lorica.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "icon-denarius": {
+   "kind": "item",
+   "file": "icons/icon-denarius.webp",
+   "width": 256,
+   "height": 256,
+   "rev": 1
+  },
+  "icon-laurels": {
+   "kind": "item",
+   "file": "icons/icon-laurels.webp",
+   "width": 256,
+   "height": 256,
+   "rev": 1
   }
  }
 }

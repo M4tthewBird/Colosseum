@@ -2,28 +2,26 @@ You are painting game art for a fitness app themed on ancient Rome. I will ask f
 
 STYLE (identical for every image):
 Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
+The first attached image is the style reference. The second attached image is the base gladiator: every image is an edit of it.
 
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
+FORMAT: EDIT THE BASE IMAGE. Always start from the base gladiator (the attached base image, or image 1 of this chat): he wears only a white loincloth and sandals. Never build on an image made earlier in this chat: the gear from the previous image must not be there. Add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
 
-THE LIST (6 images):
-1. wall-2-a. Base 1x1, surface: grass. A straight section of a limestone wall about twice as tall as a man, with a walkway on top. It crosses the base along its middle, rising to the right: it runs from the middle of the base's front-left edge to the middle of its back-right edge, parallel to the base's back-left edge. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly. Nothing else on the base.
-2. wall-2-b. Base 1x1, surface: grass. A straight section of a limestone wall about twice as tall as a man, with a walkway on top. It crosses the base along its middle, rising to the left: it runs from the middle of the base's front-right edge to the middle of its back-left edge, parallel to the base's back-right edge. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly. Nothing else on the base.
-3. wall-2-tower. Base 1x1, surface: grass. A square limestone tower with battlements standing in the middle of the base, a little taller than a limestone wall about twice as tall as a man, with a walkway on top. No wall sections attached to it: walls will join it from the sides.
-4. wall-3-a. Base 1x1, surface: grass. A straight section of a tall fortified limestone wall with battlements on top and narrow arrow slits. It crosses the base along its middle, rising to the right: it runs from the middle of the base's front-left edge to the middle of its back-right edge, parallel to the base's back-left edge. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly. Nothing else on the base.
-5. wall-3-b. Base 1x1, surface: grass. A straight section of a tall fortified limestone wall with battlements on top and narrow arrow slits. It crosses the base along its middle, rising to the left: it runs from the middle of the base's front-right edge to the middle of its back-left edge, parallel to the base's back-right edge. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly. Nothing else on the base.
-6. wall-3-tower. Base 1x1, surface: grass. A square limestone tower with battlements standing in the middle of the base, a little taller than a tall fortified limestone wall with battlements on top and narrow arrow slits. No wall sections attached to it: walls will join it from the sides.
+THE LIST (12 images):
+1. layer-weapon_rudis. A wooden practice sword of plain worn wood with a leather-wrapped grip. Put it in his right hand, held down at his side (a net hangs from his left hand).
+2. layer-weapon_pugio. A Roman dagger with a leaf-shaped iron blade and a bronze-decorated hilt, its sheath beside it. Put it in his right hand, held down at his side (a net hangs from his left hand).
+3. layer-weapon_sica. A short curved Thracian sword: an iron blade bent at an angle and a wooden grip. Put it in his right hand, held down at his side (a net hangs from his left hand).
+4. layer-weapon_net. A gladiator net gathered in loose folds, with small lead weights along its edge. Put it in his right hand, held down at his side (a net hangs from his left hand).
+5. layer-weapon_trident. A long three-pronged trident with an iron head on a wooden shaft, lying diagonally. Put it in his right hand, held down at his side (a net hangs from his left hand).
+6. layer-weapon_hasta. A spear with a leaf-shaped iron head on a long wooden shaft, lying diagonally. Put it in his right hand, held down at his side (a net hangs from his left hand).
+7. layer-weapon_gladius. A Roman short sword: a straight double-edged blade, a ribbed wooden grip and a round pommel. Put it in his right hand, held down at his side (a net hangs from his left hand).
+8. layer-weapon_two_gladii. Two Roman short swords crossed. Put it in his right hand, held down at his side (a net hangs from his left hand).
+9. layer-guard_fasciae. A pair of quilted padded linen leg wraps tied with leather cords. Put it where it is worn (on his arm, his legs or his shoulder), nothing else.
+10. layer-guard_ocreae. A pair of bronze greaves (shin guards) with engraved decoration. Put it where it is worn (on his arm, his legs or his shoulder), nothing else.
+11. layer-guard_galerus. A tall curved bronze shoulder guard with leather straps. Put it where it is worn (on his arm, his legs or his shoulder), nothing else.
+12. layer-guard_manica. A segmented arm guard of overlapping metal bands on leather. Put it where it is worn (on his arm, his legs or his shoulder), nothing else.
 
 RULES:
-- One image per reply, in the order of the list. Below the image write only its number and id (for example "1. wall-2-a").
+- One image per reply, in the order of the list. Below the image write only its number and id (for example "1. layer-weapon_rudis").
 - When I write "next", make the next image. When I write "redo", make the same image again, fixing what I say.
 - Keep the same style, angle, light and background in every image.
 
@@ -31,102 +29,102 @@ Make image 1 now.
 
 
 =====================================================================
-ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, otevři nový chat, přilož vzor-mesto.jpg a sablona-parcely.png
+ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, otevři nový chat, přilož vzor-mesto.jpg a zaklad-gladiator.jpg
 a pošli jen jeden z nich)
 =====================================================================
 
---- 1. wall-2-a (Hradby 2: kamenná zeď, úsek /) ---
-Game art for a fitness app themed on ancient Rome: wall-2-a. Base 1x1, surface: grass. A straight section of a limestone wall about twice as tall as a man, with a walkway on top. It crosses the base along its middle, rising to the right: it runs from the middle of the base's front-left edge to the middle of its back-right edge, parallel to the base's back-left edge. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly. Nothing else on the base.
+--- 1. layer-weapon_rudis (Na gladiátorovi: Rudis) ---
+Game art for a fitness app themed on ancient Rome: layer-weapon_rudis. A wooden practice sword of plain worn wood with a leather-wrapped grip. Put it in his right hand, held down at his side (a net hangs from his left hand).
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
+The first attached image is the style reference. The second attached image is the base gladiator: every image is an edit of it.
 
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
+FORMAT: EDIT THE BASE IMAGE. Always start from the base gladiator (the attached base image, or image 1 of this chat): he wears only a white loincloth and sandals. Never build on an image made earlier in this chat: the gear from the previous image must not be there. Add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
 
---- 2. wall-2-b (Hradby 2: kamenná zeď, úsek \) ---
-Game art for a fitness app themed on ancient Rome: wall-2-b. Base 1x1, surface: grass. A straight section of a limestone wall about twice as tall as a man, with a walkway on top. It crosses the base along its middle, rising to the left: it runs from the middle of the base's front-right edge to the middle of its back-left edge, parallel to the base's back-right edge. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly. Nothing else on the base.
+--- 2. layer-weapon_pugio (Na gladiátorovi: Pugio) ---
+Game art for a fitness app themed on ancient Rome: layer-weapon_pugio. A Roman dagger with a leaf-shaped iron blade and a bronze-decorated hilt, its sheath beside it. Put it in his right hand, held down at his side (a net hangs from his left hand).
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
+The first attached image is the style reference. The second attached image is the base gladiator: every image is an edit of it.
 
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
+FORMAT: EDIT THE BASE IMAGE. Always start from the base gladiator (the attached base image, or image 1 of this chat): he wears only a white loincloth and sandals. Never build on an image made earlier in this chat: the gear from the previous image must not be there. Add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
 
---- 3. wall-2-tower (Hradby 2: kamenná zeď, věž) ---
-Game art for a fitness app themed on ancient Rome: wall-2-tower. Base 1x1, surface: grass. A square limestone tower with battlements standing in the middle of the base, a little taller than a limestone wall about twice as tall as a man, with a walkway on top. No wall sections attached to it: walls will join it from the sides.
+--- 3. layer-weapon_sica (Na gladiátorovi: Sica) ---
+Game art for a fitness app themed on ancient Rome: layer-weapon_sica. A short curved Thracian sword: an iron blade bent at an angle and a wooden grip. Put it in his right hand, held down at his side (a net hangs from his left hand).
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
+The first attached image is the style reference. The second attached image is the base gladiator: every image is an edit of it.
 
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
+FORMAT: EDIT THE BASE IMAGE. Always start from the base gladiator (the attached base image, or image 1 of this chat): he wears only a white loincloth and sandals. Never build on an image made earlier in this chat: the gear from the previous image must not be there. Add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
 
---- 4. wall-3-a (Hradby 3: opevněná zeď, úsek /) ---
-Game art for a fitness app themed on ancient Rome: wall-3-a. Base 1x1, surface: grass. A straight section of a tall fortified limestone wall with battlements on top and narrow arrow slits. It crosses the base along its middle, rising to the right: it runs from the middle of the base's front-left edge to the middle of its back-right edge, parallel to the base's back-left edge. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly. Nothing else on the base.
+--- 4. layer-weapon_net (Na gladiátorovi: Rete (síť)) ---
+Game art for a fitness app themed on ancient Rome: layer-weapon_net. A gladiator net gathered in loose folds, with small lead weights along its edge. Put it in his right hand, held down at his side (a net hangs from his left hand).
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
+The first attached image is the style reference. The second attached image is the base gladiator: every image is an edit of it.
 
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
+FORMAT: EDIT THE BASE IMAGE. Always start from the base gladiator (the attached base image, or image 1 of this chat): he wears only a white loincloth and sandals. Never build on an image made earlier in this chat: the gear from the previous image must not be there. Add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
 
---- 5. wall-3-b (Hradby 3: opevněná zeď, úsek \) ---
-Game art for a fitness app themed on ancient Rome: wall-3-b. Base 1x1, surface: grass. A straight section of a tall fortified limestone wall with battlements on top and narrow arrow slits. It crosses the base along its middle, rising to the left: it runs from the middle of the base's front-right edge to the middle of its back-left edge, parallel to the base's back-right edge. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly. Nothing else on the base.
+--- 5. layer-weapon_trident (Na gladiátorovi: Fuscina (trojzubec)) ---
+Game art for a fitness app themed on ancient Rome: layer-weapon_trident. A long three-pronged trident with an iron head on a wooden shaft, lying diagonally. Put it in his right hand, held down at his side (a net hangs from his left hand).
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
+The first attached image is the style reference. The second attached image is the base gladiator: every image is an edit of it.
 
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
+FORMAT: EDIT THE BASE IMAGE. Always start from the base gladiator (the attached base image, or image 1 of this chat): he wears only a white loincloth and sandals. Never build on an image made earlier in this chat: the gear from the previous image must not be there. Add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
 
---- 6. wall-3-tower (Hradby 3: opevněná zeď, věž) ---
-Game art for a fitness app themed on ancient Rome: wall-3-tower. Base 1x1, surface: grass. A square limestone tower with battlements standing in the middle of the base, a little taller than a tall fortified limestone wall with battlements on top and narrow arrow slits. No wall sections attached to it: walls will join it from the sides.
+--- 6. layer-weapon_hasta (Na gladiátorovi: Hasta (kopí)) ---
+Game art for a fitness app themed on ancient Rome: layer-weapon_hasta. A spear with a leaf-shaped iron head on a long wooden shaft, lying diagonally. Put it in his right hand, held down at his side (a net hangs from his left hand).
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
+The first attached image is the style reference. The second attached image is the base gladiator: every image is an edit of it.
 
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
+FORMAT: EDIT THE BASE IMAGE. Always start from the base gladiator (the attached base image, or image 1 of this chat): he wears only a white loincloth and sandals. Never build on an image made earlier in this chat: the gear from the previous image must not be there. Add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
+
+--- 7. layer-weapon_gladius (Na gladiátorovi: Gladius) ---
+Game art for a fitness app themed on ancient Rome: layer-weapon_gladius. A Roman short sword: a straight double-edged blade, a ribbed wooden grip and a round pommel. Put it in his right hand, held down at his side (a net hangs from his left hand).
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The first attached image is the style reference. The second attached image is the base gladiator: every image is an edit of it.
+
+FORMAT: EDIT THE BASE IMAGE. Always start from the base gladiator (the attached base image, or image 1 of this chat): he wears only a white loincloth and sandals. Never build on an image made earlier in this chat: the gear from the previous image must not be there. Add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
+
+--- 8. layer-weapon_two_gladii (Na gladiátorovi: Dva gladii) ---
+Game art for a fitness app themed on ancient Rome: layer-weapon_two_gladii. Two Roman short swords crossed. Put it in his right hand, held down at his side (a net hangs from his left hand).
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The first attached image is the style reference. The second attached image is the base gladiator: every image is an edit of it.
+
+FORMAT: EDIT THE BASE IMAGE. Always start from the base gladiator (the attached base image, or image 1 of this chat): he wears only a white loincloth and sandals. Never build on an image made earlier in this chat: the gear from the previous image must not be there. Add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
+
+--- 9. layer-guard_fasciae (Na gladiátorovi: Fasciae) ---
+Game art for a fitness app themed on ancient Rome: layer-guard_fasciae. A pair of quilted padded linen leg wraps tied with leather cords. Put it where it is worn (on his arm, his legs or his shoulder), nothing else.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The first attached image is the style reference. The second attached image is the base gladiator: every image is an edit of it.
+
+FORMAT: EDIT THE BASE IMAGE. Always start from the base gladiator (the attached base image, or image 1 of this chat): he wears only a white loincloth and sandals. Never build on an image made earlier in this chat: the gear from the previous image must not be there. Add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
+
+--- 10. layer-guard_ocreae (Na gladiátorovi: Ocreae) ---
+Game art for a fitness app themed on ancient Rome: layer-guard_ocreae. A pair of bronze greaves (shin guards) with engraved decoration. Put it where it is worn (on his arm, his legs or his shoulder), nothing else.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The first attached image is the style reference. The second attached image is the base gladiator: every image is an edit of it.
+
+FORMAT: EDIT THE BASE IMAGE. Always start from the base gladiator (the attached base image, or image 1 of this chat): he wears only a white loincloth and sandals. Never build on an image made earlier in this chat: the gear from the previous image must not be there. Add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
+
+--- 11. layer-guard_galerus (Na gladiátorovi: Galerus) ---
+Game art for a fitness app themed on ancient Rome: layer-guard_galerus. A tall curved bronze shoulder guard with leather straps. Put it where it is worn (on his arm, his legs or his shoulder), nothing else.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The first attached image is the style reference. The second attached image is the base gladiator: every image is an edit of it.
+
+FORMAT: EDIT THE BASE IMAGE. Always start from the base gladiator (the attached base image, or image 1 of this chat): he wears only a white loincloth and sandals. Never build on an image made earlier in this chat: the gear from the previous image must not be there. Add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
+
+--- 12. layer-guard_manica (Na gladiátorovi: Manica) ---
+Game art for a fitness app themed on ancient Rome: layer-guard_manica. A segmented arm guard of overlapping metal bands on leather. Put it where it is worn (on his arm, his legs or his shoulder), nothing else.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The first attached image is the style reference. The second attached image is the base gladiator: every image is an edit of it.
+
+FORMAT: EDIT THE BASE IMAGE. Always start from the base gladiator (the attached base image, or image 1 of this chat): he wears only a white loincloth and sandals. Never build on an image made earlier in this chat: the gear from the previous image must not be there. Add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.

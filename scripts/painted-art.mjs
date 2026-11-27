@@ -52,7 +52,7 @@ const GROUP = (a) =>
     ? a.id.startsWith('icon-')
       ? 'icons'
       : 'gear'
-    : a.batch === 'dressup'
+    : a.batch === 'dressup' || a.kind === 'layer'
       ? 'dressup'
       : { piece: 'city', ground: 'ground', figure: 'gladiators', emblem: 'leagues', map: 'maps' }[
           a.kind
@@ -118,7 +118,9 @@ const intro = (kind) =>
     ? 'The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.'
     : kind === 'map'
       ? 'The first attached image is the style reference: match its painting style, line work, colours and light exactly (but paint the map from directly above). The second attached image is the outline template.'
-      : 'The attached image is the style reference: match its painting style, line work, colours and light exactly.';
+      : kind === 'layer'
+        ? 'The first attached image is the style reference. The second attached image is the base gladiator: every image is an edit of it.'
+        : 'The attached image is the style reference: match its painting style, line work, colours and light exactly.';
 
 /** The format, or one per kind when a batch mixes them (the dressing-up test: a base, then edits). */
 const formats = (list) => {
@@ -201,6 +203,9 @@ async function writeKit(manifest) {
       .toFile(path.join(kit, REFERENCE));
   }
   await sharp(Buffer.from(templateSvg())).png().toFile(path.join(kit, TEMPLATE));
+  // the base gladiator for the dressing-up edits, as Gemini made it
+  const base = path.join(out, 'dressup', 'dress-base.jpg');
+  if (fs.existsSync(base)) fs.copyFileSync(base, path.join(kit, ATTACH.layer));
   for (const id of Object.keys(MAPS))
     await sharp(Buffer.from(mapSvg(id)))
       .png()
@@ -247,6 +252,14 @@ Dávka „Zkouška oblékání“ ověřuje, jestli jde výzbroj kreslit jako vr
 
 Úseky hradeb a akvaduktu se kladou za sebe přes dlaždice, takže musí navazovat: zeď běží **středem parcely** z poloviny jedné hrany do poloviny protější a končí rovně přesně na okraji. Úsek \`-a\` stoupá doprava (/), úsek \`-b\` doleva (\\). Po importu v \`nahled-mesto.png\` uvidíš, jestli dva úseky vedle sebe tvoří jednu zeď. Než uděláš dávky „Hradby“ a „Akvadukt“, napiš mi, jak to vypadá.
 `;
+  const layerSteps = `
+## Oblékání: výzbroj na gladiátorovi
+
+Každý kus výzbroje se maluje **na základního gladiátora** (\`zaklad-gladiator.jpg\`, přilož ho k dávce spolu se vzorem). Z rozdílu proti základu appka kus vyřízne a pak gladiátora obléká podle toho, co hráč má.
+
+- Každý obrázek musí vycházet **ze základu**, ne z předchozího obrázku. Když na něm zůstane kus z minula (přilba, štít), napiš \`redo, start from the attached base image\`. Když se to opakuje, otevři nový chat a pokračuj záložním promptem.
+- Gladiátor se nesmí pohnout, zvětšit ani změnit tvář.
+`;
   const mapSteps = `
 ## Mapy
 
@@ -284,7 +297,7 @@ Začni dávkou \`davka-01.txt\`: Colosseum (3×3), velký chrám a kovárna (2×
 Po importu otevři \`nahled-mesto.png\` a dej mi vědět, jak to vypadá. Když k sobě stavby nesedí (jiný úhel, hliněné boky parcely, něco přečnívá), upravím prompty dřív, než vygeneruješ zbytek.
 `
     : ''
-}${dressLeft ? dressSteps : ''}${todo.some((a) => a.batch === 'test2') ? wallSteps : ''}${todo.some((a) => a.kind === 'map') ? mapSteps : ''}
+}${dressLeft ? dressSteps : ''}${todo.some((a) => a.batch === 'test2') ? wallSteps : ''}${todo.some((a) => a.kind === 'map') ? mapSteps : ''}${todo.some((a) => a.kind === 'layer') ? layerSteps : ''}
 ## Postup pro jednu dávku
 
 1. Otevři **nový chat** v Gemini (model **Pro**, s generováním obrázků).
@@ -389,7 +402,8 @@ function idOf(file) {
  * The picture without its cream background: RGBA at working size (at most 2048 px), and the
  * box around what is left.
  */
-async function cutout(file) {
+/** `holes: false` keeps cream inside the outline (light cloth, whitewashed walls). */
+async function cutout(file, { holes: cutHoles = true } = {}) {
   const meta = await sharp(file).metadata();
   const k = Math.min(1, 2048 / Math.max(meta.width, meta.height));
   const W = Math.round(meta.width * k);
@@ -474,7 +488,7 @@ async function cutout(file) {
   };
   // cream seen through an arch or a window: very close to the background and not tiny
   const holes = [];
-  for (let i = 0; i < N; i++) {
+  for (let i = 0; i < N && cutHoles; i++) {
     if (keep[i] && label[i] === -1 && dist(i) < HOLE_TOLERANCE) {
       const id = flood(i, (j) => keep[j] && dist(j) < HOLE_TOLERANCE);
       if (regions[id] > N * 0.0004) holes.push(id);
@@ -682,7 +696,7 @@ async function processOne(file, asset) {
 
   // The dressing-up test keeps its originals: the gear is cut out by comparing each edit with
   // the base, which needs the pictures as Gemini made them.
-  if (asset.batch === 'dressup') {
+  if (asset.batch === 'dressup' || asset.kind === 'layer') {
     const original = path.join(out, group, `${asset.id}${path.extname(file).toLowerCase()}`);
     fs.copyFileSync(file, original);
     if (asset.kind === 'layer')
@@ -751,7 +765,7 @@ async function processOne(file, asset) {
     };
   }
 
-  const c = await cutout(file);
+  const c = await cutout(file, { holes: !asset.keepHoles });
   const notes = [...c.notes];
   if (c.edge) notes.push('obrázek sahá až k okraji (něco je asi uříznuté)');
 

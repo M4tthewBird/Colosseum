@@ -2,28 +2,18 @@ You are painting game art for a fitness app themed on ancient Rome. I will ask f
 
 STYLE (identical for every image):
 Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
 
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
+FORMAT: a round emblem (a medallion) seen straight from the front, centred, filling about 80 % of the image, painted in the style of the attached city (ink outlines, hatching, warm palette). All league emblems share one design and differ only in metal and ornament. Background: perfectly flat plain cream #F2EBDB, no gradient. Square image.
 
-THE LIST (6 images):
-1. halteres-1. Base 1x1, surface: sand. A low wooden rack holding pairs of stone dumbbells (halteres) of three sizes.
-2. halteres-2. Base 1x1, surface: sand. A sturdy wooden rack reinforced with iron holding pairs of iron dumbbells of four sizes.
-3. halteres-3. Base 1x1, surface: sand. A marble rack with bronze fittings holding pairs of bronze dumbbells of five sizes.
-4. pullup-1. Base 1x1, surface: sand. A pull-up frame: two rough timber posts with a round wooden bar across the top.
-5. pullup-2. Base 1x1, surface: sand. A pull-up frame: two squared timber posts joined by an iron bar, with a climbing rope hanging beside it.
-6. pullup-3. Base 1x1, surface: sand. A pull-up frame: two marble columns joined by a bronze bar, with a climbing rope and bronze rings hanging from a beam.
+THE LIST (4 images):
+1. league-bronze. Bronze League: a bronze medallion with a laurel wreath around its edge and two crossed swords in the middle.
+2. league-silver. Silver League: the same medallion in silver, a fuller laurel wreath, two crossed swords and a small helmet above them.
+3. league-gold. Gold League: the same medallion in gold, a rich laurel wreath, crossed swords, a crested helmet above them and small red ribbons.
+4. league-imperator. Imperator's Arena: the same medallion in gold with deep red enamel, a golden eagle with spread wings above crossed swords and a laurel wreath; the grandest of the four.
 
 RULES:
-- One image per reply, in the order of the list. Below the image write only its number and id (for example "1. halteres-1").
+- One image per reply, in the order of the list. Below the image write only its number and id (for example "1. league-bronze").
 - When I write "next", make the next image. When I write "redo", make the same image again, fixing what I say.
 - Keep the same style, angle, light and background in every image.
 
@@ -31,102 +21,38 @@ Make image 1 now.
 
 
 =====================================================================
-ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, otevři nový chat, přilož vzor-mesto.jpg a sablona-parcely.png
+ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, otevři nový chat, přilož vzor-mesto.jpg
 a pošli jen jeden z nich)
 =====================================================================
 
---- 1. halteres-1 (Činky (halteres) úroveň 1) ---
-Game art for a fitness app themed on ancient Rome: halteres-1. Base 1x1, surface: sand. A low wooden rack holding pairs of stone dumbbells (halteres) of three sizes.
+--- 1. league-bronze (Bronzová liga) ---
+Game art for a fitness app themed on ancient Rome: league-bronze. Bronze League: a bronze medallion with a laurel wreath around its edge and two crossed swords in the middle.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
 
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
+FORMAT: a round emblem (a medallion) seen straight from the front, centred, filling about 80 % of the image, painted in the style of the attached city (ink outlines, hatching, warm palette). All league emblems share one design and differ only in metal and ornament. Background: perfectly flat plain cream #F2EBDB, no gradient. Square image.
 
---- 2. halteres-2 (Činky (halteres) úroveň 2) ---
-Game art for a fitness app themed on ancient Rome: halteres-2. Base 1x1, surface: sand. A sturdy wooden rack reinforced with iron holding pairs of iron dumbbells of four sizes.
+--- 2. league-silver (Stříbrná liga) ---
+Game art for a fitness app themed on ancient Rome: league-silver. Silver League: the same medallion in silver, a fuller laurel wreath, two crossed swords and a small helmet above them.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
 
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
+FORMAT: a round emblem (a medallion) seen straight from the front, centred, filling about 80 % of the image, painted in the style of the attached city (ink outlines, hatching, warm palette). All league emblems share one design and differ only in metal and ornament. Background: perfectly flat plain cream #F2EBDB, no gradient. Square image.
 
---- 3. halteres-3 (Činky (halteres) úroveň 3) ---
-Game art for a fitness app themed on ancient Rome: halteres-3. Base 1x1, surface: sand. A marble rack with bronze fittings holding pairs of bronze dumbbells of five sizes.
+--- 3. league-gold (Zlatá liga) ---
+Game art for a fitness app themed on ancient Rome: league-gold. Gold League: the same medallion in gold, a rich laurel wreath, crossed swords, a crested helmet above them and small red ribbons.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
 
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
+FORMAT: a round emblem (a medallion) seen straight from the front, centred, filling about 80 % of the image, painted in the style of the attached city (ink outlines, hatching, warm palette). All league emblems share one design and differ only in metal and ornament. Background: perfectly flat plain cream #F2EBDB, no gradient. Square image.
 
---- 4. pullup-1 (Hrazda úroveň 1) ---
-Game art for a fitness app themed on ancient Rome: pullup-1. Base 1x1, surface: sand. A pull-up frame: two rough timber posts with a round wooden bar across the top.
+--- 4. league-imperator (Imperátorova aréna) ---
+Game art for a fitness app themed on ancient Rome: league-imperator. Imperator's Arena: the same medallion in gold with deep red enamel, a golden eagle with spread wings above crossed swords and a laurel wreath; the grandest of the four.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
 
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
-
---- 5. pullup-2 (Hrazda úroveň 2) ---
-Game art for a fitness app themed on ancient Rome: pullup-2. Base 1x1, surface: sand. A pull-up frame: two squared timber posts joined by an iron bar, with a climbing rope hanging beside it.
-
-STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
-
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
-
---- 6. pullup-3 (Hrazda úroveň 3) ---
-Game art for a fitness app themed on ancient Rome: pullup-3. Base 1x1, surface: sand. A pull-up frame: two marble columns joined by a bronze bar, with a climbing rope and bronze rings hanging from a beam.
-
-STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
-
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
+FORMAT: a round emblem (a medallion) seen straight from the front, centred, filling about 80 % of the image, painted in the style of the attached city (ink outlines, hatching, warm palette). All league emblems share one design and differ only in metal and ornament. Background: perfectly flat plain cream #F2EBDB, no gradient. Square image.

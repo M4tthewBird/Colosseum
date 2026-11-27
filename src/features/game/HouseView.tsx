@@ -156,11 +156,17 @@ export function HouseView() {
           const pic = CITY_PIECES[item.id];
           return (
             <Glass key={item.id} radius={20} style={styles.tile}>
-              <View style={[styles.itemArt, built && { backgroundColor: accentA(0.08) }]}>
+              <View
+                style={
+                  pic && built
+                    ? styles.itemPic
+                    : [styles.itemArt, built && { backgroundColor: accentA(0.08) }]
+                }
+              >
                 {pic && built ? (
                   <Image
                     source={pic.image}
-                    style={{ width: 64, height: (64 * pic.height) / pic.width }}
+                    style={{ width: 72, height: Math.min(56, (72 * pic.height) / pic.width) }}
                     resizeMode="contain"
                     accessibilityIgnoresInvertColors
                   />
@@ -234,6 +240,8 @@ const styles = StyleSheet.create({
   },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   tile: { width: '48.5%', flexGrow: 1, flexBasis: 150, padding: 14, gap: 6 },
+  /** A built thing shows its painted piece instead of the icon. */
+  itemPic: { height: 56, alignItems: 'flex-start', justifyContent: 'center' },
   itemArt: {
     width: 44,
     height: 44,

@@ -17,6 +17,7 @@ export const CHANGELOG: Release[] = [
       'New Arena boards: best 40 km ride, best 1500 m swim, km ridden and km swum.',
       'Building is paid in hours now: the time you spend at the gym. Every verified visit, check-in to check-out, adds its time to your house, your ludus and your tribe. Your past visits count too.',
       'Your own house: upgrade it in City → Your domus with your own hours, from a hut to a palace, and build a garden, a fountain and more by it.',
+      'Your house and the things you build by it are painted now, from the small stone house to the palace.',
       'Denarii are for gear in the forge. Denarii you gave to a treasury are back in your wallet.',
       'A won war takes a share of the loser’s hours. A tribe attack costs 4 hours.',
       'City no longer slows the app down. The smoke and lights move only while you are looking at it.',
