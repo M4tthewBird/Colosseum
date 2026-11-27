@@ -14,7 +14,7 @@ import { canChangeStyle, isStyle, type StyleId } from '@/lib/game/styles';
 import { revengeUntil, tribeScore, tribeWarTimes, type TribeWarTimes } from '@/lib/game/tribes';
 import { sessionVerification } from '@/lib/game/visits';
 import { qualifies } from '@/lib/game/engine';
-import { isRun } from '@/lib/running';
+import { isCardio } from '@/lib/cardio';
 import { isDemo, supabase } from '@/lib/supabase';
 import { stableUuid } from '@/lib/uuid';
 import { useData } from '@/stores/data';
@@ -407,7 +407,7 @@ function myDemoPoints(from: string, to: string): number {
           s.finished_at &&
           s.started_at >= from &&
           s.started_at < to &&
-          (sessionVerification(s.started_at, visits) === 'verified' || (isRun(s) && qualifies(s))),
+          (sessionVerification(s.started_at, visits) === 'verified' || (isCardio(s) && qualifies(s))),
       )
       .map((s) => ({ user_id: me(), started_at: s.started_at, prs: s.pr_count })),
   );

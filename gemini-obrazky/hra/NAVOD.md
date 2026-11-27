@@ -1,6 +1,6 @@
 # Malovaná hra v Gemini
 
-Hotovo **46 z 136**. Zbývá 90 obrázků v 15 dávkách.
+Hotovo **63 z 136**. Zbývá 73 obrázků v 12 dávkách.
 Tenhle soubor i dávky se po každém importu přegenerují jen se zbývajícími obrázky.
 
 Město se skládá z kousků: každá stavba stojí na vlastní parcele ve tvaru kosočtverce (1×1, 2×2 nebo 3×3 dlaždice) a appka ji položí na mřížku města tam, kam si ji hráč dá. Proto musí mít všechny stavby **stejný úhel, stejné světlo a plochou parcelu bez boků**.
@@ -19,13 +19,6 @@ Město se skládá z kousků: každá stavba stojí na vlastní parcele ve tvaru
 | `nahled-mesto.png` | Po importu: všechny stavby poskládané na mřížce. Tady je vidět, jestli k sobě sedí. |
 | `nahled-ostatni.png` | Po importu: gladiátoři, výzbroj, ligové znaky, ikony a terén. |
 | `hotove/` | Sem import přesune originály. Klidně je smaž, nebo je nech pro případ, že by se import opakoval. |
-
-## Zkouška oblékání
-
-Dávka „Zkouška oblékání“ ověřuje, jestli jde výzbroj kreslit jako vrstvy na jednoho gladiátora (pak by se gladiátor oblékal podle toho, co má hráč na sobě). Obrázek 1 je gladiátor zepředu jen v bederní roušce, obrázky 2–5 jsou **úpravy obrázku 1**, každá s jedním kusem výzbroje.
-
-- Gemini má každou úpravu dělat **z obrázku 1**, ne z předchozí. Když na gladiátorovi zůstane přilba z minula, napiš `redo, start from image 1` nebo obrázek 1 přilož znovu.
-- Gladiátor se nesmí pohnout ani zvětšit. Po importu porovnám úpravy se základem a vyříznu z nich jen výzbroj.
 
 ## Zkouška hradeb a akvaduktu
 
@@ -69,18 +62,15 @@ Ke každé mapě přilož vzor stylu **a její šablonu** (`sablona-cesko.png` n
 
 | Soubor | Co | Počet | Přiložit | Obrázky |
 | --- | --- | --- | --- | --- |
-| [davka-01.txt](davky/davka-01.txt) | Malé kousky 1×1: posilovací stroje | 1 | `vzor-mesto.jpg` a `sablona-parcely.png` | Deadlift platforma úroveň 1 |
-| [davka-02.txt](davky/davka-02.txt) | Zkouška oblékání: gladiátor zepředu a 4 kusy výzbroje na něm | 5 | `vzor-mesto.jpg` | Oblékání: základní gladiátor, Oblékání: přilba, Oblékání: štít, Oblékání: zbraň, Oblékání: zbroj |
-| [davka-03.txt](davky/davka-03.txt) | Gladiátor: hodnosti a styly boje | 11 | `vzor-mesto.jpg` | Hodnost: Tiro, Hodnost: Gladiator, Hodnost: Veteranus, Hodnost: Primus Palus, Hodnost: Rudiarius, Styl: Murmillo, Styl: Thraex, Styl: Retiarius, Styl: Secutor, Styl: Hoplomachus, Styl: Bestiarius |
-| [davka-04.txt](davky/davka-04.txt) | Výzbroj: přilby a štíty | 12 | `vzor-mesto.jpg` | Výzbroj: Galea, Výzbroj: Murmillo, Výzbroj: Secutor, Výzbroj: Thraex, Výzbroj: Hoplomachus, Výzbroj: Provocator, Výzbroj: Zlatá galea, Výzbroj: Vavřínový věnec, Výzbroj: Parmula, Výzbroj: Parma, Výzbroj: Bronzový štít, Výzbroj: Scutum |
-| [davka-05.txt](davky/davka-05.txt) | Výzbroj: zbraně a chrániče | 12 | `vzor-mesto.jpg` | Výzbroj: Rudis, Výzbroj: Pugio, Výzbroj: Sica, Výzbroj: Rete (síť), Výzbroj: Fuscina (trojzubec), Výzbroj: Hasta (kopí), Výzbroj: Gladius, Výzbroj: Dva gladii, Výzbroj: Fasciae, Výzbroj: Ocreae, Výzbroj: Galerus, Výzbroj: Manica |
-| [davka-06.txt](davky/davka-06.txt) | Výzbroj: zbroj a oděv, ikony | 10 | `vzor-mesto.jpg` | Výzbroj: Tunika, Výzbroj: Exomis, Výzbroj: Subligaculum, Výzbroj: Kožené řemeny, Výzbroj: Leopardí kožešina, Výzbroj: Cardiophylax, Výzbroj: Rudý plášť, Výzbroj: Lorica, Ikona: denár, Ikona: vavříny |
-| [davka-07.txt](davky/davka-07.txt) | Cvičiště ludusu: střed 3×3 a vybavení | 7 | `vzor-mesto.jpg` a `sablona-parcely.png` | Ludus 1: malá škola gladiátorů, Ludus 2: kamenný ludus, Ludus 3: Ludus Magnus, Palus: kůl na nácvik, Stojan se zbraněmi, Žárová mísa, Koryto s vodou |
-| [davka-08.txt](davky/davka-08.txt) | Cvičiště: činky a hrazda (3 úrovně) | 6 | `vzor-mesto.jpg` a `sablona-parcely.png` | Činky (halteres) úroveň 1, Činky (halteres) úroveň 2, Činky (halteres) úroveň 3, Hrazda úroveň 1, Hrazda úroveň 2, Hrazda úroveň 3 |
-| [davka-09.txt](davky/davka-09.txt) | Zkouška: úseky hradeb a akvaduktu (navazují na sebe?) | 5 | `vzor-mesto.jpg` a `sablona-parcely.png` | Hradby 1: palisáda, úsek /, Hradby 1: palisáda, úsek \, Hradby 1: palisáda, věž, Akvadukt, úsek /, Akvadukt, úsek \ |
-| [davka-10.txt](davky/davka-10.txt) | Hradby: kamenná a opevněná | 6 | `vzor-mesto.jpg` a `sablona-parcely.png` | Hradby 2: kamenná zeď, úsek /, Hradby 2: kamenná zeď, úsek \, Hradby 2: kamenná zeď, věž, Hradby 3: opevněná zeď, úsek /, Hradby 3: opevněná zeď, úsek \, Hradby 3: opevněná zeď, věž |
-| [davka-11.txt](davky/davka-11.txt) | Tvůj dům: nový domus 2, palác a vylepšení | 7 | `vzor-mesto.jpg` a `sablona-parcely.png` | Domus 2: malý kamenný dům, Domus 5: palác, Zahrada (hortus), Fontána, Pergola s vínem, Domácí oltář (lararium), Domácí cvičiště |
-| [davka-12.txt](davky/davka-12.txt) | Akvadukt: nároží a vodojem | 2 | `vzor-mesto.jpg` a `sablona-parcely.png` | Akvadukt, nároží, Akvadukt: vodojem |
-| [davka-13.txt](davky/davka-13.txt) | Mapa Česka | 1 | `vzor-mesto.jpg` a `sablona-cesko.png` | Mapa Česka |
-| [davka-14.txt](davky/davka-14.txt) | Mapa Brna | 1 | `vzor-mesto.jpg` a `sablona-brno.png` | Mapa Brna |
-| [davka-15.txt](davky/davka-15.txt) | Ligové znaky | 4 | `vzor-mesto.jpg` | Bronzová liga, Stříbrná liga, Zlatá liga, Imperátorova aréna |
+| [davka-01.txt](davky/davka-01.txt) | Výzbroj: přilby a štíty | 12 | `vzor-mesto.jpg` | Výzbroj: Galea, Výzbroj: Murmillo, Výzbroj: Secutor, Výzbroj: Thraex, Výzbroj: Hoplomachus, Výzbroj: Provocator, Výzbroj: Zlatá galea, Výzbroj: Vavřínový věnec, Výzbroj: Parmula, Výzbroj: Parma, Výzbroj: Bronzový štít, Výzbroj: Scutum |
+| [davka-02.txt](davky/davka-02.txt) | Výzbroj: zbraně a chrániče | 12 | `vzor-mesto.jpg` | Výzbroj: Rudis, Výzbroj: Pugio, Výzbroj: Sica, Výzbroj: Rete (síť), Výzbroj: Fuscina (trojzubec), Výzbroj: Hasta (kopí), Výzbroj: Gladius, Výzbroj: Dva gladii, Výzbroj: Fasciae, Výzbroj: Ocreae, Výzbroj: Galerus, Výzbroj: Manica |
+| [davka-03.txt](davky/davka-03.txt) | Výzbroj: zbroj a oděv, ikony | 10 | `vzor-mesto.jpg` | Výzbroj: Tunika, Výzbroj: Exomis, Výzbroj: Subligaculum, Výzbroj: Kožené řemeny, Výzbroj: Leopardí kožešina, Výzbroj: Cardiophylax, Výzbroj: Rudý plášť, Výzbroj: Lorica, Ikona: denár, Ikona: vavříny |
+| [davka-04.txt](davky/davka-04.txt) | Cvičiště ludusu: střed 3×3 a vybavení | 7 | `vzor-mesto.jpg` a `sablona-parcely.png` | Ludus 1: malá škola gladiátorů, Ludus 2: kamenný ludus, Ludus 3: Ludus Magnus, Palus: kůl na nácvik, Stojan se zbraněmi, Žárová mísa, Koryto s vodou |
+| [davka-05.txt](davky/davka-05.txt) | Cvičiště: činky a hrazda (3 úrovně) | 6 | `vzor-mesto.jpg` a `sablona-parcely.png` | Činky (halteres) úroveň 1, Činky (halteres) úroveň 2, Činky (halteres) úroveň 3, Hrazda úroveň 1, Hrazda úroveň 2, Hrazda úroveň 3 |
+| [davka-06.txt](davky/davka-06.txt) | Zkouška: úseky hradeb a akvaduktu (navazují na sebe?) | 5 | `vzor-mesto.jpg` a `sablona-parcely.png` | Hradby 1: palisáda, úsek /, Hradby 1: palisáda, úsek \, Hradby 1: palisáda, věž, Akvadukt, úsek /, Akvadukt, úsek \ |
+| [davka-07.txt](davky/davka-07.txt) | Hradby: kamenná a opevněná | 6 | `vzor-mesto.jpg` a `sablona-parcely.png` | Hradby 2: kamenná zeď, úsek /, Hradby 2: kamenná zeď, úsek \, Hradby 2: kamenná zeď, věž, Hradby 3: opevněná zeď, úsek /, Hradby 3: opevněná zeď, úsek \, Hradby 3: opevněná zeď, věž |
+| [davka-08.txt](davky/davka-08.txt) | Tvůj dům: nový domus 2, palác a vylepšení | 7 | `vzor-mesto.jpg` a `sablona-parcely.png` | Domus 2: malý kamenný dům, Domus 5: palác, Zahrada (hortus), Fontána, Pergola s vínem, Domácí oltář (lararium), Domácí cvičiště |
+| [davka-09.txt](davky/davka-09.txt) | Akvadukt: nároží a vodojem | 2 | `vzor-mesto.jpg` a `sablona-parcely.png` | Akvadukt, nároží, Akvadukt: vodojem |
+| [davka-10.txt](davky/davka-10.txt) | Mapa Česka | 1 | `vzor-mesto.jpg` a `sablona-cesko.png` | Mapa Česka |
+| [davka-11.txt](davky/davka-11.txt) | Mapa Brna | 1 | `vzor-mesto.jpg` a `sablona-brno.png` | Mapa Brna |
+| [davka-12.txt](davky/davka-12.txt) | Ligové znaky | 4 | `vzor-mesto.jpg` | Bronzová liga, Stříbrná liga, Zlatá liga, Imperátorova aréna |

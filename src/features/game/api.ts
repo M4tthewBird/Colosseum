@@ -50,7 +50,7 @@ import {
 import { seasonOf } from '@/lib/game/levels';
 import { sessionVerification, type GymVisit } from '@/lib/game/visits';
 import { qualifies } from '@/lib/game/engine';
-import { isRun } from '@/lib/running';
+import { isCardio } from '@/lib/cardio';
 import { isDemo, supabase } from '@/lib/supabase';
 import type { PublicUser, Session } from '@/lib/types';
 import { stableUuid } from '@/lib/uuid';
@@ -254,7 +254,7 @@ function myWarWorkouts(from: string, to: string) {
         s.finished_at &&
         s.started_at >= from &&
         s.started_at < to &&
-        (sessionVerification(s.started_at, visits) === 'verified' || (isRun(s) && qualifies(s))),
+        (sessionVerification(s.started_at, visits) === 'verified' || (isCardio(s) && qualifies(s))),
     )
     .map((s) => ({ user_id: me(), started_at: s.started_at, prs: s.pr_count }));
 }

@@ -263,7 +263,7 @@ The **map** (City → Colosseum → Map, or Bellum → Map) shows the tribes (ho
 - **Revenge:** within 24 hours of a lost defence the tribe can attack the winner back for free with **+20 %** points, even inside the 7 days.
 - Settled by whoever opens the war after it ends (no cron).
 
-## 11. Running
+## 11. Running, cycling and swimming
 
 Running is a second way to train, balanced so a runner and a lifter compete on equal terms. **The one rule holds: no points for kilometres.** A run earns what a lifting session earns, so a marathon is not worth five gym sessions.
 
@@ -311,6 +311,26 @@ A **qualifying run**: at least **3 km or 20 minutes**, an average pace between t
 ### Arena
 
 Arena gets a **Running** metric group: best 5 km, best 10 km, VDOT, and km in the period. The km board only shows; it earns nothing.
+
+### Cycling and swimming (Matyáš, 2026-11-27)
+
+A **ride** and a **swim** work exactly like a run: logged by hand (Workouts → Cycling / Swimming), worth one workout (XP, laurels, denarii, the weekly target, the shared daily caps), counted in ludus wars, tribe attacks, Bellum and "workouts" duels, and they earn the **Retiarius** bonus. Their own numbers (`RIDE` and `SWIM` in config.ts, `src/lib/cardio.ts`):
+
+| | Ride | Swim |
+|---|---|---|
+| Where | Outdoor / Indoor bike | Pool / Open water |
+| Distance typed in | km | m |
+| Counts from | 10 km or 30 min | 750 m or 20 min |
+| Too slow to earn anything | slower than 10 km/h | slower than 4:00 /100 m |
+| Refused as impossible | faster than 60 km/h on average | faster than the world records (0:46 /100 m, 0:54 from 400 m, 0:57 from 1500 m, 1:02 from 5 km) |
+| At most | 400 km, 16 h | 30 km, 12 h |
+| Bests (PR, progress laurels) | 20 km, 40 km | 400 m, 1500 m |
+| Strength laurels (best of 90 days) | average speed of a ride from 20 km: (km/h − 20) ÷ 3, 35 km/h gives the full 5 | pace of a swim from 400 m: (180 s − pace per 100 m) ÷ 18, 1:30 /100 m gives the full 5 |
+| Arena | best 40 km, km ridden | best 1500 m, km swum |
+
+A best counts when the session is the distance to 5 % longer, its time scaled to the distance, like runs. One PR per session; a new best more than 10 % faster than the old one (after 2 sessions on that distance) is not rewarded.
+
+**Workouts tab** (Matyáš, 2026-11-27): four cards at the top (Gym, Run, Cycling, Swimming), then the calendar and every past workout. Gym opens the program, saved workouts and generating one; each sport opens logging, its bests and its sessions.
 
 ## Anti-cheat
 

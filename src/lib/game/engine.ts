@@ -5,7 +5,15 @@
  */
 import { addDays, startOfWeek, toLocalDate } from '../dates';
 import { e1rm } from '../formulas';
-import { asRun, isRun, runQualifies, runResults, runStrength, type RunLike } from '../running';
+import {
+  asCardio,
+  cardioQualifies,
+  cardioResults,
+  isCardio,
+  SPORT,
+  sportOf,
+  type CardioLike,
+} from '../cardio';
 import type { Experience, Session } from '../types';
 import {
   BASELINE_DAYS,
@@ -48,7 +56,7 @@ export interface SessionReward {
   unusualPrs: number;
   levelBefore: number;
   levelAfter: number;
-  /** A run: counts in wars like a verified workout. */
+  /** A run, ride or swim: counts in wars like a verified workout. */
   run: boolean;
 }
 
@@ -125,12 +133,13 @@ export function workingSets(s: Session) {
   return s.sets.filter((x) => x.done && !x.warmup);
 }
 
-/** A finished workout with 3+ working sets, or a run that counts (running.ts). */
+/** A finished workout with 3+ working sets, or a run, ride or swim that counts (cardio.ts). */
 export function qualifies(s: Session): boolean {
   if (!s.finished_at) return false;
-  if (isRun(s)) {
-    const r = asRun(s);
-    return !!r && runQualifies(r);
+  const sport = sportOf(s);
+  if (sport) {
+    const c = asCardio(s);
+    return !!c && cardioQualifies(sport, c);
   }
   return workingSets(s).length >= QUALIFYING_SETS;
 }
@@ -173,7 +182,7 @@ export function computeGame(input: GameInput): GameState {
     .filter((s) => s.finished_at)
     .sort((a, b) => a.started_at.localeCompare(b.started_at));
 
-  const runs = runResults(list.map(asRun).filter((r): r is RunLike => !!r));
+  const runs = cardioResults(list.map(asCardio).filter((c): c is CardioLike => !!c));
   const history = new Map<string, ExerciseHistory>();
   const big3 = new Map<string, number>();
   const weekCounts = new Map<number, number>();
@@ -189,7 +198,8 @@ export function computeGame(input: GameInput): GameState {
     const ok = qualifies(s);
     const verification = ok ? input.verification(s) : null;
     const names = [...new Set(s.sets.map((x) => input.exerciseName(x.exercise_id) ?? ''))];
-    const run = isRun(s) ? (runs.get(s.id) ?? null) : null;
+    // a run, ride or swim (cardio.ts)
+    const run = isCardio(s) ? (runs.get(s.id) ?? null) : null;
 
     // PRs: the session's best e1RM per exercise against the history before it.
     let prs = 0;
@@ -227,7 +237,7 @@ export function computeGame(input: GameInput): GameState {
       if (lift && !unusualJump) big3.set(lift, Math.max(big3.get(lift) ?? 0, best));
     }
 
-    // A run: one PR at most, on its standard distance (running.ts).
+    // Cardio: one PR at most, on its standard distance (cardio.ts).
     if (ok && run) {
       if (run.unusual) unusual++;
       if (run.pr) {
@@ -251,7 +261,7 @@ export function computeGame(input: GameInput): GameState {
 
     if (ok) {
       const rewardedPrs = Math.min(prs, XP.maxPrs);
-      xpParts.push({ label: run ? 'Run' : 'Workout', amount: XP.workout });
+      xpParts.push({ label: run ? SPORT[run.sport].name : 'Workout', amount: XP.workout });
       if (verification === 'verified')
         xpParts.push({ label: 'Verified at the gym', amount: XP.verified });
       if (verification === 'incomplete')
@@ -297,7 +307,7 @@ export function computeGame(input: GameInput): GameState {
       if (progress)
         laurelParts.push({ label: 'Progress', amount: Math.min(progress, LAURELS.maxProgress) });
       if (run && !flags.strength) {
-        const strength = runStrength(run.vdot);
+        const strength = run.strength;
         if (strength > 0) {
           laurelParts.push({ label: 'Strength', amount: strength });
           flags.strength = true;

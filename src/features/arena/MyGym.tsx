@@ -40,7 +40,7 @@ import { CURATED_EXERCISES } from '@/data/curated';
 import { challengeExercisesText, challengeVariants } from '@/lib/challenge';
 import { fromLocalDate, formatDuration, startOfDay, timeAgo } from '@/lib/dates';
 import { formatVolume, parseNumber } from '@/lib/formulas';
-import { formatKm, formatPace, paceOf } from '@/lib/running';
+import { distanceText, paceText, sportOf } from '@/lib/cardio';
 import { useData } from '@/stores/data';
 import { confirm, toast } from '@/stores/ui';
 import { dur, ease, easeIn, useReducedMotion } from '@/theme/motion';
@@ -490,9 +490,9 @@ function FeedCard({ item, onComments }: { item: FeedItem; onComments: () => void
         {item.distance_m && item.duration_s ? (
           <Text style={type.caption}>
             <Text style={{ color: colors.text, fontWeight: '600' }}>
-              {formatKm(item.distance_m)}
+              {distanceText(sportOf(item) ?? 'run', item.distance_m)}
             </Text>{' '}
-            · {formatPace(paceOf(item.distance_m, item.duration_s))}
+            · {paceText(sportOf(item) ?? 'run', item.distance_m, item.duration_s)}
           </Text>
         ) : (
           <Text style={type.caption}>

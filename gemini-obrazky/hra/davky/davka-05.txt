@@ -2,26 +2,28 @@ You are painting game art for a fitness app themed on ancient Rome. I will ask f
 
 STYLE (identical for every image):
 Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
+The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
 
-FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
+- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
+- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
+- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
+- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
+- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
+- Shadows fall only onto the base, never onto the background.
+- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
+- Square image. No people, no animals.
 
-THE LIST (12 images):
-1. weapon_rudis. A wooden practice sword of plain worn wood with a leather-wrapped grip.
-2. weapon_pugio. A Roman dagger with a leaf-shaped iron blade and a bronze-decorated hilt, its sheath beside it.
-3. weapon_sica. A short curved Thracian sword: an iron blade bent at an angle and a wooden grip.
-4. weapon_net. A gladiator net gathered in loose folds, with small lead weights along its edge.
-5. weapon_trident. A long three-pronged trident with an iron head on a wooden shaft, lying diagonally.
-6. weapon_hasta. A spear with a leaf-shaped iron head on a long wooden shaft, lying diagonally.
-7. weapon_gladius. A Roman short sword: a straight double-edged blade, a ribbed wooden grip and a round pommel.
-8. weapon_two_gladii. Two Roman short swords crossed.
-9. guard_fasciae. A pair of quilted padded linen leg wraps tied with leather cords.
-10. guard_ocreae. A pair of bronze greaves (shin guards) with engraved decoration.
-11. guard_galerus. A tall curved bronze shoulder guard with leather straps.
-12. guard_manica. A segmented arm guard of overlapping metal bands on leather.
+THE LIST (6 images):
+1. halteres-1. Base 1x1, surface: sand. A low wooden rack holding pairs of stone dumbbells (halteres) of three sizes.
+2. halteres-2. Base 1x1, surface: sand. A sturdy wooden rack reinforced with iron holding pairs of iron dumbbells of four sizes.
+3. halteres-3. Base 1x1, surface: sand. A marble rack with bronze fittings holding pairs of bronze dumbbells of five sizes.
+4. pullup-1. Base 1x1, surface: sand. A pull-up frame: two rough timber posts with a round wooden bar across the top.
+5. pullup-2. Base 1x1, surface: sand. A pull-up frame: two squared timber posts joined by an iron bar, with a climbing rope hanging beside it.
+6. pullup-3. Base 1x1, surface: sand. A pull-up frame: two marble columns joined by a bronze bar, with a climbing rope and bronze rings hanging from a beam.
 
 RULES:
-- One image per reply, in the order of the list. Below the image write only its number and id (for example "1. weapon_rudis").
+- One image per reply, in the order of the list. Below the image write only its number and id (for example "1. halteres-1").
 - When I write "next", make the next image. When I write "redo", make the same image again, fixing what I say.
 - Keep the same style, angle, light and background in every image.
 
@@ -29,102 +31,102 @@ Make image 1 now.
 
 
 =====================================================================
-ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, otevři nový chat, přilož vzor-mesto.jpg
+ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, otevři nový chat, přilož vzor-mesto.jpg a sablona-parcely.png
 a pošli jen jeden z nich)
 =====================================================================
 
---- 1. weapon_rudis (Výzbroj: Rudis) ---
-Game art for a fitness app themed on ancient Rome: weapon_rudis. A wooden practice sword of plain worn wood with a leather-wrapped grip.
+--- 1. halteres-1 (Činky (halteres) úroveň 1) ---
+Game art for a fitness app themed on ancient Rome: halteres-1. Base 1x1, surface: sand. A low wooden rack holding pairs of stone dumbbells (halteres) of three sizes.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
+The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
 
-FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
+- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
+- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
+- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
+- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
+- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
+- Shadows fall only onto the base, never onto the background.
+- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
+- Square image. No people, no animals.
 
---- 2. weapon_pugio (Výzbroj: Pugio) ---
-Game art for a fitness app themed on ancient Rome: weapon_pugio. A Roman dagger with a leaf-shaped iron blade and a bronze-decorated hilt, its sheath beside it.
-
-STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
-
-FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
-
---- 3. weapon_sica (Výzbroj: Sica) ---
-Game art for a fitness app themed on ancient Rome: weapon_sica. A short curved Thracian sword: an iron blade bent at an angle and a wooden grip.
-
-STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
-
-FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
-
---- 4. weapon_net (Výzbroj: Rete (síť)) ---
-Game art for a fitness app themed on ancient Rome: weapon_net. A gladiator net gathered in loose folds, with small lead weights along its edge.
+--- 2. halteres-2 (Činky (halteres) úroveň 2) ---
+Game art for a fitness app themed on ancient Rome: halteres-2. Base 1x1, surface: sand. A sturdy wooden rack reinforced with iron holding pairs of iron dumbbells of four sizes.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
+The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
 
-FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
+- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
+- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
+- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
+- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
+- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
+- Shadows fall only onto the base, never onto the background.
+- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
+- Square image. No people, no animals.
 
---- 5. weapon_trident (Výzbroj: Fuscina (trojzubec)) ---
-Game art for a fitness app themed on ancient Rome: weapon_trident. A long three-pronged trident with an iron head on a wooden shaft, lying diagonally.
-
-STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
-
-FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
-
---- 6. weapon_hasta (Výzbroj: Hasta (kopí)) ---
-Game art for a fitness app themed on ancient Rome: weapon_hasta. A spear with a leaf-shaped iron head on a long wooden shaft, lying diagonally.
-
-STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
-
-FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
-
---- 7. weapon_gladius (Výzbroj: Gladius) ---
-Game art for a fitness app themed on ancient Rome: weapon_gladius. A Roman short sword: a straight double-edged blade, a ribbed wooden grip and a round pommel.
+--- 3. halteres-3 (Činky (halteres) úroveň 3) ---
+Game art for a fitness app themed on ancient Rome: halteres-3. Base 1x1, surface: sand. A marble rack with bronze fittings holding pairs of bronze dumbbells of five sizes.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
+The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
 
-FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
+- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
+- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
+- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
+- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
+- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
+- Shadows fall only onto the base, never onto the background.
+- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
+- Square image. No people, no animals.
 
---- 8. weapon_two_gladii (Výzbroj: Dva gladii) ---
-Game art for a fitness app themed on ancient Rome: weapon_two_gladii. Two Roman short swords crossed.
-
-STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
-
-FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
-
---- 9. guard_fasciae (Výzbroj: Fasciae) ---
-Game art for a fitness app themed on ancient Rome: guard_fasciae. A pair of quilted padded linen leg wraps tied with leather cords.
-
-STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
-
-FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
-
---- 10. guard_ocreae (Výzbroj: Ocreae) ---
-Game art for a fitness app themed on ancient Rome: guard_ocreae. A pair of bronze greaves (shin guards) with engraved decoration.
+--- 4. pullup-1 (Hrazda úroveň 1) ---
+Game art for a fitness app themed on ancient Rome: pullup-1. Base 1x1, surface: sand. A pull-up frame: two rough timber posts with a round wooden bar across the top.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
+The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
 
-FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
+- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
+- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
+- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
+- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
+- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
+- Shadows fall only onto the base, never onto the background.
+- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
+- Square image. No people, no animals.
 
---- 11. guard_galerus (Výzbroj: Galerus) ---
-Game art for a fitness app themed on ancient Rome: guard_galerus. A tall curved bronze shoulder guard with leather straps.
+--- 5. pullup-2 (Hrazda úroveň 2) ---
+Game art for a fitness app themed on ancient Rome: pullup-2. Base 1x1, surface: sand. A pull-up frame: two squared timber posts joined by an iron bar, with a climbing rope hanging beside it.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
+The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
 
-FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
+- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
+- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
+- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
+- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
+- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
+- Shadows fall only onto the base, never onto the background.
+- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
+- Square image. No people, no animals.
 
---- 12. guard_manica (Výzbroj: Manica) ---
-Game art for a fitness app themed on ancient Rome: guard_manica. A segmented arm guard of overlapping metal bands on leather.
+--- 6. pullup-3 (Hrazda úroveň 3) ---
+Game art for a fitness app themed on ancient Rome: pullup-3. Base 1x1, surface: sand. A pull-up frame: two marble columns joined by a bronze bar, with a climbing rope and bronze rings hanging from a beam.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
+The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
 
-FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
+- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
+- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
+- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
+- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
+- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
+- Shadows fall only onto the base, never onto the background.
+- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
+- Square image. No people, no animals.

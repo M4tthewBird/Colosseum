@@ -4,21 +4,24 @@ STYLE (identical for every image):
 Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
 The attached image is the style reference: match its painting style, line work, colours and light exactly.
 
-FOR IMAGE 1:
-FORMAT: one gladiator, full body from head to feet, seen straight from the front at eye level: he faces the viewer, not turned to either side, standing upright and symmetrical with his feet a little apart and his arms hanging slightly away from his body. If he carries a weapon, it is held down at his side in his right hand; if he has a shield, it is on his left forearm, its front facing the viewer. Painted in the style of the attached city (the same ink outlines, hatching and palette). The same man in every image: muscular, tanned, short dark curly hair, a short dark beard, a calm determined face; only his gear changes. A small soft shadow directly under his feet only. Background: perfectly flat plain cream #F2EBDB, no gradient, no ground, no scenery. The whole figure in frame with empty background around it: feet, crest and weapons not cut off. Portrait image, 3:4.
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
 
-FOR IMAGES 2, 3, 4, 5:
-FORMAT: EDIT THE BASE IMAGE. Take the base gladiator (image 1 of this chat) and add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
-
-THE LIST (5 images):
-1. dress-base. The base for dressing up: the gladiator wearing only a plain white loincloth and simple leather sandals. No helmet, no armour, no weapon, no shield; his hands open and relaxed.
-2. dress-helmet. Put a galea on his head: a Roman helmet of bronze and iron with hinged cheek guards, a neck guard and a short red brush crest, his face still visible.
-3. dress-shield. Put a parma on his left forearm, its front facing the viewer: a round wooden shield painted dark red, with a bronze rim and a central bronze boss.
-4. dress-weapon. Put a gladius in his right hand, held down at his side: a Roman short sword with a straight double-edged blade.
-5. dress-armour. Dress him in a lorica: an ornate golden muscle cuirass with leather strips at the shoulders and the waist.
+THE LIST (12 images):
+1. weapon_rudis. A wooden practice sword of plain worn wood with a leather-wrapped grip.
+2. weapon_pugio. A Roman dagger with a leaf-shaped iron blade and a bronze-decorated hilt, its sheath beside it.
+3. weapon_sica. A short curved Thracian sword: an iron blade bent at an angle and a wooden grip.
+4. weapon_net. A gladiator net gathered in loose folds, with small lead weights along its edge.
+5. weapon_trident. A long three-pronged trident with an iron head on a wooden shaft, lying diagonally.
+6. weapon_hasta. A spear with a leaf-shaped iron head on a long wooden shaft, lying diagonally.
+7. weapon_gladius. A Roman short sword: a straight double-edged blade, a ribbed wooden grip and a round pommel.
+8. weapon_two_gladii. Two Roman short swords crossed.
+9. guard_fasciae. A pair of quilted padded linen leg wraps tied with leather cords.
+10. guard_ocreae. A pair of bronze greaves (shin guards) with engraved decoration.
+11. guard_galerus. A tall curved bronze shoulder guard with leather straps.
+12. guard_manica. A segmented arm guard of overlapping metal bands on leather.
 
 RULES:
-- One image per reply, in the order of the list. Below the image write only its number and id (for example "1. dress-base").
+- One image per reply, in the order of the list. Below the image write only its number and id (for example "1. weapon_rudis").
 - When I write "next", make the next image. When I write "redo", make the same image again, fixing what I say.
 - Keep the same style, angle, light and background in every image.
 
@@ -30,42 +33,98 @@ ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, otevři nový chat,
 a pošli jen jeden z nich)
 =====================================================================
 
---- 1. dress-base (Oblékání: základní gladiátor) ---
-Game art for a fitness app themed on ancient Rome: dress-base. The base for dressing up: the gladiator wearing only a plain white loincloth and simple leather sandals. No helmet, no armour, no weapon, no shield; his hands open and relaxed.
+--- 1. weapon_rudis (Výzbroj: Rudis) ---
+Game art for a fitness app themed on ancient Rome: weapon_rudis. A wooden practice sword of plain worn wood with a leather-wrapped grip.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
 The attached image is the style reference: match its painting style, line work, colours and light exactly.
 
-FORMAT: one gladiator, full body from head to feet, seen straight from the front at eye level: he faces the viewer, not turned to either side, standing upright and symmetrical with his feet a little apart and his arms hanging slightly away from his body. If he carries a weapon, it is held down at his side in his right hand; if he has a shield, it is on his left forearm, its front facing the viewer. Painted in the style of the attached city (the same ink outlines, hatching and palette). The same man in every image: muscular, tanned, short dark curly hair, a short dark beard, a calm determined face; only his gear changes. A small soft shadow directly under his feet only. Background: perfectly flat plain cream #F2EBDB, no gradient, no ground, no scenery. The whole figure in frame with empty background around it: feet, crest and weapons not cut off. Portrait image, 3:4.
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
 
---- 2. dress-helmet (Oblékání: přilba) ---
-Game art for a fitness app themed on ancient Rome: dress-helmet. Put a galea on his head: a Roman helmet of bronze and iron with hinged cheek guards, a neck guard and a short red brush crest, his face still visible.
-
-STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
-
-FORMAT: EDIT THE BASE IMAGE. Take the base gladiator (image 1 of this chat) and add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
-
---- 3. dress-shield (Oblékání: štít) ---
-Game art for a fitness app themed on ancient Rome: dress-shield. Put a parma on his left forearm, its front facing the viewer: a round wooden shield painted dark red, with a bronze rim and a central bronze boss.
+--- 2. weapon_pugio (Výzbroj: Pugio) ---
+Game art for a fitness app themed on ancient Rome: weapon_pugio. A Roman dagger with a leaf-shaped iron blade and a bronze-decorated hilt, its sheath beside it.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
 The attached image is the style reference: match its painting style, line work, colours and light exactly.
 
-FORMAT: EDIT THE BASE IMAGE. Take the base gladiator (image 1 of this chat) and add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
 
---- 4. dress-weapon (Oblékání: zbraň) ---
-Game art for a fitness app themed on ancient Rome: dress-weapon. Put a gladius in his right hand, held down at his side: a Roman short sword with a straight double-edged blade.
-
-STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The attached image is the style reference: match its painting style, line work, colours and light exactly.
-
-FORMAT: EDIT THE BASE IMAGE. Take the base gladiator (image 1 of this chat) and add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
-
---- 5. dress-armour (Oblékání: zbroj) ---
-Game art for a fitness app themed on ancient Rome: dress-armour. Dress him in a lorica: an ornate golden muscle cuirass with leather strips at the shoulders and the waist.
+--- 3. weapon_sica (Výzbroj: Sica) ---
+Game art for a fitness app themed on ancient Rome: weapon_sica. A short curved Thracian sword: an iron blade bent at an angle and a wooden grip.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
 The attached image is the style reference: match its painting style, line work, colours and light exactly.
 
-FORMAT: EDIT THE BASE IMAGE. Take the base gladiator (image 1 of this chat) and add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 4. weapon_net (Výzbroj: Rete (síť)) ---
+Game art for a fitness app themed on ancient Rome: weapon_net. A gladiator net gathered in loose folds, with small lead weights along its edge.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 5. weapon_trident (Výzbroj: Fuscina (trojzubec)) ---
+Game art for a fitness app themed on ancient Rome: weapon_trident. A long three-pronged trident with an iron head on a wooden shaft, lying diagonally.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 6. weapon_hasta (Výzbroj: Hasta (kopí)) ---
+Game art for a fitness app themed on ancient Rome: weapon_hasta. A spear with a leaf-shaped iron head on a long wooden shaft, lying diagonally.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 7. weapon_gladius (Výzbroj: Gladius) ---
+Game art for a fitness app themed on ancient Rome: weapon_gladius. A Roman short sword: a straight double-edged blade, a ribbed wooden grip and a round pommel.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 8. weapon_two_gladii (Výzbroj: Dva gladii) ---
+Game art for a fitness app themed on ancient Rome: weapon_two_gladii. Two Roman short swords crossed.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 9. guard_fasciae (Výzbroj: Fasciae) ---
+Game art for a fitness app themed on ancient Rome: guard_fasciae. A pair of quilted padded linen leg wraps tied with leather cords.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 10. guard_ocreae (Výzbroj: Ocreae) ---
+Game art for a fitness app themed on ancient Rome: guard_ocreae. A pair of bronze greaves (shin guards) with engraved decoration.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 11. guard_galerus (Výzbroj: Galerus) ---
+Game art for a fitness app themed on ancient Rome: guard_galerus. A tall curved bronze shoulder guard with leather straps.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.
+
+--- 12. guard_manica (Výzbroj: Manica) ---
+Game art for a fitness app themed on ancient Rome: guard_manica. A segmented arm guard of overlapping metal bands on leather.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The attached image is the style reference: match its painting style, line work, colours and light exactly.
+
+FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.

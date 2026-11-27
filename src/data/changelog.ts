@@ -12,6 +12,9 @@ export const CHANGELOG: Release[] = [
     date: '2026-11-27',
     title: 'Hours build the game',
     items: [
+      'Cycling and swimming: log a ride or a swim like a run. From 10 km or 30 minutes on the bike and 750 m or 20 minutes in the water, it counts as a workout for XP, laurels, your weekly target and wars, and it earns the Retiarius bonus.',
+      'Workouts starts with four cards: Gym, Run, Cycling and Swimming. Each has its bests and history; the calendar and all your workouts stay below.',
+      'New Arena boards: best 40 km ride, best 1500 m swim, km ridden and km swum.',
       'Building is paid in hours now: the time you spend at the gym. Every verified visit, check-in to check-out, adds its time to your house, your ludus and your tribe. Your past visits count too.',
       'Your own house: upgrade it in City → Your domus with your own hours, from a hut to a palace, and build a garden, a fountain and more by it.',
       'Denarii are for gear in the forge. Denarii you gave to a treasury are back in your wallet.',

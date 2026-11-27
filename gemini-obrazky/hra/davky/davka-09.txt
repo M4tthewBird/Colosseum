@@ -14,15 +14,12 @@ FORMAT (a piece of a modular city: the app places it on a grid, so it must fit e
 - Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
 - Square image. No people, no animals.
 
-THE LIST (5 images):
-1. wall-1-a. Base 1x1, surface: grass. A straight section of a palisade of sharpened timber stakes about as tall as a man, bound with rope. It crosses the base along its middle, rising to the right: it runs from the middle of the base's front-left edge to the middle of its back-right edge, parallel to the base's back-left edge. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly. Nothing else on the base.
-2. wall-1-b. Base 1x1, surface: grass. A straight section of a palisade of sharpened timber stakes about as tall as a man, bound with rope. It crosses the base along its middle, rising to the left: it runs from the middle of the base's front-right edge to the middle of its back-left edge, parallel to the base's back-right edge. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly. Nothing else on the base.
-3. wall-1-tower. Base 1x1, surface: grass. A square wooden watchtower on four posts with a small roofed platform standing in the middle of the base, a little taller than a palisade of sharpened timber stakes about as tall as a man, bound with rope. No wall sections attached to it: walls will join it from the sides.
-4. aqueduct-a. Base 1x1, surface: grass. A straight section of a Roman aqueduct: two tiers of round limestone arches carrying a covered water channel on top. It crosses the base along its middle, rising to the right: from the middle of the base's front-left edge to the middle of its back-right edge, parallel to the base's back-left edge. One full arch on each tier. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly.
-5. aqueduct-b. Base 1x1, surface: grass. A straight section of a Roman aqueduct: two tiers of round limestone arches carrying a covered water channel on top. It crosses the base along its middle, rising to the left: from the middle of the base's front-right edge to the middle of its back-left edge, parallel to the base's back-right edge. One full arch on each tier. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly.
+THE LIST (2 images):
+1. aqueduct-pier. Base 1x1, surface: grass. A square limestone pier of a Roman aqueduct, as tall as two tiers of arches, with the covered water channel on top turning the corner. It stands in the middle of the base; aqueduct sections will join it from the sides.
+2. castellum. Base 1x1, surface: paving. A castellum aquae: a small round limestone water tower with a domed roof where the aqueduct brings water into the city, a stone basin of clear water at its foot with water pouring into it from a bronze spout.
 
 RULES:
-- One image per reply, in the order of the list. Below the image write only its number and id (for example "1. wall-1-a").
+- One image per reply, in the order of the list. Below the image write only its number and id (for example "1. aqueduct-pier").
 - When I write "next", make the next image. When I write "redo", make the same image again, fixing what I say.
 - Keep the same style, angle, light and background in every image.
 
@@ -34,8 +31,8 @@ ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, otevři nový chat,
 a pošli jen jeden z nich)
 =====================================================================
 
---- 1. wall-1-a (Hradby 1: palisáda, úsek /) ---
-Game art for a fitness app themed on ancient Rome: wall-1-a. Base 1x1, surface: grass. A straight section of a palisade of sharpened timber stakes about as tall as a man, bound with rope. It crosses the base along its middle, rising to the right: it runs from the middle of the base's front-left edge to the middle of its back-right edge, parallel to the base's back-left edge. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly. Nothing else on the base.
+--- 1. aqueduct-pier (Akvadukt, nároží) ---
+Game art for a fitness app themed on ancient Rome: aqueduct-pier. Base 1x1, surface: grass. A square limestone pier of a Roman aqueduct, as tall as two tiers of arches, with the covered water channel on top turning the corner. It stands in the middle of the base; aqueduct sections will join it from the sides.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
 The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
@@ -50,56 +47,8 @@ FORMAT (a piece of a modular city: the app places it on a grid, so it must fit e
 - Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
 - Square image. No people, no animals.
 
---- 2. wall-1-b (Hradby 1: palisáda, úsek \) ---
-Game art for a fitness app themed on ancient Rome: wall-1-b. Base 1x1, surface: grass. A straight section of a palisade of sharpened timber stakes about as tall as a man, bound with rope. It crosses the base along its middle, rising to the left: it runs from the middle of the base's front-right edge to the middle of its back-left edge, parallel to the base's back-right edge. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly. Nothing else on the base.
-
-STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
-
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
-
---- 3. wall-1-tower (Hradby 1: palisáda, věž) ---
-Game art for a fitness app themed on ancient Rome: wall-1-tower. Base 1x1, surface: grass. A square wooden watchtower on four posts with a small roofed platform standing in the middle of the base, a little taller than a palisade of sharpened timber stakes about as tall as a man, bound with rope. No wall sections attached to it: walls will join it from the sides.
-
-STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
-
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
-
---- 4. aqueduct-a (Akvadukt, úsek /) ---
-Game art for a fitness app themed on ancient Rome: aqueduct-a. Base 1x1, surface: grass. A straight section of a Roman aqueduct: two tiers of round limestone arches carrying a covered water channel on top. It crosses the base along its middle, rising to the right: from the middle of the base's front-left edge to the middle of its back-right edge, parallel to the base's back-left edge. One full arch on each tier. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly.
-
-STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
-The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.
-
-FORMAT (a piece of a modular city: the app places it on a grid, so it must fit exactly):
-- One single piece standing alone on its own flat diamond-shaped base, seen from the same isometric angle as the attached city: the base edges run at about 31 degrees from horizontal, so the base is 5 wide to 3 high, exactly like the attached base template.
-- The base size is given per image: 1x1, 2x2 or 3x3 tiles. The attached base template shows each shape. Use the template only for the shape and the angle: do not copy its outline or labels.
-- The base is flat with NO thickness: no soil or earth sides, no slab edge, no plinth under it. Its surface is given per image (paving, sand, grass or bare earth) and is plain and even: no lines, no grid, no tile marks, no crosses, no border line around it.
-- The base is the widest part of the picture: nothing (roof, tree, flag, smoke) sticks out past its left or right corner or below its front corner. Tall parts may rise above it.
-- The piece fills its base, leaving only a narrow margin of the base surface around it, with the same proportions as the buildings in the attached city.
-- Shadows fall only onto the base, never onto the background.
-- Background: perfectly flat plain cream #F2EBDB, the same colour everywhere: no gradient, no texture, no vignette, no shadow. At least 10 % empty background on every side.
-- Square image. No people, no animals.
-
---- 5. aqueduct-b (Akvadukt, úsek \) ---
-Game art for a fitness app themed on ancient Rome: aqueduct-b. Base 1x1, surface: grass. A straight section of a Roman aqueduct: two tiers of round limestone arches carrying a covered water channel on top. It crosses the base along its middle, rising to the left: from the middle of the base's front-right edge to the middle of its back-left edge, parallel to the base's back-right edge. One full arch on each tier. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly.
+--- 2. castellum (Akvadukt: vodojem) ---
+Game art for a fitness app themed on ancient Rome: castellum. Base 1x1, surface: paving. A castellum aquae: a small round limestone water tower with a domed roof where the aqueduct brings water into the city, a stone basin of clear water at its foot with water pouring into it from a bronze spout.
 
 STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
 The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.

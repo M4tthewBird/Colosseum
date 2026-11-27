@@ -93,7 +93,7 @@ const STEPS: Step[] = [
     target: 'workouts-programs',
     radius: 18,
     title: 'Workouts',
-    body: 'Everything you train lives here. Programs holds your splits and ready-made templates.',
+    body: 'Everything you train lives here: the gym, running, cycling and swimming. Programs holds your splits and ready-made templates.',
     points: [
       { icon: Layers, text: 'Programs: your own split or a template, with weekly periodization' },
       { icon: Bookmark, text: 'Saved workouts for one-off sessions' },

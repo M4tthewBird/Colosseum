@@ -90,6 +90,17 @@ export const DEMO_RUNS: Record<
   filip: { fiveK: 23 * 60 + 15, tenK: 49 * 60 + 2, vdot: 42.1, weekKm: 11 },
 };
 
+/** Demo riders and swimmers for the Arena's cycling and swimming boards (times in seconds). */
+export const DEMO_CARDIO: Record<
+  string,
+  { ride40k: number | null; rideKm: number; swim1500: number | null; swimKm: number }
+> = {
+  ondrej: { ride40k: 78 * 60 + 30, rideKm: 85, swim1500: null, swimKm: 0 },
+  lukas: { ride40k: 84 * 60 + 10, rideKm: 52, swim1500: 29 * 60 + 40, swimKm: 3 },
+  petr: { ride40k: null, rideKm: 0, swim1500: 26 * 60 + 5, swimKm: 4.5 },
+  filip: { ride40k: 91 * 60, rideKm: 40, swim1500: 33 * 60 + 20, swimKm: 1.5 },
+};
+
 /** A Push/Pull/Legs program for the demo user. */
 export function demoProgram(userId: string, now: Date): Program {
   const pe = (
@@ -274,6 +285,51 @@ export function demoSessions(userId: string, program: Program, now: Date): Sessi
       elevation_m: w === 3 ? null : 40 + w * 5,
       avg_hr: 150 + w,
       updated_at: start.toISOString(),
+      sets: [],
+    });
+  }
+  // A ride on Sundays and a swim on Wednesdays for the last 3 weeks (cycling and swimming).
+  for (let w = 3; w >= 1; w--) {
+    const day = addDays(now, -7 * w + 3);
+    const ride = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 9, 0);
+    const rideS = Math.round((41.2 / (27.5 + (3 - w) * 0.8)) * 3600);
+    if (ride <= now)
+      out.push({
+        id: sid(`ride:${ride.toISOString()}`),
+        user_id: userId,
+        program_day_id: null,
+        name: 'Ride',
+        started_at: ride.toISOString(),
+        finished_at: new Date(ride.getTime() + rideS * 1000).toISOString(),
+        volume_kg: 0,
+        set_count: 0,
+        pr_count: w < 3 ? 1 : 0,
+        kind: 'ride',
+        distance_m: 41200,
+        duration_s: rideS,
+        run_place: 'outdoor',
+        elevation_m: 310 + w * 20,
+        updated_at: ride.toISOString(),
+        sets: [],
+      });
+    const swimDay = addDays(now, -7 * w - 1);
+    const swim = new Date(swimDay.getFullYear(), swimDay.getMonth(), swimDay.getDate(), 19, 30);
+    const swimS = 15 * (128 - (3 - w) * 3);
+    out.push({
+      id: sid(`swim:${swim.toISOString()}`),
+      user_id: userId,
+      program_day_id: null,
+      name: 'Swim',
+      started_at: swim.toISOString(),
+      finished_at: new Date(swim.getTime() + swimS * 1000).toISOString(),
+      volume_kg: 0,
+      set_count: 0,
+      pr_count: w < 3 ? 1 : 0,
+      kind: 'swim',
+      distance_m: 1500,
+      duration_s: swimS,
+      run_place: 'pool',
+      updated_at: swim.toISOString(),
       sets: [],
     });
   }

@@ -9,7 +9,8 @@ import { GladiatorArt } from '@/components/art/Art';
 import { GlassCard } from '@/components/Glass';
 import { Coins } from '@/components/icons';
 import { LogoMark } from '@/components/Logo';
-import { QUALIFYING_SETS, RUN, XP } from '@/lib/game/config';
+import { SPORT, sportOf } from '@/lib/cardio';
+import { QUALIFYING_SETS, XP } from '@/lib/game/config';
 import { rankFor } from '@/lib/game/levels';
 import { useTween } from '@/lib/useTween';
 import { useData } from '@/stores/data';
@@ -27,7 +28,9 @@ export function RewardCard({ sessionId }: { sessionId: string }) {
 function Reward({ sessionId }: { sessionId: string }) {
   const game = useMyGame();
   const homeGym = useData((s) => s.profile?.home_gym_id);
-  const run = useData((s) => s.sessions[sessionId]?.kind === 'run');
+  const kind = useData((s) => s.sessions[sessionId]?.kind);
+  const sport = kind ? sportOf({ kind }) : null;
+  const run = sport != null;
   const reduced = useReducedMotion();
   const r = game.sessions[sessionId];
   const xp = useTween(r?.xp ?? 0, 1100);
@@ -39,7 +42,7 @@ function Reward({ sessionId }: { sessionId: string }) {
         <Text style={type.bodyStrong}>No XP this time</Text>
         <Text style={type.small}>
           {run
-            ? `Runs from ${RUN.minDistanceM / 1000} km or ${RUN.minDurationS / 60} minutes at a running pace count.`
+            ? SPORT[sport!].minText
             : `Log at least ${QUALIFYING_SETS} working sets for a workout to count.`}
         </Text>
       </GlassCard>
@@ -113,7 +116,7 @@ function Reward({ sessionId }: { sessionId: string }) {
       {r.unusualPrs > 0 ? (
         <Text style={type.small}>
           {run
-            ? `This run beat your best by more than ${RUN.unusualGain * 100} %`
+            ? `This ${SPORT[sport!].name.toLowerCase()} beat your best by more than 10 %`
             : r.unusualPrs === 1
               ? 'One PR jumped more than 25 % over the old best'
               : `${r.unusualPrs} PRs jumped more than 25 % over the old best`}
@@ -121,7 +124,9 @@ function Reward({ sessionId }: { sessionId: string }) {
         </Text>
       ) : null}
       {run && !r.verification ? (
-        <Text style={type.small}>This run counts in wars, Bellum and tribe attacks.</Text>
+        <Text style={type.small}>
+          This {SPORT[sport!].name.toLowerCase()} counts in wars, Bellum and tribe attacks.
+        </Text>
       ) : !r.verification && homeGym ? (
         <Text style={type.small}>
           Check in at your gym with its QR code next time: +{XP.verified} XP, more denarii, and the

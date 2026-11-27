@@ -21,7 +21,8 @@ import { Pill, useSlidingPill } from '@/components/SlidingPill';
 import { ExercisePicker } from '@/features/exercises/ExercisePicker';
 import { isLiftMetric, resolveMetric, useLeaderboard, type RankRow } from '@/features/social/api';
 import { formatKg } from '@/lib/formulas';
-import { formatKm, formatRunTime, isRunMetric, isTimeMetric, RUN_METRICS } from '@/lib/running';
+import { CARDIO_METRICS, isCardioMetric, isCardioTimeMetric, isKmMetric } from '@/lib/cardio';
+import { formatKm, formatRunTime } from '@/lib/running';
 import { flush } from '@/lib/sync';
 import { useData } from '@/stores/data';
 import { usePrefs, type ArenaMetric, type ArenaPeriod, type ArenaScope } from '@/stores/prefs';
@@ -35,7 +36,7 @@ export function metricLabel(m: ArenaMetric, exercises: Record<string, { name: st
   if (m === 'volume') return 'Volume';
   if (m === 'workouts') return 'Workouts';
   if (m === 'together') return 'Together';
-  const run = RUN_METRICS.find((r) => r.id === m);
+  const run = CARDIO_METRICS.find((r) => r.id === m);
   if (run) return run.label;
   if (m.startsWith('name:')) {
     const n = m.slice(5);
@@ -50,9 +51,9 @@ function formatValue(metric: string, v: number | null): string {
   if (metric === 'dots') return v.toFixed(1);
   if (metric === 'volume') return `${(v / 1000).toFixed(1)} t`;
   if (metric === 'workouts' || metric === 'together') return `${Math.round(v)}`;
-  if (metric === 'run_km') return formatKm(v * 1000);
+  if (isKmMetric(metric)) return formatKm(v * 1000);
   if (metric === 'vdot') return v.toFixed(1);
-  if (isTimeMetric(metric)) return formatRunTime(v);
+  if (isCardioTimeMetric(metric)) return formatRunTime(v);
   return `${formatKg(v)} kg`;
 }
 
@@ -176,8 +177,8 @@ export function Ranks({ scope, friendCount }: { scope: ArenaScope; friendCount: 
           </View>
         ) : metric === 'together' ? (
           <Text style={type.small}>Workouts confirmed with someone by QR code</Text>
-        ) : isRunMetric(metric) ? (
-          <Text style={type.small}>{RUN_METRICS.find((r) => r.id === metric)?.about}</Text>
+        ) : isCardioMetric(metric) ? (
+          <Text style={type.small}>{CARDIO_METRICS.find((r) => r.id === metric)?.about}</Text>
         ) : null}
       </View>
 
@@ -239,8 +240,8 @@ export function Ranks({ scope, friendCount }: { scope: ArenaScope; friendCount: 
                 ? 'Set your sex in Settings and log your bodyweight in Profile → Body to get a DOTS score.'
                 : metric === 'together'
                   ? 'You are not on this board yet. Confirm a workout with someone by QR code to join.'
-                  : isRunMetric(metric)
-                    ? 'You are not on this board yet. Log a run in Workouts to join.'
+                  : isCardioMetric(metric)
+                    ? `You are not on this board yet. Log ${metric.startsWith('ride_') ? 'a ride' : metric.startsWith('swim_') ? 'a swim' : 'a run'} in Workouts to join.`
                     : 'You are not on this board yet. Log a finished workout to join.'}
             </Text>
           ) : null}
@@ -491,7 +492,7 @@ function MetricsSheet({ visible, onClose }: { visible: boolean; onClose: () => v
           {!metrics.includes('together') ? (
             <Chip label="+ Together" onPress={() => add('together')} />
           ) : null}
-          {RUN_METRICS.filter((r) => !metrics.includes(r.id)).map((r) => (
+          {CARDIO_METRICS.filter((r) => !metrics.includes(r.id)).map((r) => (
             <Chip key={r.id} label={`+ ${r.label}`} onPress={() => add(r.id)} />
           ))}
         </View>

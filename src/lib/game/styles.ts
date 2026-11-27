@@ -34,8 +34,8 @@ export const STYLES: FightingStyle[] = [
   {
     id: 'retiarius',
     name: 'Retiarius',
-    trait: 'Endurance · runs, cardio and circuits',
-    rule: 'A run, cardio or a superset in the workout',
+    trait: 'Endurance · runs, rides, swims and circuits',
+    rule: 'A run, a ride, a swim, cardio or a superset in the workout',
   },
   {
     id: 'secutor',
@@ -69,7 +69,7 @@ export interface StyleWorkout {
   muscles: (exerciseId: string) => string[];
   /** Weeks in a row before this one that hit the weekly target. */
   streak: number;
-  /** A run (no sets): Retiarius and Secutor can still match. */
+  /** A run, ride or swim (no sets): Retiarius and Secutor can still match. */
   run?: boolean;
 }
 

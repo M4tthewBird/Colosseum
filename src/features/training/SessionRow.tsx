@@ -4,7 +4,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { ListRow } from '@/components/List';
 import { formatDuration } from '@/lib/dates';
 import { formatKg, formatVolume, volume } from '@/lib/formulas';
-import { formatKm, formatPace, formatRunTime, isRun, paceOf } from '@/lib/running';
+import { distanceText, isCardio, paceText, sportOf } from '@/lib/cardio';
+import { formatRunTime } from '@/lib/running';
 import type { Exercise, Session } from '@/lib/types';
 import { colors, type } from '@/theme/tokens';
 
@@ -18,19 +19,20 @@ function bestPr(s: Session, exercises: Record<string, Exercise>): string | null 
   return `${name} ${formatKg(prs[0].weight_kg)} kg`;
 }
 
-/** "5.2 km · 26:40 · 5:08 /km" */
+/** "5.2 km · 26:40 · 5:08 /km", "42 km · 1:24:00 · 30.0 km/h", "1500 m · 30:00 · 2:00 /100 m" */
 function runMeta(s: Session): string {
-  if (!s.distance_m || !s.duration_s) return '';
+  const sport = sportOf(s);
+  if (!sport || !s.distance_m || !s.duration_s) return '';
   return [
-    formatKm(s.distance_m),
+    distanceText(sport, s.distance_m),
     formatRunTime(s.duration_s),
-    formatPace(paceOf(s.distance_m, s.duration_s)),
+    paceText(sport, s.distance_m, s.duration_s),
   ].join(' · ');
 }
 
 /**
- * Previous-workout row: weekday + date, name, duration · volume (· best PR), "PR" label. A run
- * shows distance · time · pace.
+ * Previous-workout row: weekday + date, name, duration · volume (· best PR), "PR" label. A run,
+ * ride or swim shows distance · time · pace (or speed).
  */
 export function SessionRow({
   session,
@@ -49,7 +51,7 @@ export function SessionRow({
     ? formatDuration(new Date(session.finished_at).getTime() - d.getTime())
     : 'In progress';
   const pr = bestPr(session, exercises);
-  const meta = isRun(session)
+  const meta = isCardio(session)
     ? runMeta(session)
     : [dur, formatVolume(session.volume_kg || volume(session.sets)), pr]
         .filter(Boolean)

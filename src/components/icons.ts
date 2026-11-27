@@ -20,6 +20,8 @@ export { default as House } from 'lucide-react-native/icons/house';
 export { default as Info } from 'lucide-react-native/icons/info';
 export { default as Flag } from 'lucide-react-native/icons/flag';
 export { default as Footprints } from 'lucide-react-native/icons/footprints';
+export { default as Bike } from 'lucide-react-native/icons/bike';
+export { default as WavesLadder } from 'lucide-react-native/icons/waves-ladder';
 export { default as LogOut } from 'lucide-react-native/icons/log-out';
 export { default as MapPin } from 'lucide-react-native/icons/map-pin';
 export { default as MessageCircle } from 'lucide-react-native/icons/message-circle';

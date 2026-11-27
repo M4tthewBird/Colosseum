@@ -15,13 +15,13 @@ import { SessionEditor } from '@/features/workout/SessionEditor';
 import { dropChain, isMain } from '@/lib/dropsets';
 import { formatDuration, shortDate, weekdayName, isoWeekday } from '@/lib/dates';
 import { formatKg, formatVolume, isSideSet, repsText, volume } from '@/lib/formulas';
-import { isRun } from '@/lib/running';
+import { isCardio } from '@/lib/cardio';
 import { interleave, letter } from '@/lib/supersets';
 import { useData } from '@/stores/data';
 import { confirm } from '@/stores/ui';
 import { colors, tabular, type } from '@/theme/tokens';
 
-/** Session detail with Edit and Delete. A run has its own body (RunDetail). */
+/** Session detail with Edit and Delete. A run, ride or swim has its own body (RunDetail). */
 export default function SessionDetail() {
   const { id, fresh } = useLocalSearchParams<{ id: string; fresh?: string }>();
   const session = useData((s) => s.sessions[id]);
@@ -42,7 +42,7 @@ export default function SessionDetail() {
   const d = new Date(session.started_at);
   const heading = `${weekdayName(isoWeekday(d))}, ${shortDate(d)} ${d.getFullYear()}`;
 
-  if (isRun(session)) {
+  if (isCardio(session)) {
     return (
       <Screen tabs={false} gap={16}>
         <BackLink label="Workouts" fallback="/workouts" />

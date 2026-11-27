@@ -218,18 +218,6 @@
    ],
    "rev": 1
   },
-  "home-2": {
-   "kind": "piece",
-   "size": 2,
-   "file": "city/home-2.webp",
-   "width": 641,
-   "height": 472,
-   "anchor": [
-    320,
-    472
-   ],
-   "rev": 1
-  },
   "home-3": {
    "kind": "piece",
    "size": 2,
@@ -410,6 +398,18 @@
    ],
    "rev": 1
   },
+  "platform-1": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/platform-1.webp",
+   "width": 321,
+   "height": 195,
+   "anchor": [
+    160,
+    195
+   ],
+   "rev": 1
+  },
   "platform-2": {
    "kind": "piece",
    "size": 1,
@@ -530,6 +530,18 @@
    ],
    "rev": 1
   },
+  "home-2": {
+   "kind": "piece",
+   "size": 2,
+   "file": "city/home-2.webp",
+   "width": 641,
+   "height": 472,
+   "anchor": [
+    320,
+    472
+   ],
+   "rev": 1
+  },
   "ground-grass": {
    "kind": "ground",
    "file": "ground/ground-grass.webp",
@@ -551,82 +563,109 @@
    "height": 1024,
    "rev": 1
   },
+  "dress-base": {
+   "kind": "figure",
+   "file": "dressup/dress-base.webp",
+   "width": 720,
+   "height": 960,
+   "rev": 1
+  },
+  "dress-helmet": {
+   "kind": "layer",
+   "file": "dressup/dress-helmet.jpg",
+   "rev": 1
+  },
+  "dress-shield": {
+   "kind": "layer",
+   "file": "dressup/dress-shield.jpg",
+   "rev": 1
+  },
+  "dress-weapon": {
+   "kind": "layer",
+   "file": "dressup/dress-weapon.jpg",
+   "rev": 1
+  },
+  "dress-armour": {
+   "kind": "layer",
+   "file": "dressup/dress-armour.jpg",
+   "rev": 1
+  },
   "rank-tiro": {
    "kind": "figure",
    "file": "gladiators/rank-tiro.webp",
    "width": 720,
    "height": 960,
-   "rev": 1
+   "rev": 2
   },
   "rank-gladiator": {
    "kind": "figure",
    "file": "gladiators/rank-gladiator.webp",
    "width": 720,
    "height": 960,
-   "rev": 1
+   "rev": 2
   },
   "rank-veteranus": {
    "kind": "figure",
    "file": "gladiators/rank-veteranus.webp",
    "width": 720,
    "height": 960,
-   "rev": 1
+   "rev": 2
   },
   "rank-primus": {
    "kind": "figure",
    "file": "gladiators/rank-primus.webp",
    "width": 720,
    "height": 960,
-   "rev": 1
+   "rev": 2
   },
   "rank-rudiarius": {
    "kind": "figure",
    "file": "gladiators/rank-rudiarius.webp",
    "width": 720,
    "height": 960,
-   "rev": 1
+   "rev": 2
   },
   "style-murmillo": {
    "kind": "figure",
    "file": "gladiators/style-murmillo.webp",
    "width": 720,
    "height": 960,
-   "rev": 1
+   "rev": 2
   },
   "style-thraex": {
    "kind": "figure",
    "file": "gladiators/style-thraex.webp",
    "width": 720,
    "height": 960,
-   "rev": 1
+   "rev": 2
   },
   "style-retiarius": {
    "kind": "figure",
    "file": "gladiators/style-retiarius.webp",
    "width": 720,
    "height": 960,
-   "rev": 1
+   "rev": 2
   },
   "style-secutor": {
    "kind": "figure",
    "file": "gladiators/style-secutor.webp",
    "width": 720,
    "height": 960,
-   "rev": 1
+   "rev": 2
   },
   "style-hoplomachus": {
    "kind": "figure",
    "file": "gladiators/style-hoplomachus.webp",
    "width": 720,
    "height": 960,
-   "rev": 1
+   "rev": 2
   },
   "style-bestiarius": {
    "kind": "figure",
    "file": "gladiators/style-bestiarius.webp",
    "width": 720,
    "height": 960,
-   "rev": 1
+   "rev": 2
   }
  }
 }

@@ -1,6 +1,7 @@
 /**
- * Log a run by hand (id "new") or edit one: distance, time, outdoor or treadmill, when, and
- * optionally heart rate, elevation and a note. The pace follows from distance and time.
+ * Log a run, ride or swim by hand (id "new", ?sport=ride|swim; a run without it) or edit one:
+ * distance, time, where, when, and optionally heart rate, elevation and a note. The pace (or a
+ * ride's speed) follows from distance and time.
  */
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
@@ -10,29 +11,43 @@ import { BackLink } from '@/components/BackLink';
 import { FillButton } from '@/components/Buttons';
 import { FieldHint, FieldLabel, FormField, FormGroup } from '@/components/Form';
 import { GlassCard } from '@/components/Glass';
-import { Footprints } from '@/components/icons';
 import { Header, Screen } from '@/components/Screen';
 import { Chip, Segmented } from '@/components/Segmented';
-import { saveRun } from '@/features/running/actions';
-import { addDays, sameDay, shortDate, startOfDay, weekdayShort, isoWeekday } from '@/lib/dates';
-import { RUN } from '@/lib/game/config';
+import { saveCardio } from '@/features/running/actions';
+import { SPORT_ICONS } from '@/features/running/sportIcons';
 import {
-  formatPace,
-  formatRunTime,
-  paceOf,
-  parseKm,
-  parseRunTime,
-  runProblem,
-  runQualifies,
-} from '@/lib/running';
+  cardioProblem,
+  cardioQualifies,
+  paceLabel,
+  paceText,
+  parseDistance,
+  slowestText,
+  SPORT,
+  sportOf,
+  type Sport,
+} from '@/lib/cardio';
+import { addDays, sameDay, shortDate, startOfDay, weekdayShort, isoWeekday } from '@/lib/dates';
+import { formatRunTime, parseRunTime } from '@/lib/running';
 import type { RunPlace } from '@/lib/types';
 import { useNow } from '@/lib/useNow';
 import { useData } from '@/stores/data';
 import { toast } from '@/stores/ui';
 import { colors, tabular, type } from '@/theme/tokens';
 
-/** Runs can be logged for today and the 6 days before. */
+/** Sessions can be logged for today and the 6 days before. */
 const DAYS_BACK = 6;
+
+const TOO_LONG: Record<Sport, string> = {
+  run: 'A run can be at most 100 km and 12 hours.',
+  ride: 'A ride can be at most 400 km and 16 hours.',
+  swim: 'A swim can be at most 30 km and 12 hours.',
+};
+
+const PLACEHOLDER: Record<Sport, { distance: string; time: string; note: string }> = {
+  run: { distance: '5.0', time: '24:05', note: 'Easy run, intervals…' },
+  ride: { distance: '40', time: '1:20:00', note: 'Hills, group ride…' },
+  swim: { distance: '1500', time: '32:00', note: 'Crawl, intervals…' },
+};
 
 function parseClockTime(text: string): { h: number; m: number } | null {
   const m = text.trim().match(/^(\d{1,2})[:.](\d{2})$/);
@@ -50,18 +65,25 @@ function dayLabel(d: Date, today: Date): string {
   return `${weekdayShort(isoWeekday(d))} ${d.getDate()}`;
 }
 
-export default function LogRun() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+export default function LogCardio() {
+  const { id, sport: asked } = useLocalSearchParams<{ id: string; sport?: string }>();
   const existing = useData((s) => (id && id !== 'new' ? s.sessions[id] : undefined));
-  const editing = !!existing && existing.kind === 'run';
+  const existingSport = existing ? sportOf(existing) : null;
+  const editing = !!existing && existingSport != null;
+  const sport: Sport = existingSport ?? (asked === 'ride' || asked === 'swim' ? asked : 'run');
+  const info = SPORT[sport];
   // Ticks so "just finished" and the future check follow the clock.
   const now = useNow(true, 15000);
   const today = startOfDay(new Date(now));
   const startedBefore = editing ? new Date(existing.started_at) : null;
 
-  const [place, setPlace] = useState<RunPlace>(existing?.run_place ?? 'outdoor');
-  const [km, setKm] = useState(
-    existing?.distance_m ? String(Math.round(existing.distance_m / 10) / 100) : '',
+  const [place, setPlace] = useState<RunPlace>(existing?.run_place ?? info.places[0].id);
+  const [distance, setDistance] = useState(
+    existing?.distance_m
+      ? info.unit === 'm'
+        ? String(existing.distance_m)
+        : String(Math.round(existing.distance_m / 10) / 100)
+      : '',
   );
   const [time, setTime] = useState(existing?.duration_s ? formatRunTime(existing.duration_s) : '');
   const [day, setDay] = useState<Date>(startedBefore ? startOfDay(startedBefore) : today);
@@ -74,12 +96,12 @@ export default function LogRun() {
   );
   const [note, setNote] = useState(existing?.notes?.run ?? '');
 
-  const distanceM = parseKm(km);
+  const distanceM = parseDistance(sport, distance);
   const durationS = parseRunTime(time);
-  const problem = distanceM && durationS ? runProblem(distanceM, durationS) : null;
+  const problem = distanceM && durationS ? cardioProblem(sport, distanceM, durationS) : null;
   const clock = start.trim() ? parseClockTime(start) : null;
   const hrValue = hr.trim() ? Number(hr) : null;
-  const elevationValue = elevation.trim() ? Number(elevation) : null;
+  const elevationValue = sport !== 'swim' && elevation.trim() ? Number(elevation) : null;
   const hrOk = hrValue == null || (Number.isInteger(hrValue) && hrValue >= 60 && hrValue <= 220);
   const elevationOk =
     elevationValue == null ||
@@ -110,29 +132,43 @@ export default function LogRun() {
     (!start.trim() || !!clock);
 
   const hint = (): { text: string; error?: boolean } | null => {
-    if (km.trim() && !distanceM) return { text: 'Type the distance in km, like 5.2.', error: true };
+    if (distance.trim() && !distanceM)
+      return {
+        text:
+          info.unit === 'm'
+            ? 'Type the distance in metres, like 1500.'
+            : 'Type the distance in km, like 5.2.',
+        error: true,
+      };
     if (time.trim() && !durationS)
       return { text: 'Type the time as 24:05 or 1:02:05.', error: true };
     if (problem === 'too-fast')
       return {
-        text: 'That is faster than the world record. Check the distance and time.',
+        text:
+          sport === 'ride'
+            ? 'That is faster than 60 km/h on average. Check the distance and time.'
+            : 'That is faster than the world record. Check the distance and time.',
         error: true,
       };
-    if (problem === 'too-long')
-      return { text: 'A run can be at most 100 km and 12 hours.', error: true };
+    if (problem === 'too-long') return { text: TOO_LONG[sport], error: true };
     if (problem === 'too-slow')
       return {
-        text: `Slower than ${formatPace(RUN.maxPace)} counts as a walk: it is saved, but earns nothing.`,
+        text: `Slower than ${slowestText(sport)} is saved, but earns nothing.`,
       };
-    if (distanceM && durationS && !runQualifies({ distance_m: distanceM, duration_s: durationS }))
-      return { text: 'Runs from 3 km or 20 minutes earn XP and laurels.' };
+    if (
+      distanceM &&
+      durationS &&
+      !cardioQualifies(sport, { distance_m: distanceM, duration_s: durationS })
+    )
+      return { text: info.minText };
     return null;
   };
   const h = hint();
 
   const save = () => {
     if (!ready) return;
-    const runId = saveRun({
+    const sessionId = saveCardio({
+      sport,
       id: editing ? existing.id : undefined,
       startedAt: startedAt!,
       distanceM: distanceM!,
@@ -143,52 +179,56 @@ export default function LogRun() {
       note,
     });
     if (editing) {
-      toast('Run updated');
+      toast(`${info.name} updated`);
       router.back();
-    } else router.replace({ pathname: '/session/[id]', params: { id: runId, fresh: '1' } });
+    } else router.replace({ pathname: '/session/[id]', params: { id: sessionId, fresh: '1' } });
   };
 
   const days = Array.from({ length: DAYS_BACK + 1 }, (_, i) => addDays(today, -i));
+  const noun = info.name.toLowerCase();
 
   return (
     <Screen tabs={false} gap={16}>
       <BackLink label="Workouts" fallback="/workouts" />
-      <Header above="Running" title={editing ? 'Edit run' : 'Log a run'} />
+      <Header above={info.title} title={editing ? `Edit ${noun}` : `Log ${info.noun}`} />
 
       <Segmented
-        options={[
-          { value: 'outdoor', label: 'Outdoor' },
-          { value: 'treadmill', label: 'Treadmill' },
-        ]}
+        options={info.places.map((p) => ({ value: p.id, label: p.label }))}
         value={place}
         onChange={setPlace}
-        accessibilityLabel="Where you ran"
+        accessibilityLabel={`Where you ${sport === 'run' ? 'ran' : sport === 'ride' ? 'rode' : 'swam'}`}
       />
 
       <FormGroup>
         <FormField
           label="Distance"
-          value={km}
-          onChangeText={setKm}
-          placeholder="5.0"
-          keyboardType="decimal-pad"
-          suffix="km"
+          value={distance}
+          onChangeText={setDistance}
+          placeholder={PLACEHOLDER[sport].distance}
+          keyboardType={info.unit === 'm' ? 'number-pad' : 'decimal-pad'}
+          suffix={info.unit}
           autoFocus={!editing}
         />
         <FormField
           label="Time"
           value={time}
           onChangeText={setTime}
-          placeholder="24:05"
+          placeholder={PLACEHOLDER[sport].time}
           keyboardType="numbers-and-punctuation"
         />
       </FormGroup>
 
       <GlassCard radius={22} style={styles.pace}>
-        <Text style={[styles.paceValue, tabular]} accessibilityLabel="Average pace">
-          {distanceM && durationS ? formatPace(paceOf(distanceM, durationS)) : '–:–– /km'}
+        <Text style={[styles.paceValue, tabular]} accessibilityLabel={paceLabel(sport)}>
+          {distanceM && durationS
+            ? paceText(sport, distanceM, durationS)
+            : sport === 'ride'
+              ? '–– km/h'
+              : sport === 'swim'
+                ? '–:–– /100 m'
+                : '–:–– /km'}
         </Text>
-        <Text style={type.small}>Average pace</Text>
+        <Text style={type.small}>{paceLabel(sport)}</Text>
       </GlassCard>
       {h ? <FieldHint text={h.text} error={h.error} /> : null}
 
@@ -220,7 +260,7 @@ export default function LogRun() {
         {start.trim() && !clock ? (
           <FieldHint text="Type the start time as 07:30." error />
         ) : inFuture ? (
-          <FieldHint text="That run would end in the future." error />
+          <FieldHint text={`That ${noun} would end in the future.`} error />
         ) : (
           <FieldHint
             text={
@@ -244,21 +284,23 @@ export default function LogRun() {
             keyboardType="number-pad"
             suffix="bpm"
           />
-          <FormField
-            label="Elevation gain"
-            labelWidth={124}
-            value={elevation}
-            onChangeText={setElevation}
-            placeholder="—"
-            keyboardType="number-pad"
-            suffix="m"
-          />
+          {sport !== 'swim' ? (
+            <FormField
+              label="Elevation gain"
+              labelWidth={124}
+              value={elevation}
+              onChangeText={setElevation}
+              placeholder="—"
+              keyboardType="number-pad"
+              suffix="m"
+            />
+          ) : null}
           <FormField
             label="Note"
             labelWidth={124}
             value={note}
             onChangeText={setNote}
-            placeholder="Easy run, intervals…"
+            placeholder={PLACEHOLDER[sport].note}
             maxLength={200}
           />
         </FormGroup>
@@ -275,8 +317,8 @@ export default function LogRun() {
       </View>
 
       <FillButton
-        label={editing ? 'Save changes' : 'Save run'}
-        icon={Footprints}
+        label={editing ? 'Save changes' : `Save ${noun}`}
+        icon={SPORT_ICONS[sport]}
         ready={ready}
         disabled={!ready}
         onPress={save}

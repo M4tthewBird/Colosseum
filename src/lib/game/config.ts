@@ -159,6 +159,60 @@ export const RUN = {
   maxStrength: 5,
 } as const;
 
+/**
+ * Cycling and swimming (Matyáš, 2026-11-27): the same rules as running with their own numbers
+ * (docs/GAME.md §11, src/lib/cardio.ts). Paces are seconds per km. The database repeats the limits
+ * (supabase/updates/2026-11-27-cardio.sql).
+ */
+export const RIDE = {
+  /** A ride counts from this distance or this duration. */
+  minDistanceM: 10000,
+  minDurationS: 30 * 60,
+  /** Faster than 60 km/h on average is not a ride; slower than 10 km/h is not training. */
+  fastest: [[0, 60]] as [number, number][],
+  slowest: 360,
+  maxDistanceM: 400000,
+  maxDurationS: 16 * 3600,
+  distanceSlack: 1.05,
+  unusualGain: 0.1,
+  unusualMinRuns: 2,
+  baselineDays: 21,
+  /** Strength laurels from the best average speed (km/h) of a ride from this distance, in the
+   * last strengthDays: (speed − base) ÷ step, at most 5 (35 km/h gives 5). */
+  strengthMinM: 20000,
+  strengthDays: 90,
+  strengthBase: 20,
+  strengthStep: 3,
+  maxStrength: 5,
+} as const;
+
+export const SWIM = {
+  minDistanceM: 750,
+  minDurationS: 20 * 60,
+  /** Nobody swims faster than the world records (seconds per km from a distance on); slower
+   * than 4:00 per 100 m is not swimming. */
+  fastest: [
+    [0, 460],
+    [400, 540],
+    [1500, 570],
+    [5000, 620],
+  ] as [number, number][],
+  slowest: 2400,
+  maxDistanceM: 30000,
+  maxDurationS: 12 * 3600,
+  distanceSlack: 1.05,
+  unusualGain: 0.1,
+  unusualMinRuns: 2,
+  baselineDays: 21,
+  /** Strength laurels from the best pace per 100 m of a swim from this distance, in the last
+   * strengthDays: (base − pace) ÷ step, at most 5 (1:30 per 100 m gives 5). */
+  strengthMinM: 400,
+  strengthDays: 90,
+  strengthBase: 180,
+  strengthStep: 18,
+  maxStrength: 5,
+} as const;
+
 /** Gear raises a member's war points by up to this share. */
 export const GEAR = { maxWarBonus: 0.15 } as const;
 

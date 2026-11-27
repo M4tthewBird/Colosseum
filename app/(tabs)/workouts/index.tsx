@@ -4,15 +4,13 @@ import { Text, View } from 'react-native';
 
 import { FillButton, TextButton } from '@/components/Buttons';
 import { GlassCard } from '@/components/Glass';
-import { Footprints } from '@/components/icons';
 import { ListGroup, SectionHeader } from '@/components/List';
 import { Header, Screen } from '@/components/Screen';
 import { TourTarget } from '@/features/onboarding/TourTarget';
-import { SavedWorkouts } from '@/features/programs/SavedWorkouts';
 import { useActiveProgram, useFinishedSessions } from '@/features/training/hooks';
 import { MonthCalendar } from '@/features/training/MonthCalendar';
 import { SessionRow } from '@/features/training/SessionRow';
-import { UpNextCard } from '@/features/training/UpNextCard';
+import { WorkoutCards } from '@/features/training/WorkoutCards';
 import { programWeek } from '@/lib/programs';
 import { useData } from '@/stores/data';
 import { usePendingIds, useQueue } from '@/stores/queue';
@@ -47,15 +45,7 @@ export default function Workouts() {
           </TourTarget>
         }
       />
-      <UpNextCard variant="workouts" />
-      <TourTarget id="workouts-run">
-        <FillButton
-          label="Log a run"
-          icon={Footprints}
-          onPress={() => router.push({ pathname: '/run/[id]', params: { id: 'new' } })}
-        />
-      </TourTarget>
-      <SavedWorkouts />
+      <WorkoutCards />
       <MonthCalendar sessions={sessions} />
 
       <View style={{ gap: 8 }}>

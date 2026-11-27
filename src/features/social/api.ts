@@ -16,12 +16,13 @@ import {
   DEMO_TRAINING_NOW,
   DEMO_USERS,
   demoUser,
+  DEMO_CARDIO,
   DEMO_RUNS,
 } from '@/dev/seed';
 import { demoTogetherCount } from '@/features/together/api';
 import { addDays, startOfMonth, startOfWeek, toLocalDate } from '@/lib/dates';
 import { dotsCoefficient, e1rm, volume } from '@/lib/formulas';
-import { isRunMetric, isTimeMetric, runMetricValue } from '@/lib/running';
+import { cardioMetricValue, isCardioMetric, isCardioTimeMetric } from '@/lib/cardio';
 import { finished } from '@/lib/stats';
 import { isDemo, supabase } from '@/lib/supabase';
 import type { Gym, PublicUser, Session, SetEntry } from '@/lib/types';
@@ -223,7 +224,7 @@ function myValue(metric: string, period: ArenaPeriod): number | null {
   if (metric === 'volume') return sessions.reduce((sum, s) => sum + volume(s.sets), 0);
   if (metric === 'workouts') return sessions.length;
   if (metric === 'together') return demoTogetherCount() || null;
-  if (isRunMetric(metric)) return runMetricValue(metric, sessions);
+  if (isCardioMetric(metric)) return cardioMetricValue(metric, sessions);
   let best = 0;
   for (const s of sessions)
     for (const x of s.sets)
@@ -234,7 +235,7 @@ function myValue(metric: string, period: ArenaPeriod): number | null {
 /** True when the metric is a lift (ranked by e1RM), not a count of volume or workouts or a run. */
 export function isLiftMetric(metric: string): boolean {
   return (
-    metric !== 'volume' && metric !== 'workouts' && metric !== 'together' && !isRunMetric(metric)
+    metric !== 'volume' && metric !== 'workouts' && metric !== 'together' && !isCardioMetric(metric)
   );
 }
 
@@ -293,7 +294,16 @@ function demoLeaderboard(key: string, period: ArenaPeriod, global = false): Rank
     if (metric === 'volume') value = st.weekVolume * scale;
     else if (metric === 'workouts') value = Math.round(st.workouts * scale);
     else if (metric === 'together') value = DEMO_TOGETHER_COUNTS[u.username] ?? null;
-    else if (isRunMetric(metric)) {
+    else if (metric.startsWith('ride_') || metric.startsWith('swim_')) {
+      const c = DEMO_CARDIO[u.username];
+      if (c)
+        value =
+          metric === 'ride_40k'
+            ? c.ride40k
+            : metric === 'swim_1500'
+              ? c.swim1500
+              : (metric === 'ride_km' ? c.rideKm : c.swimKm) * scale || null;
+    } else if (isCardioMetric(metric)) {
       const r = DEMO_RUNS[u.username];
       if (r)
         value =
@@ -330,7 +340,7 @@ function demoLeaderboard(key: string, period: ArenaPeriod, global = false): Rank
       value: mine,
     });
   }
-  if (isTimeMetric(metric)) rows.sort((a, b) => (a.value ?? 0) - (b.value ?? 0));
+  if (isCardioTimeMetric(metric)) rows.sort((a, b) => (a.value ?? 0) - (b.value ?? 0));
   else rows.sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
   return rows.map((r, i) => ({
     ...r,
@@ -681,7 +691,8 @@ export interface FeedItem {
   finished_at: string;
   volume_kg: number;
   pr_count: number;
-  /** A run: distance and time instead of volume. */
+  /** Cardio: what it was, and distance and time instead of volume. */
+  kind?: 'lift' | 'run' | 'ride' | 'swim';
   distance_m?: number | null;
   duration_s?: number | null;
   likes: number;
@@ -757,8 +768,9 @@ export function useFeed() {
         finished_at: r.finished_at,
         volume_kg: Number(r.volume_kg),
         pr_count: r.pr_count,
-        distance_m: r.kind === 'run' ? r.distance_m : null,
-        duration_s: r.kind === 'run' ? r.duration_s : null,
+        kind: (r.kind ?? 'lift') as FeedItem['kind'],
+        distance_m: r.kind && r.kind !== 'lift' ? r.distance_m : null,
+        duration_s: r.kind && r.kind !== 'lift' ? r.duration_s : null,
         likes: r.session_likes[0]?.count ?? 0,
         liked: liked.has(r.id),
         comments: r.session_comments[0]?.count ?? 0,

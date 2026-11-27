@@ -96,11 +96,11 @@ const SHOW: Record<FeatureId, () => void> = {
   generate: () =>
     showGuide([
       {
-        route: '/workouts',
+        route: '/workouts/gym',
         target: 'workouts-generate',
         radius: 27,
         title: 'Generate a workout',
-        body: 'It starts here, in Workouts. Let’s build one together.',
+        body: 'It starts here, in Workouts → Gym. Let’s build one together.',
       },
       {
         route: { pathname: '/generate', params: { preset: 'full' } },

@@ -132,20 +132,21 @@ export interface Session {
   /** Effort of the whole workout, 1–10, rated after finishing. */
   rpe?: number | null;
   feel?: Feel | null;
-  /** 'run' for a logged run (no sets); missing or 'lift' for a lifting workout. */
-  kind?: 'lift' | 'run';
-  /** Run only. */
+  /** 'run', 'ride' or 'swim' for logged cardio (no sets); missing or 'lift' for lifting. */
+  kind?: 'lift' | 'run' | 'ride' | 'swim';
+  /** Cardio only (cardio.ts). */
   distance_m?: number | null;
   duration_s?: number | null;
   run_place?: RunPlace | null;
   elevation_m?: number | null;
-  /** Run only, private like rpe and feel (session_ratings). */
+  /** Cardio only, private like rpe and feel (session_ratings). */
   avg_hr?: number | null;
   updated_at: string;
   sets: SetEntry[];
 }
 
-export type RunPlace = 'outdoor' | 'treadmill';
+/** Where: a run outdoor or on a treadmill, a ride outdoor or indoor, a swim in a pool or open water. */
+export type RunPlace = 'outdoor' | 'treadmill' | 'indoor' | 'pool' | 'open';
 
 /** The user's own settings for one exercise. */
 export interface ExercisePref {
