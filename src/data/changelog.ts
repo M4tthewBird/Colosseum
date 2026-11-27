@@ -8,6 +8,16 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-11-27',
+    date: '2026-11-27',
+    title: 'A smoother City',
+    items: [
+      'City no longer slows the app down. The smoke and lights move only while you are looking at it.',
+      'A new city starts small: your arena, your home and the barracks. Your arena grows with your tribe’s fortress and your home with your rank.',
+      'Building icons no longer cover building names.',
+    ],
+  },
+  {
     id: '2026-11-26',
     date: '2026-11-26',
     title: 'The game moves to City',

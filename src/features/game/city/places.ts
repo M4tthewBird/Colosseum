@@ -253,19 +253,20 @@ export const EFFECTS: Record<string, Effect[]> = {
   ],
 };
 
-/** The city a player starts with (tiles); pieces the rules refuse are left out. */
+/**
+ * The city a new player starts with (tiles): the tribe's arena, their own home and the
+ * barracks that lead into the ludus (Matyáš, 2026-11-27). Everything else is built later.
+ */
 export const START: [string, number, number][] = [
-  ['arena-4', 0, 0],
-  ['temple-3', 3, 0],
-  ['forge', 0, 3],
-  ['market', 2, 3],
-  ['home-3', -2, 0],
-  ['barracks-3', 0, -2],
-  ['baths', 5, 0],
-  ['tree-cypress', -1, 2],
-  ['statue', 4, 2],
-  ['rack-2', 5, 2],
-  ['tree-pine', 2, -1],
+  ['arena-1', 0, 0],
+  ['home-1', -2, 0],
+  ['barracks-1', 0, -2],
 ];
+
+/** Pieces that grow with the game, not by hand: the arena with the tribe, the home with the rank. */
+export const GROWS: Record<string, string> = {
+  arena: 'Grows with your tribe’s fortress',
+  home: 'Grows with your rank',
+};
 
 export type { Placed };

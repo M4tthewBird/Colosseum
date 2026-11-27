@@ -7,7 +7,7 @@
  * and change with the city.
  */
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
+import { router, useIsFocused } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
@@ -20,6 +20,7 @@ import {
   Text,
   View,
   type LayoutChangeEvent,
+  type ViewStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, {
@@ -49,7 +50,7 @@ import {
   type Placed,
 } from '@/lib/game/cityGrid';
 import { homeStage } from '@/lib/game/attributes';
-import { fortressLevel } from '@/lib/game/fortress';
+import { fortressLevel, fortressStage } from '@/lib/game/fortress';
 import { GEAR_ITEMS, owns } from '@/lib/game/gear';
 import { useGym } from '@/features/social/api';
 import { useData } from '@/stores/data';
@@ -63,6 +64,7 @@ import { startingCity, useCityLayout } from './layout';
 import { CITY_PAVING, CITY_PIECES, CITY_RATIO, CITY_TILE } from './pieces';
 import {
   EFFECTS,
+  GROWS,
   levelsOf,
   PALETTE,
   PIECE,
@@ -90,6 +92,8 @@ const TH = TW / CITY_RATIO;
 const THICK = 12;
 const PAVE = 512;
 const BUILD_MS = 1300;
+/** On the web the panned map gets its own compositor layer, so dragging it repaints nothing. */
+const WEB_LAYER = Platform.OS === 'web' ? ({ willChange: 'transform' } as object) : null;
 
 type Mode = 'view' | 'build';
 
@@ -230,6 +234,17 @@ export function PaintedCity() {
   const gym = useGym(gymId).data?.gym;
   const game = useMyGame();
   const statuses = useStatuses();
+  const focused = useIsFocused();
+  const tribe = useFortress('gym', gymId).data;
+  // the arena and the home are drawn as the game has them: the tribe's fortress, the player's rank
+  const arenaId = `arena-${fortressStage(tribe ? fortressLevel(tribe.buildings, new Date()) : 0) + 1}`;
+  const homeId = `home-${homeStage(game.rank.id) + 1}`;
+  const pictureOf = (id: string) => {
+    const family = PIECE[id]?.family;
+    if (family === 'arena' && CITY_PIECES[arenaId]) return arenaId;
+    if (family === 'home' && CITY_PIECES[homeId]) return homeId;
+    return id;
+  };
   const [city, setCity] = useCityLayout();
   const root = useMemo(() => city.find((p) => PIECE[p.id]?.family === 'arena') ?? city[0], [city]);
 
@@ -410,18 +425,50 @@ export function PaintedCity() {
   const gh = Math.max(1, ...corners.map((c) => c[1])) - gy + THICK + 4;
   const sel = city.find((p) => p.key === chosen) ?? null;
 
-  const sides: string[] = [];
+  // the ground as single paths: every tile's diamond, and the earth under the outer front edges
+  const pt = (p: [number, number]) => `${p[0].toFixed(1)},${p[1].toFixed(1)}`;
+  let groundPath = '';
+  let earthLeft = '';
+  let earthRight = '';
   for (const k of tiles.keys()) {
     const [i, j] = parseTile(k);
+    const T = gridPoint(i, j, z);
     const L = gridPoint(i, j + 1, z);
     const B = gridPoint(i + 1, j + 1, z);
     const R = gridPoint(i + 1, j, z);
+    groundPath += `M${pt(T)}L${pt(R)}L${pt(B)}L${pt(L)}Z`;
     if (!tiles.has(`${i},${j + 1}`))
-      sides.push(`L${L} ${B} ${B[0]},${B[1] + THICK} ${L[0]},${L[1] + THICK}`);
+      earthLeft += `M${pt(L)}L${pt(B)}L${pt([B[0], B[1] + THICK])}L${pt([L[0], L[1] + THICK])}Z`;
     if (!tiles.has(`${i + 1},${j}`))
-      sides.push(`R${B} ${R} ${R[0]},${R[1] + THICK} ${B[0]},${B[1] + THICK}`);
+      earthRight += `M${pt(B)}L${pt(R)}L${pt([R[0], R[1] + THICK])}L${pt([B[0], B[1] + THICK])}Z`;
   }
   const pave = (TW * z) / 2 / PAVE;
+
+  // the places with a pin, back to front by where they stand, the chosen one on top
+  const pins: Pin[] = shown
+    .flatMap((p) => {
+      const place = placeOf(p.id);
+      if (!place || building[p.key] != null) return [];
+      const b = spriteBox(p, pictureOf(p.id), z);
+      const status = statuses[place.id];
+      const title =
+        place.id === 'clan' && status?.text && !status.text.startsWith('Join')
+          ? status.text.split(' · ')[0]
+          : place.title;
+      return [
+        {
+          key: p.key,
+          place,
+          title,
+          status,
+          on: p.key === chosen,
+          x: b.left + b.width / 2,
+          y: b.top + b.height * 0.18,
+          depth: p.i + p.j + sizeOf(p.id),
+        },
+      ];
+    })
+    .sort((a, b) => Number(a.on) - Number(b.on) || a.depth - b.depth);
 
   // ── the bottom panel ──
   const panelBottom = insets.bottom + space.tabBarBottom + space.tabBarHeight + 12;
@@ -436,6 +483,7 @@ export function PaintedCity() {
         <Animated.View
           style={[
             styles.layer,
+            WEB_LAYER,
             { transform: [{ translateX: map.pan.x }, { translateY: map.pan.y }] },
           ]}
         >
@@ -454,26 +502,11 @@ export function PaintedCity() {
               ) : null}
             </Defs>
             <G transform={`translate(${-gx} ${-gy})`}>
-              {sides.map((s) => (
-                <Polygon key={s} points={s.slice(1)} fill={s[0] === 'L' ? '#7A5A3A' : '#5E4329'} />
-              ))}
-              {[...tiles.keys()].map((k) => {
-                const [i, j] = parseTile(k);
-                const pts = diamond(i, j, 1, z);
-                return (
-                  <G key={k}>
-                    <Polygon points={pts} fill="#B9AE9B" stroke="#B9AE9B" strokeWidth={0.6} />
-                    {CITY_PAVING ? (
-                      <Polygon
-                        points={pts}
-                        fill="url(#pave)"
-                        stroke="url(#pave)"
-                        strokeWidth={0.6}
-                      />
-                    ) : null}
-                  </G>
-                );
-              })}
+              {/* the earth sides and the paving, each one shape: cheap to paint while panning */}
+              <Path d={earthLeft} fill="#7A5A3A" />
+              <Path d={earthRight} fill="#5E4329" />
+              <Path d={groundPath} fill="#B9AE9B" stroke="#B9AE9B" strokeWidth={0.8} />
+              {CITY_PAVING ? <Path d={groundPath} fill="url(#pave)" /> : null}
               {[...edge].map((k) => {
                 const [i, j] = parseTile(k);
                 return (
@@ -513,7 +546,7 @@ export function PaintedCity() {
             const picture =
               scaffold && CITY_PIECES[`scaffold-${sizeOf(p.id)}`]
                 ? `scaffold-${sizeOf(p.id)}`
-                : p.id;
+                : pictureOf(p.id);
             const b = spriteBox(p, picture, z);
             return (
               <View
@@ -536,8 +569,9 @@ export function PaintedCity() {
                   />
                 </Drop>
                 {scaffold ? <BuildBar width={b.width} /> : null}
-                {!scaffold && p.key !== -1 && !reduced
-                  ? (EFFECTS[p.id] ?? []).map((fx, n) => (
+                {/* light, fire and smoke only while the city is on screen and not being edited */}
+                {!scaffold && p.key !== -1 && !reduced && focused && mode === 'view'
+                  ? (EFFECTS[picture] ?? []).map((fx, n) => (
                       <EffectView key={n} fx={fx} scale={b.scale} />
                     ))
                   : null}
@@ -545,57 +579,16 @@ export function PaintedCity() {
             );
           })}
 
+          {/* pins: every icon first, then every label above them (back to front, the chosen
+              one last), so no icon ever covers a label. A phone shows no labels: the sheet below
+              names the chosen building, and a label there would cover its neighbours' icons */}
           {mode === 'view'
-            ? shown.map((p) => {
-                const place = placeOf(p.id);
-                if (!place || building[p.key] != null) return null;
-                const b = spriteBox(p, p.id, z);
-                const status = statuses[place.id];
-                const on = p.key === chosen;
-                return (
-                  <Pressable
-                    key={`pin${p.key}`}
-                    accessibilityRole="button"
-                    accessibilityLabel={`${place.title}, ${status?.text ?? ''}`}
-                    onPress={() => setSelected(p.key)}
-                    style={[
-                      styles.pin,
-                      { left: b.left + b.width / 2 - 17, top: b.top + b.height * 0.18 - 17 },
-                    ]}
-                  >
-                    <View
-                      style={[
-                        styles.pinDot,
-                        on && styles.pinDotOn,
-                        status?.hot && !on && { borderColor: red },
-                      ]}
-                    >
-                      <PlaceIcon place={place} color={on ? '#fff' : red} />
-                    </View>
-                    {wide || on ? (
-                      <View style={[styles.pinLabel, on && styles.pinLabelOn]}>
-                        <Text style={[styles.pinTitle, on && { color: paper }]} numberOfLines={1}>
-                          {place.id === 'clan' && status?.text && !status.text.startsWith('Join')
-                            ? status.text.split(' · ')[0]
-                            : place.title}
-                        </Text>
-                        {status ? (
-                          <Text
-                            style={[
-                              styles.pinStatus,
-                              on && { color: 'rgba(242,235,219,0.75)' },
-                              status.hot && !on && { color: red },
-                            ]}
-                            numberOfLines={1}
-                          >
-                            {status.text}
-                          </Text>
-                        ) : null}
-                      </View>
-                    ) : null}
-                  </Pressable>
-                );
-              })
+            ? pins.map((pin) => <PinDot key={`dot${pin.key}`} pin={pin} onPress={setSelected} />)
+            : null}
+          {mode === 'view' && wide
+            ? pins.map((pin) => (
+                <PinLabel key={`label${pin.key}`} pin={pin} onPress={setSelected} />
+              ))
             : null}
         </Animated.View>
       </View>
@@ -614,7 +607,9 @@ export function PaintedCity() {
             : 'A new building has to touch the city'}
         </Text>
         <View style={styles.testing}>
-          <Text style={styles.testingText}>IN TESTING PHASE, THINGS WILL CHANGE</Text>
+          <Text style={styles.testingText} numberOfLines={1}>
+            IN TESTING PHASE, THINGS WILL CHANGE
+          </Text>
         </View>
       </View>
       <View style={[styles.topRight, { top: insets.top + 12 }]}>
@@ -654,6 +649,7 @@ export function PaintedCity() {
           <ViewSheet
             narrow={!wide}
             piece={sel}
+            picture={sel ? pictureOf(sel.id) : null}
             statuses={statuses}
             onEnter={enterPlace}
             onEdit={() => {
@@ -723,6 +719,70 @@ export function PaintedCity() {
 
 // ───────────── pieces of the screen ─────────────
 
+interface Pin {
+  key: number;
+  place: Place;
+  title: string;
+  status?: { text: string; hot?: boolean };
+  on: boolean;
+  /** Where the icon's centre goes, on the map. */
+  x: number;
+  y: number;
+  depth: number;
+}
+
+function PinDot({ pin, onPress }: { pin: Pin; onPress: (key: number) => void }) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${pin.title}, ${pin.status?.text ?? ''}`}
+      onPress={() => onPress(pin.key)}
+      style={[styles.pin, { left: pin.x - 17, top: pin.y - 17 }]}
+    >
+      <View
+        style={[
+          styles.pinDot,
+          pin.on && styles.pinDotOn,
+          pin.status?.hot && !pin.on && { borderColor: red },
+        ]}
+      >
+        <PlaceIcon place={pin.place} color={pin.on ? '#fff' : red} />
+      </View>
+    </Pressable>
+  );
+}
+
+/** The label right of its icon, in the layer above every icon. */
+function PinLabel({ pin, onPress }: { pin: Pin; onPress: (key: number) => void }) {
+  return (
+    <Pressable
+      accessible={false}
+      onPress={() => onPress(pin.key)}
+      style={[
+        styles.pinLabel,
+        pin.on && styles.pinLabelOn,
+        { position: 'absolute', left: pin.x + 25, top: pin.y - 19 },
+      ]}
+    >
+      <Text style={[styles.pinTitle, pin.on && { color: paper }]} numberOfLines={1}>
+        {pin.title}
+      </Text>
+      {pin.status ? (
+        <Text
+          style={[
+            styles.pinStatus,
+            pin.on && { color: 'rgba(242,235,219,0.75)' },
+            pin.status.hot && !pin.on && { color: red },
+          ]}
+          numberOfLines={1}
+        >
+          {pin.status.text}
+        </Text>
+      ) : null}
+    </Pressable>
+  );
+}
+
 /** The place's icon, drawn like lucide's (24 × 24, stroke 2). */
 function PlaceIcon({ place, color }: { place: Place; color: string }) {
   const paths: Record<string, string[]> = {
@@ -786,6 +846,7 @@ function PlaceIcon({ place, color }: { place: Place; color: string }) {
 
 function ViewSheet({
   piece,
+  picture,
   statuses,
   onEnter,
   onEdit,
@@ -793,20 +854,22 @@ function ViewSheet({
 }: {
   narrow: boolean;
   piece: Placed | null;
+  /** The picture drawn for it (the arena and the home follow the game). */
+  picture: string | null;
   statuses: Record<string, { text: string; hot?: boolean }>;
   onEnter: (p: Place) => void;
   onEdit: () => void;
 }) {
   const place = piece ? placeOf(piece.id) : null;
   const levels = piece ? levelsOf(piece.id) : [];
-  const at = piece ? levels.findIndex((l) => l.id === piece.id) : -1;
+  const at = piece ? levels.findIndex((l) => l.id === (picture ?? piece.id)) : -1;
   return (
     <View style={[styles.sheet, narrow && { flexDirection: 'column', alignItems: 'stretch' }]}>
       {piece && place ? (
         <View style={styles.sheetMain}>
           <View style={styles.thumb}>
             <Image
-              source={CITY_PIECES[piece.id].image}
+              source={CITY_PIECES[picture ?? piece.id].image}
               style={styles.thumbImg}
               contentFit="cover"
               contentPosition="center"
@@ -875,7 +938,8 @@ function BuildActions({
 }) {
   const levels = levelsOf(piece.id);
   const at = levels.findIndex((l) => l.id === piece.id);
-  const canUp = levels.length > 1 && at < levels.length - 1 && !busy;
+  const grows = GROWS[PIECE[piece.id]?.family ?? ''];
+  const canUp = !grows && levels.length > 1 && at < levels.length - 1 && !busy;
   return (
     <View style={{ gap: 10 }}>
       <View style={styles.row}>
@@ -885,7 +949,11 @@ function BuildActions({
           </Text>
           <Text style={styles.text}>
             {`${sizeOf(piece.id)}×${sizeOf(piece.id)}`}
-            {levels.length > 1 ? ` · level ${at + 1} of ${levels.length}` : ''}
+            {grows
+              ? ` · ${grows}`
+              : levels.length > 1
+                ? ` · level ${at + 1} of ${levels.length}`
+                : ''}
           </Text>
         </View>
         <IconButton icon={X} size={40} accessibilityLabel="Close" onPress={onClose} />
@@ -920,7 +988,6 @@ function BuildActions({
 
 const TABS: { id: CityGroup; label: string }[] = [
   { id: 'building', label: 'Buildings' },
-  { id: 'machine', label: 'Machines' },
   { id: 'decor', label: 'Decor' },
 ];
 function Palette({
@@ -1037,8 +1104,169 @@ function BuildBar({ width }: { width: number }) {
   );
 }
 
-/** Light, fire and smoke over a picture (PAINTED-UI §5), all on one looping clock. */
-function EffectView({ fx, scale }: { fx: Effect; scale: number }) {
+/**
+ * Light, fire and smoke over a picture (PAINTED-UI §5). On the web they are CSS animations, which
+ * the browser runs off the main thread; JavaScript-driven loops there made the whole app stutter.
+ */
+function EffectView(props: { fx: Effect; scale: number }) {
+  return Platform.OS === 'web' ? <WebEffect {...props} /> : <NativeEffect {...props} />;
+}
+
+type Frames = Record<string, { opacity?: number; transform?: object[] }>;
+const move = (x: number, y: number, s: number) => [
+  { translateX: x },
+  { translateY: y },
+  { scale: s },
+];
+
+/**
+ * The web's keyframes. React Native Web turns `animationKeyframes` into CSS only in StyleSheet
+ * styles, so they live here at one size; a wrapper scales the smoke with the map.
+ */
+const WEB_FX =
+  Platform.OS === 'web'
+    ? StyleSheet.create({
+        puffA: {
+          animationKeyframes: [
+            {
+              '0%': { opacity: 0, transform: move(0, 0, 0.4) },
+              '8%': { opacity: 0.8 },
+              '40%': { opacity: 0.6, transform: move(18, -66, 1.4) },
+              '70%': { opacity: 0.35, transform: move(44, -118, 2.3) },
+              '100%': { opacity: 0, transform: move(72, -170, 3.3) },
+            } satisfies Frames,
+          ],
+          animationDuration: '6s',
+          animationTimingFunction: 'cubic-bezier(0.3, 0.1, 0.6, 1)',
+          animationIterationCount: 'infinite',
+        } as unknown as ViewStyle,
+        puffB: {
+          animationKeyframes: [
+            {
+              '0%': { opacity: 0, transform: move(0, 0, 0.35) },
+              '10%': { opacity: 0.7 },
+              '35%': { transform: move(4, -58, 1.2) },
+              '65%': { opacity: 0.35, transform: move(30, -112, 2.1) },
+              '100%': { opacity: 0, transform: move(58, -176, 3.1) },
+            } satisfies Frames,
+          ],
+          animationDuration: '6.8s',
+          animationTimingFunction: 'cubic-bezier(0.3, 0.1, 0.6, 1)',
+          animationIterationCount: 'infinite',
+        } as unknown as ViewStyle,
+        glow: {
+          animationKeyframes: [
+            {
+              '0%': { opacity: 0.35, transform: [{ scale: 0.96 }] },
+              '100%': { opacity: 0.9, transform: [{ scale: 1.04 }] },
+            },
+          ],
+          animationDuration: '2.6s',
+          animationDirection: 'alternate',
+          animationTimingFunction: 'ease-in-out',
+          animationIterationCount: 'infinite',
+        } as unknown as ViewStyle,
+        fire: {
+          animationKeyframes: [
+            {
+              '0%': { opacity: 0.55 },
+              '18%': { opacity: 1 },
+              '33%': { opacity: 0.45 },
+              '52%': { opacity: 0.95 },
+              '71%': { opacity: 0.6 },
+              '86%': { opacity: 0.85 },
+              '100%': { opacity: 0.55 },
+            },
+          ],
+          animationDuration: '1.3s',
+          animationTimingFunction: 'steps(1)',
+          animationIterationCount: 'infinite',
+        } as unknown as ViewStyle,
+      })
+    : null;
+
+function WebEffect({ fx, scale }: { fx: Effect; scale: number }) {
+  if (!WEB_FX) return null;
+  if (fx.kind === 'smoke') {
+    // the puffs at one size, around the chimney; the wrapper grows them with the map
+    const k = scale * 2.4;
+    return (
+      <View
+        style={{
+          position: 'absolute',
+          left: fx.x * scale,
+          top: fx.y * scale,
+          width: 0,
+          height: 0,
+          transform: [{ scale: k }],
+        }}
+      >
+        {[0, 1, 2, 3, 4, 5, 6, 7].map((n) => {
+          const s = [9, 11, 14][n % 3];
+          return (
+            <View
+              key={n}
+              style={[
+                {
+                  position: 'absolute',
+                  left: -s / 2,
+                  top: -s / 2,
+                  width: s,
+                  height: s,
+                  opacity: 0,
+                },
+                n % 2 ? WEB_FX.puffB : WEB_FX.puffA,
+                { animationDelay: `${-0.72 * n}s` } as unknown as ViewStyle,
+              ]}
+            >
+              <Soft color="#A09E98" size={s} />
+            </View>
+          );
+        })}
+      </View>
+    );
+  }
+  const w = fx.w * scale;
+  const h = fx.h * scale;
+  return (
+    <View
+      style={[
+        {
+          position: 'absolute',
+          left: fx.x * scale - w / 2,
+          top: fx.y * scale - h / 2,
+          width: w,
+          height: h,
+        },
+        fx.kind === 'glow' ? WEB_FX.glow : WEB_FX.fire,
+      ]}
+    >
+      <Glow kind={fx.kind} w={w} h={h} />
+    </View>
+  );
+}
+
+function Glow({ kind, w, h }: { kind: 'glow' | 'fire'; w: number; h: number }) {
+  return (
+    <Svg width={w} height={h}>
+      <Defs>
+        <RadialGradient id={`g${kind}`} cx="50%" cy="50%" r="50%">
+          <Stop offset="0" stopColor={kind === 'glow' ? '#FFD682' : '#FFC85A'} stopOpacity={0.85} />
+          <Stop
+            offset="0.55"
+            stopColor={kind === 'glow' ? '#FFAA46' : '#FF781E'}
+            stopOpacity={0.45}
+          />
+          <Stop offset="1" stopColor="#FFAA46" stopOpacity={0} />
+        </RadialGradient>
+      </Defs>
+      <Ellipse cx={w / 2} cy={h / 2} rx={w / 2} ry={h / 2} fill={`url(#g${kind})`} />
+    </Svg>
+  );
+}
+
+/** The phone apps: the same effects with the native driver, off the JavaScript thread. */
+function NativeEffect({ fx, scale }: { fx: Effect; scale: number }) {
   const [clock] = useState(() => new Animated.Value(0));
   useEffect(() => {
     const loop = Animated.loop(
@@ -1169,6 +1397,8 @@ const styles = StyleSheet.create({
   sub: { fontSize: 13, color: inkMuted },
   testing: {
     alignSelf: 'flex-start',
+    // the box may run under the denarii pill, which sits higher; one line on a phone
+    marginRight: -104,
     marginTop: 6,
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -1177,7 +1407,7 @@ const styles = StyleSheet.create({
     borderColor: red,
     backgroundColor: 'rgba(185,28,28,0.08)',
   },
-  testingText: { fontSize: 10.5, fontWeight: '700', letterSpacing: 0.8, color: red },
+  testingText: { fontSize: 10.5, fontWeight: '700', letterSpacing: 0.6, color: red },
   topRight: { position: 'absolute', right: 16, flexDirection: 'row', gap: 8 },
   zoom: { position: 'absolute', right: 16, gap: 8 },
   pin: { position: 'absolute', flexDirection: 'row', alignItems: 'center', gap: 8 },
