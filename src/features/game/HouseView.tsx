@@ -2,6 +2,7 @@
  * City → Your domus, at the top: your own house (docs/GAME.md §5a). You upgrade it with your own
  * hours (time at the gym from verified visits) and build a few things by it.
  */
+import { router } from 'expo-router';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { FillButton } from '@/components/Buttons';
@@ -11,6 +12,7 @@ import {
   Dumbbell,
   Droplets,
   Grape,
+  Hammer,
   Hourglass,
   House as HouseIcon,
   Landmark,
@@ -143,6 +145,11 @@ export function HouseView() {
           ) : (
             <Text style={type.caption}>Your house is a palace. There is nothing grander.</Text>
           )}
+          <FillButton
+            label="Build around your house"
+            icon={Hammer}
+            onPress={() => router.push({ pathname: '/city/ground', params: { kind: 'home' } })}
+          />
         </View>
       </GlassCard>
 

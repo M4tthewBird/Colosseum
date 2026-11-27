@@ -106,4 +106,5 @@ export { default as Bath } from 'lucide-react-native/icons/bath';
 export { default as Store } from 'lucide-react-native/icons/store';
 export { default as Map } from 'lucide-react-native/icons/map';
 export { default as Minus } from 'lucide-react-native/icons/minus';
+export { default as Move } from 'lucide-react-native/icons/move';
 export { default as Maximize2 } from 'lucide-react-native/icons/maximize-2';

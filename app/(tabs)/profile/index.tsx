@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { SlidersHorizontal } from '@/components/icons';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Avatar } from '@/components/Avatar';
@@ -12,6 +12,7 @@ import { BadgeGrid } from '@/features/badges/BadgeViews';
 import { useMyBadges } from '@/features/badges/hooks';
 import { useGameOn } from '@/features/game/gameMode';
 import { LevelLine, XpBar } from '@/features/game/GameViews';
+import { GladiatorView } from '@/features/game/GladiatorView';
 import { useMyGame } from '@/features/game/hooks';
 import { TourTarget } from '@/features/onboarding/TourTarget';
 import { BodyView } from '@/features/profile/BodyView';
@@ -24,8 +25,9 @@ import { useFinishedSessions } from '@/features/training/hooks';
 import { useData } from '@/stores/data';
 import { type } from '@/theme/tokens';
 
-type Section = 'body' | 'lifts' | 'badges';
-const isSection = (s: unknown): s is Section => s === 'body' || s === 'lifts' || s === 'badges';
+type Section = 'body' | 'lifts' | 'badges' | 'gladiator';
+const isSection = (s: unknown): s is Section =>
+  s === 'body' || s === 'lifts' || s === 'badges' || s === 'gladiator';
 
 export default function Profile() {
   const profile = useData((s) => s.profile);
@@ -43,13 +45,11 @@ export default function Profile() {
   const badges = useMyBadges();
   const game = useMyGame();
   const gameOn = useGameOn();
-  // The gladiator moved to City → Your domus: old links (?section=gladiator) go there.
-  useEffect(() => {
-    if (section === 'gladiator') router.replace('/city/domus');
-  }, [section]);
 
   if (!profile) return null;
   const gymName = gym.data?.gym?.name;
+  // the Gladiator section only while the game is on (Matyáš, 2026-11-27: open him from Profile)
+  const shown: Section = tab === 'gladiator' && !gameOn ? 'body' : tab;
 
   return (
     <Screen glow="right" glowTop={-120} gap={14}>
@@ -81,7 +81,7 @@ export default function Profile() {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel={`Your gladiator, level ${game.level}`}
-              onPress={() => router.navigate('/city/domus')}
+              onPress={() => setTab('gladiator')}
               style={{ gap: 6 }}
             >
               <LevelLine level={game.level} />
@@ -96,16 +96,19 @@ export default function Profile() {
             { value: 'body', label: 'Body' },
             { value: 'lifts', label: 'Lifts' },
             { value: 'badges', label: 'Badges' },
+            ...(gameOn ? [{ value: 'gladiator' as const, label: 'Gladiator' }] : []),
           ]}
-          value={tab}
+          value={shown}
           onChange={setTab}
           accessibilityLabel="Profile sections"
         />
       </TourTarget>
-      {tab === 'body' ? (
+      {shown === 'body' ? (
         <BodyView />
-      ) : tab === 'badges' ? (
+      ) : shown === 'badges' ? (
         <BadgeGrid badges={badges} />
+      ) : shown === 'gladiator' ? (
+        <GladiatorView />
       ) : (
         <>
           <WeeklySets sessions={sessions} exercises={exercises} />

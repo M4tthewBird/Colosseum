@@ -22,12 +22,14 @@ export const MAPS = {
     height: 1152,
     margin: 0.06,
   },
+  // rev 2 (Matyáš, 2026-11-27): only the built-up city, edge to edge, with its real streets
   'map-brno': {
     data: 'brno.json',
+    streets: 'brno-streets.json',
     template: 'sablona-brno.png',
-    width: 1536,
-    height: 1536,
-    margin: 0.05,
+    width: 2048,
+    height: 2048,
+    bbox: [16.528, 49.143, 16.688, 49.247],
   },
 };
 
@@ -37,7 +39,14 @@ export function frameOf(id) {
   const { outline } = read(m.data);
   const lngs = outline.map((p) => p[0]);
   const lats = outline.map((p) => p[1]);
-  const [w, e, s, n] = [Math.min(...lngs), Math.max(...lngs), Math.min(...lats), Math.max(...lats)];
+  // a map of a part of a place (a bbox) fills its frame; a whole country sits in it with a margin
+  const [w, s, e, n] = m.bbox ?? [
+    Math.min(...lngs),
+    Math.min(...lats),
+    Math.max(...lngs),
+    Math.max(...lats),
+  ];
+  if (m.bbox) m.margin = 0;
   const k = Math.cos((((s + n) / 2) * Math.PI) / 180);
   const aspect = m.width / m.height;
   // the outline's size in "flat degrees", grown by the margin on both sides
@@ -80,6 +89,7 @@ export function templateSvg(id, { overlay = false } = {}) {
       .map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`)
       .join(' ');
   const ink = overlay ? '#E0261B' : '#3B2F22';
+  const streets = m.streets ? read(m.streets) : null;
   const stroke = Math.round(m.width / 340);
   const rivers = (geo.rivers ?? [])
     .map(
@@ -93,6 +103,27 @@ export function templateSvg(id, { overlay = false } = {}) {
       return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${stroke * 2.2}" fill="${ink}"/>`;
     })
     .join('');
+  if (streets) {
+    // a city map: the whole frame is the city, its streets drawn as dark lines
+    const draw = (lines, width, color, opacity = 1) =>
+      lines
+        .map(
+          (l) =>
+            `<polyline points="${pts(l)}" fill="none" stroke="${color}" stroke-opacity="${opacity}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round"/>`,
+        )
+        .join('');
+    const w1 = m.width / 1000;
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${m.width}" height="${m.height}">${
+      overlay ? '' : '<rect width="100%" height="100%" fill="#E4D9C0"/>'
+    }${overlay ? '' : draw(streets.minor, 1.4 * w1, '#6E5E4A')}${overlay ? '' : draw(streets.mid, 2.6 * w1, '#4E3F30')}${draw(streets.main, (overlay ? 2.4 : 4.4) * w1, ink)}${(
+      geo.rivers ?? []
+    )
+      .map(
+        (r) =>
+          `<polyline points="${pts(r)}" fill="none" stroke="${overlay ? ink : '#3F7FA8'}" stroke-width="${5 * w1}" stroke-linecap="round" stroke-linejoin="round"/>`,
+      )
+      .join('')}${towns}</svg>`;
+  }
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${m.width}" height="${m.height}">${
     overlay ? '' : '<rect width="100%" height="100%" fill="#F2EBDB"/>'
   }<defs><clipPath id="in"><polygon points="${pts(geo.outline)}"/></clipPath></defs><polygon points="${pts(geo.outline)}" fill="${overlay ? 'none' : '#E4D9C0'}" stroke="${ink}" stroke-width="${stroke * 1.6}" stroke-linejoin="round"/><g clip-path="url(#in)">${rivers}</g>${towns}</svg>`;

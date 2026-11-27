@@ -1,9 +1,16 @@
-/** City → Your domus, under your house: the gladiator, rank path, character sheet, wallet and the cell. */
+/** The gladiator, rank path, character sheet, wallet and the cell: Profile → Gladiator, and City → Your domus under the house. */
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { ArtStage, GladiatorArt, StyleArt } from '@/components/art/Art';
+import {
+  ArtStage,
+  CAN_DRESS,
+  DressedGladiator,
+  GladiatorArt,
+  StyleArt,
+} from '@/components/art/Art';
+import { GEAR_SLOTS, worn } from '@/lib/game/gear';
 import { GlassCard } from '@/components/Glass';
 import { Coins, Flame, Hammer, Swords } from '@/components/icons';
 import { ListGroup, ListRow, SectionHeader } from '@/components/List';
@@ -55,7 +62,14 @@ export function GladiatorView() {
           </View>
         }
       >
-        {glad?.style ? (
+        {CAN_DRESS ? (
+          <DressedGladiator
+            outfit={Object.fromEntries(
+              GEAR_SLOTS.map((s) => [s.id, worn(glad?.loadout ?? {}, s.id).id]),
+            )}
+            width={150}
+          />
+        ) : glad?.style ? (
           <StyleArt style={glad.style} width={190} />
         ) : (
           <GladiatorArt rank={game.rank.id} width={190} />

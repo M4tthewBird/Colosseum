@@ -39,6 +39,14 @@ import {
 } from '@/lib/game/fortress';
 import { EMPTY_RECORD, gloriaChange, type WarRecord } from '@/lib/game/gloria';
 import {
+  buyBlock,
+  groundFits,
+  groundMinutes,
+  GROUND_ITEM,
+  type GroundKind,
+  type GroundPiece,
+} from '@/lib/game/grounds';
+import {
   formatMinutes,
   houseItemBlock,
   houseUpgradeBlock,
@@ -116,6 +124,8 @@ const demo = {
   duels: [] as Duel[],
   poster: {} as Record<string, { lat: number; lng: number }>,
   house: { level: 2, minutes: 14 * 60 + 25, items: ['hortus'] } as House,
+  /** Grids: the training grounds and the house, by `${kind}:${owner}`. */
+  grounds: {} as Record<string, GroundPiece[]>,
 };
 
 function demoWars(): War[] {
@@ -642,6 +652,7 @@ function useInvalidateGame() {
     void qc.invalidateQueries({ queryKey: ['wars'] });
     void qc.invalidateQueries({ queryKey: ['duels'] });
     void qc.invalidateQueries({ queryKey: ['house'] });
+    void qc.invalidateQueries({ queryKey: ['ground'] });
   };
 }
 
@@ -900,6 +911,190 @@ export function useBuildHouseItem() {
         return;
       }
       check(await supabase.rpc('build_home_item', { p_item: item }));
+    },
+    onSuccess: done,
+  });
+}
+
+// ───────────── Grids: training grounds and your house (lib/game/grounds.ts) ─────────────
+
+/** Whose grid: a ludus, a gym (tribe), or 'home' (yours). */
+function groundOwner(kind: GroundKind, id: string | null | undefined): string | null {
+  return kind === 'home' ? me() : (id ?? null);
+}
+
+function demoGround(kind: GroundKind, owner: string): GroundPiece[] {
+  const key = `${kind}:${owner}`;
+  if (!demo.grounds[key]) {
+    // the demo ludus has a few things already; its old buildings wait to be placed
+    demo.grounds[key] =
+      kind === 'ludus'
+        ? [
+            { id: stableUuid('g1'), piece: 'palus', i: 3, j: 0 },
+            { id: stableUuid('g2'), piece: 'weapon-rack', i: 3, j: 1 },
+            { id: stableUuid('g3'), piece: 'tree-cypress', i: 0, j: 3 },
+          ]
+        : kind === 'home'
+          ? [{ id: stableUuid('g4'), piece: 'hortus', i: 2, j: 0 }]
+          : [];
+  }
+  return demo.grounds[key];
+}
+
+/** The pieces on a grid (the heart is not one of them). */
+export function useGround(kind: GroundKind, id?: string | null) {
+  const owner = groundOwner(kind, id);
+  return useQuery({
+    queryKey: ['ground', kind, owner],
+    enabled: !!owner,
+    queryFn: async (): Promise<GroundPiece[]> => {
+      if (isDemo) return [...demoGround(kind, owner!)];
+      return check(
+        await supabase
+          .from('ground_pieces')
+          .select('id,piece,i,j')
+          .eq('owner_kind', kind)
+          .eq('owner_id', owner!)
+          .order('placed_at'),
+      ) as GroundPiece[];
+    },
+  });
+}
+
+/** Hours left to build with on this grid, in minutes (in demo mode, read from the demo store). */
+function demoMinutes(kind: GroundKind, owner: string): number {
+  return kind === 'home' ? demo.house.minutes : (demo.treasuries[`${kind}:${owner}`] ?? 0);
+}
+function demoTake(kind: GroundKind, owner: string, minutes: number) {
+  if (demoMinutes(kind, owner) < minutes) throw new Error(`Needs ${Math.ceil(minutes / 60)} h`);
+  if (kind === 'home') demo.house.minutes -= minutes;
+  else demo.treasuries[`${kind}:${owner}`] -= minutes;
+}
+
+export interface GroundSpot {
+  kind: GroundKind;
+  /** The ludus or gym; ignored for your house. */
+  id?: string | null;
+  i: number;
+  j: number;
+}
+
+/** Buys a piece of equipment, a wall or decoration and puts it down. */
+export function useBuyGroundPiece() {
+  const done = useInvalidateGame();
+  return useMutation({
+    mutationFn: async ({ kind, id, i, j, piece }: GroundSpot & { piece: string }) => {
+      const owner = groundOwner(kind, id);
+      if (!owner) throw new Error('Nothing to build on');
+      if (isDemo) {
+        const list = demoGround(kind, owner);
+        const block = buyBlock(kind, list, piece, demoMinutes(kind, owner));
+        if (block) throw new Error(block);
+        if (!groundFits(kind, list, piece, i, j))
+          throw new Error('It has to touch what is built, on free tiles');
+        demoTake(kind, owner, groundMinutes(kind, piece) ?? 0);
+        list.push({ id: stableUuid(`${owner}:${piece}:${i}:${j}:${list.length}`), piece, i, j });
+        if (
+          kind === 'home' &&
+          GROUND_ITEM[piece]?.once &&
+          !demo.house.items.includes(piece as never)
+        )
+          demo.house.items.push(piece as never);
+        return;
+      }
+      check(
+        await supabase.rpc('buy_ground_piece', {
+          p_kind: kind,
+          p_id: owner,
+          p_piece: piece,
+          p_i: i,
+          p_j: j,
+        }),
+      );
+    },
+    onSuccess: done,
+  });
+}
+
+/** Starts a fortress building at a spot on the training ground (its first level). */
+export function useBuildOnGround() {
+  const done = useInvalidateGame();
+  const start = useStartBuilding();
+  return useMutation({
+    mutationFn: async ({ kind, id, i, j, building }: GroundSpot & { building: BuildingId }) => {
+      if (kind === 'home' || !id) throw new Error('Nothing to build on');
+      if (isDemo) {
+        const list = demoGround(kind, id);
+        if (list.some((p) => p.piece === building))
+          throw new Error('It stands already: upgrade it');
+        if (!groundFits(kind, list, building, i, j))
+          throw new Error('It has to touch what is built, on free tiles');
+        await start.mutateAsync({ kind, id, building });
+        list.push({ id: stableUuid(`${id}:${building}`), piece: building, i, j });
+        return;
+      }
+      check(
+        await supabase.rpc('build_on_ground', {
+          p_kind: kind,
+          p_id: id,
+          p_building: building,
+          p_i: i,
+          p_j: j,
+        }),
+      );
+    },
+    onSuccess: done,
+  });
+}
+
+/** Puts down, for free, a building or a thing by the house that was bought before the grids. */
+export function usePlaceOwned() {
+  const done = useInvalidateGame();
+  return useMutation({
+    mutationFn: async ({ kind, id, i, j, piece }: GroundSpot & { piece: string }) => {
+      const owner = groundOwner(kind, id);
+      if (!owner) throw new Error('Nothing to build on');
+      if (isDemo) {
+        const list = demoGround(kind, owner);
+        if (list.some((p) => p.piece === piece)) throw new Error('It stands already');
+        if (!groundFits(kind, list, piece, i, j))
+          throw new Error('It has to touch what is built, on free tiles');
+        list.push({ id: stableUuid(`${owner}:${piece}`), piece, i, j });
+        return;
+      }
+      if (kind === 'home')
+        check(await supabase.rpc('place_home_item', { p_item: piece, p_i: i, p_j: j }));
+      else
+        check(
+          await supabase.rpc('place_built', {
+            p_kind: kind,
+            p_id: owner,
+            p_building: piece,
+            p_i: i,
+            p_j: j,
+          }),
+        );
+    },
+    onSuccess: done,
+  });
+}
+
+/** Moves a piece of your own house. */
+export function useMoveHomePiece() {
+  const done = useInvalidateGame();
+  return useMutation({
+    mutationFn: async ({ pieceId, i, j }: { pieceId: string; i: number; j: number }) => {
+      if (isDemo) {
+        const list = demoGround('home', me());
+        const p = list.find((x) => x.id === pieceId);
+        if (!p) throw new Error('That is not yours');
+        if (!groundFits('home', list, p.piece, i, j, p.id))
+          throw new Error('It has to touch what is built, on free tiles');
+        p.i = i;
+        p.j = j;
+        return;
+      }
+      check(await supabase.rpc('move_home_piece', { p_piece_id: pieceId, p_i: i, p_j: j }));
     },
     onSuccess: done,
   });

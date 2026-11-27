@@ -3,14 +3,16 @@
  * verified visits) and the buildings with their level, what they do, what the next level costs in
  * hours, and the one being built (docs/GAME.md §5).
  */
-import { StyleSheet, Text, View } from 'react-native';
+import { Image } from 'expo-image';
+import { router } from 'expo-router';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { ArtStage, FortressArt } from '@/components/art/Art';
 import { FillButton } from '@/components/Buttons';
 import { ProgressBar } from '@/components/Charts';
 import { Glass, GlassCard } from '@/components/Glass';
 import {
   Anvil,
+  ChevronRight,
   Church,
   Dumbbell,
   Fence,
@@ -36,11 +38,13 @@ import {
   type BuildingId,
   type OwnerKind,
 } from '@/lib/game/fortress';
+import { rootPicture } from '@/lib/game/grounds';
 import { formatMinutes } from '@/lib/game/hours';
 import { useNow } from '@/lib/useNow';
 import { confirm, toast } from '@/stores/ui';
 import { accentA, colors, tabular, type } from '@/theme/tokens';
 import { useFortress, useRepairBuilding, useStartBuilding } from './api';
+import { CITY_PIECES } from './city/pieces';
 
 const ICONS: Record<BuildingId, LucideIcon> = {
   bench: Dumbbell,
@@ -118,16 +122,7 @@ export function FortressView({
 
   return (
     <View style={{ gap: 12 }}>
-      <ArtStage
-        height={200}
-        overlay={
-          <Text style={type.rpg} numberOfLines={1}>
-            {title}
-          </Text>
-        }
-      >
-        <FortressArt stage={stage} width={stage === 3 ? 215 : 230} />
-      </ArtStage>
+      <GroundEntry kind={kind} id={id} title={title} stage={stage} />
       <View style={{ gap: 6, paddingHorizontal: 4 }}>
         <Text style={type.bodyStrong}>
           {here.name} · <Text style={tabular}>lv {total}</Text>
@@ -249,7 +244,63 @@ export function FortressView({
   );
 }
 
+/** The painted heart of the training ground; it opens the grid you build on. */
+function GroundEntry({
+  kind,
+  id,
+  title,
+  stage,
+}: {
+  kind: OwnerKind;
+  id: string;
+  title: string;
+  stage: number;
+}) {
+  const pic = CITY_PIECES[rootPicture(kind, stage, 1)];
+  return (
+    <Pressable
+      onPress={() => router.push({ pathname: '/city/ground', params: { kind, id } })}
+      accessibilityRole="button"
+      accessibilityLabel={`Open the training ground of ${title}`}
+      style={({ pressed }) => pressed && { opacity: 0.85 }}
+    >
+      <GlassCard radius={24} style={styles.entry}>
+        <View style={styles.stage}>
+          {pic ? (
+            <Image
+              source={pic.image}
+              style={{ width: 250, height: (250 * pic.height) / pic.width }}
+              contentFit="contain"
+              accessible={false}
+            />
+          ) : null}
+          <Text style={[type.rpg, styles.stageTitle]} numberOfLines={1}>
+            {title}
+          </Text>
+        </View>
+        <View style={styles.enter}>
+          <View style={{ flex: 1, gap: 2 }}>
+            <Text style={type.bodyStrong}>Training ground</Text>
+            <Text style={type.small}>Build machines, walls and drill on a grid</Text>
+          </View>
+          <ChevronRight size={18} color={colors.text2} />
+        </View>
+      </GlassCard>
+    </Pressable>
+  );
+}
+
 const styles = StyleSheet.create({
+  entry: { padding: 0, overflow: 'hidden' },
+  stage: {
+    height: 200,
+    backgroundColor: '#F2EBDB',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 14,
+  },
+  stageTitle: { position: 'absolute', top: 12, left: 14 },
+  enter: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14 },
   treasury: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16 },
   coin: {
     width: 40,

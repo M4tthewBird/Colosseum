@@ -8,10 +8,24 @@ import type { Release } from '@/lib/changelog';
 
 export const CHANGELOG: Release[] = [
   {
+    id: '2026-11-27b',
+    date: '2026-11-27',
+    title: 'Build your training ground and your house',
+    items: [
+      'Your ludus and your tribe build their training ground on a grid: machines, walls and towers, dumbbells, pull-up bars and decoration, paid with their hours. What is built stays where it stands.',
+      'Your house is a grid too: a garden, a fountain, trees, statues, private baths and more around it, with your own hours. You can move them as you like.',
+      'Your gladiator is painted now and wears the gear you chose in the forge.',
+      'Painted gear in the forge, painted league emblems and gladiator classes.',
+      'A painted map of Czechia with every gym, in City → Map.',
+      'The city can have an aqueduct and a water tower.',
+    ],
+  },
+  {
     id: '2026-11-27',
     date: '2026-11-27',
     title: 'Hours build the game',
     items: [
+      'Your gladiator opens from Profile again: tap Gladiator, or your level.',
       'Cycling and swimming: log a ride or a swim like a run. From 10 km or 30 minutes on the bike and 750 m or 20 minutes in the water, it counts as a workout for XP, laurels, your weekly target and wars, and it earns the Retiarius bonus.',
       'Workouts starts with four cards: Gym, Run, Cycling and Swimming. Each has its bests and history; the calendar and all your workouts stay below.',
       'New Arena boards: best 40 km ride, best 1500 m swim, km ridden and km swum.',

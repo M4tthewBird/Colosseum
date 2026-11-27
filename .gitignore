@@ -60,3 +60,7 @@ gemini-obrazky/hra/hotove/
 gemini-obrazky/hra/nahled-*.png
 # the full-size city painting the style reference is made from (7.8 MB)
 gemini-obrazky/Assets/
+
+# Originals of the dressing-up layers (13 MB): scripts/dress-layers.mjs cuts dress/*.webp from them;
+# the cut pictures are in git, the originals stay on the machine that imported them.
+assets/game/painted/dressup/layer-*.jpg

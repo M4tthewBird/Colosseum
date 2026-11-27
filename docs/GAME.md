@@ -156,7 +156,11 @@ The ludus and the gym (tribe) each have a fortress. Any member can start a build
 - A **damaged** building (lost war) gives no bonus until repaired for 40 % of its level cost. Nothing is ever destroyed.
 - **Spoils** of a won war are hours: 20 % of the loser's treasury, at most 12 h (ludus war) or 20 h (tribe attack). A tribe attack costs the attacking tribe 4 h (a revenge attack is free).
 
-**The training ground (planned, Matyáš 2026-11-27).** The fortress is built like the city: its buildings stand on a grid that grows from its heart (the ludus's school, the tribe's arena), each new one next to one already built. The machines, the walls and drill props (palus, weapon rack, brazier, water trough) stand there, not in the city. Anyone in the ludus or tribe may build; a building stays where it was placed (nobody moves or removes it). Who decides about building is open (Matyáš, later).
+**The training ground (Matyáš 2026-11-27, `src/lib/game/grounds.ts`, City → Ludus or Temple → Training ground).** The fortress is built like the city, on a grid that grows from its heart: the ludus's school (3×3, painted by the fortress stage) or the tribe's arena. A new piece goes on free tiles touching what is built, at most 15 tiles from the heart. Anyone in the ludus or tribe may build; a piece stays where it was put (nobody moves or removes it). Who decides about building is open (Matyáš, later).
+
+- **Buildings** (the table above) stand on the grid too: the first level is started on a chosen tile and paid as above; upgrades from the piece. Buildings built before the grid wait in Build → Buildings and are put down for free. The palisade shows as the gate (wooden, stone, towered by its level).
+- **Bought with hours** (a tribe pays 3×): palus 2 h, weapon rack 2 h, brazier 2 h, water trough 3 h, dumbbells 3/6/10 h (stone, iron, bronze), pull-up bars 3/6/10 h, walls: palisade 1 h a section and a watchtower 3 h, stone wall 2 h and tower 5 h, fortified wall 3 h and tower 8 h; cypresses, stone pine, banner, amphorae, cart 1 h, statue 5 h. No effect, only looks.
+- The server checks the tiles and the hours (`buy_ground_piece()`, `build_on_ground()`, `place_built()`; supabase/updates/2026-11-27-grounds.sql).
 
 ### 5a. Your house
 
@@ -171,6 +175,8 @@ Your own house (your domus) is the first thing in the City you upgrade yourself,
 | 5 | Palace | 100 h |
 
 Things to build by the house, 5 h each, from house level 2: a garden (hortus), a fountain, a pergola with a vine, a household shrine (lararium) and a private training corner (palaestra). Cosmetic only, like the cell.
+
+**Your house is a grid too** (Matyáš, 2026-11-27; City → Your domus → Build around your house): the house (2×2) in the middle, and around it the five things above (once each) and, with your own hours, trees, statues, banners, a palus, a brazier, dumbbells, a pull-up bar, a trough, a triumphal arch (20 h) and private baths (30 h). Unlike the ludus, you may move your pieces.
 
 ### 5b. The aqueduct (planned)
 

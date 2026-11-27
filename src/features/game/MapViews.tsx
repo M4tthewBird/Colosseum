@@ -2,12 +2,17 @@
  * The map of the city and tribe attacks (docs/GAME.md §10): the tribes of the city with their
  * territory, an enemy tribe up close, comparing gear, a running attack and its result.
  */
+import { useQuery } from '@tanstack/react-query';
+import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 import Svg, { Circle, Ellipse, G, Line, Path, Rect, Text as SvgText } from 'react-native-svg';
 
 import { ArtStage, FortressArt, GladiatorArt, StyleArt } from '@/components/art/Art';
+import { PAINTED_MAPS } from '@/components/art/painted';
+import { DEMO_CITY } from '@/dev/seed';
+import { isDemo, supabase } from '@/lib/supabase';
 import { FillButton, Tap } from '@/components/Buttons';
 import { GlassCard } from '@/components/Glass';
 import { Flame, Hammer, Shield, Swords, Users } from '@/components/icons';
@@ -76,6 +81,7 @@ type Filter = 'all' | 'war' | 'weaker' | 'stronger';
 
 export function MapScreen() {
   const { gymId, gym, tribes, wars } = useMyCity();
+  const [scope, setScope] = useState<'city' | 'country'>('city');
   const [filter, setFilter] = useState<Filter>('all');
   const [picked, setPicked] = useState<string | null>(null);
   const [width, setWidth] = useState(350);
@@ -116,38 +122,158 @@ export function MapScreen() {
             ? `Territory: ${me.territories} of ${tribes?.length ?? 0} · ${ordinal(places.get(me.id) ?? 0)} in the city`
             : gym.name
         }
-        title={gym.city}
+        title={scope === 'country' ? 'Czechia' : gym.city}
         right={<DenariiPill />}
       />
-      <Segmented
-        options={[
-          { value: 'all', label: 'All' },
-          { value: 'war', label: 'At war' },
-          { value: 'weaker', label: 'Weaker' },
-          { value: 'stronger', label: 'Stronger' },
-        ]}
-        value={filter}
-        onChange={setFilter}
-        accessibilityLabel="Show tribes"
-      />
-      <View
-        style={styles.map}
-        onLayout={(e: LayoutChangeEvent) => setWidth(Math.round(e.nativeEvent.layout.width))}
-      >
-        {tribes ? (
-          <CityMap
-            size={width}
-            tribes={tribes}
-            mine={gymId}
-            wars={wars}
-            selected={sel?.id ?? null}
-            shown={shown}
-            onPick={setPicked}
+      {PAINTED_MAPS['map-cz'] ? (
+        <Segmented
+          options={[
+            { value: 'city', label: gym.city },
+            { value: 'country', label: 'Czechia' },
+          ]}
+          value={scope}
+          onChange={setScope}
+          accessibilityLabel="Map of"
+        />
+      ) : null}
+      {scope === 'country' ? (
+        <View
+          style={{ gap: 10 }}
+          onLayout={(e: LayoutChangeEvent) => setWidth(Math.round(e.nativeEvent.layout.width))}
+        >
+          <CountryMap width={width} mine={gymId} />
+        </View>
+      ) : (
+        <>
+          <Segmented
+            options={[
+              { value: 'all', label: 'All' },
+              { value: 'war', label: 'At war' },
+              { value: 'weaker', label: 'Weaker' },
+              { value: 'stronger', label: 'Stronger' },
+            ]}
+            value={filter}
+            onChange={setFilter}
+            accessibilityLabel="Show tribes"
           />
-        ) : null}
-      </View>
-      {sel ? <TribeCard tribe={sel} me={me} /> : null}
+          <View
+            style={styles.map}
+            onLayout={(e: LayoutChangeEvent) => setWidth(Math.round(e.nativeEvent.layout.width))}
+          >
+            {tribes ? (
+              <CityMap
+                size={width}
+                tribes={tribes}
+                mine={gymId}
+                wars={wars}
+                selected={sel?.id ?? null}
+                shown={shown}
+                onPick={setPicked}
+              />
+            ) : null}
+          </View>
+          {sel ? <TribeCard tribe={sel} me={me} /> : null}
+        </>
+      )}
     </Screen>
+  );
+}
+
+interface MapGymRow {
+  id: string;
+  name: string;
+  city: string | null;
+  lat: number;
+  lng: number;
+}
+
+/** Every gym with a position, for the map of Czechia. */
+function useAllGyms() {
+  return useQuery({
+    queryKey: ['gyms', 'map'],
+    queryFn: async (): Promise<MapGymRow[]> => {
+      if (isDemo)
+        return DEMO_CITY.map((g) => ({
+          id: g.id,
+          name: g.name,
+          city: 'Praha',
+          lat: g.lat,
+          lng: g.lng,
+        }));
+      const res = await supabase
+        .from('gyms')
+        .select('id,name,city,lat,lng')
+        .not('lat', 'is', null)
+        .not('lng', 'is', null)
+        .limit(2000);
+      if (res.error) throw new Error(res.error.message);
+      return res.data as MapGymRow[];
+    },
+    staleTime: 10 * 60 * 1000,
+  });
+}
+
+/** The painted map of Czechia with every gym where it stands (scripts/geo/maps.mjs frame). */
+function CountryMap({ width, mine }: { width: number; mine: string }) {
+  const m = PAINTED_MAPS['map-cz'];
+  const gyms = useAllGyms();
+  const [picked, setPicked] = useState<string | null>(mine);
+  if (!m) return null;
+  const h = (width * m.height) / m.width;
+  const { west, east, south, north } = m.geo;
+  const at = (g: MapGymRow) => ({
+    x: ((g.lng - west) / (east - west)) * width,
+    y: ((north - g.lat) / (north - south)) * h,
+  });
+  const list = gyms.data ?? [];
+  const sel = list.find((g) => g.id === picked);
+  // your gym last, so it sits on top
+  const ordered = [...list].sort((a, b) => Number(a.id === mine) - Number(b.id === mine));
+  return (
+    <>
+      <View style={[styles.country, { width, height: h }]}>
+        <Image
+          source={m.image as number}
+          style={{ width, height: h }}
+          contentFit="fill"
+          accessible={false}
+        />
+        {ordered.map((g) => {
+          const p = at(g);
+          const own = g.id === mine;
+          const on = g.id === picked;
+          const r = own || on ? 8 : 6;
+          return (
+            <Pressable
+              key={g.id}
+              onPress={() => setPicked(g.id)}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={`${g.name}${g.city ? `, ${g.city}` : ''}`}
+              style={[
+                styles.gymDot,
+                {
+                  left: p.x - r,
+                  top: p.y - r,
+                  width: r * 2,
+                  height: r * 2,
+                  borderRadius: r,
+                  backgroundColor: own ? colors.accent : on ? INK : '#FFFFFF',
+                  borderColor: own ? '#FFFFFF' : INK,
+                },
+              ]}
+            />
+          );
+        })}
+      </View>
+      <Text style={[type.small, { textAlign: 'center' }]}>
+        {gyms.isLoading
+          ? 'Loading the gyms…'
+          : sel
+            ? `${sel.name}${sel.city ? ` · ${sel.city}` : ''}${sel.id === mine ? ' · your gym' : ''}`
+            : `${list.length} gyms in Czechia. Tap one.`}
+      </Text>
+    </>
   );
 }
 
@@ -1100,6 +1226,13 @@ export function MapRow() {
 }
 
 const styles = StyleSheet.create({
+  country: {
+    borderRadius: 18,
+    overflow: 'hidden',
+    backgroundColor: '#F2EBDB',
+    alignSelf: 'center',
+  },
+  gymDot: { position: 'absolute', borderWidth: 2 },
   map: { borderRadius: 20, overflow: 'hidden' },
   hit: { position: 'absolute', width: 52, height: 52, borderRadius: 26 },
   tribeCard: { padding: 16, gap: 14 },

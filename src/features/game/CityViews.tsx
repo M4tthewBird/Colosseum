@@ -6,7 +6,15 @@ import { router, type Href } from 'expo-router';
 import { useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { ArtStage, CityArt, GearArt, GladiatorArt, StyleArt } from '@/components/art/Art';
+import {
+  ArtStage,
+  CAN_DRESS,
+  CityArt,
+  DressedGladiator,
+  GearArt,
+  GladiatorArt,
+  StyleArt,
+} from '@/components/art/Art';
 import { FillButton, IconButton, Tap } from '@/components/Buttons';
 import { Glass, GlassCard } from '@/components/Glass';
 import {
@@ -304,7 +312,14 @@ export function ForgeScreen() {
           </View>
         }
       >
-        {glad?.style ? (
+        {CAN_DRESS ? (
+          <DressedGladiator
+            outfit={Object.fromEntries(
+              GEAR_SLOTS.map((s) => [s.id, worn(glad?.loadout ?? {}, s.id).id]),
+            )}
+            width={145}
+          />
+        ) : glad?.style ? (
           <StyleArt style={glad.style} width={180} />
         ) : (
           <GladiatorArt rank={game.rank.id} width={180} />

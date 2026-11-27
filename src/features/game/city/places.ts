@@ -48,9 +48,10 @@ const FAMILIES: [string | null, string, CityPiece['group'], [string, string][]][
     'building',
     [
       ['home-1', 'Hut'],
-      ['home-2', 'Wooden house'],
+      ['home-2', 'Small stone house'],
       ['home-3', 'Domus'],
       ['home-4', 'Villa'],
+      ['home-5', 'Palace'],
     ],
   ],
   [
@@ -135,6 +136,11 @@ const FAMILIES: [string | null, string, CityPiece['group'], [string, string][]][
       ['banner', 'Banner'],
       ['cart', 'Cart'],
       ['amphorae', 'Amphorae'],
+      // the aqueduct (Matyáš, 2026-11-27): its bonus waits for who owns the city (GAME.md §5b)
+      ['aqueduct-a', 'Aqueduct /'],
+      ['aqueduct-b', 'Aqueduct \\'],
+      ['aqueduct-pier', 'Aqueduct corner'],
+      ['castellum', 'Water tower'],
     ],
   ],
   [

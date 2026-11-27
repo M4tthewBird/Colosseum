@@ -28,6 +28,8 @@ import {
 } from '@/components/icons';
 import { LogoMark } from '@/components/Logo';
 import { ArtStage, GladiatorArt, HomeArt } from '@/components/art/Art';
+import { PAINTED_LEAGUES } from '@/components/art/painted';
+import { Image } from 'expo-image';
 import { cellItems, CELL_ROOMS, homeStage, type Attributes } from '@/lib/game/attributes';
 import {
   leagueFor,
@@ -71,6 +73,16 @@ export function XpBar({ progress }: { progress: LevelProgress }) {
 export function LeagueEmblem({ league, size = 44 }: { league: League; size?: number }) {
   const tier = { bronze: 1, silver: 2, gold: 3, imperator: 4 }[league.id];
   const top = league.id === 'imperator';
+  const painted = PAINTED_LEAGUES[league.id];
+  if (painted)
+    return (
+      <Image
+        source={painted as number}
+        style={{ width: size, height: size }}
+        contentFit="contain"
+        accessibilityLabel={`${league.name} league`}
+      />
+    );
   return (
     <View
       style={[

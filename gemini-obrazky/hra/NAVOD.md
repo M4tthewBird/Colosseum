@@ -1,6 +1,6 @@
 # Malovaná hra v Gemini
 
-Hotovo **122 z 168**. Zbývá 46 obrázků v 8 dávkách.
+Hotovo **166 z 168**. Zbývá 2 obrázků v 2 dávkách.
 Tenhle soubor i dávky se po každém importu přegenerují jen se zbývajícími obrázky.
 
 Město se skládá z kousků: každá stavba stojí na vlastní parcele ve tvaru kosočtverce (1×1, 2×2 nebo 3×3 dlaždice) a appka ji položí na mřížku města tam, kam si ji hráč dá. Proto musí mít všechny stavby **stejný úhel, stejné světlo a plochou parcelu bez boků**.
@@ -23,13 +23,6 @@ Město se skládá z kousků: každá stavba stojí na vlastní parcele ve tvaru
 ## Mapy
 
 Ke každé mapě přilož vzor stylu **a její šablonu** (`sablona-cesko.png` nebo `sablona-brno.png`). Gemini musí nechat hranici přesně tam, kde je na šabloně, a stejný poměr stran (Česko 16:9, Brno čtverec). Jinak gymy na mapě nebudou na svém místě. Po importu otevři `nahled-map-cz.png` / `nahled-map-brno.png`: červená čára je skutečná hranice. Když se s namalovanou hranicí rozchází, napiš `redo, keep the outline exactly where the template has it`.
-
-## Oblékání: výzbroj na gladiátorovi
-
-Každý kus výzbroje se maluje **na základního gladiátora** (`zaklad-gladiator.jpg`, přilož ho k dávce spolu se vzorem). Z rozdílu proti základu appka kus vyřízne a pak gladiátora obléká podle toho, co hráč má.
-
-- Každý obrázek musí vycházet **ze základu**, ne z předchozího obrázku. Když na něm zůstane kus z minula (přilba, štít), napiš `redo, start from the attached base image`. Když se to opakuje, otevři nový chat a pokračuj záložním promptem.
-- Gladiátor se nesmí pohnout, zvětšit ani změnit tvář.
 
 ## Postup pro jednu dávku
 
@@ -65,11 +58,5 @@ Každý kus výzbroje se maluje **na základního gladiátora** (`zaklad-gladiat
 
 | Soubor | Co | Počet | Přiložit | Obrázky |
 | --- | --- | --- | --- | --- |
-| [davka-01.txt](davky/davka-01.txt) | Hradby: kamenná a opevněná | 6 | `vzor-mesto.jpg` a `sablona-parcely.png` | Hradby 2: kamenná zeď, úsek /, Hradby 2: kamenná zeď, úsek \, Hradby 2: kamenná zeď, věž, Hradby 3: opevněná zeď, úsek /, Hradby 3: opevněná zeď, úsek \, Hradby 3: opevněná zeď, věž |
-| [davka-02.txt](davky/davka-02.txt) | Akvadukt: nároží a vodojem | 2 | `vzor-mesto.jpg` a `sablona-parcely.png` | Akvadukt, nároží, Akvadukt: vodojem |
-| [davka-03.txt](davky/davka-03.txt) | Mapa Česka | 1 | `vzor-mesto.jpg` a `sablona-cesko.png` | Mapa Česka |
-| [davka-04.txt](davky/davka-04.txt) | Mapa Brna | 1 | `vzor-mesto.jpg` a `sablona-brno.png` | Mapa Brna |
-| [davka-05.txt](davky/davka-05.txt) | Ligové znaky | 4 | `vzor-mesto.jpg` | Bronzová liga, Stříbrná liga, Zlatá liga, Imperátorova aréna |
-| [davka-06.txt](davky/davka-06.txt) | Oblékání: přilby a štíty na gladiátorovi | 12 | `vzor-mesto.jpg` a `zaklad-gladiator.jpg` | Na gladiátorovi: Galea, Na gladiátorovi: Murmillo, Na gladiátorovi: Secutor, Na gladiátorovi: Thraex, Na gladiátorovi: Hoplomachus, Na gladiátorovi: Provocator, Na gladiátorovi: Zlatá galea, Na gladiátorovi: Vavřínový věnec, Na gladiátorovi: Parmula, Na gladiátorovi: Parma, Na gladiátorovi: Bronzový štít, Na gladiátorovi: Scutum |
-| [davka-07.txt](davky/davka-07.txt) | Oblékání: zbraně a chrániče na gladiátorovi | 12 | `vzor-mesto.jpg` a `zaklad-gladiator.jpg` | Na gladiátorovi: Rudis, Na gladiátorovi: Pugio, Na gladiátorovi: Sica, Na gladiátorovi: Rete (síť), Na gladiátorovi: Fuscina (trojzubec), Na gladiátorovi: Hasta (kopí), Na gladiátorovi: Gladius, Na gladiátorovi: Dva gladii, Na gladiátorovi: Fasciae, Na gladiátorovi: Ocreae, Na gladiátorovi: Galerus, Na gladiátorovi: Manica |
-| [davka-08.txt](davky/davka-08.txt) | Oblékání: zbroj a oděv na gladiátorovi | 8 | `vzor-mesto.jpg` a `zaklad-gladiator.jpg` | Na gladiátorovi: Tunika, Na gladiátorovi: Exomis, Na gladiátorovi: Subligaculum, Na gladiátorovi: Kožené řemeny, Na gladiátorovi: Leopardí kožešina, Na gladiátorovi: Cardiophylax, Na gladiátorovi: Rudý plášť, Na gladiátorovi: Lorica |
+| [davka-01.txt](davky/davka-01.txt) | Hradby: kamenná a opevněná | 1 | `vzor-mesto.jpg` a `sablona-parcely.png` | Hradby 2: kamenná zeď, úsek \ |
+| [davka-02.txt](davky/davka-02.txt) | Mapa Brna | 1 | `vzor-mesto.jpg` a `sablona-brno.png` | Mapa Brna (celé město, skutečné ulice) |

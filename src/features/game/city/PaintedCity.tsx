@@ -162,7 +162,7 @@ function useStatuses(): Record<string, { text: string; hot?: boolean }> {
  * The map's pan and gestures, kept outside React: a PanResponder has to stay the same object for
  * a whole drag, so it reads the screen's latest handlers from here (`use`, after each render).
  */
-function createMapControl() {
+export function createMapControl() {
   const pan = new Animated.ValueXY({ x: 0, y: 0 });
   let at = { x: 0, y: 0 };
   let origin = { x: 0, y: 0 };
@@ -1059,7 +1059,7 @@ function Palette({
 }
 
 /** A new or upgraded building drops into place. */
-function Drop({ on, children }: { on: boolean; children: React.ReactNode }) {
+export function Drop({ on, children }: { on: boolean; children: React.ReactNode }) {
   const [v] = useState(() => new Animated.Value(on ? 0 : 1));
   useEffect(() => {
     if (!on) return;

@@ -2,6 +2,7 @@
  * Game illustrations: the gladiator for each rank, the fortress as it grows and the gladiator's
  * home. Hand-drawn SVG from the design (direction E), drawn with SvgXml so web and native match.
  */
+import { Image } from 'expo-image';
 import { memo, type ReactNode } from 'react';
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Defs, LinearGradient, Rect, Stop, SvgXml } from 'react-native-svg';
@@ -11,6 +12,7 @@ import type { FortressStage } from '@/lib/game/fortress';
 import type { HomeStage } from '@/lib/game/attributes';
 import type { StyleId } from '@/lib/game/styles';
 import { shadows } from '@/theme/tokens';
+import { DRESS, DRESS_SIZE, PAINTED_FIGURES, PAINTED_GEAR } from './painted';
 import * as svgs from './svgs';
 import * as svgsF from './svgsF';
 
@@ -50,8 +52,60 @@ const Picture = memo(function Picture({ xml, width }: { xml: string; width: numb
   return <SvgXml xml={xml} width={width} height={width * RATIO} />;
 });
 
+/** A painted picture in the same box as the drawn one, when it has been painted. */
+function Painted({ source, width }: { source: unknown; width: number }) {
+  return (
+    <Image
+      source={source as number}
+      style={{ width, height: width * RATIO }}
+      contentFit="contain"
+      accessible={false}
+    />
+  );
+}
+
 export function GladiatorArt({ rank, width = 190 }: { rank: RankId; width?: number }) {
+  const painted = PAINTED_FIGURES[`rank-${rank}`];
+  if (painted) return <Painted source={painted} width={width} />;
   return <Picture xml={GLADIATORS[rank]} width={width} />;
+}
+
+/** What the gladiator wears (slot → gear id), drawn bottom to top. */
+export interface Outfit {
+  armour?: string | null;
+  guard?: string | null;
+  helmet?: string | null;
+  weapon?: string | null;
+  shield?: string | null;
+}
+const DRESS_ORDER: (keyof Outfit)[] = ['armour', 'guard', 'helmet', 'weapon', 'shield'];
+
+/** Whether the painted dressing-up pictures exist. */
+export const CAN_DRESS = !!DRESS.base;
+
+/**
+ * The painted gladiator wearing his gear (Matyáš, 2026-11-27): the base and every worn piece
+ * cut out in the same frame (scripts/dress-layers.mjs), stacked. Null before it is painted.
+ */
+export function DressedGladiator({ outfit, width = 190 }: { outfit: Outfit; width?: number }) {
+  if (!DRESS.base) return null;
+  const height = (width * DRESS_SIZE.height) / DRESS_SIZE.width;
+  const layers = DRESS_ORDER.map((slot) => outfit[slot]).filter(
+    (id): id is string => !!id && !!DRESS[id],
+  );
+  return (
+    <View style={{ width, height }} accessible={false}>
+      {['base', ...layers].map((id) => (
+        <Image
+          key={id}
+          source={DRESS[id] as number}
+          style={StyleSheet.absoluteFill}
+          contentFit="contain"
+          accessible={false}
+        />
+      ))}
+    </View>
+  );
 }
 
 export function FortressArt({ stage, width = 230 }: { stage: FortressStage; width?: number }) {
@@ -73,11 +127,23 @@ const STYLES: Record<StyleId, string> = {
 
 /** The gladiator dressed in a fighting style (Forge → Style, the forge, enemy tribes). */
 export function StyleArt({ style, width = 190 }: { style: StyleId; width?: number }) {
+  const painted = PAINTED_FIGURES[`style-${style}`];
+  if (painted) return <Painted source={painted} width={width} />;
   return <Picture xml={STYLES[style]} width={width} />;
 }
 
 /** One piece of gear, drawn on a square tile (ids from lib/game/gear.ts). */
 export const GearArt = memo(function GearArt({ id, size = 76 }: { id: string; size?: number }) {
+  const painted = PAINTED_GEAR[id];
+  if (painted)
+    return (
+      <Image
+        source={painted as number}
+        style={{ width: size, height: size }}
+        contentFit="contain"
+        accessible={false}
+      />
+    );
   const xml = (svgsF as Record<string, string>)[`gear_${id}`];
   if (!xml) return <View style={{ width: size, height: size }} />;
   return <SvgXml xml={xml} width={size} height={size} />;

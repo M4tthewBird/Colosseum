@@ -722,6 +722,66 @@
    ],
    "rev": 1
   },
+  "wall-2-a": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/wall-2-a.webp",
+   "width": 321,
+   "height": 191,
+   "anchor": [
+    160,
+    190
+   ],
+   "rev": 1
+  },
+  "wall-2-tower": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/wall-2-tower.webp",
+   "width": 321,
+   "height": 274,
+   "anchor": [
+    160,
+    273
+   ],
+   "rev": 1
+  },
+  "wall-3-a": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/wall-3-a.webp",
+   "width": 321,
+   "height": 196,
+   "anchor": [
+    160,
+    196
+   ],
+   "rev": 1
+  },
+  "wall-3-b": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/wall-3-b.webp",
+   "width": 321,
+   "height": 216,
+   "anchor": [
+    160,
+    216
+   ],
+   "rev": 1
+  },
+  "wall-3-tower": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/wall-3-tower.webp",
+   "width": 321,
+   "height": 268,
+   "anchor": [
+    160,
+    267
+   ],
+   "rev": 1
+  },
   "aqueduct-a": {
    "kind": "piece",
    "size": 1,
@@ -743,6 +803,30 @@
    "anchor": [
     160,
     220
+   ],
+   "rev": 1
+  },
+  "aqueduct-pier": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/aqueduct-pier.webp",
+   "width": 321,
+   "height": 328,
+   "anchor": [
+    162,
+    328
+   ],
+   "rev": 1
+  },
+  "castellum": {
+   "kind": "piece",
+   "size": 1,
+   "file": "city/castellum.webp",
+   "width": 321,
+   "height": 248,
+   "anchor": [
+    160,
+    248
    ],
    "rev": 1
   },
@@ -1191,6 +1275,207 @@
    "file": "icons/icon-laurels.webp",
    "width": 256,
    "height": 256,
+   "rev": 1
+  },
+  "league-bronze": {
+   "kind": "emblem",
+   "file": "leagues/league-bronze.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "league-silver": {
+   "kind": "emblem",
+   "file": "leagues/league-silver.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "league-gold": {
+   "kind": "emblem",
+   "file": "leagues/league-gold.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "league-imperator": {
+   "kind": "emblem",
+   "file": "leagues/league-imperator.webp",
+   "width": 512,
+   "height": 512,
+   "rev": 1
+  },
+  "map-cz": {
+   "kind": "map",
+   "file": "maps/map-cz.webp",
+   "width": 2048,
+   "height": 1152,
+   "geo": {
+    "west": 11.55642,
+    "east": 19.39168,
+    "south": 48.38113,
+    "north": 51.22567
+   },
+   "rev": 1
+  },
+  "layer-helmet_galea": {
+   "kind": "layer",
+   "file": "dressup/layer-helmet_galea.jpg",
+   "rev": 1
+  },
+  "layer-helmet_murmillo": {
+   "kind": "layer",
+   "file": "dressup/layer-helmet_murmillo.jpg",
+   "rev": 1
+  },
+  "layer-helmet_secutor": {
+   "kind": "layer",
+   "file": "dressup/layer-helmet_secutor.jpg",
+   "rev": 1
+  },
+  "layer-helmet_thraex": {
+   "kind": "layer",
+   "file": "dressup/layer-helmet_thraex.jpg",
+   "rev": 1
+  },
+  "layer-helmet_hoplomachus": {
+   "kind": "layer",
+   "file": "dressup/layer-helmet_hoplomachus.jpg",
+   "rev": 1
+  },
+  "layer-helmet_provocator": {
+   "kind": "layer",
+   "file": "dressup/layer-helmet_provocator.jpg",
+   "rev": 1
+  },
+  "layer-helmet_galea_gold": {
+   "kind": "layer",
+   "file": "dressup/layer-helmet_galea_gold.jpg",
+   "rev": 1
+  },
+  "layer-helmet_laurel": {
+   "kind": "layer",
+   "file": "dressup/layer-helmet_laurel.jpg",
+   "rev": 1
+  },
+  "layer-shield_parmula": {
+   "kind": "layer",
+   "file": "dressup/layer-shield_parmula.jpg",
+   "rev": 1
+  },
+  "layer-shield_parma": {
+   "kind": "layer",
+   "file": "dressup/layer-shield_parma.jpg",
+   "rev": 1
+  },
+  "layer-shield_bronze": {
+   "kind": "layer",
+   "file": "dressup/layer-shield_bronze.jpg",
+   "rev": 1
+  },
+  "layer-shield_scutum": {
+   "kind": "layer",
+   "file": "dressup/layer-shield_scutum.jpg",
+   "rev": 1
+  },
+  "layer-weapon_rudis": {
+   "kind": "layer",
+   "file": "dressup/layer-weapon_rudis.jpg",
+   "rev": 1
+  },
+  "layer-weapon_pugio": {
+   "kind": "layer",
+   "file": "dressup/layer-weapon_pugio.jpg",
+   "rev": 1
+  },
+  "layer-weapon_sica": {
+   "kind": "layer",
+   "file": "dressup/layer-weapon_sica.jpg",
+   "rev": 1
+  },
+  "layer-weapon_net": {
+   "kind": "layer",
+   "file": "dressup/layer-weapon_net.jpg",
+   "rev": 1
+  },
+  "layer-weapon_trident": {
+   "kind": "layer",
+   "file": "dressup/layer-weapon_trident.jpg",
+   "rev": 1
+  },
+  "layer-weapon_hasta": {
+   "kind": "layer",
+   "file": "dressup/layer-weapon_hasta.jpg",
+   "rev": 1
+  },
+  "layer-weapon_gladius": {
+   "kind": "layer",
+   "file": "dressup/layer-weapon_gladius.jpg",
+   "rev": 1
+  },
+  "layer-weapon_two_gladii": {
+   "kind": "layer",
+   "file": "dressup/layer-weapon_two_gladii.jpg",
+   "rev": 1
+  },
+  "layer-guard_fasciae": {
+   "kind": "layer",
+   "file": "dressup/layer-guard_fasciae.jpg",
+   "rev": 1
+  },
+  "layer-guard_ocreae": {
+   "kind": "layer",
+   "file": "dressup/layer-guard_ocreae.jpg",
+   "rev": 1
+  },
+  "layer-guard_galerus": {
+   "kind": "layer",
+   "file": "dressup/layer-guard_galerus.jpg",
+   "rev": 1
+  },
+  "layer-guard_manica": {
+   "kind": "layer",
+   "file": "dressup/layer-guard_manica.jpg",
+   "rev": 1
+  },
+  "layer-armour_tunic": {
+   "kind": "layer",
+   "file": "dressup/layer-armour_tunic.jpg",
+   "rev": 1
+  },
+  "layer-armour_exomis": {
+   "kind": "layer",
+   "file": "dressup/layer-armour_exomis.jpg",
+   "rev": 1
+  },
+  "layer-armour_subligaculum": {
+   "kind": "layer",
+   "file": "dressup/layer-armour_subligaculum.jpg",
+   "rev": 1
+  },
+  "layer-armour_straps": {
+   "kind": "layer",
+   "file": "dressup/layer-armour_straps.jpg",
+   "rev": 1
+  },
+  "layer-armour_leopard": {
+   "kind": "layer",
+   "file": "dressup/layer-armour_leopard.jpg",
+   "rev": 1
+  },
+  "layer-armour_cardiophylax": {
+   "kind": "layer",
+   "file": "dressup/layer-armour_cardiophylax.jpg",
+   "rev": 1
+  },
+  "layer-armour_cloak": {
+   "kind": "layer",
+   "file": "dressup/layer-armour_cloak.jpg",
+   "rev": 1
+  },
+  "layer-armour_lorica": {
+   "kind": "layer",
+   "file": "dressup/layer-armour_lorica.jpg",
    "rev": 1
   }
  }
