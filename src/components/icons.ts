@@ -12,7 +12,9 @@ export { default as ChevronRight } from 'lucide-react-native/icons/chevron-right
 export { default as ChevronUp } from 'lucide-react-native/icons/chevron-up';
 export { default as Copy } from 'lucide-react-native/icons/copy';
 export { default as Dumbbell } from 'lucide-react-native/icons/dumbbell';
+export { default as Droplets } from 'lucide-react-native/icons/droplets';
 export { default as Equal } from 'lucide-react-native/icons/equal';
+export { default as Grape } from 'lucide-react-native/icons/grape';
 export { default as Heart } from 'lucide-react-native/icons/heart';
 export { default as House } from 'lucide-react-native/icons/house';
 export { default as Info } from 'lucide-react-native/icons/info';
@@ -26,6 +28,7 @@ export { default as Plus } from 'lucide-react-native/icons/plus';
 export { default as Search } from 'lucide-react-native/icons/search';
 export { default as Send } from 'lucide-react-native/icons/send';
 export { default as SlidersHorizontal } from 'lucide-react-native/icons/sliders-horizontal';
+export { default as Sprout } from 'lucide-react-native/icons/sprout';
 export { default as Star } from 'lucide-react-native/icons/star';
 export { default as Trash2 } from 'lucide-react-native/icons/trash';
 export { default as Trophy } from 'lucide-react-native/icons/trophy';

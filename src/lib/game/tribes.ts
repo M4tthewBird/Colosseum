@@ -53,6 +53,7 @@ export function tribeScore(side: TribeSide): number {
   return Math.round(per * bonus * 10) / 10;
 }
 
+/** Spoils of a tribe attack: a share of the loser's hours (minutes), capped. */
 export function tribeSpoils(loserTreasury: number): number {
   return Math.min(
     TRIBE_WAR.maxSpoils,

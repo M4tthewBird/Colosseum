@@ -91,7 +91,8 @@ export const WAR = {
   activeDays: 14,
   rematchDays: 7,
   spoilsShare: 0.2,
-  maxSpoils: 300,
+  /** Spoils are hours of the loser's treasury, in minutes (12 h). */
+  maxSpoils: 720,
   /** Palisade bonus per level for the defender. */
   wallBonus: 0.05,
 } as const;
@@ -166,15 +167,16 @@ export const TRIBE_WAR = {
   /** Warning before the battle starts, for the defenders to get ready. */
   warningHours: 24,
   days: 3,
-  /** Paid from the attacking tribe's treasury (a revenge attack is free). */
-  cost: 100,
+  /** Minutes (4 h) paid from the attacking tribe's treasury (a revenge attack is free). */
+  cost: 240,
   /** Who may declare: from this level (the Gladiator rank). */
   minLevel: 5,
   /** Each side needs this many active members; also the least a score is divided by. */
   minActive: 3,
   rematchDays: 7,
   spoilsShare: 0.2,
-  maxSpoils: 500,
+  /** In minutes (20 h). */
+  maxSpoils: 1200,
   /** Defender's palisade bonus per level. */
   wallBonus: 0.03,
   /** A revenge attack within this many hours of a lost defence gets the bonus and is free. */

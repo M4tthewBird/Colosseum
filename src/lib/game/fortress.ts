@@ -10,8 +10,8 @@ export interface BuildingDef {
   id: BuildingId;
   name: string;
   maxLevel: number;
-  /** Cost of level 1 for a ludus; level n costs n times this. */
-  baseCost: number;
+  /** Hours level 1 costs a ludus; level n costs n times this (docs/GAME.md §5). */
+  baseHours: number;
   /** Machines: the exercises they boost (by name). */
   boosts?: RegExp;
   /** Not built by gyms. */
@@ -26,7 +26,7 @@ export const BUILDINGS: BuildingDef[] = [
     id: 'bench',
     name: 'Bench',
     maxLevel: 3,
-    baseCost: 150,
+    baseHours: 6,
     boosts: /bench|chest press|push-?up|dip/i,
     effect: (l) => `${pct(0.05 * l)} denarii for bench and chest presses`,
   },
@@ -34,7 +34,7 @@ export const BUILDINGS: BuildingDef[] = [
     id: 'rack',
     name: 'Squat rack',
     maxLevel: 3,
-    baseCost: 150,
+    baseHours: 6,
     boosts: /squat|lunge|split squat|step-?up/i,
     effect: (l) => `${pct(0.05 * l)} denarii for squats and lunges`,
   },
@@ -42,7 +42,7 @@ export const BUILDINGS: BuildingDef[] = [
     id: 'cable',
     name: 'Cable station',
     maxLevel: 3,
-    baseCost: 150,
+    baseHours: 6,
     boosts: /cable|pulldown|pushdown|face pull|seated row/i,
     effect: (l) => `${pct(0.05 * l)} denarii for cable exercises`,
   },
@@ -50,7 +50,7 @@ export const BUILDINGS: BuildingDef[] = [
     id: 'platform',
     name: 'Deadlift platform',
     maxLevel: 3,
-    baseCost: 150,
+    baseHours: 6,
     boosts: /deadlift|hip thrust|good morning|rack pull/i,
     effect: (l) => `${pct(0.05 * l)} denarii for deadlifts and hip thrusts`,
   },
@@ -58,7 +58,7 @@ export const BUILDINGS: BuildingDef[] = [
     id: 'palisade',
     name: 'Palisade',
     maxLevel: 5,
-    baseCost: 120,
+    baseHours: 5,
     effect: (l, owner) =>
       owner === 'gym' ? `${pct(0.02 * l)} Bellum score` : `${pct(0.05 * l)} war points in defence`,
   },
@@ -66,7 +66,7 @@ export const BUILDINGS: BuildingDef[] = [
     id: 'barracks',
     name: 'Barracks',
     maxLevel: 5,
-    baseCost: 200,
+    baseHours: 8,
     ludusOnly: true,
     effect: (l) => `Room for ${LUDUS.baseMembers + l} members`,
   },
@@ -74,7 +74,7 @@ export const BUILDINGS: BuildingDef[] = [
     id: 'temple',
     name: 'Temple',
     maxLevel: 3,
-    baseCost: 250,
+    baseHours: 10,
     effect: () => 'Prestige: shows your records',
   },
 ];
@@ -98,13 +98,13 @@ export interface Building {
   damaged: boolean;
 }
 
-/** Cost of building a level. */
-export function levelCost(id: BuildingId, level: number, owner: OwnerKind): number {
-  return buildingDef(id).baseCost * level * (owner === 'gym' ? GYM_COST_FACTOR : 1);
+/** Minutes of the treasury's hours that building a level costs (start_building() in SQL). */
+export function levelMinutes(id: BuildingId, level: number, owner: OwnerKind): number {
+  return buildingDef(id).baseHours * level * (owner === 'gym' ? GYM_COST_FACTOR : 1) * 60;
 }
 
-export function repairCost(id: BuildingId, level: number, owner: OwnerKind): number {
-  return Math.ceil(levelCost(id, level, owner) * REPAIR_SHARE);
+export function repairMinutes(id: BuildingId, level: number, owner: OwnerKind): number {
+  return Math.ceil(levelMinutes(id, level, owner) * REPAIR_SHARE);
 }
 
 /** Days a level takes to build. */

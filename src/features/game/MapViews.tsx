@@ -17,6 +17,7 @@ import { Segmented } from '@/components/Segmented';
 import { useGym } from '@/features/social/api';
 import { TRIBE_WAR, WAR } from '@/lib/game/config';
 import { fortressStage } from '@/lib/game/fortress';
+import { formatMinutes } from '@/lib/game/hours';
 import {
   gearInSlot,
   GEAR_SLOTS,
@@ -400,7 +401,7 @@ function TribeCard({ tribe, me }: { tribe: CityTribeRow; me: CityTribeRow | unde
         </View>
         <View style={{ alignItems: 'flex-end' }}>
           <Text style={type.small}>spoils up to</Text>
-          <Text style={[styles.loot, tabular]}>{fmt(tribeSpoils(tribe.treasury))} den.</Text>
+          <Text style={[styles.loot, tabular]}>{formatMinutes(tribeSpoils(tribe.treasury))}</Text>
         </View>
       </View>
       <View style={styles.buttons}>
@@ -493,7 +494,7 @@ export function EnemyScreen({ id }: { id: string }) {
           value={`+${Math.round(TRIBE_WAR.wallBonus * tribe.palisade * 100)} %`}
           label={`walls lv ${tribe.palisade}`}
         />
-        <Tile value={fmt(tribeSpoils(tribe.treasury))} label="spoils in den." accent />
+        <Tile value={formatMinutes(tribeSpoils(tribe.treasury))} label="spoils (hours)" accent />
       </View>
       {weakSpot ? (
         <View style={styles.note}>
@@ -785,8 +786,8 @@ function WarRunning({
           }
         />
         <StakeRow
-          label="Treasury"
-          value={`${defending ? '−' : '+'}${fmt(tribeSpoils((defending ? me : enemy)?.treasury ?? 0))} denarii`}
+          label="Hours"
+          value={`${defending ? '−' : '+'}${formatMinutes(tribeSpoils((defending ? me : enemy)?.treasury ?? 0))}`}
         />
         <StakeRow label="Walls" value={defending ? 'damaged' : 'theirs damaged'} />
         {placeAfter && defending ? (
@@ -935,8 +936,8 @@ function WarResult({
       </GlassCard>
       <GlassCard radius={24} style={{ paddingHorizontal: 16, paddingVertical: 6 }}>
         <StakeRow
-          label="Treasury"
-          value={`${won ? '+' : '−'}${fmt(war.spoils ?? 0)} denarii`}
+          label="Hours"
+          value={`${won ? '+' : '−'}${war.spoils_minutes != null ? formatMinutes(war.spoils_minutes) : `${fmt(war.spoils ?? 0)} denarii`}`}
           good={won}
         />
         {!won && war.damaged_building ? (

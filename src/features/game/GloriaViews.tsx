@@ -15,6 +15,7 @@ import { formatKg } from '@/lib/formulas';
 import { buildingDef, type BuildingId } from '@/lib/game/fortress';
 import { GLORIA, LAURELS } from '@/lib/game/config';
 import { ludusBadges, type WarRecord } from '@/lib/game/gloria';
+import { formatMinutes } from '@/lib/game/hours';
 import { accentA, colors, tabular, type } from '@/theme/tokens';
 
 import { useLudusRanking, type LudusRank, type War } from './api';
@@ -180,7 +181,7 @@ function WarRow({ w, mine }: { w: War; mine: string }) {
   const parts = [
     gloria != null && gloria !== 0 ? `${signed(gloria)} gloria` : null,
     won
-      ? `+${w.spoils ?? 0} denarii, +${LAURELS.warWin} laurels each`
+      ? `+${w.spoils_minutes != null ? formatMinutes(w.spoils_minutes) : `${w.spoils ?? 0} denarii`}, +${LAURELS.warWin} laurels each`
       : damaged
         ? `${damaged} damaged`
         : 'Nothing damaged',

@@ -9,7 +9,7 @@ import { Text, View } from 'react-native';
 
 import { IconButton } from '@/components/Buttons';
 import { Map as MapIcon } from '@/components/icons';
-import { EmptyState } from '@/components/List';
+import { EmptyState, SectionHeader } from '@/components/List';
 import { Screen } from '@/components/Screen';
 import { Segmented } from '@/components/Segmented';
 import { ScopeTabs } from '@/features/arena/Ranks';
@@ -22,6 +22,7 @@ import { CityTopBar } from './CityViews';
 import { DuelsView } from './DuelsView';
 import { FortressView } from './FortressView';
 import { GladiatorView } from './GladiatorView';
+import { HouseView } from './HouseView';
 import { LeagueView } from './LeagueView';
 import { LudusView } from './LudusView';
 
@@ -104,8 +105,8 @@ export function TempleScreen() {
       {gymId ? (
         <>
           <Text style={type.caption}>
-            Your tribe is everyone who trains at {gym?.name ?? 'your gym'}. Its fortress grows with
-            the denarii its members give.
+            Your tribe is everyone who trains at {gym?.name ?? 'your gym'}. Its fortress is built
+            with the hours its members spend there.
           </Text>
           <FortressView kind="gym" id={gymId} title={gym?.name ?? 'Gym'} />
         </>
@@ -123,6 +124,8 @@ export function DomusScreen() {
   return (
     <Screen glow="center" gap={16}>
       <CityTopBar title="Your domus" />
+      <HouseView />
+      <SectionHeader title="Your gladiator" />
       <GladiatorView />
     </Screen>
   );

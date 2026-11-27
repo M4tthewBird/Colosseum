@@ -9,6 +9,8 @@
  * - figure:  the gladiator, full body (ranks and fighting styles).
  * - item:    one object on its own (gear, small icons).
  * - emblem:  a round league emblem.
+ * - map:     a painted map (Czechia, Brno) over an outline template (scripts/geo/maps.mjs), so
+ *            gyms can be put on it by their coordinates.
  *
  * `batch` groups pictures that are made in one Gemini chat (same kind and attachments); `test`
  * pictures come first, to check that the pieces fit together before making the rest.
@@ -40,10 +42,12 @@ export const FORMAT = {
   figure: `FORMAT: one gladiator, full body from head to feet, seen straight from the front at eye level: he faces the viewer, not turned to either side, standing upright and symmetrical with his feet a little apart and his arms hanging slightly away from his body. If he carries a weapon, it is held down at his side in his right hand; if he has a shield, it is on his left forearm, its front facing the viewer. Painted in the style of the attached city (the same ink outlines, hatching and palette). The same man in every image: muscular, tanned, short dark curly hair, a short dark beard, a calm determined face; only his gear changes. A small soft shadow directly under his feet only. Background: perfectly flat plain cream #F2EBDB, no gradient, no ground, no scenery. The whole figure in frame with empty background around it: feet, crest and weapons not cut off. Portrait image, 3:4.`,
   item: `FORMAT: one object alone, seen straight from the front, flat-on, the way it faces you when worn (no tilt, no three-quarter view), centred, filling about 70 % of the image, painted in the style of the attached city (the same ink outlines, hatching, palette and light from the upper left). A helmet faces the viewer; a shield shows its front; a weapon stands upright, blade or point up; armour and clothes are shown from the front as if worn by an invisible body. Nobody wears or holds it. A small soft shadow under it only. Background: perfectly flat plain cream #F2EBDB, no gradient, no texture, no table, no scenery. Square image.`,
   layer: `FORMAT: EDIT THE BASE IMAGE. Take the base gladiator (image 1 of this chat) and add only the piece of gear named. Keep everything else exactly as it is: the same man, the same pose, the same position and size in the frame, the same framing, the same light and the same cream background #F2EBDB. Do not move, redraw or restyle anything else, and do not add any other gear. Portrait image, 3:4, the same size as the base.`,
+  map: `FORMAT: a painted map seen from directly above (top-down: not isometric, no perspective, no tilt), in the style of the attached city painting. The second attached image is the outline template. Keep the outline exactly where the template has it, with the same shape, position and size in the frame: do not move, rotate, scale or simplify it, because the app puts real places on the map by their coordinates. Blue lines in the template are rivers: paint them exactly there. Each small dark dot is a town: paint a small cluster of terracotta roofs exactly on it. Paint the land inside the outline; draw its border as a thin dark-brown ink line. Outside the outline leave plain flat cream #F2EBDB with nothing on it: no neighbouring land, no sea, no frame, no compass rose, no legend. No text, no labels, no names, no numbers, no markers, no pins. Give the image the same proportions as the template.`,
   emblem: `FORMAT: a round emblem (a medallion) seen straight from the front, centred, filling about 80 % of the image, painted in the style of the attached city (ink outlines, hatching, warm palette). All league emblems share one design and differ only in metal and ornament. Background: perfectly flat plain cream #F2EBDB, no gradient. Square image.`,
 };
 
-/** Extra attachment per kind (besides the style reference), shown in the kit's steps. */
+/** Extra attachment per kind (besides the style reference), shown in the kit's steps; a map
+ * brings its own outline template (`attach`). */
 export const ATTACH = { piece: 'sablona-parcely.png' };
 
 /** The Czech titles of the batches, in the order they are made. */
@@ -55,11 +59,20 @@ export const BATCHES = {
   S1: 'Malé kousky 1×1: posilovací stroje',
   S2: 'Malé kousky 1×1: doplňky, parcela, lešení',
   ground: 'Terén (textury)',
+  // 2026-11-27: the gladiator first, then the training grounds, the house, the aqueduct, the maps
   dressup: 'Zkouška oblékání: gladiátor zepředu a 4 kusy výzbroje na něm',
   figures: 'Gladiátor: hodnosti a styly boje',
   items1: 'Výzbroj: přilby a štíty',
   items2: 'Výzbroj: zbraně a chrániče',
   items3: 'Výzbroj: zbroj a oděv, ikony',
+  T1: 'Cvičiště ludusu: střed 3×3 a vybavení',
+  T2: 'Cvičiště: činky a hrazda (3 úrovně)',
+  test2: 'Zkouška: úseky hradeb a akvaduktu (navazují na sebe?)',
+  W: 'Hradby: kamenná a opevněná',
+  D: 'Tvůj dům: nový domus 2, palác a vylepšení',
+  A: 'Akvadukt: nároží a vodojem',
+  mapCZ: 'Mapa Česka',
+  mapBrno: 'Mapa Brna',
   emblems: 'Ligové znaky',
 };
 
@@ -227,14 +240,6 @@ export const ASSETS = [
     'grass',
     'Domus 1: chýše',
     'A small poor hut: wattle walls, a straw roof, a woodpile, a small vegetable patch and a low wicker fence.',
-  ),
-  piece(
-    'M2',
-    'home-2',
-    2,
-    'grass',
-    'Domus 2: dřevěný dům',
-    'A modest timber house with a gabled shingle roof, a small storage shed beside it and a stack of firewood.',
   ),
   piece(
     'M2',
@@ -419,6 +424,230 @@ export const ASSETS = [
   ),
   plot(1, 'S2'),
   scaffold(1, 'S2'),
+
+  // ── Training grounds (Matyáš, 2026-11-27): the ludus and the tribe build their fortress as a
+  // grid like the city: the machines, walls and drill props stand there, not in the city ──
+  piece(
+    'T1',
+    'ludus-1',
+    3,
+    'sand',
+    'Ludus 1: malá škola gladiátorů',
+    'A small gladiator school: a long low timber barracks hut with a thatched roof along the back of a square sand training yard, a palus post and a straw practice dummy in the yard, a low wooden fence around it.',
+  ),
+  piece(
+    'T1',
+    'ludus-2',
+    3,
+    'sand',
+    'Ludus 2: kamenný ludus',
+    'A stone gladiator school: an L-shaped two-storey limestone building with a terracotta tiled roof and a wooden balcony along the back and one side of a sand training yard, two palus posts and a rack of wooden swords in the yard.',
+  ),
+  piece(
+    'T1',
+    'ludus-3',
+    3,
+    'sand',
+    'Ludus 3: Ludus Magnus',
+    'A grand gladiator school (Ludus Magnus): two-storey colonnaded limestone buildings with terracotta roofs on three sides of an oval sand practice arena with a few low tiers of stone seats, red pennants on the roofs.',
+  ),
+  piece(
+    'T1',
+    'palus',
+    1,
+    'sand',
+    'Palus: kůl na nácvik',
+    'A palus: a thick wooden post as tall as a man, scarred by sword cuts, with a straw practice dummy tied to a second post beside it.',
+  ),
+  piece(
+    'T1',
+    'weapon-rack',
+    1,
+    'sand',
+    'Stojan se zbraněmi',
+    'A wooden rack with wooden practice swords, two spears and a round wooden shield leaning against it.',
+  ),
+  piece(
+    'T1',
+    'brazier',
+    1,
+    'paving',
+    'Žárová mísa',
+    'A bronze brazier on three legs with a bright orange fire burning in it, and a small stack of firewood beside it.',
+  ),
+  piece(
+    'T1',
+    'water-trough',
+    1,
+    'sand',
+    'Koryto s vodou',
+    'A long stone water trough full of clear water with a wooden ladle, and a clay jug beside it.',
+  ),
+
+  // more gym equipment for the training grounds, three levels like the other machines
+  ...[
+    [
+      'halteres',
+      'Činky (halteres)',
+      [
+        'A low wooden rack holding pairs of stone dumbbells (halteres) of three sizes.',
+        'A sturdy wooden rack reinforced with iron holding pairs of iron dumbbells of four sizes.',
+        'A marble rack with bronze fittings holding pairs of bronze dumbbells of five sizes.',
+      ],
+    ],
+    [
+      'pullup',
+      'Hrazda',
+      [
+        'A pull-up frame: two rough timber posts with a round wooden bar across the top.',
+        'A pull-up frame: two squared timber posts joined by an iron bar, with a climbing rope hanging beside it.',
+        'A pull-up frame: two marble columns joined by a bronze bar, with a climbing rope and bronze rings hanging from a beam.',
+      ],
+    ],
+  ].flatMap(([id, cs, prompts]) =>
+    prompts.map((prompt, n) =>
+      piece('T2', `${id}-${n + 1}`, 1, 'sand', `${cs} úroveň ${n + 1}`, prompt),
+    ),
+  ),
+
+  // ── Walls of the training grounds and the aqueduct: sections that join up across tiles.
+  // The test pair first: do two sections side by side meet without a gap? ──
+  ...[
+    [
+      '1',
+      'Hradby 1: palisáda',
+      'a palisade of sharpened timber stakes about as tall as a man, bound with rope',
+    ],
+    [
+      '2',
+      'Hradby 2: kamenná zeď',
+      'a limestone wall about twice as tall as a man, with a walkway on top',
+    ],
+    [
+      '3',
+      'Hradby 3: opevněná zeď',
+      'a tall fortified limestone wall with battlements on top and narrow arrow slits',
+    ],
+  ].flatMap(([n, cs, wall]) => [
+    piece(
+      n === '1' ? 'test2' : 'W',
+      `wall-${n}-a`,
+      1,
+      'grass',
+      `${cs}, úsek /`,
+      `A straight section of ${wall}. It crosses the base along its middle, rising to the right: it runs from the middle of the base's front-left edge to the middle of its back-right edge, parallel to the base's back-left edge. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly. Nothing else on the base.`,
+    ),
+    piece(
+      n === '1' ? 'test2' : 'W',
+      `wall-${n}-b`,
+      1,
+      'grass',
+      `${cs}, úsek \\`,
+      `A straight section of ${wall}. It crosses the base along its middle, rising to the left: it runs from the middle of the base's front-right edge to the middle of its back-left edge, parallel to the base's back-right edge. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly. Nothing else on the base.`,
+    ),
+    piece(
+      n === '1' ? 'test2' : 'W',
+      `wall-${n}-tower`,
+      1,
+      'grass',
+      `${cs}, věž`,
+      `A ${n === '1' ? 'square wooden watchtower on four posts with a small roofed platform' : 'square limestone tower with battlements'} standing in the middle of the base, a little taller than ${wall}. No wall sections attached to it: walls will join it from the sides.`,
+    ),
+  ]),
+  piece(
+    'test2',
+    'aqueduct-a',
+    1,
+    'grass',
+    'Akvadukt, úsek /',
+    "A straight section of a Roman aqueduct: two tiers of round limestone arches carrying a covered water channel on top. It crosses the base along its middle, rising to the right: from the middle of the base's front-left edge to the middle of its back-right edge, parallel to the base's back-left edge. One full arch on each tier. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly.",
+  ),
+  piece(
+    'test2',
+    'aqueduct-b',
+    1,
+    'grass',
+    'Akvadukt, úsek \\',
+    "A straight section of a Roman aqueduct: two tiers of round limestone arches carrying a covered water channel on top. It crosses the base along its middle, rising to the left: from the middle of the base's front-right edge to the middle of its back-left edge, parallel to the base's back-right edge. One full arch on each tier. Both ends are cut off flat exactly at the base's edges, so the next section continues it seamlessly.",
+  ),
+  piece(
+    'A',
+    'aqueduct-pier',
+    1,
+    'grass',
+    'Akvadukt, nároží',
+    'A square limestone pier of a Roman aqueduct, as tall as two tiers of arches, with the covered water channel on top turning the corner. It stands in the middle of the base; aqueduct sections will join it from the sides.',
+  ),
+  piece(
+    'A',
+    'castellum',
+    1,
+    'paving',
+    'Akvadukt: vodojem',
+    'A castellum aquae: a small round limestone water tower with a domed roof where the aqueduct brings water into the city, a stone basin of clear water at its foot with water pouring into it from a bronze spout.',
+  ),
+
+  // ── Your own house (Matyáš, 2026-11-27): upgraded with your own hours in the gym, and a few
+  // things to build around it. rev 2 of home-2: the timber house did not fit ──
+  {
+    ...piece(
+      'D',
+      'home-2',
+      2,
+      'grass',
+      'Domus 2: malý kamenný dům',
+      'A small Roman house: whitewashed limestone walls, a low terracotta tiled roof, a wooden door under a small porch, a vine on a wooden pergola beside it, a bench and a few clay pots.',
+    ),
+    rev: 2,
+  },
+  piece(
+    'D',
+    'home-5',
+    2,
+    'grass',
+    'Domus 5: palác',
+    'A grand palatial villa: a two-storey limestone house with terracotta roofs around a colonnaded garden courtyard (peristyle) with a fountain, a small private bath house with a dome at one side, statues and cypresses. The grandest house of the city.',
+  ),
+  piece(
+    'D',
+    'hortus',
+    1,
+    'grass',
+    'Zahrada (hortus)',
+    'A small Roman kitchen garden: neat beds of herbs and vegetables edged with stones, a little olive tree and a clay water jar.',
+  ),
+  piece(
+    'D',
+    'fountain',
+    1,
+    'paving',
+    'Fontána',
+    'A round marble fountain with a small bronze statue in the middle, clear water splashing into the basin.',
+  ),
+  piece(
+    'D',
+    'pergola',
+    1,
+    'paving',
+    'Pergola s vínem',
+    'A wooden pergola overgrown with a grape vine with green leaves and dark grapes, a stone bench under it.',
+  ),
+  piece(
+    'D',
+    'lararium',
+    1,
+    'paving',
+    'Domácí oltář (lararium)',
+    'A lararium: a small household shrine like a tiny temple front on a pedestal, with two small bronze figures inside, an oil lamp and offerings of fruit.',
+  ),
+  piece(
+    'D',
+    'palaestra',
+    1,
+    'sand',
+    'Domácí cvičiště',
+    'A private training corner: a small sand square with a stone bench, a pair of stone dumbbells and a wooden practice sword leaning on the bench.',
+  ),
 
   // ── Ground ──
   {
@@ -793,4 +1022,24 @@ export const ASSETS = [
     cs,
     prompt,
   })),
+
+  // ── Maps (Matyáš, 2026-11-27): gyms go on them by their coordinates (scripts/geo/maps.mjs) ──
+  {
+    kind: 'map',
+    batch: 'mapCZ',
+    id: 'map-cz',
+    cs: 'Mapa Česka',
+    attach: 'sablona-cesko.png',
+    prompt:
+      'Czechia as a hand-painted map: the mountains along its borders (Krkonoše in the north, Šumava in the south-west, Krušné hory in the north-west, the Beskydy in the east) as small painted hills with dark green forests, the gentle Bohemian-Moravian Highlands in the middle, patches of olive fields and ochre farmland, clusters of small painted trees for forests, the rivers Vltava, Labe, Morava and Odra as thin blue-green lines. Landscape image, 16:9.',
+  },
+  {
+    kind: 'map',
+    batch: 'mapBrno',
+    id: 'map-brno',
+    cs: 'Mapa Brna',
+    attach: 'sablona-brno.png',
+    prompt:
+      'The city of Brno as a hand-painted map: the rivers Svratka and Svitava as blue-green lines (the Svratka widens into the Brno reservoir in the north-west, among wooded hills), the old town in the middle around the dot with dense terracotta roofs, the Špilberk castle on its wooded hill just west of it and the cathedral on Petrov hill, city blocks of terracotta roofs thinning towards the outline into houses with gardens, fields and vineyards in the south, forested hills in the north and west. Square image.',
+  },
 ];

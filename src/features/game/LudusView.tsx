@@ -26,6 +26,7 @@ import { QrCode } from '@/components/QrCode';
 import { SearchField } from '@/components/SearchField';
 import { Sheet } from '@/components/Sheet';
 import { LAURELS, LUDUS, WAR } from '@/lib/game/config';
+import { formatMinutes } from '@/lib/game/hours';
 import { currentLevel, timeLeftText } from '@/lib/game/fortress';
 import { formatKg } from '@/lib/formulas';
 import { useData } from '@/stores/data';
@@ -70,9 +71,9 @@ function NoLudus() {
         </View>
         <Text style={[type.title, { textAlign: 'center' }]}>Your ludus</Text>
         <Text style={[type.caption, { textAlign: 'center' }]}>
-          A crew of {LUDUS.minMembers}–{LUDUS.maxMembers} friends, from any gym. Give the denarii
-          you earn by training, build your fortress together and fight other ludi: the crew that
-          trains more wins.
+          A crew of {LUDUS.minMembers}–{LUDUS.maxMembers} friends, from any gym. Your hours at the
+          gym build your fortress together, and you fight other ludi: the crew that trains more
+          wins.
         </Text>
       </GlassCard>
       <FillButton label="Create a ludus" icon={Plus} onPress={() => setSheet('create')} />
@@ -203,8 +204,8 @@ function MyLudus({ ludus }: { ludus: Ludus }) {
         </View>
         <GloriaStats record={ludus.record} place={place} />
         <Text style={[type.small, tabular]}>
-          {ludus.members.length} of {ludus.limit} members · {ludus.treasury.toLocaleString('en-US')}{' '}
-          denarii in the treasury
+          {ludus.members.length} of {ludus.limit} members · {formatMinutes(ludus.treasury)} to build
+          with
         </Text>
       </GlassCard>
 
@@ -314,8 +315,8 @@ function MyLudus({ ludus }: { ludus: Ludus }) {
               message: last
                 ? 'You are the last member: the ludus, its treasury and fortress close for good.'
                 : leader
-                  ? 'The longest member becomes the leader. Denarii you gave stay in the treasury.'
-                  : 'Denarii you gave stay in the treasury.',
+                  ? 'The longest member becomes the leader. The hours you brought stay with the ludus.'
+                  : 'The hours you brought stay with the ludus.',
               confirmLabel: 'Leave',
               destructive: true,
             })
@@ -368,7 +369,7 @@ function WarSheet({ ludus, onClose }: { ludus: Ludus; onClose: () => void }) {
     if (
       await confirm({
         title: `Declare war on ${target.name}?`,
-        message: `For ${WAR.days} days, verified workouts at the gym score points (${WAR.perWorkout} each, +${WAR.pr} per PR, +${WAR.perDay} per day). Points are divided by active members, so size does not decide. The winner takes up to ${WAR.maxSpoils} denarii, ${LAURELS.warWin} laurels each and gloria; one of the loser's buildings gets damaged.`,
+        message: `For ${WAR.days} days, verified workouts at the gym score points (${WAR.perWorkout} each, +${WAR.pr} per PR, +${WAR.perDay} per day). Points are divided by active members, so size does not decide. The winner takes up to ${formatMinutes(WAR.maxSpoils)} of their hours, ${LAURELS.warWin} laurels each and gloria; one of the loser's buildings gets damaged.`,
         confirmLabel: 'Declare war',
       })
     )

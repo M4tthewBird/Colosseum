@@ -22,6 +22,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
+import { frameOf, MAPS, templateSvg as mapSvg } from './geo/maps.mjs';
 import { ASSETS, ATTACH, BATCHES, FORMAT, RATIO, STYLE } from './painted-assets.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -44,7 +45,7 @@ const TILE = 320;
 /** Colour distance (|ΔR| + |ΔG| + |ΔB|) that still counts as background, and for cream holes. */
 const TOLERANCE = 26;
 const HOLE_TOLERANCE = 12;
-const MAX_PER_BATCH = { piece: 11, ground: 3, figure: 11, item: 12, emblem: 4 };
+const MAX_PER_BATCH = { piece: 11, ground: 3, figure: 11, item: 12, emblem: 4, map: 1 };
 
 const GROUP = (a) =>
   a.kind === 'item'
@@ -53,7 +54,9 @@ const GROUP = (a) =>
       : 'gear'
     : a.batch === 'dressup'
       ? 'dressup'
-      : { piece: 'city', ground: 'ground', figure: 'gladiators', emblem: 'leagues' }[a.kind];
+      : { piece: 'city', ground: 'ground', figure: 'gladiators', emblem: 'leagues', map: 'maps' }[
+          a.kind
+        ];
 
 export function slug(name) {
   return name
@@ -103,13 +106,19 @@ function batchesOf(todo) {
 const sizeText = (a) => `Base ${a.size}x${a.size}, surface: ${a.base}.`;
 const line = (a) => (a.kind === 'piece' ? `${sizeText(a)} ${a.prompt}` : a.prompt);
 
-const attachments = (kind) =>
-  ATTACH[kind] ? `\`${REFERENCE}\` a \`${ATTACH[kind]}\`` : `\`${REFERENCE}\``;
+/** What to attach in Gemini for a batch: the style reference, the base template, a map's outline. */
+const attachments = (list) =>
+  [REFERENCE, ATTACH[list[0].kind], ...list.map((a) => a.attach)]
+    .filter((f, i, all) => f && all.indexOf(f) === i)
+    .map((f) => `\`${f}\``)
+    .join(' a ');
 
 const intro = (kind) =>
   kind === 'piece'
     ? 'The first attached image is the style reference: match its painting style, line work, colours, light and isometric angle exactly. The second attached image is the base template: the flat diamond base of a 1x1, 2x2 and 3x3 piece.'
-    : 'The attached image is the style reference: match its painting style, line work, colours and light exactly.';
+    : kind === 'map'
+      ? 'The first attached image is the style reference: match its painting style, line work, colours and light exactly (but paint the map from directly above). The second attached image is the outline template.'
+      : 'The attached image is the style reference: match its painting style, line work, colours and light exactly.';
 
 /** The format, or one per kind when a batch mixes them (the dressing-up test: a base, then edits). */
 const formats = (list) => {
@@ -192,6 +201,10 @@ async function writeKit(manifest) {
       .toFile(path.join(kit, REFERENCE));
   }
   await sharp(Buffer.from(templateSvg())).png().toFile(path.join(kit, TEMPLATE));
+  for (const id of Object.keys(MAPS))
+    await sharp(Buffer.from(mapSvg(id)))
+      .png()
+      .toFile(path.join(kit, MAPS[id].template));
 
   batches.forEach(({ list }, n) => {
     const singles = list
@@ -200,7 +213,7 @@ async function writeKit(manifest) {
     fs.writeFileSync(
       path.join(kit, 'davky', file(n)),
       `${batchText(list)}\n\n\n=====================================================================\n` +
-        `ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, otevři nový chat, přilož ${attachments(list[0].kind).replace(/`/g, '')}\n` +
+        `ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, otevři nový chat, přilož ${attachments(list).replace(/`/g, '')}\n` +
         `a pošli jen jeden z nich)\n` +
         `=====================================================================\n\n${singles}\n`,
     );
@@ -215,7 +228,7 @@ async function writeKit(manifest) {
   const table = batches
     .map(
       ({ key, list }, n) =>
-        `| [${file(n)}](davky/${file(n)}) | ${BATCHES[key]} | ${list.length} | ${attachments(list[0].kind)} | ${list.map((a) => a.cs).join(', ')} |`,
+        `| [${file(n)}](davky/${file(n)}) | ${BATCHES[key]} | ${list.length} | ${attachments(list)} | ${list.map((a) => a.cs).join(', ')} |`,
     )
     .join('\n');
   const testLeft = todo.some((a) => a.batch === 'test');
@@ -229,6 +242,16 @@ Dávka „Zkouška oblékání“ ověřuje, jestli jde výzbroj kreslit jako vr
 - Gladiátor se nesmí pohnout ani zvětšit. Po importu porovnám úpravy se základem a vyříznu z nich jen výzbroj.
 `;
 
+  const wallSteps = `
+## Zkouška hradeb a akvaduktu
+
+Úseky hradeb a akvaduktu se kladou za sebe přes dlaždice, takže musí navazovat: zeď běží **středem parcely** z poloviny jedné hrany do poloviny protější a končí rovně přesně na okraji. Úsek \`-a\` stoupá doprava (/), úsek \`-b\` doleva (\\). Po importu v \`nahled-mesto.png\` uvidíš, jestli dva úseky vedle sebe tvoří jednu zeď. Než uděláš dávky „Hradby“ a „Akvadukt“, napiš mi, jak to vypadá.
+`;
+  const mapSteps = `
+## Mapy
+
+Ke každé mapě přilož vzor stylu **a její šablonu** (\`sablona-cesko.png\` nebo \`sablona-brno.png\`). Gemini musí nechat hranici přesně tam, kde je na šabloně, a stejný poměr stran (Česko 16:9, Brno čtverec). Jinak gymy na mapě nebudou na svém místě. Po importu otevři \`nahled-map-cz.png\` / \`nahled-map-brno.png\`: červená čára je skutečná hranice. Když se s namalovanou hranicí rozchází, napiš \`redo, keep the outline exactly where the template has it\`.
+`;
   fs.writeFileSync(
     path.join(kit, 'NAVOD.md'),
     `# Malovaná hra v Gemini
@@ -244,6 +267,8 @@ Město se skládá z kousků: každá stavba stojí na vlastní parcele ve tvaru
 | --- | --- |
 | \`${REFERENCE}\` | Vzor stylu (tvoje město). Přikládej ho ke každé dávce. |
 | \`${TEMPLATE}\` | Tvar parcel 1×1, 2×2 a 3×3. Přikládej ho k dávkám se stavbami (v tabulce dole je u každé dávky, co přiložit). |
+| \`sablona-cesko.png\`, \`sablona-brno.png\` | Skutečná hranice Česka a Brna (řeky modře, města tečkou). Přikládej ke své mapě. |
+| \`nahled-map-*.png\` | Po importu mapy: skutečná hranice červeně přes namalovanou mapu. Musí sedět, jinak gymy nebudou na správném místě. |
 | \`davky/\` | Prompty, jeden soubor = jedna dávka. Nahoře hlavní prompt, dole záložní prompty po jednom. |
 | \`stazene/\` | Sem stahuj obrázky z Gemini. |
 | \`importovat.cmd\` | Dvojklik: odstraní krémové pozadí, srovná velikost podle parcely, uloží obrázky do appky (\`assets/game/painted/\`) a nakreslí náhledy. |
@@ -259,7 +284,7 @@ Začni dávkou \`davka-01.txt\`: Colosseum (3×3), velký chrám a kovárna (2×
 Po importu otevři \`nahled-mesto.png\` a dej mi vědět, jak to vypadá. Když k sobě stavby nesedí (jiný úhel, hliněné boky parcely, něco přečnívá), upravím prompty dřív, než vygeneruješ zbytek.
 `
     : ''
-}${dressLeft ? dressSteps : ''}
+}${dressLeft ? dressSteps : ''}${todo.some((a) => a.batch === 'test2') ? wallSteps : ''}${todo.some((a) => a.kind === 'map') ? mapSteps : ''}
 ## Postup pro jednu dávku
 
 1. Otevři **nový chat** v Gemini (model **Pro**, s generováním obrázků).
@@ -706,6 +731,26 @@ async function processOne(file, asset) {
     return { entry: { kind: 'ground', file: rel, width: 1024, height: 1024 }, notes };
   }
 
+  if (asset.kind === 'map') {
+    // no cut-out: the map keeps its cream, and is stretched to the template's frame exactly
+    const m = MAPS[asset.id];
+    const meta = await sharp(file).metadata();
+    const got = meta.width / meta.height;
+    const want = m.width / m.height;
+    const notes =
+      Math.abs(got / want - 1) > 0.03
+        ? [`jiný poměr stran (${got.toFixed(2)} místo ${want.toFixed(2)}), hranice asi nesedí`]
+        : [];
+    await sharp(file)
+      .resize(m.width, m.height, { fit: 'fill', kernel: 'lanczos3' })
+      .webp({ quality: 86 })
+      .toFile(dest);
+    return {
+      entry: { kind: 'map', file: rel, width: m.width, height: m.height, geo: frameOf(asset.id) },
+      notes,
+    };
+  }
+
   const c = await cutout(file);
   const notes = [...c.notes];
   if (c.edge) notes.push('obrázek sahá až k okraji (něco je asi uříznuté)');
@@ -895,6 +940,22 @@ ${lines.map(([a, b]) => `<line x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x
     .toFile(file);
 }
 
+/** Each painted map with the real outline over it in red: it must match the painted border. */
+async function mapPreview(manifest) {
+  for (const id of Object.keys(MAPS)) {
+    const file = path.join(kit, `nahled-${id}.png`);
+    const a = manifest.assets[id];
+    if (!a) {
+      fs.rmSync(file, { force: true });
+      continue;
+    }
+    await sharp(path.join(out, a.file))
+      .composite([{ input: Buffer.from(mapSvg(id, { overlay: true })) }])
+      .png()
+      .toFile(file);
+  }
+}
+
 /** Gladiators, gear, emblems, icons and ground, each with its id. */
 async function otherPreview(manifest) {
   const file = path.join(kit, 'nahled-ostatni.png');
@@ -1082,6 +1143,7 @@ async function importInbox() {
   writeLinks({ assets: sorted });
   await cityPreview({ assets: sorted });
   await otherPreview({ assets: sorted });
+  await mapPreview({ assets: sorted });
   const kitInfo = await writeKit({ assets: sorted });
   console.log(
     `\nNaimportováno ${done}. Zbývá ${kitInfo.todo} obrázků v ${kitInfo.batches} dávkách.` +
@@ -1097,6 +1159,7 @@ else if (args.includes('--previews')) {
   writeLinks(manifest);
   await cityPreview(manifest);
   await otherPreview(manifest);
+  await mapPreview(manifest);
 } else {
   writeLinks(readManifest());
   const info = await writeKit(readManifest());

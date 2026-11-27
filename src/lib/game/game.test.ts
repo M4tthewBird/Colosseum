@@ -7,7 +7,7 @@ import {
   currentLevel,
   fortressLevel,
   fortressStage,
-  levelCost,
+  levelMinutes,
   machineBonus,
   memberLimit,
   workingLevel,
@@ -354,8 +354,8 @@ describe('fortress', () => {
     expect(memberLimit([b({ building: 'barracks', level: 5 })], now)).toBe(10);
   });
   it('costs more for a gym', () => {
-    expect(levelCost('bench', 2, 'ludus')).toBe(300);
-    expect(levelCost('bench', 2, 'gym')).toBe(900);
+    expect(levelMinutes('bench', 2, 'ludus')).toBe(720);
+    expect(levelMinutes('bench', 2, 'gym')).toBe(2160);
   });
   it('adds up standing levels into a fortress level and stage', () => {
     const list = [b({ level: 2, damaged: true }), b({ building: 'rack', level: 3 })];
@@ -385,7 +385,7 @@ describe('battles', () => {
     expect(warScore(90, 3)).toBe(30);
     expect(warScore(90, 3, 2)).toBe(33);
     expect(warWinner(10, 10)).toBe('defender');
-    expect(warSpoils(5000)).toBe(300);
+    expect(warSpoils(5000)).toBe(720);
   });
   it('scores duels', () => {
     const list = [

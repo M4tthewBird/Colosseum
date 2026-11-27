@@ -14,7 +14,8 @@ An RPG layer on top of the tracker, inspired by Gladiatus (XP and ranks), Clash 
 |---|---|
 | **XP** | Experience. Never resets. Sets the **level** and the **rank**. |
 | **Laurels** | Season points. Set the **league**. Partly reset every month. |
-| **Denarii** | Coins. Earned by training, given to a ludus or gym treasury to build. |
+| **Denarii** | Coins. Earned by training, spent on gear. |
+| **Hours** | Time in the gym from verified visits. They build the fortresses and your house (§5). |
 | **Ludus** | A crew of 2–10 people (friends, any gyms). Builds a fortress, fights wars. |
 | **Tribe** | Everyone whose home gym is the same gym. Builds the gym fortress, fights Bellum. |
 | **Verified workout** | A workout inside a gym visit checked in and out with the gym's QR code and GPS. |
@@ -120,26 +121,60 @@ A visit proves you were at the gym.
 | Machines in your ludus or gym fortress | +5 % per level for workouts with that exercise |
 
 - **Daily cap:** 60. Without a verified visit that day the server accepts at most 30.
-- **Wallet** = denarii earned − denarii given. Give any amount to your ludus or your gym treasury.
+- **Wallet** = denarii earned − gear bought. Denarii buy gear in the forge.
+- Until 2026-11-27 denarii could be given to a ludus or gym treasury. Since building is paid in hours (§5), those gifts went back to the people who gave them.
 
-## 5. Building the fortress
+## 5. Hours and building the fortress
 
-The ludus and the gym (tribe) each have a fortress. Any member can start a building when the treasury has enough. One construction at a time; it takes real time.
+**Hours are time in the gym** (Matyáš, 2026-11-27). They pay for everything that is built: the fortress of the ludus, the fortress of the tribe and your own house.
+
+- Every **verified visit** (§3: both scans valid, 20 min – 4 h) adds its minutes, check-in to check-out, the moment it is verified, to three treasuries at once:
+  - **your house** (§5a),
+  - **your ludus**, for visits from the day you joined it,
+  - **your tribe**, for visits at your home gym.
+- An incomplete, rejected or uncounted visit adds nothing. A workout alone adds nothing: only the visit counts.
+- Hours cannot be given, bought or moved. They stay with the treasury they went to: a member who leaves a ludus takes nothing back.
+- Visits verified before hours existed count too: the update credits them once.
+- The app shows whole hours ("37 h"); the database keeps minutes.
+
+The ludus and the gym (tribe) each have a fortress. Any member can start a building when the treasury has enough hours. One construction at a time; it takes real time.
 
 | Building | Levels | Effect | Cost per level (ludus) |
 |---|---|---|---|
-| Bench | 3 | +5 % denarii per level for workouts with a bench or chest press | 150 × level |
-| Squat rack | 3 | +5 % per level for squats and lunges | 150 × level |
-| Cable station | 3 | +5 % per level for cable and pulldown exercises | 150 × level |
-| Deadlift platform | 3 | +5 % per level for deadlifts and hip thrusts | 150 × level |
-| Palisade | 5 | Defence: +5 % war points per level when attacked (gym: +2 % in Bellum) | 120 × level |
-| Barracks (ludus only) | 5 | +1 member per level | 200 × level |
-| Temple | 3 | Prestige: shows the ludus records | 250 × level |
+| Bench | 3 | +5 % denarii per level for workouts with a bench or chest press | 6 h × level |
+| Squat rack | 3 | +5 % per level for squats and lunges | 6 h × level |
+| Cable station | 3 | +5 % per level for cable and pulldown exercises | 6 h × level |
+| Deadlift platform | 3 | +5 % per level for deadlifts and hip thrusts | 6 h × level |
+| Palisade (walls) | 5 | Defence: +5 % war points per level when attacked (gym: +2 % in Bellum) | 5 h × level |
+| Barracks (ludus only) | 5 | +1 member per level | 8 h × level |
+| Temple | 3 | Prestige: shows the ludus records | 10 h × level |
 
-- The gym fortress costs **3×** as much (it is a bigger community).
+- The gym fortress costs **3×** as much (it is a bigger community, so it also gathers more hours).
+- A ludus of 5 who each train 3 hours a week gathers 15 h a week: a bench takes under a week, every machine at level 3 about ten weeks.
 - **Build time:** level × 1 day (level 3 takes 3 days).
 - **Timers** need no cron job: the database stores when a building is ready and every read treats it as done from then on.
 - A **damaged** building (lost war) gives no bonus until repaired for 40 % of its level cost. Nothing is ever destroyed.
+- **Spoils** of a won war are hours: 20 % of the loser's treasury, at most 12 h (ludus war) or 20 h (tribe attack). A tribe attack costs the attacking tribe 4 h (a revenge attack is free).
+
+**The training ground (planned, Matyáš 2026-11-27).** The fortress is built like the city: its buildings stand on a grid that grows from its heart (the ludus's school, the tribe's arena), each new one next to one already built. The machines, the walls and drill props (palus, weapon rack, brazier, water trough) stand there, not in the city. Anyone in the ludus or tribe may build; a building stays where it was placed (nobody moves or removes it). Who decides about building is open (Matyáš, later).
+
+### 5a. Your house
+
+Your own house (your domus) is the first thing in the City you upgrade yourself, with **your own hours**.
+
+| Level | House | Cost |
+|---|---|---|
+| 1 | Hut | free, everyone starts here |
+| 2 | Small stone house | 10 h |
+| 3 | Domus | 25 h |
+| 4 | Villa | 50 h |
+| 5 | Palace | 100 h |
+
+Things to build by the house, 5 h each, from house level 2: a garden (hortus), a fountain, a pergola with a vine, a household shrine (lararium) and a private training corner (palaestra). Cosmetic only, like the cell.
+
+### 5b. The aqueduct (planned)
+
+The longer the aqueduct, the more each verified visit brings: **+2 % hours per arch, at most +20 %** (10 arches), for the treasury of the city it stands in. It waits for the decision on whose city it is (Matyáš, later).
 
 ## 6. Ludus wars
 
@@ -147,7 +182,7 @@ The ludus and the gym (tribe) each have a fortress. Any member can start a build
 - **Points** come only from **verified workouts** in the window: 10 per workout (2 a day at most), +5 per PR (3 at most), +5 per day trained.
 - **Per active member:** each side's points are divided by its active members at the start (trained in the 14 days before, at least 2), so a small crew can beat a big one.
 - **Defender** gets the palisade bonus.
-- **The winner** takes 20 % of the loser's treasury (at most 300) and every member gets +30 laurels. **The loser** gets one building damaged. A tie goes to the defender.
+- **The winner** takes 20 % of the loser's hours (at most 12 h) and every member gets +30 laurels. **The loser** gets one building damaged. A tie goes to the defender.
 - Settled by whoever opens the war after it ends (no cron).
 
 ### Gloria, the record and ludus badges
@@ -221,10 +256,10 @@ The **map** (City → Colosseum → Map, or Bellum → Map) shows the tribes (ho
 
 - **Strength** of a tribe = 20 per verified workout of its members in the last 14 days + the gear power of those members.
 - **Territory:** every gym starts holding its own. A tribe that wins an attack takes every territory the defender holds. The **city ranking** is by territories, then fortress level.
-- **Declare an attack:** any tribe member from level 5 (Gladiator), on a tribe of the same city. Both need 3 members with a verified workout in the last 14 days; neither can be at war; the same two not twice in 7 days. It costs **100 denarii** from the tribe treasury.
+- **Declare an attack:** any tribe member from level 5 (Gladiator), on a tribe of the same city. Both need 3 members with a verified workout in the last 14 days; neither can be at war; the same two not twice in 7 days. It costs **4 hours** from the tribe's treasury (a revenge attack is free).
 - **Timing:** a **24-hour warning** (members pledge to train: "I pledge to train within 24 h"), then **3 days** of battle.
 - **Points:** like ludus wars (10 per verified workout, 2 a day, +5 per PR up to 3, +5 per day trained), per active member (at least 3), times `1 + gear bonus`, plus the defender's walls (+3 % per palisade level).
-- **The winner** takes 20 % of the loser's treasury (at most 500) and the loser's territories (if the attacker won). **The loser** gets a building damaged, the walls first. Nothing is destroyed. A tie goes to the defender.
+- **The winner** takes 20 % of the loser's hours (at most 20 h) and the loser's territories (if the attacker won). **The loser** gets a building damaged, the walls first. Nothing is destroyed. A tie goes to the defender.
 - **Revenge:** within 24 hours of a lost defence the tribe can attack the winner back for free with **+20 %** points, even inside the 7 days.
 - Settled by whoever opens the war after it ends (no cron).
 
@@ -298,7 +333,8 @@ Tables (`supabase/updates/2026-11-13-game.sql`, also in `schema.sql`):
 | `gym_secrets` | the HMAC key per gym | nobody (functions only) | functions |
 | `gym_visits` | check-in/out scans, position, server-set `in_ok`, `out_ok` (status follows from the times) | owner only | owner (scans); the trigger sets the checks |
 | `ludi`, `ludus_members` | crews and who is in them; gloria and the war record on `ludi` (set by `settle_war()` only) | signed-in users | functions (`create_ludus`, `join_ludus`, `leave_ludus`, `remove_member`) |
-| `treasuries`, `treasury_gifts` | balance per ludus/gym, gifts | members | `donate()` |
+| `treasuries` | hours (`minutes`) per ludus/gym; the old `denarii` column is unused since 2026-11-27 | members | visit credits, building |
+| `visit_credits`, `homes`, `home_items` | which visits paid in their minutes, your house and its things | owner | trigger on `gym_visits`, `upgrade_home()`, `build_home_item()` |
 | `buildings` | level, target level, ready at, damaged | signed-in users | `start_building()`, `repair_building()` |
 | `ludus_wars` | the two sides, window, member counts, result, gloria won or lost per side | signed-in users | `declare_war()`, `settle_war()` |
 | `duels` | challenger, opponent, kind, exercise, window, result | the two players | `create_duel()`, `answer_duel()`, `settle_duel()` |

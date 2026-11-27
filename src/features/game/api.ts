@@ -1,6 +1,6 @@
 /**
- * Server data of the game layer: league tables, ludus, treasuries, fortresses, wars, duels,
- * Bellum, gym posters and the user's own visits. Online only (react-query); the user's own XP,
+ * Server data of the game layer: league tables, ludus, treasuries (hours), fortresses, your
+ * house, wars, duels, Bellum, gym posters and the user's own visits. Online only (react-query); the user's own XP,
  * laurels and denarii are computed on the device (see hooks.ts). In demo mode every call is
  * answered from src/dev/seed.ts plus the local user's own data.
  */
@@ -30,14 +30,23 @@ import {
   buildDays,
   buildingDef,
   currentLevel,
-  levelCost,
+  levelMinutes,
   memberLimit,
-  repairCost,
+  repairMinutes,
   type Building,
   type BuildingId,
   type OwnerKind,
 } from '@/lib/game/fortress';
 import { EMPTY_RECORD, gloriaChange, type WarRecord } from '@/lib/game/gloria';
+import {
+  formatMinutes,
+  houseItemBlock,
+  houseUpgradeBlock,
+  houseUpgradeMinutes,
+  HOUSE,
+  type House,
+  type HouseItemId,
+} from '@/lib/game/hours';
 import { seasonOf } from '@/lib/game/levels';
 import { sessionVerification, type GymVisit } from '@/lib/game/visits';
 import { qualifies } from '@/lib/game/engine';
@@ -85,9 +94,9 @@ const demoGymId = DEMO_GYMS[0].id;
 const demo = {
   inLudus: true,
   ludus: { ...DEMO_LUDUS, members: [...DEMO_LUDUS.members] },
-  given: 0,
   /** Spent on gear (cityApi.ts). */
   spent: 0,
+  /** Treasuries hold minutes (hours of verified visits). */
   treasuries: {
     [`ludus:${DEMO_LUDUS.id}`]: DEMO_LUDUS.treasury,
     [`gym:${demoGymId}`]: 2480,
@@ -106,6 +115,7 @@ const demo = {
   wars: [] as War[],
   duels: [] as Duel[],
   poster: {} as Record<string, { lat: number; lng: number }>,
+  house: { level: 2, minutes: 14 * 60 + 25, items: ['hortus'] } as House,
 };
 
 function demoWars(): War[] {
@@ -147,7 +157,8 @@ function demoWars(): War[] {
       attacker_score: 38,
       defender_score: 31,
       winner_id: DEMO_LUDUS.id,
-      spoils: 84,
+      spoils: null,
+      spoils_minutes: 150,
       damaged_building: 'cable',
       settled_at: hoursFromNow(-24 * 9),
       attacker_gloria: 30,
@@ -454,6 +465,7 @@ export interface Ludus {
   motto: string;
   code: string;
   members: LudusMember[];
+  /** Hours in the treasury, in minutes. */
   treasury: number;
   buildings: Building[];
   myRole: 'leader' | 'member';
@@ -509,7 +521,7 @@ export function useMyLudus() {
           .order('joined_at'),
         supabase
           .from('treasuries')
-          .select('denarii')
+          .select('*')
           .eq('owner_kind', 'ludus')
           .eq('owner_id', id)
           .maybeSingle(),
@@ -541,7 +553,7 @@ export function useMyLudus() {
         motto,
         code,
         members: list,
-        treasury: (check(treasury) as { denarii: number } | null)?.denarii ?? 0,
+        treasury: (check(treasury) as { minutes?: number } | null)?.minutes ?? 0,
         buildings: b,
         myRole: list.find((m) => m.id === me())?.role ?? 'member',
         limit: memberLimit(b),
@@ -629,6 +641,7 @@ function useInvalidateGame() {
     void qc.invalidateQueries({ queryKey: ['fortress'] });
     void qc.invalidateQueries({ queryKey: ['wars'] });
     void qc.invalidateQueries({ queryKey: ['duels'] });
+    void qc.invalidateQueries({ queryKey: ['house'] });
   };
 }
 
@@ -711,50 +724,24 @@ export function demoPay(from: 'wallet' | `gym:${string}`, amount: number) {
   else demoSpend('gym', from.slice(4), amount);
 }
 
-/** Demo mode: a gym treasury's balance. */
+/** Demo mode: a gym treasury's hours, in minutes. */
 export function demoTreasury(gymId: string): number {
   return demo.treasuries[`gym:${gymId}`] ?? 0;
 }
 
-/** Denarii I can give. `earned` is computed on the device (used in demo mode). */
+/** Denarii I can spend on gear. `earned` is computed on the device (used in demo mode). */
 export function useWallet(earned: number) {
   return useQuery({
     queryKey: ['wallet', me(), isDemo ? earned : 0],
     queryFn: async (): Promise<number> => {
-      if (isDemo) return Math.max(0, earned - demo.given - demo.spent);
+      if (isDemo) return Math.max(0, earned - demo.spent);
       return Number(check(await supabase.rpc('my_wallet')) ?? 0);
     },
   });
 }
 
-export function useDonate() {
-  const done = useInvalidateGame();
-  return useMutation({
-    mutationFn: async ({
-      kind,
-      id,
-      amount,
-      wallet,
-    }: {
-      kind: OwnerKind;
-      id: string;
-      amount: number;
-      wallet: number;
-    }) => {
-      if (!Number.isInteger(amount) || amount <= 0) throw new Error('Give at least 1 denarius');
-      if (amount > wallet) throw new Error('You do not have that many denarii');
-      if (isDemo) {
-        demo.given += amount;
-        demo.treasuries[`${kind}:${id}`] = (demo.treasuries[`${kind}:${id}`] ?? 0) + amount;
-        return;
-      }
-      check(await supabase.rpc('donate', { p_kind: kind, p_id: id, p_amount: amount }));
-    },
-    onSuccess: done,
-  });
-}
-
 export interface Fortress {
+  /** Hours in the treasury, in minutes: every member's verified visits fill it. */
   treasury: number;
   buildings: Building[];
 }
@@ -772,14 +759,14 @@ export function useFortress(kind: OwnerKind, id: string | null | undefined) {
       const [treasury, buildings] = await Promise.all([
         supabase
           .from('treasuries')
-          .select('denarii')
+          .select('*')
           .eq('owner_kind', kind)
           .eq('owner_id', id!)
           .maybeSingle(),
         supabase.from('buildings').select('*').eq('owner_kind', kind).eq('owner_id', id!),
       ]);
       return {
-        treasury: (check(treasury) as { denarii: number } | null)?.denarii ?? 0,
+        treasury: (check(treasury) as { minutes?: number } | null)?.minutes ?? 0,
         buildings: check(buildings) as Building[],
       };
     },
@@ -788,7 +775,8 @@ export function useFortress(kind: OwnerKind, id: string | null | undefined) {
 
 function demoSpend(kind: OwnerKind, id: string, cost: number) {
   const key = `${kind}:${id}`;
-  if ((demo.treasuries[key] ?? 0) < cost) throw new Error(`The treasury needs ${cost} denarii`);
+  if ((demo.treasuries[key] ?? 0) < cost)
+    throw new Error(`The treasury needs ${formatMinutes(cost)}`);
   demo.treasuries[key] -= cost;
 }
 
@@ -817,7 +805,7 @@ export function useStartBuilding() {
         if (b?.damaged) throw new Error('Repair it first');
         const next = (b?.level ?? 0) + 1;
         if (next > buildingDef(building).maxLevel) throw new Error('It is at the top level');
-        demoSpend(kind, id, levelCost(building, next, kind));
+        demoSpend(kind, id, levelMinutes(building, next, kind));
         if (!b) {
           b = demoBuilding(kind, id, building, 0);
           demo.buildings.push(b);
@@ -849,13 +837,69 @@ export function useRepairBuilding() {
           (x) => x.owner_kind === kind && x.owner_id === id && x.building === building,
         );
         if (!b?.damaged) throw new Error('Nothing to repair');
-        demoSpend(kind, id, repairCost(building, Math.max(1, currentLevel(b)), kind));
+        demoSpend(kind, id, repairMinutes(building, Math.max(1, currentLevel(b)), kind));
         b.damaged = false;
         return;
       }
       check(
         await supabase.rpc('repair_building', { p_kind: kind, p_id: id, p_building: building }),
       );
+    },
+    onSuccess: done,
+  });
+}
+
+// ───────────── Your house (docs/GAME.md §5a) ─────────────
+
+/** Your house: its level, your own hours not spent yet and the things built by it. */
+export function useHouse() {
+  return useQuery({
+    queryKey: ['house', me()],
+    queryFn: async (): Promise<House> => {
+      if (isDemo) return { ...demo.house, items: [...demo.house.items] };
+      const [home, items] = await Promise.all([
+        supabase.from('homes').select('level,minutes').eq('user_id', me()).maybeSingle(),
+        supabase.from('home_items').select('item').eq('user_id', me()),
+      ]);
+      const h = check(home) as { level: number; minutes: number } | null;
+      return {
+        level: h?.level ?? 1,
+        minutes: h?.minutes ?? 0,
+        items: (check(items) as { item: HouseItemId }[]).map((r) => r.item),
+      };
+    },
+  });
+}
+
+export function useUpgradeHouse() {
+  const done = useInvalidateGame();
+  return useMutation({
+    mutationFn: async (house: House) => {
+      const block = houseUpgradeBlock(house);
+      if (block) throw new Error(block);
+      if (isDemo) {
+        demo.house.minutes -= houseUpgradeMinutes(demo.house.level) ?? 0;
+        demo.house.level += 1;
+        return;
+      }
+      check(await supabase.rpc('upgrade_home'));
+    },
+    onSuccess: done,
+  });
+}
+
+export function useBuildHouseItem() {
+  const done = useInvalidateGame();
+  return useMutation({
+    mutationFn: async ({ house, item }: { house: House; item: HouseItemId }) => {
+      const block = houseItemBlock(house, item);
+      if (block) throw new Error(block);
+      if (isDemo) {
+        demo.house.minutes -= HOUSE.itemHours * 60;
+        demo.house.items.push(item);
+        return;
+      }
+      check(await supabase.rpc('build_home_item', { p_item: item }));
     },
     onSuccess: done,
   });
@@ -877,7 +921,10 @@ export interface War {
   attacker_score: number;
   defender_score: number;
   winner_id: string | null;
+  /** Denarii, for wars settled before 2026-11-27. */
   spoils: number | null;
+  /** Hours won, in minutes (wars settled since 2026-11-27). */
+  spoils_minutes?: number | null;
   damaged_building: string | null;
   settled_at: string | null;
   /** Gloria each side won or lost (null until settled). */
@@ -914,7 +961,8 @@ function demoScoreWar(w: War): War {
   return {
     ...scored,
     winner_id: winner.id,
-    spoils: warSpoils(400),
+    spoils: null,
+    spoils_minutes: warSpoils(demo.treasuries[`ludus:${loser.id}`] ?? 900),
     settled_at: w.ends_at,
     attacker_gloria: attackerWins ? g.winner : g.loser,
     defender_gloria: attackerWins ? g.loser : g.winner,

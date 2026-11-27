@@ -1,19 +1,17 @@
 /**
- * A fortress (of a ludus or a gym): the treasury, a gift from your wallet, and the buildings with
- * their level, what they do, what the next level costs, and the one being built.
+ * A fortress (of a ludus or a gym): its hours (the time its members spent at the gym, from
+ * verified visits) and the buildings with their level, what they do, what the next level costs in
+ * hours, and the one being built (docs/GAME.md §5).
  */
-import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { ArtStage, FortressArt } from '@/components/art/Art';
 import { FillButton } from '@/components/Buttons';
 import { ProgressBar } from '@/components/Charts';
-import { FormField, FormGroup } from '@/components/Form';
 import { Glass, GlassCard } from '@/components/Glass';
 import {
   Anvil,
   Church,
-  Coins,
   Dumbbell,
   Fence,
   Hammer,
@@ -22,7 +20,6 @@ import {
   Warehouse,
   type LucideIcon,
 } from '@/components/icons';
-import { Sheet } from '@/components/Sheet';
 import {
   buildDays,
   buildingsFor,
@@ -30,8 +27,8 @@ import {
   fortressLevel,
   fortressStage,
   FORTRESS_STAGES,
-  levelCost,
-  repairCost,
+  levelMinutes,
+  repairMinutes,
   timeLeftText,
   underConstruction,
   type Building,
@@ -39,11 +36,11 @@ import {
   type BuildingId,
   type OwnerKind,
 } from '@/lib/game/fortress';
+import { formatMinutes } from '@/lib/game/hours';
 import { useNow } from '@/lib/useNow';
 import { confirm, toast } from '@/stores/ui';
 import { accentA, colors, tabular, type } from '@/theme/tokens';
-import { useDonate, useFortress, useRepairBuilding, useStartBuilding, useWallet } from './api';
-import { useMyGame } from './hooks';
+import { useFortress, useRepairBuilding, useStartBuilding } from './api';
 
 const ICONS: Record<BuildingId, LucideIcon> = {
   bench: Dumbbell,
@@ -71,7 +68,6 @@ export function FortressView({
   const now = useNow(true, 60000);
   const start = useStartBuilding();
   const repair = useRepairBuilding();
-  const [giving, setGiving] = useState(false);
   const data = fortress.data;
   if (!data) {
     return (
@@ -85,10 +81,10 @@ export function FortressView({
 
   const build = async (def: BuildingDef, b: Building | undefined) => {
     const next = currentLevel(b, new Date(now)) + 1;
-    const cost = levelCost(def.id, next, kind);
+    const cost = formatMinutes(levelMinutes(def.id, next, kind));
     const ok = await confirm({
       title: `${b ? 'Upgrade' : 'Build'} ${def.name}?`,
-      message: `Level ${next}: ${def.effect(next, kind)}. Costs ${cost} denarii from the treasury and takes ${buildDays(next)} day${buildDays(next) === 1 ? '' : 's'}.`,
+      message: `Level ${next}: ${def.effect(next, kind)}. Costs ${cost} of the treasury’s hours and takes ${buildDays(next)} day${buildDays(next) === 1 ? '' : 's'}.`,
       confirmLabel: b ? 'Upgrade' : 'Build',
     });
     if (ok)
@@ -102,10 +98,10 @@ export function FortressView({
   };
 
   const fix = async (def: BuildingDef, b: Building) => {
-    const cost = repairCost(def.id, Math.max(1, currentLevel(b)), kind);
+    const cost = formatMinutes(repairMinutes(def.id, Math.max(1, currentLevel(b)), kind));
     const ok = await confirm({
       title: `Repair ${def.name}?`,
-      message: `It was damaged in a war and gives nothing until repaired. Costs ${cost} denarii.`,
+      message: `It was damaged in a war and gives nothing until repaired. Costs ${cost} of the treasury’s hours.`,
       confirmLabel: 'Repair',
     });
     if (ok)
@@ -151,13 +147,17 @@ export function FortressView({
       </View>
       <GlassCard radius={22} style={styles.treasury}>
         <View style={styles.coin}>
-          <Coins size={20} color={colors.accent} strokeWidth={2.2} />
+          <Hourglass size={20} color={colors.accent} strokeWidth={2.2} />
         </View>
         <View style={{ flex: 1, gap: 2 }}>
-          <Text style={type.small}>{title} treasury</Text>
-          <Text style={[styles.big, tabular]}>{data.treasury.toLocaleString('en-US')} denarii</Text>
+          <Text style={type.small}>Hours to build with</Text>
+          <Text style={[styles.big, tabular]}>{formatMinutes(data.treasury)}</Text>
+          <Text style={type.small}>
+            {kind === 'gym'
+              ? 'Every verified visit to this gym adds its time.'
+              : 'Every member’s verified visit to the gym adds its time.'}
+          </Text>
         </View>
-        <FillButton size="sm" label="Give" icon={Coins} onPress={() => setGiving(true)} />
       </GlassCard>
 
       <View style={styles.grid}>
@@ -228,10 +228,10 @@ export function FortressView({
               ) : (
                 <FillButton
                   size="sm"
-                  label={`${level ? 'Lv ' + next : 'Build'} · ${levelCost(def.id, next, kind)}`}
+                  label={`${level ? 'Lv ' + next : 'Build'} · ${formatMinutes(levelMinutes(def.id, next, kind))}`}
                   icon={Hammer}
                   disabled={!!busy || start.isPending}
-                  accessibilityLabel={`${level ? 'Upgrade' : 'Build'} ${def.name} for ${levelCost(def.id, next, kind)} denarii`}
+                  accessibilityLabel={`${level ? 'Upgrade' : 'Build'} ${def.name} for ${formatMinutes(levelMinutes(def.id, next, kind))}`}
                   onPress={() => void build(def, b)}
                 />
               )}
@@ -245,77 +245,7 @@ export function FortressView({
         </Text>
       ) : null}
       {extra}
-      {giving ? (
-        <GiveSheet kind={kind} id={id} title={title} onClose={() => setGiving(false)} />
-      ) : null}
     </View>
-  );
-}
-
-function GiveSheet({
-  kind,
-  id,
-  title,
-  onClose,
-}: {
-  kind: OwnerKind;
-  id: string;
-  title: string;
-  onClose: () => void;
-}) {
-  const { denariiEarned } = useMyGame();
-  const wallet = useWallet(denariiEarned);
-  const donate = useDonate();
-  const [text, setText] = useState('');
-  const amount = Math.floor(Number(text.replace(/\s/g, '')) || 0);
-  const have = wallet.data ?? 0;
-  const send = () =>
-    donate.mutate(
-      { kind, id, amount, wallet: have },
-      {
-        onSuccess: () => {
-          toast(`${amount} denarii given to ${title}`, true);
-          onClose();
-        },
-        onError: (e) => toast(e.message),
-      },
-    );
-  return (
-    <Sheet
-      visible
-      onClose={onClose}
-      title={`Give to ${title}`}
-      doneLabel="Give"
-      onDone={send}
-      doneDisabled={amount <= 0 || amount > have || donate.isPending}
-    >
-      <Text style={[type.caption, tabular]}>
-        Your wallet: {wallet.isLoading ? '…' : `${have} denarii`}. Denarii come from training; give
-        them to build together.
-      </Text>
-      <FormGroup>
-        <FormField
-          label="Denarii"
-          keyboardType="number-pad"
-          value={text}
-          onChangeText={setText}
-          placeholder="0"
-          autoFocus
-        />
-      </FormGroup>
-      <View style={styles.quick}>
-        {[25, 50, 100].map((n) => (
-          <FillButton
-            key={n}
-            size="sm"
-            label={String(n)}
-            disabled={n > have}
-            onPress={() => setText(String(n))}
-          />
-        ))}
-        <FillButton size="sm" label="All" disabled={!have} onPress={() => setText(String(have))} />
-      </View>
-    </Sheet>
   );
 }
 
@@ -344,5 +274,4 @@ const styles = StyleSheet.create({
   pips: { flexDirection: 'row', gap: 3 },
   pip: { width: 7, height: 7, borderRadius: 3.5, backgroundColor: colors.fillStrong },
   pipOn: { backgroundColor: colors.accent },
-  quick: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
 });

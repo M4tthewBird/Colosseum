@@ -40,7 +40,7 @@ export function warWinner(attacker: number, defender: number): 'attacker' | 'def
   return attacker > defender ? 'attacker' : 'defender';
 }
 
-/** Spoils: a share of the loser's treasury, capped. */
+/** Spoils: a share of the loser's hours (minutes), capped. */
 export function warSpoils(loserTreasury: number): number {
   return Math.min(WAR.maxSpoils, Math.floor(Math.max(0, loserTreasury) * WAR.spoilsShare));
 }

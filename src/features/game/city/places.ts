@@ -266,7 +266,7 @@ export const START: [string, number, number][] = [
 /** Pieces that grow with the game, not by hand: the arena with the tribe, the home with the rank. */
 export const GROWS: Record<string, string> = {
   arena: 'Grows with your tribe’s fortress',
-  home: 'Grows with your rank',
+  home: 'Upgrade it in Your domus, with your own hours',
 };
 
 export type { Placed };

@@ -1,4 +1,4 @@
-/** City → Your domus: the gladiator, rank path, character sheet, wallet and the cell. */
+/** City → Your domus, under your house: the gladiator, rank path, character sheet, wallet and the cell. */
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -97,7 +97,7 @@ export function GladiatorView() {
             <Coins size={16} color={colors.accent} strokeWidth={2.2} />
             <Text style={[styles.big, tabular]}>{wallet.data ?? '—'}</Text>
           </View>
-          <Text style={type.small}>Denarii to give</Text>
+          <Text style={type.small}>Denarii for gear</Text>
         </GlassCard>
       </View>
 

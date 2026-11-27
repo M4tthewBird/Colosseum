@@ -49,13 +49,14 @@ import {
   tilesOf,
   type Placed,
 } from '@/lib/game/cityGrid';
-import { homeStage } from '@/lib/game/attributes';
 import { fortressLevel, fortressStage } from '@/lib/game/fortress';
 import { GEAR_ITEMS, owns } from '@/lib/game/gear';
 import { useGym } from '@/features/social/api';
 import { useData } from '@/stores/data';
 import { toast } from '@/stores/ui';
-import { useFortress, useMyLudus } from '../api';
+import { useFortress, useHouse, useMyLudus } from '../api';
+import { housePicture } from '../HouseView';
+import { houseName } from '@/lib/game/hours';
 import { useTribeWars } from '../cityApi';
 import { DenariiPill } from '../CityViews';
 import { chooseGame, useGameOn } from '../gameMode';
@@ -126,9 +127,9 @@ function useStatuses(): Record<string, { text: string; hot?: boolean }> {
   const gymId = useData((s) => s.profile?.home_gym_id ?? null);
   const tribe = useFortress('gym', gymId).data;
   const ludus = useMyLudus().data;
-  const game = useMyGame();
   const progress = useGearProgress();
   const wars = useTribeWars(gymId).data;
+  const houseLevel = useHouse().data?.level ?? 1;
   const now = new Date();
   const level = (b?: { level: number }) => b?.level ?? 0;
   const tribeLevel = tribe ? fortressLevel(tribe.buildings, now) : 0;
@@ -150,7 +151,7 @@ function useStatuses(): Record<string, { text: string; hot?: boolean }> {
     forge: { text: `${GEAR_ITEMS.filter((g) => owns(g, progress)).length} pieces of gear` },
     market: { text: 'Soon' },
     baths: { text: 'Soon' },
-    home: { text: `${game.rank.name} · stage ${homeStage(game.rank.id) + 1}` },
+    home: { text: `${houseName(houseLevel)} · lv ${houseLevel}` },
     ludus: ludus
       ? { text: `${ludus.name} · lv ${fortressLevel(ludus.buildings, now)}` }
       : { text: 'Join a ludus' },
@@ -236,9 +237,10 @@ export function PaintedCity() {
   const statuses = useStatuses();
   const focused = useIsFocused();
   const tribe = useFortress('gym', gymId).data;
-  // the arena and the home are drawn as the game has them: the tribe's fortress, the player's rank
+  // the arena and the home are drawn as the game has them: the tribe's fortress, the player's house
+  const houseLevel = useHouse().data?.level ?? 1;
   const arenaId = `arena-${fortressStage(tribe ? fortressLevel(tribe.buildings, new Date()) : 0) + 1}`;
-  const homeId = `home-${homeStage(game.rank.id) + 1}`;
+  const homeId = housePicture(houseLevel) ?? 'home-1';
   const pictureOf = (id: string) => {
     const family = PIECE[id]?.family;
     if (family === 'arena' && CITY_PIECES[arenaId]) return arenaId;

@@ -311,7 +311,10 @@ export interface TribeWar extends TribeWarTimes {
   attacker_score: number;
   defender_score: number;
   winner_gym: string | null;
+  /** Denarii, for attacks settled before 2026-11-27. */
   spoils: number | null;
+  /** Hours won, in minutes (attacks settled since 2026-11-27). */
+  spoils_minutes?: number | null;
   damaged_building: string | null;
   settled_at: string | null;
   pledges: number;
@@ -364,7 +367,8 @@ function demoTribeWars(): TribeWar[] {
       attacker_score: 62.4,
       defender_score: 56.1,
       winner_gym: spartan.id,
-      spoils: 380,
+      spoils: null,
+      spoils_minutes: 380,
       damaged_building: 'palisade',
       settled_at: hoursFromNow(-24 * 5),
       pledges: 11,
@@ -383,7 +387,8 @@ function demoTribeWars(): TribeWar[] {
       attacker_score: 48.5,
       defender_score: 31,
       winner_gym: mine.id,
-      spoils: 95,
+      spoils: null,
+      spoils_minutes: 95,
       damaged_building: 'bench',
       settled_at: hoursFromNow(-24 * 12),
       pledges: 8,

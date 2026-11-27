@@ -1,0 +1,31 @@
+You are painting game art for a fitness app themed on ancient Rome. I will ask for the pictures one at a time.
+
+STYLE (identical for every image):
+Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The first attached image is the style reference: match its painting style, line work, colours and light exactly (but paint the map from directly above). The second attached image is the outline template.
+
+FORMAT: a painted map seen from directly above (top-down: not isometric, no perspective, no tilt), in the style of the attached city painting. The second attached image is the outline template. Keep the outline exactly where the template has it, with the same shape, position and size in the frame: do not move, rotate, scale or simplify it, because the app puts real places on the map by their coordinates. Blue lines in the template are rivers: paint them exactly there. Each small dark dot is a town: paint a small cluster of terracotta roofs exactly on it. Paint the land inside the outline; draw its border as a thin dark-brown ink line. Outside the outline leave plain flat cream #F2EBDB with nothing on it: no neighbouring land, no sea, no frame, no compass rose, no legend. No text, no labels, no names, no numbers, no markers, no pins. Give the image the same proportions as the template.
+
+THE LIST (1 images):
+1. map-cz. Czechia as a hand-painted map: the mountains along its borders (Krkonoše in the north, Šumava in the south-west, Krušné hory in the north-west, the Beskydy in the east) as small painted hills with dark green forests, the gentle Bohemian-Moravian Highlands in the middle, patches of olive fields and ochre farmland, clusters of small painted trees for forests, the rivers Vltava, Labe, Morava and Odra as thin blue-green lines. Landscape image, 16:9.
+
+RULES:
+- One image per reply, in the order of the list. Below the image write only its number and id (for example "1. map-cz").
+- When I write "next", make the next image. When I write "redo", make the same image again, fixing what I say.
+- Keep the same style, angle, light and background in every image.
+
+Make image 1 now.
+
+
+=====================================================================
+ZÁLOHA: jednotlivé prompty (když Gemini ztratí přehled, otevři nový chat, přilož vzor-mesto.jpg a sablona-cesko.png
+a pošli jen jeden z nich)
+=====================================================================
+
+--- 1. map-cz (Mapa Česka) ---
+Game art for a fitness app themed on ancient Rome: map-cz. Czechia as a hand-painted map: the mountains along its borders (Krkonoše in the north, Šumava in the south-west, Krušné hory in the north-west, the Beskydy in the east) as small painted hills with dark green forests, the gentle Bohemian-Moravian Highlands in the middle, patches of olive fields and ochre farmland, clusters of small painted trees for forests, the rivers Vltava, Labe, Morava and Odra as thin blue-green lines. Landscape image, 16:9.
+
+STYLE: Hand-painted isometric game art in the exact style of the attached city painting: a soft painterly digital illustration with fine dark-brown ink outlines and light cross-hatching, a warm muted palette (terracotta roof tiles, cream and beige limestone, warm brown timber, olive-green grass, dark green cypresses and pines, grey-beige cobblestones), soft daylight from the upper left and gentle shading. Ancient Rome. No text, no letters, no numbers, no logos, no watermark, no frame, no border.
+The first attached image is the style reference: match its painting style, line work, colours and light exactly (but paint the map from directly above). The second attached image is the outline template.
+
+FORMAT: a painted map seen from directly above (top-down: not isometric, no perspective, no tilt), in the style of the attached city painting. The second attached image is the outline template. Keep the outline exactly where the template has it, with the same shape, position and size in the frame: do not move, rotate, scale or simplify it, because the app puts real places on the map by their coordinates. Blue lines in the template are rivers: paint them exactly there. Each small dark dot is a town: paint a small cluster of terracotta roofs exactly on it. Paint the land inside the outline; draw its border as a thin dark-brown ink line. Outside the outline leave plain flat cream #F2EBDB with nothing on it: no neighbouring land, no sea, no frame, no compass rose, no legend. No text, no labels, no names, no numbers, no markers, no pins. Give the image the same proportions as the template.
