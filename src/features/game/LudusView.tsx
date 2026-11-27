@@ -1,5 +1,5 @@
 /**
- * City → Clan (a ludus in code): your crew of 2–10 (any gyms). Create or join one; then the crew, its wars and
+ * City → Ludus: your crew of 2–10 (any gyms). Create or join one; then the crew, its wars and
  * its fortress. The leader declares wars and can remove members.
  */
 import * as Linking from 'expo-linking';
@@ -68,14 +68,14 @@ function NoLudus() {
         <View style={styles.introIcon}>
           <LogoMark size={40} />
         </View>
-        <Text style={[type.title, { textAlign: 'center' }]}>Your clan</Text>
+        <Text style={[type.title, { textAlign: 'center' }]}>Your ludus</Text>
         <Text style={[type.caption, { textAlign: 'center' }]}>
           A crew of {LUDUS.minMembers}–{LUDUS.maxMembers} friends, from any gym. Give the denarii
-          you earn by training, build your fortress together and fight other clans: the crew that
+          you earn by training, build your fortress together and fight other ludi: the crew that
           trains more wins.
         </Text>
       </GlassCard>
-      <FillButton label="Create a clan" icon={Plus} onPress={() => setSheet('create')} />
+      <FillButton label="Create a ludus" icon={Plus} onPress={() => setSheet('create')} />
       <FillButton label="Join with a code" icon={LogIn} onPress={() => setSheet('join')} />
       <LudusRanking mine={null} />
       {sheet === 'create' ? <CreateSheet onClose={() => setSheet(null)} /> : null}
@@ -93,14 +93,14 @@ function CreateSheet({ onClose }: { onClose: () => void }) {
     <Sheet
       visible
       onClose={onClose}
-      title="New clan"
+      title="New ludus"
       doneLabel="Create"
       doneDisabled={!ok || create.isPending}
       onDone={() =>
         create.mutate(
           { name, motto },
           {
-            onSuccess: () => (toast('Your clan is ready. Invite your crew!', true), onClose()),
+            onSuccess: () => (toast('Your ludus is ready. Invite your crew!', true), onClose()),
             onError: (e) => toast(e.message),
           },
         )
@@ -136,12 +136,12 @@ function JoinSheet({ onClose, initial = '' }: { onClose: () => void; initial?: s
     <Sheet
       visible
       onClose={onClose}
-      title="Join a clan"
+      title="Join a ludus"
       doneLabel="Join"
       doneDisabled={clean.length !== 6 || join.isPending}
       onDone={() =>
         join.mutate(clean, {
-          onSuccess: () => (toast('Welcome to the clan!', true), onClose()),
+          onSuccess: () => (toast('Welcome to the ludus!', true), onClose()),
           onError: (e) => toast(e.message),
         })
       }
@@ -197,7 +197,7 @@ function MyLudus({ ludus }: { ludus: Ludus }) {
           </View>
           <IconButton
             icon={QrIcon}
-            accessibilityLabel="Invite to the clan"
+            accessibilityLabel="Invite to the ludus"
             onPress={() => setInvite(true)}
           />
         </View>
@@ -223,9 +223,9 @@ function MyLudus({ ludus }: { ludus: Ludus }) {
           title="At peace"
           text={
             ludus.members.length < LUDUS.minMembers
-              ? `A clan needs ${LUDUS.minMembers} members to fight. Invite your crew.`
+              ? `A ludus needs ${LUDUS.minMembers} members to fight. Invite your crew.`
               : leader
-                ? `Declare war on another clan. For ${WAR.days} days, verified workouts at the gym score points; the crew with more per member wins.`
+                ? `Declare war on another ludus. For ${WAR.days} days, verified workouts at the gym score points; the crew with more per member wins.`
                 : 'Your leader declares wars. When one starts, every verified workout counts.'
           }
         />
@@ -304,7 +304,7 @@ function MyLudus({ ludus }: { ludus: Ludus }) {
       <GloriaRules />
 
       <TextButton
-        label="Leave the clan"
+        label="Leave the ludus"
         style={{ alignSelf: 'center', minHeight: 44, justifyContent: 'center' }}
         onPress={async () => {
           const last = ludus.members.length === 1;
@@ -312,7 +312,7 @@ function MyLudus({ ludus }: { ludus: Ludus }) {
             await confirm({
               title: `Leave ${ludus.name}?`,
               message: last
-                ? 'You are the last member: the clan, its treasury and fortress close for good.'
+                ? 'You are the last member: the ludus, its treasury and fortress close for good.'
                 : leader
                   ? 'The longest member becomes the leader. Denarii you gave stay in the treasury.'
                   : 'Denarii you gave stay in the treasury.',
@@ -343,13 +343,13 @@ function InviteSheet({ ludus, onClose }: { ludus: Ludus; onClose: () => void }) 
         {ludus.code}
       </Text>
       <Text style={[type.caption, { textAlign: 'center' }]}>
-        Friends scan this with the phone camera, or type the code in City → Clan → Join.
+        Friends scan this with the phone camera, or type the code in City → Ludus → Join.
       </Text>
       <FillButton
         label="Share link"
         icon={ShareIcon}
         onPress={() =>
-          void Share.share({ message: `Join my clan ${ludus.name} on Colosseum: ${link}` }).catch(
+          void Share.share({ message: `Join my ludus ${ludus.name} on Colosseum: ${link}` }).catch(
             () => {},
           )
         }
@@ -380,7 +380,7 @@ function WarSheet({ ludus, onClose }: { ludus: Ludus; onClose: () => void }) {
   const rows = (list.data ?? []).filter((l) => l.id !== ludus.id);
   return (
     <Sheet visible onClose={onClose} title="Declare war">
-      <SearchField value={q} onChangeText={setQ} placeholder="Search clans" />
+      <SearchField value={q} onChangeText={setQ} placeholder="Search ludi" />
       {rows.length ? (
         <ListGroup>
           {rows.map((l) => (
@@ -400,7 +400,7 @@ function WarSheet({ ludus, onClose }: { ludus: Ludus; onClose: () => void }) {
         </ListGroup>
       ) : (
         <Text style={[type.caption, { textAlign: 'center', padding: 16 }]}>
-          {list.isLoading ? 'Loading…' : 'No clan found'}
+          {list.isLoading ? 'Loading…' : 'No ludus found'}
         </Text>
       )}
     </Sheet>

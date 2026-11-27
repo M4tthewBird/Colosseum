@@ -186,7 +186,7 @@ On City → Your domus, 0–99 each:
 
 **The city** (the City tab) is the way into the game: the Colosseum (league, duels, Bellum and the map), your ludus, the temple (your gym's tribe and its fortress), the forge, your domus (your gladiator) and the market and the baths (both later).
 
-**Names in the app.** This document keeps the code's names. The app calls a ludus a **clan** (`src/lib/game/words.ts` turns server messages into it); every other name stays as here.
+**Names in the app.** The app uses the same names as this document: ludus (plural ludi), tribe, domus and the rest.
 
 **Building the city (planned, Matyáš 2026-11-26).** The city is a grid that grows from its arena; there is no board to fill. Every building is a painted piece on its own diamond plot of 1×1, 2×2 or 3×3 tiles (`assets/game/painted/city/`, anchors in `manifest.json`). In edit mode the player sees the grid: the free tiles that touch the city. A new piece must share at least one edge with a piece already built, so the city only grows outwards and stays in one block. The ground exists only under built plots; the app draws earth sides along the city's outer front edges. Pieces are drawn back to front: one goes behind another when its tiles all lie at smaller i, or all at smaller j. Pieces cannot be rotated (each is painted from one side).
 

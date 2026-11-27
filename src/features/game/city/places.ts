@@ -60,7 +60,7 @@ const FAMILIES: [string | null, string, CityPiece['group'], [string, string][]][
     [
       ['barracks-1', 'Wooden barracks'],
       ['barracks-2', 'Stone barracks'],
-      ['barracks-3', 'Clan barracks'],
+      ['barracks-3', 'Ludus barracks'],
     ],
   ],
   [
@@ -178,7 +178,7 @@ export const sizeOf = (id: string): number => CITY_PIECES[id]?.size ?? 1;
 
 /** The places that open a part of the game; `status` is filled in from the player's game. */
 export type PlaceId =
-  'colosseum' | 'temple' | 'forge' | 'market' | 'baths' | 'home' | 'clan' | 'walls';
+  'colosseum' | 'temple' | 'forge' | 'market' | 'baths' | 'home' | 'ludus' | 'walls';
 export interface Place {
   id: PlaceId;
   title: string;
@@ -212,10 +212,10 @@ export const PLACES: Record<PlaceId, Place> = {
     text: 'Your gladiator’s home, growing with your rank.',
     to: '/city/domus',
   },
-  clan: {
-    id: 'clan',
-    title: 'Clan',
-    text: 'Your clan’s barracks: its members, treasury, fortress and wars.',
+  ludus: {
+    id: 'ludus',
+    title: 'Ludus',
+    text: 'Your ludus’s barracks: its members, treasury, fortress and wars.',
     to: '/city/ludus',
   },
   walls: {
@@ -234,7 +234,7 @@ export function placeOf(id: string): Place | null {
     market: 'market',
     baths: 'baths',
     home: 'home',
-    barracks: 'clan',
+    barracks: 'ludus',
     gate: 'walls',
   };
   return map[fam] ? PLACES[map[fam]] : null;

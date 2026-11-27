@@ -88,7 +88,7 @@ export function ColosseumScreen() {
 export function LudusScreen() {
   return (
     <Screen glow="center" gap={16}>
-      <CityTopBar title="Clan" />
+      <CityTopBar title="Ludus" />
       <Text style={type.caption}>Your crew of 3–10 across gyms, its fortress and its wars.</Text>
       <LudusView />
     </Screen>

@@ -45,7 +45,6 @@ import { isRun } from '@/lib/running';
 import { isDemo, supabase } from '@/lib/supabase';
 import type { PublicUser, Session } from '@/lib/types';
 import { stableUuid } from '@/lib/uuid';
-import { gameWords } from '@/lib/game/words';
 import { useData } from '@/stores/data';
 import { useGame as useGameStore } from '@/stores/game';
 import type { ArenaScope } from '@/stores/prefs';
@@ -58,7 +57,7 @@ function me(): string {
 }
 
 function check<T>(res: { data: T | null; error: { message: string } | null }): T {
-  if (res.error) throw new Error(gameWords(res.error.message));
+  if (res.error) throw new Error(res.error.message);
   return res.data as T;
 }
 
@@ -664,7 +663,8 @@ export function useJoinLudus() {
   return useMutation({
     mutationFn: async (code: string) => {
       if (isDemo) {
-        if (code.trim().toUpperCase() !== DEMO_LUDUS.code) throw new Error('No clan has that code');
+        if (code.trim().toUpperCase() !== DEMO_LUDUS.code)
+          throw new Error('No ludus has that code');
         demo.inLudus = true;
         demo.ludus = { ...DEMO_LUDUS, members: [...DEMO_LUDUS.members] };
         return;
@@ -989,7 +989,7 @@ export function useDeclareWar() {
         if (wars.some((w) => !w.settled_at)) throw new Error('One of you is at war already');
         const l = demoLudus();
         if (!l || l.members.length < LUDUS.minMembers)
-          throw new Error(`Your clan needs ${LUDUS.minMembers} members to fight`);
+          throw new Error(`Your ludus needs ${LUDUS.minMembers} members to fight`);
         if (target.members < LUDUS.minMembers)
           throw new Error(`They need ${LUDUS.minMembers} members to fight`);
         wars.unshift({

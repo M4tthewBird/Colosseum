@@ -17,7 +17,6 @@ import { qualifies } from '@/lib/game/engine';
 import { isRun } from '@/lib/running';
 import { isDemo, supabase } from '@/lib/supabase';
 import { stableUuid } from '@/lib/uuid';
-import { gameWords } from '@/lib/game/words';
 import { useData } from '@/stores/data';
 import { useGame as useGameStore } from '@/stores/game';
 import { demoPay, demoTreasury } from './api';
@@ -27,7 +26,7 @@ function me(): string {
 }
 
 function check<T>(res: { data: T | null; error: { message: string } | null }): T {
-  if (res.error) throw new Error(gameWords(res.error.message));
+  if (res.error) throw new Error(res.error.message);
   return res.data as T;
 }
 

@@ -87,7 +87,7 @@ export function GameModeSetting() {
       <FieldHint
         text={
           choice === 'on'
-            ? 'The City tab: your gladiator, the league, duels, your clan and your gym’s wars.'
+            ? 'The City tab: your gladiator, the league, duels, your ludus and your gym’s wars.'
             : 'The City tab and the game’s cards are hidden. Your workouts still count in the background, so nothing is lost if you turn it on later.'
         }
       />

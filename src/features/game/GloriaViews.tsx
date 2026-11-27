@@ -1,5 +1,5 @@
 /**
- * Gloria in City → Clan: the ludus's fame and war record, its badges, the ludus ranking
+ * Gloria in City → Ludus: the ludus's fame and war record, its badges, the ludus ranking
  * (tap a ludus to see its record and badges) and the full war history.
  */
 import { useState } from 'react';
@@ -56,7 +56,7 @@ export function LudusRanking({ mine }: { mine: string | null }) {
   return (
     <>
       <SectionHeader
-        title="Clan ranking"
+        title="Ludus ranking"
         right={
           rows.length > top.length ? (
             <TextButton label="See all" accent onPress={() => setAll(true)} />
@@ -68,12 +68,12 @@ export function LudusRanking({ mine }: { mine: string | null }) {
       ) : (
         <EmptyState
           title={
-            ranking.isLoading ? 'Loading…' : ranking.isError ? 'Could not load' : 'No clans yet'
+            ranking.isLoading ? 'Loading…' : ranking.isError ? 'Could not load' : 'No ludi yet'
           }
           text={ranking.isError ? 'Are you online?' : 'Win wars to gain gloria and climb.'}
         />
       )}
-      <Sheet visible={all} onClose={() => setAll(false)} title="Clan ranking">
+      <Sheet visible={all} onClose={() => setAll(false)} title="Ludus ranking">
         <RankList
           rows={rows}
           mine={mine}
@@ -149,7 +149,7 @@ function LudusSheet({
               </Text>
             ) : null}
             <Text style={type.small}>
-              {mine ? 'Your clan · ' : ''}
+              {mine ? 'Your ludus · ' : ''}
               {ludus.members} member{ludus.members === 1 ? '' : 's'}
             </Text>
           </View>
@@ -237,7 +237,7 @@ export function GloriaRules() {
     <GlassCard radius={22} style={{ gap: 6, padding: 16 }}>
       <Text style={type.bodyStrong}>How to earn gloria</Text>
       <Text style={type.caption}>
-        +{GLORIA.win} for every war won, up to +{GLORIA.maxUpset} more for beating a clan with more
+        +{GLORIA.win} for every war won, up to +{GLORIA.maxUpset} more for beating a ludus with more
         gloria. A loss costs {GLORIA.loss}, or nothing when you were close (at least{' '}
         {Math.round(GLORIA.closeShare * 100)} % of their score). Gloria never resets.
       </Text>

@@ -855,7 +855,7 @@ function WarRunning({
       />
       <View style={styles.buttons}>
         <FillButton
-          label="Call the clan"
+          label="Call the ludus"
           icon={Users}
           style={{ flex: 1 }}
           onPress={() => {

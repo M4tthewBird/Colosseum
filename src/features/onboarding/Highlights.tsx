@@ -208,7 +208,7 @@ const SHOW: Record<FeatureId, () => void> = {
         target: 'city-places',
         radius: 22,
         title: 'The City',
-        body: 'The Colosseum holds the league, duels with friends and Bellum, the monthly war of the gyms in your city. Your clan, your gym’s temple, the forge and your domus are here too.',
+        body: 'The Colosseum holds the league, duels with friends and Bellum, the monthly war of the gyms in your city. Your ludus, your gym’s temple, the forge and your domus are here too.',
       },
     ]);
   },

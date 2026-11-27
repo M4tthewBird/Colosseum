@@ -181,8 +181,8 @@ export function CityScreen() {
           })}
           {row({
             icon: Castle,
-            title: ludus?.name ?? 'Clan',
-            subtitle: 'Your clan, its fortress and wars',
+            title: ludus?.name ?? 'Ludus',
+            subtitle: 'Your ludus, its fortress and wars',
             right: ludusLevel != null ? `lv ${ludusLevel}` : 'join one',
             to: () => router.push('/city/ludus'),
           })}

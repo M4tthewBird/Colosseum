@@ -151,9 +151,9 @@ function useStatuses(): Record<string, { text: string; hot?: boolean }> {
     market: { text: 'Soon' },
     baths: { text: 'Soon' },
     home: { text: `${game.rank.name} · stage ${homeStage(game.rank.id) + 1}` },
-    clan: ludus
+    ludus: ludus
       ? { text: `${ludus.name} · lv ${fortressLevel(ludus.buildings, now)}` }
-      : { text: 'Join a clan' },
+      : { text: 'Join a ludus' },
   };
 }
 
@@ -452,7 +452,7 @@ export function PaintedCity() {
       const b = spriteBox(p, pictureOf(p.id), z);
       const status = statuses[place.id];
       const title =
-        place.id === 'clan' && status?.text && !status.text.startsWith('Join')
+        place.id === 'ludus' && status?.text && !status.text.startsWith('Join')
           ? status.text.split(' · ')[0]
           : place.title;
       return [
@@ -811,7 +811,7 @@ function PlaceIcon({ place, color }: { place: Place; color: string }) {
       'M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8',
       'M3 10a2 2 0 0 1 .71-1.53l7-6a2 2 0 0 1 2.58 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
     ],
-    clan: [
+    ludus: [
       'M22 20v-9H2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2Z',
       'M18 11V4H6v7',
       'M15 22v-4a3 3 0 0 0-6 0v4',

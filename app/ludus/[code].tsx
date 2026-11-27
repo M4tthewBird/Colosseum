@@ -1,4 +1,4 @@
-/** A ludus invite (link or QR code): join it, then see it in City → Clan. */
+/** A ludus invite (link or QR code): join it, then see it in City → Ludus. */
 import { router, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -31,7 +31,7 @@ export default function JoinLudus() {
     return (
       <Screen tabs={false} gap={16}>
         <Head
-          title="Join the clan"
+          title="Join the ludus"
           text="Join Colosseum or sign in first, then open the invite again."
         />
         <FillButton
@@ -52,9 +52,9 @@ export default function JoinLudus() {
       <Screen tabs={false} gap={16}>
         <Head
           title={`You are in ${mine.data.name}`}
-          text="One clan at a time. Leave yours in City → Clan first, then open the invite again."
+          text="One ludus at a time. Leave yours in City → Ludus first, then open the invite again."
         />
-        <FillButton label="Open my clan" onPress={open} />
+        <FillButton label="Open my ludus" onPress={open} />
         <TextButton label="Close" style={styles.secondary} onPress={done} />
       </Screen>
     );
@@ -66,15 +66,15 @@ export default function JoinLudus() {
           title={`Welcome to ${mine.data.name}`}
           text="You are in. Train at the gym to help in wars."
         />
-        <FillButton label="Open the clan" icon={Check} onPress={open} />
+        <FillButton label="Open the ludus" icon={Check} onPress={open} />
       </Screen>
     );
 
   return (
     <Screen tabs={false} gap={16}>
       <Head
-        title="Join this clan?"
-        text={`Invite code ${clean}. Train together, build your fortress and fight other clans.`}
+        title="Join this ludus?"
+        text={`Invite code ${clean}. Train together, build your fortress and fight other ludi.`}
       />
       <FillButton
         label="Join"
